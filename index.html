@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AeroLex | High-End Legal & Tech Firm">
+    <title>AeroLex | Soluciones Corporativas y Tecnológicas</title>
+
+    <!-- Fuentes Apple-like (Inter imita a San Francisco) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        /* Paleta de 4 colores Minimalista/Pastel */
+                        'mac-bg': '#F5F5F7',       /* Gris Perla Claro (Fondo) */
+                        'mac-glass': 'rgba(255, 255, 255, 0.75)', /* Blanco Translúcido */
+                        'mac-dark': '#1D1D1F',     /* Carbón Apple (Textos) */
+                        'mac-accent': '#8B9DAE',   /* Azul Pizarra Pastel (Acentos y Selecciones) */
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"Inter"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'mac-window': '0 20px 40px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0,0,0,0.05)',
+                        'mac-card': '0 4px 15px rgba(0, 0, 0, 0.03)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Estilos Personalizados: Efectos Glassmorphism y Animaciones macOS -->
+    <style>
+        body {
+            background-color: #F5F5F7;
+            color: #1D1D1F;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Fondo de malla difuminada tipo macOS */
+        .mesh-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            background: 
+                radial-gradient(at 0% 0%, rgba(220, 226, 235, 1) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(245, 245, 247, 1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(215, 222, 232, 1) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(245, 245, 247, 1) 0px, transparent 50%);
+            filter: blur(60px);
+            opacity: 0.8;
+        }
+
+        /* Efecto Cristal (Glassmorphism) */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* Header macOS */
+        .mac-header {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        /* Barra lateral estilo Finder */
+        .sidebar-item {
+            transition: all 0.2s ease;
+        }
+        .sidebar-item.active {
+            background: #8B9DAE; /* Pastel Azul Pizarra */
+            color: #ffffff;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(139, 157, 174, 0.3);
+        }
+
+        /* Tarjetas de Servicio estilo Apple */
+        .service-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .service-card:hover {
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.06);
+            background: #ffffff;
+        }
+
+        /* Animación de entrada suave */
+        .fade-in {
+            animation: fadeInApple 0.5s ease-out forwards;
+        }
+        @keyframes fadeInApple {
+            from { opacity: 0; transform: translateY(10px) scale(0.99); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Custom Scrollbar minimalista */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
+    </style>
+</head>
+<body class="relative">
+
+    <!-- Fondo de Color Minimalista macOS -->
+    <div class="mesh-bg"></div>
+
+    <!-- Header Estilo macOS Menu Bar -->
+    <header class="fixed w-full top-0 z-50 mac-header transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <i class="fab fa-apple text-mac-dark text-xl opacity-80 hidden md:block"></i>
+                    <a href="#" class="font-semibold text-lg tracking-tight text-mac-dark">
+                        AeroLex
+                    </a>
+                </div>
+                <!-- Menú Central (Minimalista) -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#inicio" class="text-xs font-medium tracking-wide text-mac-dark/70 hover:text-mac-dark transition-colors">Inicio</a>
+                    <a href="#servicios" class="text-xs font-medium tracking-wide text-mac-dark/70 hover:text-mac-dark transition-colors">Portafolio de Servicios</a>
+                    <a href="#drones" class="text-xs font-medium tracking-wide text-mac-dark/70 hover:text-mac-dark transition-colors">AeroLex Drones</a>
+                </nav>
+                <!-- Botón de Contacto Estilo Apple -->
+                <div class="hidden md:flex">
+                    <a href="#contacto" class="bg-mac-dark text-white hover:bg-black px-5 py-1.5 rounded-full text-xs font-medium transition-all shadow-sm">
+                        Contactar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section (Clean & Minimal) -->
+    <section id="inicio" class="pt-32 pb-16 flex flex-col items-center justify-center text-center px-4">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-mac-dark mb-6 max-w-4xl">
+            Ingeniería Legal.<br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-mac-accent to-gray-500">
+                Precisión Tecnológica.
+            </span>
+        </h1>
+        <p class="text-lg md:text-xl text-mac-dark/60 max-w-2xl font-light mb-10 leading-relaxed">
+            Asesoría corporativa de élite, gestión patrimonial avanzada y servicios audiovisuales con drones 4K para proyectos de alta complejidad.
+        </p>
+    </section>
+
+    <!-- macOS Window Interface para Servicios (El Organismo Vivo) -->
+    <section id="servicios" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-32">
+        
+        <!-- Ventana Principal -->
+        <div class="glass-effect rounded-2xl shadow-mac-window overflow-hidden border border-white/60 flex flex-col md:h-[750px]">
+            
+            <!-- Barra Superior de la Ventana (Traffic Lights) -->
+            <div class="h-12 bg-white/40 border-b border-black/5 flex items-center px-4 backdrop-blur-md">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]"></div>
+                    <div class="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]"></div>
+                    <div class="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]"></div>
+                </div>
+                <div class="flex-grow text-center">
+                    <span class="text-xs font-medium text-mac-dark/60 tracking-wide">AeroLex System Preferences</span>
+                </div>
+            </div>
+
+            <!-- Contenido de la Ventana -->
+            <div class="flex flex-1 overflow-hidden">
+                
+                <!-- Sidebar (Menú de Categorías) -->
+                <div class="w-full md:w-64 bg-white/30 border-r border-black/5 p-4 overflow-y-auto hidden md:block">
+                    <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-wider mb-3 px-3">Ecosistema Legal</p>
+                    <nav id="sidebar-nav" class="space-y-1">
+                        <!-- Botones inyectados por JS -->
+                    </nav>
+
+                    <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-wider mt-8 mb-3 px-3">Tecnología y Drones</p>
+                    <nav id="sidebar-nav-tech" class="space-y-1">
+                        <!-- Botones inyectados por JS -->
+                    </nav>
+                </div>
+
+                <!-- Panel Principal de Contenido -->
+                <div class="flex-1 bg-white/50 p-8 overflow-y-auto relative">
+                    <div id="content-header" class="mb-8 fade-in">
+                        <div class="w-16 h-16 bg-mac-accent/10 rounded-2xl flex items-center justify-center mb-4 text-mac-accent">
+                            <i id="content-icon" class="fas fa-balance-scale text-2xl"></i>
+                        </div>
+                        <h2 id="content-title" class="text-3xl font-semibold text-mac-dark tracking-tight">Cargando...</h2>
+                        <p id="content-desc" class="text-mac-dark/60 mt-2 font-light">Seleccione una categoría para ver los servicios.</p>
+                    </div>
+
+                    <!-- Grid de Servicios (Cards) -->
+                    <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-12">
+                        <!-- Tarjetas inyectadas por JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Apple Style -->
+    <footer class="border-t border-black/5 bg-mac-bg py-8">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-xs text-mac-dark/50">
+            <p>&copy; 2026 AeroLex Corp. Todos los derechos reservados.</p>
+            <div class="flex space-x-6 mt-4 md:mt-0">
+                <a href="#" class="hover:text-mac-dark">Privacidad</a>
+                <a href="#" class="hover:text-mac-dark">Condiciones</a>
+                <a href="#" class="hover:text-mac-dark">Legal</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lógica JavaScript (Base de datos y Renderizado) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /* BASE DE DATOS EXHAUSTIVA DE SERVICIOS AEROLEX */
+            const db = {
+                legal: [
+                    {
+                        id: 'civil',
+                        title: 'Derecho Civil',
+                        icon: 'fa-file-signature',
+                        desc: 'Gestión y estructuración del patrimonio privado con rigor técnico.',
+                        items: [
+                            "Redacción y revisión de contratos",
+                            "Cobranza judicial y extrajudicial",
+                            "Juicios ordinarios y ejecutivos",
+                            "Indemnización de perjuicios",
+                            "Responsabilidad contractual y extracontractual",
+                            "Prescripción adquisitiva",
+                            "Servidumbres",
+                            "Acciones posesorias"
+                        ]
+                    },
+                    {
+                        id: 'inmobiliario',
+                        title: 'Derecho Inmobiliario',
+                        icon: 'fa-city',
+                        desc: 'Seguridad jurídica integral para el desarrollo de proyectos y bienes raíces.',
+                        items: [
+                            "Estudios de títulos",
+                            "Compraventa de inmuebles",
+                            "Regularización de propiedades",
+                            "Saneamiento de títulos",
+                            "Subdivisiones prediales",
+                            "Constitución de servidumbres",
+                            "Asesoría inmobiliaria"
+                        ]
+                    },
+                    {
+                        id: 'comercial',
+                        title: 'Comercial y Corporativo',
+                        icon: 'fa-briefcase',
+                        desc: 'Estructuración societaria y protección legal para el crecimiento empresarial.',
+                        items: [
+                            "Constitución de sociedades",
+                            "Modificaciones societarias",
+                            "Fusiones y adquisiciones",
+                            "Pactos de accionistas",
+                            "Contratos comerciales",
+                            "Cobranza empresarial",
+                            "Due diligence",
+                            "Gobierno corporativo"
+                        ]
+                    },
+                    {
+                        id: 'laboral',
+                        title: 'Laboral y Administrativo',
+                        icon: 'fa-users-cog',
+                        desc: 'Cumplimiento normativo patronal y relación con organismos del Estado.',
+                        items: [
+                            "Asesoría a empleadores",
+                            "Defensa laboral y Despidos",
+                            "Tutela laboral y Accidentes del trabajo",
+                            "Auditorías y Negociación laboral",
+                            "Recursos y Procedimientos sancionatorios",
+                            "Licitaciones y Compras públicas",
+                            "Reclamos ante organismos públicos",
+                            "Solicitudes de transparencia"
+                        ]
+                    },
+                    {
+                        id: 'familia',
+                        title: 'Familia y Sucesorio',
+                        icon: 'fa-home',
+                        desc: 'Soluciones legales discretas y efectivas para la vida personal y hereditaria.',
+                        items: [
+                            "Divorcios y Compensación económica",
+                            "Alimentos y Cuidado personal",
+                            "Relación directa y regular",
+                            "Violencia intrafamiliar",
+                            "Posesiones efectivas y Herencias",
+                            "Particiones y Testamentos",
+                            "Litigios hereditarios"
+                        ]
+                    },
+                    {
+                        id: 'litigacion',
+                        title: 'Litigación y Compliance',
+                        icon: 'fa-gavel',
+                        desc: 'Defensa estratégica ante tribunales y prevención de riesgos corporativos.',
+                        items: [
+                            "Representación ante tribunales (Patrocinio y poder)",
+                            "Juicios civiles, laborales y ejecutivos",
+                            "Recursos de protección, amparo y apelación",
+                            "Gerencia legal externa y Compliance corporativo",
+                            "Modelos de prevención de delitos",
+                            "Auditorías legales y Gestión de riesgos",
+                            "Negociación extrajudicial y Mediación privada",
+                            "Acuerdos transaccionales y Reestructuración de deudas"
+                        ]
+                    }
+                ],
+                tech: [
+                    {
+                        id: 'drones',
+                        title: 'Inspección Aérea y Audiovisual 4K',
+                        icon: 'fa-drone',
+                        desc: 'Operaciones con drones de alta gama para proyectos industriales y seguimiento.',
+                        items: [
+                            "Videos Corporativos e Inmobiliarios en Resolución 4K/8K",
+                            "Inspección industrial y de techumbres",
+                            "Inspección de obras, predios y caminos",
+                            "Monitoreo constante de proyectos de ingeniería",
+                            "Integración de servicios avanzados (Estándar AustralDrone)"
+                        ]
+                    },
+                    {
+                        id: 'fotogrametria',
+                        title: 'Fotogrametría y Levantamientos',
+                        icon: 'fa-layer-group',
+                        desc: 'Topografía digital de precisión milimétrica para análisis territorial.',
+                        items: [
+                            "Generación de Ortomosaicos de alta resolución",
+                            "Modelos 3D del terreno e infraestructura",
+                            "Cálculo de superficies y volumetrías",
+                            "Seguimiento técnico de obras de construcción",
+                            "Informes técnicos y cartográficos documentados"
+                        ]
+                    },
+                    {
+                        id: 'digital',
+                        title: 'Tecnología y Evidencia Digital',
+                        icon: 'fa-shield-alt',
+                        desc: 'Protección de datos y levantamiento de información corporativa.',
+                        items: [
+                            "Levantamiento de evidencia digital",
+                            "Protección de datos personales (Empresas)",
+                            "Informes jurídicos especializados",
+                            "Investigación jurídica y Análisis regulatorio",
+                            "Custodia documental y respaldo en la nube"
+                        ]
+                    }
+                ]
+            };
+
+            // Referencias del DOM
+            const navLegal = document.getElementById('sidebar-nav');
+            const navTech = document.getElementById('sidebar-nav-tech');
+            const contentTitle = document.getElementById('content-title');
+            const contentDesc = document.getElementById('content-desc');
+            const contentIcon = document.getElementById('content-icon');
+            const servicesGrid = document.getElementById('services-grid');
+            let currentActiveBtn = null;
+
+            // Función para renderizar el contenido en la zona derecha
+            function renderContent(dataObj, btnElement) {
+                // Actualizar botón activo en el sidebar
+                if (currentActiveBtn) {
+                    currentActiveBtn.classList.remove('active', 'text-white', 'bg-mac-accent');
+                    currentActiveBtn.classList.add('text-mac-dark/70', 'hover:bg-black/5');
+                }
+                btnElement.classList.remove('text-mac-dark/70', 'hover:bg-black/5');
+                btnElement.classList.add('active', 'text-white', 'bg-mac-accent');
+                currentActiveBtn = btnElement;
+
+                // Actualizar Header del Contenido
+                contentTitle.textContent = dataObj.title;
+                contentDesc.textContent = dataObj.desc;
+                contentIcon.className = `fas ${dataObj.icon} text-2xl`;
+
+                // Renderizar Grid con animación
+                servicesGrid.innerHTML = '';
+                dataObj.items.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'service-card p-5 fade-in flex items-start gap-3';
+                    card.style.animationDelay = `${index * 0.05}s`; // Efecto cascada
+                    
+                    card.innerHTML = `
+                        <div class="mt-0.5 text-mac-accent opacity-80">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="text-sm font-medium text-mac-dark/90 leading-snug">
+                            ${item}
+                        </div>
+                    `;
+                    servicesGrid.appendChild(card);
+                });
+            }
+
+            // Función para crear botones del sidebar
+            function createSidebarButtons(categoryArray, container) {
+                categoryArray.forEach((cat, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'sidebar-item w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-mac-dark/70 hover:bg-black/5 flex items-center gap-2';
+                    btn.innerHTML = `<i class="fas ${cat.icon} w-4 text-center opacity-70"></i> ${cat.title}`;
+                    
+                    btn.addEventListener('click', () => renderContent(cat, btn));
+                    container.appendChild(btn);
+
+                    // Auto-click al primer elemento al cargar
+                    if (index === 0 && container === navLegal) {
+                        setTimeout(() => btn.click(), 50);
+                    }
+                });
+            }
+
+            // Inicializar aplicación
+            createSidebarButtons(db.legal, navLegal);
+            createSidebarButtons(db.tech, navTech);
+        });
+    </script>
+</body>
+</html>
