@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="AeroLex | High-End Legal & Tech Firm">
     <title>AeroLex | Soluciones Corporativas y Tecnológicas</title>
 
@@ -17,11 +17,10 @@
             theme: {
                 extend: {
                     colors: {
-                        /* Paleta de 4 colores Minimalista/Pastel */
-                        'mac-bg': '#F5F5F7',       /* Gris Perla Claro (Fondo base) */
-                        'mac-glass': 'rgba(255, 255, 255, 0.70)', /* Blanco Translúcido */
-                        'mac-dark': '#1D1D1F',     /* Carbón Apple (Textos) */
-                        'mac-accent': '#788C9F',   /* Azul Pizarra Pastel ligeramente más oscuro */
+                        'mac-bg': '#F5F5F7',
+                        'mac-glass': 'rgba(255, 255, 255, 0.70)',
+                        'mac-dark': '#1D1D1F',
+                        'mac-accent': '#788C9F',
                     },
                     fontFamily: {
                         sans: ['-apple-system', 'BlinkMacSystemFont', '"Inter"', 'sans-serif'],
@@ -42,10 +41,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* * FONDO HÍBRIDO: 
-         * Combina una imagen fotográfica legal/corporativa en B/N muy tenue
-         * con la malla de gradientes pasteles por encima.
-         */
+        /* Fondo Híbrido */
         .bg-container {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -54,7 +50,7 @@
             background-size: cover;
             background-position: center;
             filter: grayscale(100%);
-            opacity: 0.15; /* Súper sutil para no interferir */
+            opacity: 0.15;
         }
 
         .mesh-overlay {
@@ -69,7 +65,7 @@
             filter: blur(40px);
         }
 
-        /* Efecto Cristal (Glassmorphism) */
+        /* Glassmorphism General */
         .glass-effect {
             background: rgba(255, 255, 255, 0.55);
             backdrop-filter: blur(30px);
@@ -77,20 +73,20 @@
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
-        /* Header */
+        /* Header & Mobile Menu */
         .mac-header {
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.4);
         }
 
-        /* Barra lateral */
+        /* Botones del Menú (Responsive) */
         .sidebar-item {
             transition: all 0.2s ease;
         }
         .sidebar-item.active {
-            background: #788C9F; /* Pastel Azul Pizarra */
+            background: #788C9F;
             color: #ffffff;
             font-weight: 500;
             box-shadow: 0 2px 10px rgba(120, 140, 159, 0.3);
@@ -118,8 +114,17 @@
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
+        /* Ocultar Scrollbar en móvil para el menú horizontal */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Custom Scrollbar (Desktop) */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
@@ -131,89 +136,113 @@
     <div class="mesh-overlay"></div>
 
     <header class="fixed w-full top-0 z-50 mac-header transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-6">
+        <div class="max-w-7xl mx-auto px-4 md:px-6">
             <div class="flex justify-between items-center h-16">
                 <div class="flex-shrink-0 flex items-center gap-2.5">
-                    <div class="w-8 h-8 bg-mac-dark rounded-md flex items-center justify-center text-white shadow-sm hidden md:flex">
+                    <div class="w-8 h-8 bg-mac-dark rounded-md flex items-center justify-center text-white shadow-sm">
                         <i class="fas fa-gavel text-sm"></i>
                     </div>
                     <a href="#" class="font-semibold text-lg tracking-tight text-mac-dark">
                         AeroLex
                     </a>
                 </div>
+                
                 <nav class="hidden md:flex space-x-8">
                     <a href="#inicio" class="text-xs font-medium tracking-wide text-mac-dark/70 hover:text-mac-dark transition-colors">Inicio</a>
-                    <a href="#servicios" class="text-xs font-medium tracking-wide text-mac-dark/70 hover:text-mac-dark transition-colors">Portafolio de Servicios</a>
-                    <a href="#drones" class="text-xs font-medium tracking-wide text-mac-dark/70 hover:text-mac-dark transition-colors">AeroLex Drones</a>
+                    <a href="#servicios" class="text-xs font-medium tracking-wide text-mac-dark/70 hover:text-mac-dark transition-colors">Portafolio</a>
+                    <a href="#servicios" class="text-xs font-medium tracking-wide text-mac-dark/70 hover:text-mac-dark transition-colors">Tecnología</a>
                 </nav>
+                
                 <div class="hidden md:flex">
                     <a href="#contacto" class="bg-mac-dark text-white hover:bg-black px-5 py-1.5 rounded-full text-xs font-medium transition-all shadow-sm">
                         Contactar
                     </a>
                 </div>
+
+                <button id="mobile-menu-btn" class="md:hidden text-mac-dark p-2 focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-white/90 backdrop-blur-3xl border-b border-black/5 absolute w-full left-0 top-16 shadow-lg">
+            <div class="flex flex-col px-4 pt-2 pb-6 space-y-4">
+                <a href="#inicio" class="mobile-link text-sm font-medium text-mac-dark/80 hover:text-mac-dark">Inicio</a>
+                <a href="#servicios" class="mobile-link text-sm font-medium text-mac-dark/80 hover:text-mac-dark">Portafolio Legal</a>
+                <a href="#servicios" class="mobile-link text-sm font-medium text-mac-dark/80 hover:text-mac-dark">Drones y Tecnología</a>
+                <a href="#contacto" class="mobile-link mt-4 text-center bg-mac-dark text-white py-2.5 rounded-xl text-sm font-medium">Contactar Ahora</a>
             </div>
         </div>
     </header>
 
-    <section id="inicio" class="pt-32 pb-16 flex flex-col items-center justify-center text-center px-4">
-        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-mac-dark mb-6 max-w-4xl">
+    <section id="inicio" class="pt-32 pb-12 md:pb-16 flex flex-col items-center justify-center text-center px-4">
+        <h1 class="text-4xl md:text-7xl font-bold tracking-tight text-mac-dark mb-4 md:mb-6 max-w-4xl leading-tight">
             Ingeniería Legal.<br>
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-mac-accent to-gray-500">
                 Precisión Tecnológica.
             </span>
         </h1>
-        <p class="text-lg md:text-xl text-mac-dark/60 max-w-2xl font-light mb-10 leading-relaxed">
+        <p class="text-base md:text-xl text-mac-dark/60 max-w-2xl font-light mb-8 md:mb-10 leading-relaxed">
             Asesoría corporativa de élite, gestión patrimonial avanzada y servicios audiovisuales con drones 4K para proyectos de alta complejidad.
         </p>
     </section>
 
-    <section id="servicios" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-32">
+    <section id="servicios" class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pb-32">
         
-        <div class="glass-effect rounded-2xl shadow-mac-window overflow-hidden border border-white/60 flex flex-col md:h-[750px]">
+        <div class="glass-effect rounded-2xl shadow-mac-window overflow-hidden border border-white/60 flex flex-col h-[700px] md:h-[750px]">
             
-            <div class="h-14 bg-white/40 border-b border-black/5 flex items-center justify-between px-6 backdrop-blur-md">
-                <div class="flex items-center gap-3">
-                    <i class="fas fa-shield-alt text-mac-accent opacity-80"></i>
-                    <span class="text-xs font-semibold text-mac-dark/70 uppercase tracking-widest">AeroLex Core System</span>
+            <div class="h-12 md:h-14 bg-white/40 border-b border-black/5 flex items-center justify-between px-4 md:px-6 backdrop-blur-md shrink-0">
+                <div class="flex items-center gap-2 md:gap-3">
+                    <i class="fas fa-shield-alt text-mac-accent opacity-80 text-sm md:text-base"></i>
+                    <span class="text-[10px] md:text-xs font-semibold text-mac-dark/70 uppercase tracking-widest truncate">AeroLex Core System</span>
                 </div>
-                <div class="flex space-x-4 text-xs font-medium text-mac-dark/40">
-                    <span class="hidden md:inline">V. 2.0</span>
-                    <span class="flex items-center gap-1.5"><i class="fas fa-lock text-[10px]"></i> Conexión Segura</span>
+                <div class="flex space-x-4 text-[10px] md:text-xs font-medium text-mac-dark/40">
+                    <span class="hidden sm:inline">V. 2.0</span>
+                    <span class="flex items-center gap-1.5"><i class="fas fa-lock"></i> <span class="hidden sm:inline">Conexión Segura</span></span>
                 </div>
             </div>
 
-            <div class="flex flex-1 overflow-hidden">
+            <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
                 
-                <div class="w-full md:w-64 bg-white/20 border-r border-black/5 p-4 overflow-y-auto hidden md:block backdrop-blur-sm">
-                    <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-wider mb-3 px-3">Ecosistema Legal</p>
-                    <nav id="sidebar-nav" class="space-y-1">
-                        </nav>
+                <div class="w-full md:w-64 bg-white/20 border-b md:border-b-0 md:border-r border-black/5 p-3 md:p-4 shrink-0 backdrop-blur-sm z-10">
+                    
+                    <div class="flex md:flex-col overflow-x-auto hide-scrollbar gap-3 md:gap-0 pb-1 md:pb-0">
+                        
+                        <div class="flex md:block flex-row md:flex-col shrink-0 gap-2 md:gap-0">
+                            <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-wider mb-2 px-3 hidden md:block">Ecosistema Legal</p>
+                            <nav id="sidebar-nav" class="flex md:block flex-row md:flex-col gap-2 md:gap-0 md:space-y-1">
+                                </nav>
+                        </div>
 
-                    <div class="my-6 border-t border-black/5 mx-3"></div>
+                        <div class="hidden md:block my-5 border-t border-black/5 mx-3"></div>
 
-                    <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-wider mb-3 px-3">Tecnología y Drones</p>
-                    <nav id="sidebar-nav-tech" class="space-y-1">
-                        </nav>
+                        <div class="flex md:block flex-row md:flex-col shrink-0 gap-2 md:gap-0">
+                            <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-wider mb-2 px-3 hidden md:block">Tecnología y Drones</p>
+                            <nav id="sidebar-nav-tech" class="flex md:block flex-row md:flex-col gap-2 md:gap-0 md:space-y-1">
+                                </nav>
+                        </div>
+
+                    </div>
                 </div>
 
-                <div class="flex-1 bg-white/40 p-8 overflow-y-auto relative">
-                    <div id="content-header" class="mb-8 fade-in">
-                        <div class="w-16 h-16 bg-white/80 rounded-2xl flex items-center justify-center mb-4 text-mac-accent shadow-sm border border-white">
-                            <i id="content-icon" class="fas fa-balance-scale text-2xl"></i>
+                <div class="flex-1 bg-white/40 p-5 md:p-8 overflow-y-auto relative">
+                    <div id="content-header" class="mb-6 md:mb-8 fade-in">
+                        <div class="w-12 h-12 md:w-16 md:h-16 bg-white/80 rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-4 text-mac-accent shadow-sm border border-white">
+                            <i id="content-icon" class="fas fa-balance-scale text-xl md:text-2xl"></i>
                         </div>
-                        <h2 id="content-title" class="text-3xl font-semibold text-mac-dark tracking-tight">Cargando...</h2>
-                        <p id="content-desc" class="text-mac-dark/60 mt-2 font-light">Seleccione una categoría para ver los servicios.</p>
+                        <h2 id="content-title" class="text-2xl md:text-3xl font-semibold text-mac-dark tracking-tight">Cargando...</h2>
+                        <p id="content-desc" class="text-sm md:text-base text-mac-dark/60 mt-1 md:mt-2 font-light">Seleccione una categoría para ver los servicios.</p>
                     </div>
 
-                    <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-12">
+                    <div id="services-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 pb-8 md:pb-12">
                         </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="border-t border-black/5 bg-white/30 backdrop-blur-md py-8">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-xs text-mac-dark/50">
+    <footer class="border-t border-black/5 bg-white/30 backdrop-blur-md py-6 md:py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-center text-xs text-mac-dark/50">
             <div class="flex items-center gap-2 mb-4 md:mb-0">
                 <i class="fas fa-gavel text-mac-dark/40"></i>
                 <p>&copy; 2026 AeroLex Corp. Todos los derechos reservados.</p>
@@ -229,148 +258,38 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            /* BASE DE DATOS EXHAUSTIVA DE SERVICIOS AEROLEX */
+            // Menú Móvil
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+
+            mobileBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            /* BASE DE DATOS DE SERVICIOS */
             const db = {
                 legal: [
-                    {
-                        id: 'civil',
-                        title: 'Derecho Civil',
-                        icon: 'fa-file-signature',
-                        desc: 'Gestión y estructuración del patrimonio privado con rigor técnico.',
-                        items: [
-                            "Redacción y revisión de contratos",
-                            "Cobranza judicial y extrajudicial",
-                            "Juicios ordinarios y ejecutivos",
-                            "Indemnización de perjuicios",
-                            "Responsabilidad contractual y extracontractual",
-                            "Prescripción adquisitiva",
-                            "Servidumbres",
-                            "Acciones posesorias"
-                        ]
-                    },
-                    {
-                        id: 'inmobiliario',
-                        title: 'Derecho Inmobiliario',
-                        icon: 'fa-city',
-                        desc: 'Seguridad jurídica integral para el desarrollo de proyectos y bienes raíces.',
-                        items: [
-                            "Estudios de títulos",
-                            "Compraventa de inmuebles",
-                            "Regularización de propiedades",
-                            "Saneamiento de títulos",
-                            "Subdivisiones prediales",
-                            "Constitución de servidumbres",
-                            "Asesoría inmobiliaria"
-                        ]
-                    },
-                    {
-                        id: 'comercial',
-                        title: 'Comercial y Corporativo',
-                        icon: 'fa-briefcase',
-                        desc: 'Estructuración societaria y protección legal para el crecimiento empresarial.',
-                        items: [
-                            "Constitución de sociedades",
-                            "Modificaciones societarias",
-                            "Fusiones y adquisiciones",
-                            "Pactos de accionistas",
-                            "Contratos comerciales",
-                            "Cobranza empresarial",
-                            "Due diligence",
-                            "Gobierno corporativo"
-                        ]
-                    },
-                    {
-                        id: 'laboral',
-                        title: 'Laboral y Administrativo',
-                        icon: 'fa-users-cog',
-                        desc: 'Cumplimiento normativo patronal y relación con organismos del Estado.',
-                        items: [
-                            "Asesoría a empleadores",
-                            "Defensa laboral y Despidos",
-                            "Tutela laboral y Accidentes del trabajo",
-                            "Auditorías y Negociación laboral",
-                            "Recursos y Procedimientos sancionatorios",
-                            "Licitaciones y Compras públicas",
-                            "Reclamos ante organismos públicos",
-                            "Solicitudes de transparencia"
-                        ]
-                    },
-                    {
-                        id: 'familia',
-                        title: 'Familia y Sucesorio',
-                        icon: 'fa-home',
-                        desc: 'Soluciones legales discretas y efectivas para la vida personal y hereditaria.',
-                        items: [
-                            "Divorcios y Compensación económica",
-                            "Alimentos y Cuidado personal",
-                            "Relación directa y regular",
-                            "Violencia intrafamiliar",
-                            "Posesiones efectivas y Herencias",
-                            "Particiones y Testamentos",
-                            "Litigios hereditarios"
-                        ]
-                    },
-                    {
-                        id: 'litigacion',
-                        title: 'Litigación y Compliance',
-                        icon: 'fa-gavel',
-                        desc: 'Defensa estratégica ante tribunales y prevención de riesgos corporativos.',
-                        items: [
-                            "Representación ante tribunales (Patrocinio y poder)",
-                            "Juicios civiles, laborales y ejecutivos",
-                            "Recursos de protección, amparo y apelación",
-                            "Gerencia legal externa y Compliance corporativo",
-                            "Modelos de prevención de delitos",
-                            "Auditorías legales y Gestión de riesgos",
-                            "Negociación extrajudicial y Mediación privada",
-                            "Acuerdos transaccionales y Reestructuración de deudas"
-                        ]
-                    }
+                    { id: 'civil', title: 'Derecho Civil', icon: 'fa-file-signature', desc: 'Gestión y estructuración del patrimonio privado con rigor técnico.', items: ["Redacción y revisión de contratos", "Cobranza judicial y extrajudicial", "Juicios ordinarios y ejecutivos", "Indemnización de perjuicios", "Responsabilidad contractual y extracontractual", "Prescripción adquisitiva", "Servidumbres", "Acciones posesorias"] },
+                    { id: 'inmobiliario', title: 'Derecho Inmobiliario', icon: 'fa-city', desc: 'Seguridad jurídica integral para el desarrollo de proyectos y bienes raíces.', items: ["Estudios de títulos", "Compraventa de inmuebles", "Regularización de propiedades", "Saneamiento de títulos", "Subdivisiones prediales", "Constitución de servidumbres", "Asesoría inmobiliaria"] },
+                    { id: 'comercial', title: 'Comercial y Corporativo', icon: 'fa-briefcase', desc: 'Estructuración societaria y protección legal para el crecimiento empresarial.', items: ["Constitución de sociedades", "Modificaciones societarias", "Fusiones y adquisiciones", "Pactos de accionistas", "Contratos comerciales", "Cobranza empresarial", "Due diligence", "Gobierno corporativo"] },
+                    { id: 'laboral', title: 'Laboral y Administrativo', icon: 'fa-users-cog', desc: 'Cumplimiento normativo patronal y relación con organismos del Estado.', items: ["Asesoría a empleadores", "Defensa laboral y Despidos", "Tutela laboral y Accidentes del trabajo", "Auditorías y Negociación laboral", "Recursos y Procedimientos sancionatorios", "Licitaciones y Compras públicas", "Reclamos ante organismos públicos", "Solicitudes de transparencia"] },
+                    { id: 'familia', title: 'Familia y Sucesorio', icon: 'fa-home', desc: 'Soluciones legales discretas y efectivas para la vida personal y hereditaria.', items: ["Divorcios y Compensación económica", "Alimentos y Cuidado personal", "Relación directa y regular", "Violencia intrafamiliar", "Posesiones efectivas y Herencias", "Particiones y Testamentos", "Litigios hereditarios"] },
+                    { id: 'litigacion', title: 'Litigación y Compliance', icon: 'fa-gavel', desc: 'Defensa estratégica ante tribunales y prevención de riesgos corporativos.', items: ["Representación ante tribunales", "Juicios civiles, laborales y ejecutivos", "Recursos de protección y amparo", "Gerencia legal externa y Compliance", "Modelos de prevención de delitos", "Auditorías legales y Gestión de riesgos", "Negociación extrajudicial", "Reestructuración de deudas"] }
                 ],
                 tech: [
-                    {
-                        id: 'drones',
-                        title: 'Inspección Aérea y Audiovisual 4K',
-                        icon: 'fa-drone',
-                        desc: 'Operaciones con drones de alta gama para proyectos industriales y seguimiento.',
-                        items: [
-                            "Videos Corporativos e Inmobiliarios en Resolución 4K/8K",
-                            "Inspección industrial y de techumbres",
-                            "Inspección de obras, predios y caminos",
-                            "Monitoreo constante de proyectos de ingeniería",
-                            "Integración de servicios avanzados (Estándar AustralDrone)"
-                        ]
-                    },
-                    {
-                        id: 'fotogrametria',
-                        title: 'Fotogrametría y Levantamientos',
-                        icon: 'fa-layer-group',
-                        desc: 'Topografía digital de precisión milimétrica para análisis territorial.',
-                        items: [
-                            "Generación de Ortomosaicos de alta resolución",
-                            "Modelos 3D del terreno e infraestructura",
-                            "Cálculo de superficies y volumetrías",
-                            "Seguimiento técnico de obras de construcción",
-                            "Informes técnicos y cartográficos documentados"
-                        ]
-                    },
-                    {
-                        id: 'digital',
-                        title: 'Tecnología y Evidencia Digital',
-                        icon: 'fa-laptop-code',
-                        desc: 'Protección de datos y levantamiento de información corporativa.',
-                        items: [
-                            "Levantamiento de evidencia digital",
-                            "Protección de datos personales (Empresas)",
-                            "Informes jurídicos especializados",
-                            "Investigación jurídica y Análisis regulatorio",
-                            "Custodia documental y respaldo en la nube"
-                        ]
-                    }
+                    { id: 'drones', title: 'Inspección 4K', icon: 'fa-drone', desc: 'Operaciones con drones de alta gama para proyectos industriales.', items: ["Videos Corporativos 4K/8K", "Inspección industrial y de techumbres", "Inspección de obras y caminos", "Monitoreo constante de proyectos", "Integración de servicios avanzados"] },
+                    { id: 'fotogrametria', title: 'Fotogrametría', icon: 'fa-layer-group', desc: 'Topografía digital de precisión milimétrica.', items: ["Ortomosaicos de alta resolución", "Modelos 3D del terreno", "Cálculo de superficies y volumetrías", "Seguimiento técnico de obras", "Informes técnicos documentados"] },
+                    { id: 'digital', title: 'Evidencia Digital', icon: 'fa-shield-alt', desc: 'Protección de datos y levantamiento de información corporativa.', items: ["Levantamiento de evidencia", "Protección de datos personales", "Informes jurídicos especializados", "Investigación jurídica y Análisis", "Custodia documental en la nube"] }
                 ]
             };
 
-            // Referencias del DOM
             const navLegal = document.getElementById('sidebar-nav');
             const navTech = document.getElementById('sidebar-nav-tech');
             const contentTitle = document.getElementById('content-title');
@@ -379,9 +298,7 @@
             const servicesGrid = document.getElementById('services-grid');
             let currentActiveBtn = null;
 
-            // Función para renderizar el contenido en la zona derecha
             function renderContent(dataObj, btnElement) {
-                // Actualizar botón activo en el sidebar
                 if (currentActiveBtn) {
                     currentActiveBtn.classList.remove('active', 'text-white', 'bg-mac-accent');
                     currentActiveBtn.classList.add('text-mac-dark/70', 'hover:bg-black/5');
@@ -390,23 +307,22 @@
                 btnElement.classList.add('active', 'text-white', 'bg-mac-accent');
                 currentActiveBtn = btnElement;
 
-                // Actualizar Header del Contenido
                 contentTitle.textContent = dataObj.title;
                 contentDesc.textContent = dataObj.desc;
-                contentIcon.className = `fas ${dataObj.icon} text-2xl`;
+                contentIcon.className = `fas ${dataObj.icon} text-xl md:text-2xl`;
 
-                // Renderizar Grid con animación
                 servicesGrid.innerHTML = '';
                 dataObj.items.forEach((item, index) => {
                     const card = document.createElement('div');
-                    card.className = 'service-card p-4 fade-in flex items-start gap-3';
-                    card.style.animationDelay = `${index * 0.05}s`;
+                    // Ajuste de card padding responsive
+                    card.className = 'service-card p-3 md:p-4 fade-in flex items-start gap-2.5';
+                    card.style.animationDelay = `${index * 0.04}s`;
                     
                     card.innerHTML = `
-                        <div class="mt-0.5 text-mac-accent opacity-90">
+                        <div class="mt-0.5 text-mac-accent opacity-90 text-sm">
                             <i class="fas fa-check"></i>
                         </div>
-                        <div class="text-[13px] font-medium text-mac-dark/90 leading-snug">
+                        <div class="text-xs md:text-[13px] font-medium text-mac-dark/90 leading-snug">
                             ${item}
                         </div>
                     `;
@@ -414,24 +330,29 @@
                 });
             }
 
-            // Función para crear botones del sidebar
             function createSidebarButtons(categoryArray, container) {
                 categoryArray.forEach((cat, index) => {
                     const btn = document.createElement('button');
-                    btn.className = 'sidebar-item w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-mac-dark/70 hover:bg-black/5 flex items-center gap-2.5';
-                    btn.innerHTML = `<i class="fas ${cat.icon} w-4 text-center opacity-70"></i> ${cat.title}`;
+                    // Clases responsive: rounded-full en móvil para parecer botones de tabs, rounded-lg en desktop
+                    btn.className = 'sidebar-item w-auto md:w-full shrink-0 text-left px-4 md:px-3 py-2 rounded-full md:rounded-lg text-[13px] md:text-sm font-medium text-mac-dark/70 hover:bg-black/5 flex items-center gap-2 md:gap-2.5 whitespace-nowrap md:whitespace-normal';
+                    btn.innerHTML = `<i class="fas ${cat.icon} w-3 md:w-4 text-center opacity-70"></i> ${cat.title}`;
                     
-                    btn.addEventListener('click', () => renderContent(cat, btn));
+                    btn.addEventListener('click', () => {
+                        renderContent(cat, btn);
+                        // En móvil, desplazar suavemente el foco hacia abajo si es necesario
+                        if(window.innerWidth < 768) {
+                            btn.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+                        }
+                    });
+                    
                     container.appendChild(btn);
 
-                    // Auto-click al primer elemento al cargar
                     if (index === 0 && container === navLegal) {
                         setTimeout(() => btn.click(), 50);
                     }
                 });
             }
 
-            // Inicializar aplicación
             createSidebarButtons(db.legal, navLegal);
             createSidebarButtons(db.tech, navTech);
         });
