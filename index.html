@@ -114,7 +114,7 @@
         ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
     </style>
 </head>
-<body class="relative">
+<body class="relative flex flex-col min-h-screen">
 
     <div class="bg-container"></div>
     <div class="mesh-overlay"></div>
@@ -180,7 +180,7 @@
         </div>
     </div>
 
-    <section id="inicio" class="pt-40 pb-12 md:pb-24 flex flex-col items-center justify-center text-center px-4 relative z-10">
+    <section id="inicio" class="pt-40 pb-12 md:pb-24 flex flex-col items-center justify-center text-center px-4 relative z-10 flex-grow">
         <h1 class="text-4xl md:text-7xl font-bold tracking-tight text-mac-dark mb-4 md:mb-6 max-w-4xl leading-tight fade-in">
             Evidencia Irrefutable.<br>
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-mac-accent to-gray-500">
@@ -211,8 +211,8 @@
         <div class="mt-16 animate-bounce text-mac-dark/30 hidden md:block fade-in" style="animation-delay: 0.4s;"><i class="fas fa-chevron-down"></i></div>
     </section>
 
-    <section id="servicios" class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pb-20 relative z-10">
-        <div class="glass-effect rounded-3xl shadow-mac-window overflow-hidden border border-white flex flex-col h-[750px] md:h-[800px] fade-in" style="animation-delay: 0.3s;">
+    <section id="servicios" class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pb-20 relative z-10 w-full">
+        <div class="glass-effect rounded-3xl shadow-mac-window overflow-hidden border border-white flex flex-col h-[650px] md:h-[750px] fade-in" style="animation-delay: 0.3s;">
             
             <div class="h-12 md:h-14 bg-white/60 border-b border-black/5 flex items-center justify-between px-4 md:px-6 backdrop-blur-md shrink-0">
                 <div class="flex items-center gap-2 md:gap-3">
@@ -225,9 +225,9 @@
                 </div>
             </div>
 
-            <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
+            <div class="flex flex-col md:flex-row flex-1 overflow-hidden h-full">
                 <div class="w-full md:w-64 bg-white/40 border-b md:border-b-0 md:border-r border-black/5 p-3 md:p-4 shrink-0 backdrop-blur-sm z-10">
-                    <div class="flex md:flex-col overflow-x-auto hide-scrollbar gap-3 md:gap-0 pb-1 md:pb-0">
+                    <div class="flex md:flex-col overflow-x-auto hide-scrollbar gap-3 md:gap-0 pb-1 md:pb-0 h-full">
                         <div class="flex md:block flex-row md:flex-col shrink-0 gap-2 md:gap-0">
                             <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-wider mb-2 px-3 hidden md:block">Ecosistema Legal</p>
                             <nav id="sidebar-nav" class="flex md:block flex-row md:flex-col gap-2 md:gap-0 md:space-y-1"></nav>
@@ -240,7 +240,7 @@
                     </div>
                 </div>
 
-                <div class="flex-1 bg-white/60 p-5 md:p-8 overflow-y-auto relative">
+                <div class="flex-1 bg-white/60 p-5 md:p-8 overflow-y-auto relative h-full">
                     <div id="content-header" class="mb-6 md:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
                         <div>
                             <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-4 text-mac-accent shadow-sm border border-white">
@@ -256,9 +256,9 @@
                         </div>
                     </div>
 
-                    <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8 md:pb-12"></div>
+                    <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-20"></div>
                     
-                    <div class="md:hidden mt-6 pb-8">
+                    <div class="md:hidden mt-2 pb-16">
                         <a href="#" id="wa-panel-btn-mobile" target="_blank" class="w-full bg-whatsapp text-white px-5 py-3.5 rounded-xl text-sm font-medium shadow-md flex items-center justify-center gap-2">
                             <i class="fab fa-whatsapp text-lg"></i> Consultar este servicio
                         </a>
@@ -268,22 +268,7 @@
         </div>
     </section>
 
-    <section id="contacto" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 relative z-10 text-center fade-in" style="animation-delay: 0.4s;">
-        <div class="glass-effect p-10 md:p-14 rounded-3xl border border-white shadow-mac-window">
-            <div class="w-16 h-16 bg-whatsapp/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <i class="fas fa-concierge-bell text-3xl text-whatsapp-dark"></i>
-            </div>
-            <h2 class="text-3xl md:text-4xl font-bold text-mac-dark mb-4 tracking-tight">Comunicación Inteligente</h2>
-            <p class="text-mac-dark/70 mb-8 max-w-xl mx-auto font-light">
-                Nuestro sistema procesa su solicitud para derivarla al área legal o técnica correspondiente al instante de manera confidencial.
-            </p>
-            <button class="open-intake inline-flex items-center justify-center gap-3 bg-mac-dark hover:bg-black text-white text-base font-semibold px-8 py-4 rounded-full shadow-lg transition-transform hover:scale-105">
-                <i class="fas fa-filter"></i> Iniciar Flujo de Admisión
-            </button>
-        </div>
-    </section>
-
-    <footer class="border-t border-black/5 bg-white/50 backdrop-blur-md py-6 md:py-8 relative z-10">
+    <footer class="border-t border-black/5 bg-white/50 backdrop-blur-md py-6 md:py-8 relative z-10 w-full mt-auto">
         <div class="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-center text-xs text-mac-dark/50">
             <div class="flex items-center gap-2 mb-4 md:mb-0">
                 <i class="fas fa-gavel text-mac-dark/40"></i>
@@ -344,7 +329,7 @@
             mobileBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
             mobileLinks.forEach(link => { link.addEventListener('click', () => { mobileMenu.classList.add('hidden'); }); });
 
-            /* BASE DE DATOS DE SERVICIOS (Tarjetas Premium con Descripciones Técnicas) */
+            /* BASE DE DATOS DE SERVICIOS PREMIUM */
             const db = {
                 legal: [
                     { 
@@ -352,9 +337,9 @@
                         items: [
                             { title: "Redacción y revisión de contratos", desc: "Aplicación rigurosa de la teoría del acto jurídico para resguardar la voluntad y el equilibrio contractual." },
                             { title: "Cobranza judicial y extrajudicial", desc: "Estrategias de recuperación de activos mediante acciones ejecutivas y ordinarias con alta eficacia." },
-                            { title: "Juicios ordinarios y ejecutivos", desc: "Litigación patrimonial especializada, asegurando el debido proceso y la ejecución inobjetable de sentencias." },
-                            { title: "Responsabilidad contractual", desc: "Análisis dogmático de incumplimientos, cláusulas penales y resguardo ante lesión enorme u otros vicios." },
-                            { title: "Indemnización de perjuicios", desc: "Persecución de responsabilidad civil contractual y extracontractual para la reparación integral del daño." },
+                            { title: "Juicios ordinarios y ejecutivos", desc: "Litigación patrimonial especializada, asegurando el debido proceso y la ejecución inobjetable." },
+                            { title: "Responsabilidad contractual", desc: "Análisis dogmático de incumplimientos, cláusulas penales y resguardo ante lesión enorme." },
+                            { title: "Indemnización de perjuicios", desc: "Persecución de responsabilidad civil contractual y extracontractual para la reparación integral." },
                             { title: "Prescripción adquisitiva", desc: "Consolidación del dominio mediante la comprobación judicial de la posesión material ininterrumpida." },
                             { title: "Servidumbres", desc: "Constitución, defensa y extinción de gravámenes reales sobre predios sirvientes de forma estratégica." },
                             { title: "Acciones posesorias", desc: "Protección cautelar rápida y efectiva frente a turbaciones o despojos de la posesión de inmuebles." }
@@ -363,39 +348,39 @@
                     { 
                         id: 'inmobiliario', title: 'Derecho Inmobiliario', icon: 'fa-city', desc: 'Seguridad jurídica integral para el desarrollo de proyectos y bienes raíces.', 
                         items: [
-                            { title: "Estudios de títulos", desc: "Revisión exhaustiva de la cadena de dominio y registros conservatorios para garantizar transacciones blindadas." },
-                            { title: "Compraventa de inmuebles", desc: "Asesoría integral desde la promesa hasta la inscripción, previniendo vicios redhibitorios y saneando reparos." },
+                            { title: "Estudios de títulos", desc: "Revisión exhaustiva de la cadena de dominio y registros conservatorios para garantizar transacciones." },
+                            { title: "Compraventa de inmuebles", desc: "Asesoría integral desde la promesa hasta la inscripción, previniendo vicios y saneando reparos." },
                             { title: "Regularización de propiedades", desc: "Saneamiento de la pequeña propiedad raíz y gestión experta de títulos de dominio irregulares." },
                             { title: "Saneamiento de títulos", desc: "Corrección estratégica de vicios formales y materiales en inscripciones de dominio conservatorias." },
-                            { title: "Subdivisiones prediales", desc: "Gestión técnico-legal para la división de terrenos cumpliendo con la planimetría y normativa urbanística." },
+                            { title: "Subdivisiones prediales", desc: "Gestión técnico-legal para la división de terrenos cumpliendo con la planimetría urbanística." },
                             { title: "Constitución de servidumbres", desc: "Formalización de tránsitos, acueductos y vistas cruzando precisión topográfica y legal." },
-                            { title: "Asesoría inmobiliaria", desc: "Consultoría de alto nivel para el desarrollo, financiamiento y ejecución segura de proyectos inmobiliarios." }
+                            { title: "Asesoría inmobiliaria", desc: "Consultoría de alto nivel para el desarrollo, financiamiento y ejecución segura de proyectos." }
                         ] 
                     },
                     { 
                         id: 'comercial', title: 'Comercial y Corporativo', icon: 'fa-briefcase', desc: 'Estructuración societaria y protección legal para el crecimiento empresarial.', 
                         items: [
-                            { title: "Constitución de sociedades", desc: "Estructuración de vehículos societarios (SpA, Ltda., SA) adaptados al riesgo y necesidad de capital." },
-                            { title: "Fusiones y adquisiciones", desc: "Acompañamiento corporativo integral en la compraventa de empresas y procesos complejos de M&A." },
-                            { title: "Pactos de accionistas", desc: "Regulación de gobiernos corporativos, opciones de salida y prevención estratégica de bloqueos." },
-                            { title: "Due diligence", desc: "Auditoría legal preventiva para detectar contingencias laborales, tributarias y civiles antes de invertir." },
+                            { title: "Constitución de sociedades", desc: "Estructuración de vehículos societarios adaptados al riesgo y necesidad de capital." },
+                            { title: "Fusiones y adquisiciones", desc: "Acompañamiento corporativo integral en la compraventa de empresas y procesos de M&A." },
+                            { title: "Pactos de accionistas", desc: "Regulación de gobiernos corporativos, opciones de salida y prevención de bloqueos." },
+                            { title: "Due diligence", desc: "Auditoría legal preventiva para detectar contingencias laborales y civiles antes de invertir." },
                             { title: "Modificaciones societarias", desc: "Transformaciones, divisiones y aumentos de capital con estricto apego a los estatutos comerciales." },
-                            { title: "Contratos comerciales", desc: "Redacción meticulosa de acuerdos de distribución, franquicias, leasing y joint ventures empresariales." },
-                            { title: "Cobranza empresarial", desc: "Gestión corporativa integral de carteras castigadas y recuperación agresiva de flujos comerciales." },
-                            { title: "Gobierno corporativo", desc: "Implementación de políticas directivas sólidas para la toma de decisiones transparente y segura." }
+                            { title: "Contratos comerciales", desc: "Redacción meticulosa de acuerdos de distribución, franquicias, leasing y joint ventures." },
+                            { title: "Cobranza empresarial", desc: "Gestión corporativa integral de carteras castigadas y recuperación de flujos comerciales." },
+                            { title: "Gobierno corporativo", desc: "Implementación de políticas directivas sólidas para la toma de decisiones transparente." }
                         ] 
                     },
                     { 
                         id: 'laboral', title: 'Laboral y Administrativo', icon: 'fa-users-cog', desc: 'Cumplimiento normativo patronal y relación con organismos del Estado.', 
                         items: [
-                            { title: "Asesoría a empleadores", desc: "Consultoría preventiva en contratación, reglamentos internos y cumplimiento estricto ante la DT." },
+                            { title: "Asesoría a empleadores", desc: "Consultoría preventiva en contratación, reglamentos internos y cumplimiento ante la DT." },
                             { title: "Defensa laboral y Despidos", desc: "Representación patronal estratégica en juicios por despido injustificado y demandas de cobro." },
-                            { title: "Tutela laboral y Accidentes", desc: "Defensa especializada ante vulneración de derechos fundamentales y siniestralidad laboral grave." },
+                            { title: "Tutela laboral y Accidentes", desc: "Defensa especializada ante vulneración de derechos fundamentales y siniestralidad laboral." },
                             { title: "Auditorías y Negociación", desc: "Revisión de cumplimiento normativo y manejo directivo en negociaciones colectivas sindicales." },
-                            { title: "Recursos y Procedimientos", desc: "Defensa administrativa y judicial frente a multas, clausuras y resoluciones fiscalizadoras del Estado." },
+                            { title: "Recursos y Procedimientos", desc: "Defensa administrativa y judicial frente a multas, clausuras y resoluciones fiscalizadoras." },
                             { title: "Licitaciones y Compras", desc: "Asesoría técnica en bases de licitación, procesos de adjudicación y contratos públicos." },
                             { title: "Reclamos ante organismos", desc: "Representación formal ante Contraloría, Superintendencias y diversas Municipalidades del país." },
-                            { title: "Solicitudes de transparencia", desc: "Gestión de acceso a la información pública y acciones de amparo ante el Consejo para la Transparencia." }
+                            { title: "Solicitudes de transparencia", desc: "Gestión de acceso a la información pública y acciones de amparo ante el CPLT." }
                         ] 
                     },
                     { 
@@ -407,7 +392,7 @@
                             { title: "Posesiones efectivas", desc: "Tramitación notarial y judicial impecable para la correcta transmisión del patrimonio del causante." },
                             { title: "Particiones y Testamentos", desc: "Redacción de voluntades testamentarias y litigación experta en juicios de comunidades hereditarias." },
                             { title: "Litigios hereditarios", desc: "Acciones de petición de herencia, reforma de testamento y protección de asignaciones forzosas." },
-                            { title: "Violencia intrafamiliar", desc: "Gestión de medidas cautelares y representación en tribunales de familia con absoluta confidencialidad." }
+                            { title: "Violencia intrafamiliar", desc: "Gestión de medidas cautelares y representación en tribunales de familia con confidencialidad." }
                         ] 
                     },
                     { 
@@ -416,9 +401,9 @@
                             { title: "Representación ante tribunales", desc: "Patrocinio experto y representación estratégica en todas las instancias y tribunales del país." },
                             { title: "Juicios civiles y ejecutivos", desc: "Defensa patrimonial de alta intensidad en juicios de lato conocimiento y procedimientos de apremio." },
                             { title: "Recursos de protección", desc: "Acciones constitucionales urgentes para restablecer el imperio del derecho ante actos arbitrarios." },
-                            { title: "Gerencia legal y Compliance", desc: "Dirección jurídica externalizada y modelos de prevención de delitos corporativos (Ley 20.393)." },
+                            { title: "Gerencia legal y Compliance", desc: "Dirección jurídica externalizada y modelos de prevención de delitos corporativos." },
                             { title: "Modelos de prevención", desc: "Diseño e implementación de matrices de riesgo penal exclusivas para personas jurídicas." },
-                            { title: "Auditorías y Gestión", desc: "Evaluación exhaustiva de procesos internos para mitigar riesgos legales y operacionales de la empresa." },
+                            { title: "Auditorías y Gestión", desc: "Evaluación exhaustiva de procesos internos para mitigar riesgos legales de la empresa." },
                             { title: "Negociación extrajudicial", desc: "Acercamiento estratégico para la resolución de conflictos complejos sin escalamiento judicial." },
                             { title: "Reestructuración de deudas", desc: "Asesoría integral en reorganización financiera y liquidación conforme a la Ley de Insolvencia." }
                         ] 
@@ -430,7 +415,7 @@
                         items: [
                             { title: "Fijación de deslindes _4k", desc: "Levantamiento aéreo milimétrico para constatar linderos, cercos y resolver conflictos de superposición." },
                             { title: "Inspección FPV industrial", desc: "Vuelos técnicos de precisión para revisar techumbres, infraestructura mayor y zonas de alto riesgo." },
-                            { title: "Prueba visual judicial", desc: "Captura de evidencia material certificada y georreferenciada para nutrir litigios de usurpación o daños." },
+                            { title: "Prueba visual judicial", desc: "Captura de evidencia material certificada y georreferenciada para nutrir litigios de usurpación." },
                             { title: "Monitoreo de proyectos", desc: "Seguimiento periódico de obras civiles con material visual inobjetable para el control de avance." },
                             { title: "Videos Corporativos _4k", desc: "Producción audiovisual inmersiva de alta gama para proyectos inmobiliarios y comerciales." }
                         ] 
@@ -438,17 +423,17 @@
                     { 
                         id: 'fotogrametria', title: 'Fotogrametría', icon: 'fa-layer-group', desc: 'Topografía digital de precisión milimétrica.', 
                         items: [
-                            { title: "Ortomosaicos de resolución _4k", desc: "Mapeo topográfico avanzado uniendo cientos de fotografías aéreas para crear planos ultra detallados." },
-                            { title: "Cálculo exacto de superficies", desc: "Determinación de cabidas reales mediante software de vanguardia, contrastando con información del SII." },
-                            { title: "Modelos 3D para peritajes", desc: "Reconstrucción digital topográfica del terreno, fundamental para informes técnicos y peritajes judiciales." },
-                            { title: "Mapeo para servidumbres", desc: "Planificación visual técnica de trazados para servidumbres de tránsito, acueducto o instalaciones eléctricas." },
-                            { title: "Informes documentados", desc: "Entregables técnicos firmados que combinan la rigurosidad legal probatoria con la data espacial exacta." }
+                            { title: "Ortomosaicos de resolución _4k", desc: "Mapeo topográfico avanzado uniendo fotografías aéreas para crear planos ultra detallados." },
+                            { title: "Cálculo exacto de superficies", desc: "Determinación de cabidas reales mediante software de vanguardia, contrastando con el SII." },
+                            { title: "Modelos 3D para peritajes", desc: "Reconstrucción digital topográfica del terreno, fundamental para informes periciales judiciales." },
+                            { title: "Mapeo para servidumbres", desc: "Planificación visual técnica de trazados para servidumbres de tránsito o eléctricas." },
+                            { title: "Informes documentados", desc: "Entregables técnicos firmados que combinan la rigurosidad legal probatoria con la data espacial." }
                         ] 
                     },
                     { 
                         id: 'digital', title: 'Evidencia Digital', icon: 'fa-shield-alt', desc: 'Protección de datos y levantamiento de información corporativa.', 
                         items: [
-                            { title: "Levantamiento de evidencia", desc: "Recolección forense de datos electrónicos y digitales asegurando la impecabilidad de la cadena de custodia." },
+                            { title: "Levantamiento de evidencia", desc: "Recolección forense de datos electrónicos asegurando la impecabilidad de la cadena de custodia." },
                             { title: "Protección de datos", desc: "Adecuación corporativa integral a las normativas vigentes de privacidad y tratamiento de información." },
                             { title: "Informes especializados", desc: "Análisis técnico cruzado entre regulaciones complejas, leyes sustantivas y metadatos digitales." },
                             { title: "Investigación y Análisis", desc: "Búsqueda profunda y estructurada de antecedentes registrales, comerciales y huellas digitales." },
@@ -490,17 +475,16 @@
                     contentIcon.className = `fas ${dataObj.icon} text-xl md:text-2xl transition-all duration-300`;
                     
                     servicesGrid.innerHTML = '';
-                    // Renderizado de las nuevas Tarjetas (Widgets Premium)
                     dataObj.items.forEach((item, index) => {
                         const card = document.createElement('div');
                         card.className = 'service-widget fade-in';
                         card.style.animationDelay = `${index * 0.04}s`;
                         card.innerHTML = `
                             <div class="flex items-center gap-2 mb-2">
-                                <i class="fas fa-check-circle text-mac-accent/80 text-sm"></i>
-                                <h4 class="text-sm font-semibold text-mac-dark leading-tight">${format4K(item.title)}</h4>
+                                <i class="fas fa-check-circle text-mac-accent/80 text-sm shrink-0"></i>
+                                <h4 class="text-[13px] md:text-sm font-semibold text-mac-dark leading-tight">${format4K(item.title)}</h4>
                             </div>
-                            <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light pl-6">${format4K(item.desc)}</p>
+                            <p class="text-[12px] md:text-[13px] text-mac-dark/70 leading-relaxed font-light pl-6">${format4K(item.desc)}</p>
                         `;
                         servicesGrid.appendChild(card);
                     });
