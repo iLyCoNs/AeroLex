@@ -18,10 +18,8 @@
                 extend: {
                     colors: {
                         'mac-bg': '#F9FAFB', 
-                        'mac-glass': 'rgba(255, 255, 255, 0.85)', 
                         'mac-dark': '#1D1D1F',
                         'mac-accent': '#788C9F',
-                        'whatsapp': '#25D366',
                     },
                     fontFamily: { sans: ['-apple-system', 'BlinkMacSystemFont', '"Inter"', 'sans-serif'], },
                     boxShadow: {
@@ -52,7 +50,7 @@
         .service-widget { background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(249,250,251,0.9) 100%); border: 1px solid rgba(255, 255, 255, 1); border-radius: 20px; transition: all 0.3s ease; cursor: pointer; }
         .service-widget:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(0,0,0,0.05); background: #ffffff; }
 
-        /* Estilos IA Chat Mejorados */
+        /* Estilos IA Chat */
         dialog::backdrop { background: rgba(29, 29, 31, 0.6); backdrop-filter: blur(8px); }
         dialog[open] { animation: modalFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
@@ -65,25 +63,15 @@
         .typing-indicator span:nth-child(3) { animation-delay: 0.4s; margin-right: 0; }
         @keyframes typing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 
-        /* Botones Rápidos (Quick Replies) */
         .quick-replies { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
         .quick-reply-btn { background: #F0F4F8; color: #1D1D1F; border: 1px solid #E2E8F0; padding: 8px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
         .quick-reply-btn:hover { background: #1D1D1F; color: #fff; border-color: #1D1D1F; }
 
-        /* Tarjeta Estado de Causa */
-        .timeline-container { position: relative; padding-left: 20px; margin-top: 15px; }
-        .timeline-container::before { content: ''; position: absolute; left: 5px; top: 0; bottom: 0; width: 2px; background: #E2E8F0; }
-        .timeline-step { position: relative; margin-bottom: 15px; }
-        .timeline-step::before { content: ''; position: absolute; left: -20px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: #E2E8F0; border: 2px solid #fff; box-shadow: 0 0 0 1px #E2E8F0; }
-        .timeline-step.active::before { background: #25D366; box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.3); border: none;}
-        .timeline-step.active .step-title { color: #1D1D1F; font-weight: 700; }
-        
         .fade-in { opacity: 0; animation: fadeInApple 0.4s ease-out forwards; }
         @keyframes fadeInApple { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Links Externos Oficiales */
         .gov-link { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.04); padding: 6px 10px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; color: #1D1D1F; border: 1px solid rgba(0,0,0,0.05); margin-top: 6px; transition: background 0.2s;}
         .gov-link:hover { background: rgba(0,0,0,0.08); }
         .btn-wa-final { display: flex; align-items: center; justify-content: center; gap: 8px; background: #25D366; color: white; padding: 12px; border-radius: 8px; font-weight: 600; text-decoration: none; margin-top: 15px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.2); transition: transform 0.2s;}
@@ -108,7 +96,6 @@
                 <nav class="hidden md:flex space-x-2 dock-nav rounded-full px-4 py-2 mx-auto">
                     <a href="#inicio" class="px-4 py-1.5 rounded-full text-xs font-medium text-mac-dark/80 hover:bg-white/50 transition-all">Inicio</a>
                     <a href="#servicios" class="px-4 py-1.5 rounded-full text-xs font-medium text-mac-dark/80 hover:bg-white/50 transition-all">Core System</a>
-                    <!-- Nuevo botón para Estado de Causa -->
                     <button onclick="openAIChat('ESTADO_CAUSA')" class="px-4 py-1.5 rounded-full text-xs font-bold text-mac-accent bg-mac-accent/10 hover:bg-mac-accent/20 transition-all flex items-center gap-2">
                         <i class="fas fa-search"></i> Estado de mi Caso
                     </button>
@@ -124,10 +111,9 @@
         </div>
     </header>
 
-    <!-- EL NUEVO DIALOG NATIVO HTML5 PARA EL ASISTENTE -->
+    <!-- DIALOG NATIVO HTML5 PARA EL ASISTENTE -->
     <dialog id="ai-modal" class="p-0 bg-transparent w-full max-w-lg m-auto rounded-3xl backdrop:bg-black/40">
         <div class="glass-effect rounded-3xl shadow-2xl border border-white overflow-hidden flex flex-col h-[650px] w-full" id="ai-modal-content">
-            
             <div class="h-16 bg-white/80 border-b border-black/5 flex items-center justify-between px-6 backdrop-blur-xl shrink-0">
                 <div class="flex items-center gap-3">
                     <div class="relative flex items-center justify-center w-10 h-10 bg-mac-dark rounded-full text-white shadow-md">
@@ -166,17 +152,28 @@
     <section id="servicios" class="max-w-7xl mx-auto px-4 pb-20 w-full">
         <div class="glass-effect rounded-[2.5rem] shadow-mac-window overflow-hidden border border-white flex flex-col h-[750px] fade-in" style="animation-delay: 0.1s;">
             <div class="flex flex-col md:flex-row flex-1 overflow-hidden h-full">
-                <!-- Sidebar -->
+                
+                <!-- SIDEBAR DOBLE (Legal y Tech) -->
                 <div class="w-full md:w-72 bg-white/60 border-r border-black/5 p-4 overflow-y-auto hide-scrollbar z-10">
-                    <p class="text-[10px] font-bold text-mac-dark/40 uppercase mb-3 px-3">Ecosistema Jurídico</p>
-                    <nav id="sidebar-nav" class="flex flex-col space-y-1"></nav>
+                    <div class="mb-6">
+                        <p class="text-[10px] font-bold text-mac-dark/40 uppercase mb-3 px-3 tracking-widest">Ecosistema Jurídico</p>
+                        <nav id="sidebar-nav" class="flex flex-col space-y-1"></nav>
+                    </div>
+                    <div class="my-4 border-t border-black/5 mx-3"></div>
+                    <div class="mb-6">
+                        <p class="text-[10px] font-bold text-mac-dark/40 uppercase mb-3 px-3 tracking-widest">Tecnología & Apoyo</p>
+                        <nav id="sidebar-nav-tech" class="flex flex-col space-y-1"></nav>
+                    </div>
                 </div>
-                <!-- Content -->
+
+                <!-- CONTENIDO DE SERVICIOS -->
                 <div class="flex-1 p-6 md:p-10 overflow-y-auto hide-scrollbar bg-white/30">
                     <div id="content-header" class="mb-8">
-                        <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-4 text-mac-accent shadow-sm"><i id="content-icon" class="fas fa-balance-scale text-xl"></i></div>
+                        <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-4 text-mac-accent shadow-sm border border-black/5">
+                            <i id="content-icon" class="fas fa-balance-scale text-xl"></i>
+                        </div>
                         <h2 id="content-title" class="text-3xl font-bold text-mac-dark">Cargando...</h2>
-                        <p id="content-desc" class="text-mac-dark/60 mt-2 text-sm max-w-xl">Iniciando Motor...</p>
+                        <p id="content-desc" class="text-mac-dark/60 mt-2 text-sm max-w-xl">Iniciando Motor Analítico...</p>
                     </div>
                     <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-10"></div>
                 </div>
@@ -184,48 +181,245 @@
         </div>
     </section>
 
-    <!-- ===================================================================== -->
-    <!-- MOTOR JEDI DE TRIAGE LEGAL CHILENO Y ESTADO DE CAUSAS (SINGLE FILE)   -->
-    <!-- ===================================================================== -->
+    <!-- MOTOR JEDI: BASE DE DATOS Y LÓGICA -->
     <script>
-        const WHATSAPP_NUMBER = "56900000000"; // Tu número aquí
+        const WHATSAPP_NUMBER = "56900000000"; // Tu número de WhatsApp aquí
 
-        // 1. BASE DE DATOS DE REQUISITOS CHILENOS (TRIAGE RULES)
-        // Aquí mapeamos lo que el Secretario IA debe exigir según el área legal detectada.
+        // ==========================================
+        // 1. BASE DE DATOS MAESTRA COMPLETADA
+        // ==========================================
+        const db = {
+            legal: [
+                { 
+                    id: 'civil', title: 'Derecho Civil', icon: 'fa-file-signature', desc: 'Gestión y blindaje estructural del patrimonio privado, garantizando seguridad jurídica.', 
+                    items: [
+                        { title: "Redacción y revisión de contratos", desc: "Análisis y estructuración de acuerdos legales preventivos." },
+                        { title: "Cobranza judicial y extrajudicial", desc: "Recuperación estratégica de activos y deudas impagas." },
+                        { title: "Juicios ordinarios y ejecutivos", desc: "Litigación en defensa de intereses patrimoniales." },
+                        { title: "Indemnización de perjuicios", desc: "Persecución civil para la reparación integral de daños." },
+                        { title: "Responsabilidad contractual", desc: "Análisis de incumplimientos y sus consecuencias legales." },
+                        { title: "Prescripción adquisitiva", desc: "Consolidación judicial del dominio por posesión." },
+                        { title: "Servidumbres", desc: "Constitución y regulación de gravámenes sobre predios." },
+                        { title: "Acciones posesorias", desc: "Protección legal urgente frente a turbaciones de propiedad." }
+                    ] 
+                },
+                { 
+                    id: 'inmobiliario', title: 'Derecho Inmobiliario', icon: 'fa-city', desc: 'Seguridad jurídica en bienes raíces y proyectos de desarrollo.', 
+                    items: [
+                        { title: "Estudios de títulos", desc: "Auditoría preventiva antes de la compraventa o inversión." },
+                        { title: "Compraventa de inmuebles", desc: "Acompañamiento corporativo hasta la inscripción en el CBR." },
+                        { title: "Regularización de propiedades", desc: "Saneamiento de la pequeña propiedad raíz." },
+                        { title: "Saneamiento de títulos", desc: "Corrección de vicios formales que impiden la libre circulación." },
+                        { title: "Subdivisiones prediales", desc: "Gestión técnica y legal para división de terrenos." },
+                        { title: "Constitución de servidumbres", desc: "Formalización de tránsitos, acueductos o tendidos eléctricos." },
+                        { title: "Asesoría inmobiliaria", desc: "Consultoría integral para el desarrollo de proyectos." }
+                    ] 
+                },
+                { 
+                    id: 'comercial', title: 'Comercial y Corporativo', icon: 'fa-briefcase', desc: 'Estructuración societaria y protección legal para el crecimiento corporativo.', 
+                    items: [
+                        { title: "Constitución de sociedades", desc: "Creación de estructuras jurídicas adaptadas a su negocio." },
+                        { title: "Modificaciones societarias", desc: "Transformaciones, divisiones y aumentos de capital." },
+                        { title: "Fusiones y adquisiciones", desc: "Acompañamiento integral en procesos de M&A." },
+                        { title: "Pactos de accionistas", desc: "Regulación de relaciones internas y gobiernos corporativos." },
+                        { title: "Contratos comerciales", desc: "Acuerdos de distribución, franquicias y prestación de servicios." },
+                        { title: "Cobranza empresarial", desc: "Gestión corporativa de flujos comerciales impagos." },
+                        { title: "Due diligence", desc: "Auditoría legal preventiva 360º para detectar contingencias." },
+                        { title: "Gobierno corporativo", desc: "Implementación de normas directivas y transparencia." }
+                    ] 
+                },
+                { 
+                    id: 'laboral', title: 'Derecho Laboral', icon: 'fa-user-tie', desc: 'Asesoría estratégica en relaciones del trabajo y defensa ante tribunales.', 
+                    items: [
+                        { title: "Asesoría a empleadores", desc: "Consultoría preventiva en contratación y reglamentos." },
+                        { title: "Defensa laboral", desc: "Representación corporativa en juicios complejos." },
+                        { title: "Despidos", desc: "Planificación estratégica y defensa ante desvinculaciones." },
+                        { title: "Tutela laboral", desc: "Defensa ante acusaciones de vulneración de derechos fundamentales." },
+                        { title: "Accidentes del trabajo", desc: "Blindaje y defensa ante siniestralidad laboral grave." },
+                        { title: "Auditorías laborales", desc: "Revisión exhaustiva del cumplimiento de la Dirección del Trabajo." },
+                        { title: "Negociación laboral", desc: "Estrategias de negociación colectiva y sindical." }
+                    ] 
+                },
+                { 
+                    id: 'administrativo', title: 'Derecho Administrativo', icon: 'fa-university', desc: 'Intermediación técnica y representación frente a los actos del Estado.', 
+                    items: [
+                        { title: "Recursos administrativos", desc: "Impugnación técnica de actos de la administración." },
+                        { title: "Procedimientos sancionatorios", desc: "Defensa ante multas y sumarios de entidades públicas." },
+                        { title: "Licitaciones públicas", desc: "Asesoría experta en Mercado Público y adjudicaciones." },
+                        { title: "Compras públicas", desc: "Gestión de contratos y cumplimiento normativo como proveedor." },
+                        { title: "Reclamos ante organismos", desc: "Representación ante la Contraloría y Superintendencias." },
+                        { title: "Solicitudes de transparencia", desc: "Exigencia de información pública mediante la Ley de Transparencia." }
+                    ] 
+                },
+                { 
+                    id: 'ambiental', title: 'Derecho Ambiental', icon: 'fa-leaf', desc: 'Viabilidad técnica de proyectos y defensa especializada frente a contingencias.', 
+                    items: [
+                        { title: "Asesoría ambiental", desc: "Acompañamiento en el Sistema de Evaluación de Impacto Ambiental." },
+                        { title: "Cumplimiento normativo", desc: "Adaptación proactiva a las exigencias medioambientales vigentes." },
+                        { title: "Procedimientos ante organismos", desc: "Representación ante la Superintendencia del Medio Ambiente." },
+                        { title: "Denuncias ambientales", desc: "Gestión y defensa ante acusaciones de impacto o daño." },
+                        { title: "Daño ambiental", desc: "Litigación en tribunales ambientales por reparación." }
+                    ] 
+                },
+                { 
+                    id: 'familia', title: 'Derecho de Familia', icon: 'fa-users', desc: 'Soluciones legales de máxima discreción y efectividad patrimonial.', 
+                    items: [
+                        { title: "Divorcios", desc: "Tramitación de divorcios de mutuo acuerdo y litigios unilaterales." },
+                        { title: "Alimentos", desc: "Acciones de fijación, aumento, rebaja y medidas de apremio." },
+                        { title: "Cuidado personal", desc: "Juicios de tuición resguardando el interés superior." },
+                        { title: "Relación directa y regular", desc: "Establecimiento judicial de regímenes de visitas." },
+                        { title: "Compensación económica", desc: "Cálculo preciso para exigencia o blindaje de compensaciones." },
+                        { title: "Violencia intrafamiliar", desc: "Tramitación de medidas cautelares urgentes." }
+                    ] 
+                },
+                { 
+                    id: 'sucesorio', title: 'Derecho Sucesorio', icon: 'fa-scroll', desc: 'Planificación hereditaria y resolución de conflictos de sucesión.', 
+                    items: [
+                        { title: "Posesiones efectivas", desc: "Gestión ante el Registro Civil o Tribunales para apertura." },
+                        { title: "Herencias", desc: "Asesoría en la aceptación e inventario hereditario." },
+                        { title: "Particiones", desc: "Liquidación y distribución de bienes de mutuo acuerdo o juicio." },
+                        { title: "Testamentos", desc: "Redacción solemne de últimas voluntades." },
+                        { title: "Litigios hereditarios", desc: "Acciones de petición de herencia y nulidad testamentaria." }
+                    ] 
+                },
+                { 
+                    id: 'litigacion', title: 'Litigación y Defensa', icon: 'fa-gavel', desc: 'Representación implacable en tribunales, fusionando la ley con evidencia técnica.', 
+                    items: [
+                        { title: "Representación ante tribunales", desc: "Patrocinio experto en tribunales ordinarios y especiales." },
+                        { title: "Patrocinio y poder", desc: "Asunción de la representación jurídica formal." },
+                        { title: "Juicios civiles", desc: "Defensa en procedimientos ordinarios y sumarios." },
+                        { title: "Juicios laborales", desc: "Litigación protegiendo los intereses del cliente." },
+                        { title: "Juicios ejecutivos", desc: "Defensa activa contra embargos y persecución de cobro." },
+                        { title: "Recursos de protección", desc: "Acciones constitucionales urgentes contra actos arbitrarios." },
+                        { title: "Recursos de amparo", desc: "Acción inmediata ante vulneraciones a la libertad." },
+                        { title: "Recursos de apelación", desc: "Defensas ante Cortes de Apelaciones y Corte Suprema." },
+                        { title: "Defensa administrativa", desc: "Representación en procedimientos sancionatorios del Estado." }
+                    ] 
+                },
+                { 
+                    id: 'compliance', title: 'Asesoría y Compliance', icon: 'fa-shield-check', desc: 'Gerencia legal y prevención de riesgos corporativos para operar con seguridad.', 
+                    items: [
+                        { title: "Gerencia legal externa", desc: "Dirección jurídica externalizada para operatividad diaria." },
+                        { title: "Compliance corporativo", desc: "Implementación de políticas de cumplimiento y transparencia interna." },
+                        { title: "Modelos de prevención", desc: "Diseño de matrices Ley 20.393 (Responsabilidad penal)." },
+                        { title: "Auditorías legales", desc: "Revisión profunda del estado jurídico de la compañía." },
+                        { title: "Gestión de riesgos", desc: "Identificación y mitigación de contingencias legales operacionales." },
+                        { title: "Protección de datos", desc: "Adecuación a las normativas de privacidad vigentes." },
+                        { title: "Cumplimiento normativo", desc: "Alineación de procesos con exigencias regulatorias." },
+                        { title: "Investigación interna", desc: "Conducción de sumarios por fraude corporativo o infracciones." },
+                        { title: "Due diligence empresarial", desc: "Radiografía jurídica para compras o fusiones." }
+                    ] 
+                },
+                { 
+                    id: 'mediacion', title: 'Mediación y Negociación', icon: 'fa-handshake', desc: 'Resolución inteligente de conflictos mediante estrategias extrajudiciales.', 
+                    items: [
+                        { title: "Negociación extrajudicial", desc: "Intervención estratégica para evitar el litigio." },
+                        { title: "Resolución de conflictos", desc: "Diseño de vías alternativas para acuerdos eficientes." },
+                        { title: "Mediación privada", desc: "Facilitación profesional para destrabar disputas comerciales." },
+                        { title: "Acuerdos transaccionales", desc: "Redacción de contratos para extinguir litigios." },
+                        { title: "Reestructuración de deudas", desc: "Negociación de pasivos con acreedores bancarios." }
+                    ] 
+                }
+            ],
+            tech: [
+                { 
+                    id: 'evidencia_digital', title: 'Evidencia Digital', icon: 'fa-microchip', desc: 'Extracción, resguardo y análisis de datos electrónicos con cadena de custodia.', 
+                    items: [
+                        { title: "Levantamiento de evidencia", desc: "Recolección forense asegurando validez probatoria." },
+                        { title: "Informes jurídicos", desc: "Análisis cruzando regulaciones con metadatos electrónicos." },
+                        { title: "Investigación jurídica", desc: "Búsqueda profunda de antecedentes comerciales (OSINT)." },
+                        { title: "Custodia documental", desc: "Almacenamiento encriptado para litigios inminentes." },
+                        { title: "Respaldo probatorio", desc: "Aseguramiento técnico de pruebas para presentar a tribunales." },
+                        { title: "Análisis documental", desc: "Revisión técnica de expedientes corporativos." }
+                    ] 
+                },
+                { 
+                    id: 'drones_registro', title: 'Inspección Aérea', icon: 'fa-drone', desc: 'Inspección visual de alta precisión mediante sistemas aéreos no tripulados.', 
+                    items: [
+                        { title: "Inspección de predios", desc: "Vuelos para evaluar el estado real de extensiones de tierra." },
+                        { title: "Inspección de obras", desc: "Revisión en altura de avances constructivos." },
+                        { title: "Inspección industrial", desc: "Evaluación visual de infraestructuras críticas." },
+                        { title: "Inspección de techumbres", desc: "Detección de fallas estructurales mediante cámaras." },
+                        { title: "Inspección de caminos", desc: "Levantamiento visual de rutas terrestres." },
+                        { title: "Monitoreo de proyectos", desc: "Registro periódico del estado de grandes proyectos." }
+                    ] 
+                },
+                { 
+                    id: 'drones_litigios', title: 'Evidencia Litigios', icon: 'fa-camera', desc: 'Captura audiovisual georreferenciada para sustentar demandas en tribunales.', 
+                    items: [
+                        { title: "Registro audiovisual", desc: "Generación de prueba material en video geolocalizado." },
+                        { title: "Verificación de deslindes", desc: "Constatación aérea del límite físico vs. inscripción." },
+                        { title: "Conflictos de propiedad", desc: "Aportación visual contundente en juicios de demarcación." },
+                        { title: "Ocupaciones irregulares", desc: "Evidencia temporal y espacial de tomas de terreno." },
+                        { title: "Daños ambientales", desc: "Captura de la magnitud de derrames o alteraciones al ecosistema." },
+                        { title: "Peritajes judiciales", desc: "Informes técnicos visuales validados para sala de audiencias." }
+                    ] 
+                },
+                { 
+                    id: 'fotogrametria', title: 'Fotogrametría', icon: 'fa-layer-group', desc: 'Mapeo espacial y modelado 3D para cálculo de superficies y validación topográfica.', 
+                    items: [
+                        { title: "Ortomosaicos", desc: "Mapas 2D de alta resolución a partir de fotografías aéreas." },
+                        { title: "Modelos 3D", desc: "Reconstrucción digital volumétrica de terrenos y edificaciones." },
+                        { title: "Cálculo de superficies", desc: "Determinación matemática exacta de cabidas." },
+                        { title: "Seguimiento de obras", desc: "Contraste técnico entre planificación y terreno." },
+                        { title: "Informes técnicos", desc: "Documentación topográfica elaborada por especialistas." },
+                        { title: "Documentación procesal", desc: "Traducción de data técnica a lenguaje jurídico." }
+                    ] 
+                },
+                { 
+                    id: 'empresas', title: 'Servicios a Empresas', icon: 'fa-building', desc: 'Externalización de la inteligencia legal y técnica para el blindaje de la empresa moderna.', 
+                    items: [
+                        { title: "Asesoría permanente", desc: "Acompañamiento legal constante para la toma de decisiones." },
+                        { title: "Gestión de contratos", desc: "Administración del ciclo de vida de contratos corporativos." },
+                        { title: "Cobranza corporativa", desc: "Sistemas de recuperación de cartera vencida B2B." },
+                        { title: "Auditoría legal preventiva", desc: "Diagnóstico legal continuo para anticiparse a fiscalizaciones." },
+                        { title: "Evaluación de riesgos", desc: "Mapeo jurídico de nuevas líneas de negocio." },
+                        { title: "Regularización de activos", desc: "Saneamiento de propiedades y maquinarias de la compañía." },
+                        { title: "Asesoría para licitaciones", desc: "Estrategia técnica para la adjudicación de contratos." },
+                        { title: "Recuperación de activos", desc: "Persecución civil y penal para reintegro de bienes." },
+                        { title: "Estudios corporativos", desc: "Análisis de sociedades objetivo para futuras inversiones." },
+                        { title: "Informes estratégicos", desc: "Redacción de opiniones legales (Legal Opinions)." }
+                    ] 
+                }
+            ]
+        };
+
+        // ==========================================
+        // 2. REGLAS DE TRIAGE DE LA IA
+        // ==========================================
         const triageRules = {
             familia: {
-                question: "Los asuntos de Familia requieren documentación estricta para proceder en Tribunales. ¿Cuenta usted con el <strong>Certificado de Mediación Frustrada</strong> o <strong>Certificados del Registro Civil</strong> (Matrimonio/Nacimiento)?",
+                question: "Los asuntos de Familia requieren documentación estricta para proceder en Tribunales. ¿Cuenta usted con el <strong>Certificado de Mediación Frustrada</strong> o <strong>Certificados del Registro Civil</strong>?",
                 options: [
                     { label: "Sí, tengo todo", nextState: "triage_success" },
                     { label: "No, ¿cómo los saco?", nextState: "help_familia_docs" },
                     { label: "Es urgente (VIF/Medida Cautelar)", nextState: "urgent_vif" }
                 ],
-                helpHTML: `Para iniciar cualquier demanda de alimentos o visitas, la ley exige pasar por mediación. Puede solicitarla con su <strong>ClaveÚnica</strong> en el portal oficial.<br>
-                          <a href="https://mediacion.minjusticia.gob.cl/" target="_blank" class="gov-link"><i class="fas fa-external-link-alt"></i> Portal Mediación Chile</a><br>
-                          <a href="https://www.registrocivil.cl/" target="_blank" class="gov-link"><i class="fas fa-id-card"></i> Registro Civil (Certificados)</a>`
+                helpHTML: `Para iniciar demandas de alimentos o visitas, la ley exige pasar por mediación. Puede solicitarla con su <strong>ClaveÚnica</strong>.<br>
+                          <a href="https://mediacion.minjusticia.gob.cl/" target="_blank" class="gov-link"><i class="fas fa-external-link-alt"></i> Portal Mediación Chile</a>`
             },
             laboral: {
-                question: "Para evaluar la viabilidad de una demanda laboral, necesitamos revisar ciertos hitos. ¿Tiene en su poder la <strong>Carta de Despido</strong> o el <strong>Finiquito</strong> (firmado o con reserva de derechos)?",
+                question: "Para evaluar la viabilidad de una acción laboral, necesitamos ciertos hitos. ¿Tiene en su poder la <strong>Carta de Despido</strong> o el <strong>Finiquito</strong> (firmado o con reserva de derechos)?",
                 options: [
                     { label: "Sí, tengo los documentos", nextState: "triage_success" },
                     { label: "No me dieron nada (Despido Verbal)", nextState: "laboral_verbal" },
                     { label: "¿Dónde descargo mis cotizaciones?", nextState: "help_laboral_docs" }
                 ],
-                helpHTML: `Puede descargar sus certificados de cotizaciones y dejar constancias laborales directamente en la Dirección del Trabajo (Mi DT) usando su ClaveÚnica.<br>
-                          <a href="https://midt.dirtrab.cl/" target="_blank" class="gov-link"><i class="fas fa-briefcase"></i> Portal Mi DT (Dirección del Trabajo)</a>`
+                helpHTML: `Puede descargar sus cotizaciones en la Dirección del Trabajo (Mi DT).<br>
+                          <a href="https://midt.dirtrab.cl/" target="_blank" class="gov-link"><i class="fas fa-briefcase"></i> Portal Mi DT</a>`
             },
             inmobiliario: {
-                question: "El Derecho Inmobiliario requiere precisión registral. Para estudiar su caso, ¿cuenta con el <strong>Certificado de Dominio Vigente</strong> o de <strong>Hipotecas y Gravámenes</strong> (GP)?",
+                question: "El Derecho Inmobiliario requiere precisión registral. ¿Cuenta con el <strong>Certificado de Dominio Vigente</strong> o de <strong>Hipotecas y Gravámenes</strong> (GP)?",
                 options: [
                     { label: "Sí, los tengo", nextState: "triage_success" },
                     { label: "Solo tengo las escrituras", nextState: "triage_success" },
                     { label: "No, ¿dónde los pido?", nextState: "help_inmobiliario_docs" }
                 ],
-                helpHTML: `Los certificados actualizados (máx. 30 días) se solicitan en el Conservador de Bienes Raíces (CBR) correspondiente a la comuna del inmueble.<br>
+                helpHTML: `Los certificados actualizados (máx. 30 días) se solicitan en el Conservador de Bienes Raíces (CBR) respectivo.<br>
                           <a href="https://www.conservadores.cl/" target="_blank" class="gov-link"><i class="fas fa-home"></i> Red de Conservadores (CBR)</a>`
             },
             default: {
-                question: "Para que nuestro equipo jurídico analice su requerimiento con la máxima rigurosidad, ¿cuenta actualmente con documentación de respaldo (contratos, correos, resoluciones)?",
+                question: "Para que nuestro equipo analice su requerimiento con la máxima rigurosidad, ¿cuenta actualmente con documentación de respaldo (contratos, correos, antecedentes)?",
                 options: [
                     { label: "Sí, poseo antecedentes", nextState: "triage_success" },
                     { label: "No, es solo una consulta", nextState: "triage_success" }
@@ -234,231 +428,11 @@
             }
         };
 
-        // 2. BASE DE DATOS SIMULADA DE ESTADOS DE CAUSA
-        const casesDB = {
-            "ALX-2026-01": {
-                materia: "Cuidado Personal y Alimentos",
-                tribunal: "2° Juzgado de Familia de Santiago",
-                rit: "C-1450-2025",
-                estadoActual: 2, // Índice del paso actual
-                steps: [
-                    { title: "Ingreso de Demanda", date: "12 Mar 2026", done: true },
-                    { title: "Notificación a Contraparte", date: "25 Mar 2026", done: true },
-                    { title: "Audiencia Preparatoria", date: "Fijada para 15 May 2026", done: false },
-                    { title: "Audiencia de Juicio", date: "Pendiente", done: false },
-                    { title: "Sentencia Definitiva", date: "Pendiente", done: false }
-                ]
-            },
-            "ALX-2026-02": {
-                materia: "Despido Injustificado",
-                tribunal: "1° Juzgado de Letras del Trabajo",
-                rit: "O-321-2026",
-                estadoActual: 4,
-                steps: [
-                    { title: "Ingreso Demanda", date: "02 Ene 2026", done: true },
-                    { title: "Audiencia Preparatoria", date: "10 Feb 2026", done: true },
-                    { title: "Audiencia de Juicio", date: "05 Mar 2026", done: true },
-                    { title: "Sentencia (Favorable)", date: "20 Mar 2026", done: true },
-                    { title: "Gestión de Cobro / Embargo", date: "En curso", done: false }
-                ]
-            }
-        };
-
-        // 3. LÓGICA DEL DIALOG NATIVO Y CHAT
-        const aiModal = document.getElementById('ai-modal');
-        const aiChatLog = document.getElementById('ai-chat-log');
-        const aiInput = document.getElementById('ai-input');
-        const aiSendBtn = document.getElementById('ai-send-btn');
-        
-        let triageContext = { area: 'default', service: '', data: '' };
-
-        function openAIChat(triggerData = null) {
-            aiModal.showModal(); // API Nativa de HTML5 Dialog
-            
-            if (triggerData === 'ESTADO_CAUSA') {
-                aiChatLog.innerHTML = ''; // Limpiamos chat
-                injectBotMessage("Módulo de Rastreo Judicial activado. Por favor, <strong>ingrese su número de caso asignado por AeroLex</strong> (Ej: ALX-2026-01).");
-                return;
-            }
-
-            if (triggerData === 'GREETING_ONLY' && aiChatLog.children.length <= 1) {
-                injectBotMessage("Bienvenido al sistema de Triage Técnico de <strong>AeroLex</strong>. Nuestro objetivo es perfilar su caso legal antes de derivarlo a un abogado especialista. ¿En qué área requiere asistencia?");
-            }
-
-            if (typeof triggerData === 'object') {
-                triageContext.area = triggerData.areaId;
-                triageContext.service = triggerData.serviceTitle;
-                
-                addUserMessage(`Solicito evaluación para: ${triggerData.serviceTitle}`);
-                
-                // Buscar reglas de triage
-                const rule = triageRules[triggerData.areaId] || triageRules.default;
-                
-                let responseHTML = `Iniciando protocolo de análisis para <strong>${triggerData.serviceTitle}</strong>.<br><br>${rule.question}`;
-                injectBotMessage(responseHTML, rule.options);
-            }
-        }
-
-        function closeAIChat() {
-            aiModal.close();
-        }
-
         // ==========================================
-        // RENDERIZADO DE MENSAJES (Efecto Jedi)
+        // 3. RENDERIZADO DEL CORE SYSTEM (La magia del DOM)
         // ==========================================
-        function addUserMessage(text) {
-            const msgHtml = `<div class="ai-chat-bubble-user fade-in">${text}</div>`;
-            aiChatLog.insertAdjacentHTML('beforeend', msgHtml);
-            scrollToBottom();
-        }
-
-        function injectBotMessage(htmlContent, options = null) {
-            // Eliminar botones rápidos anteriores para que no se puedan volver a pulsar
-            document.querySelectorAll('.quick-replies').forEach(el => el.remove());
-
-            const typingId = 'typing-' + Date.now();
-            const typingHtml = `<div id="${typingId}" class="ai-chat-bubble-bot typing-indicator"><span></span><span></span><span></span></div>`;
-            aiChatLog.insertAdjacentHTML('beforeend', typingHtml);
-            scrollToBottom();
-
-            setTimeout(() => {
-                document.getElementById(typingId)?.remove();
-                
-                let finalHTML = `<div class="ai-chat-bubble-bot fade-in">${htmlContent}`;
-                
-                // Inyectar botones si existen
-                if (options) {
-                    finalHTML += `<div class="quick-replies">`;
-                    options.forEach(opt => {
-                        finalHTML += `<button class="quick-reply-btn" onclick="handleQuickReply('${opt.nextState}', '${opt.label}')">${opt.label}</button>`;
-                    });
-                    finalHTML += `</div>`;
-                }
-                
-                finalHTML += `</div>`;
-                aiChatLog.insertAdjacentHTML('beforeend', finalHTML);
-                scrollToBottom();
-            }, 800);
-        }
-
-        function scrollToBottom() {
-            setTimeout(() => { aiChatLog.scrollTop = aiChatLog.scrollHeight; }, 50);
-        }
-
-        // ==========================================
-        // MÁQUINA DE ESTADOS (Respuestas a Botones)
-        // ==========================================
-        window.handleQuickReply = function(nextState, labelTyped) {
-            addUserMessage(labelTyped);
-            
-            const rule = triageRules[triageContext.area] || triageRules.default;
-
-            if (nextState === 'triage_success' || nextState === 'urgent_vif') {
-                let waText = encodeURIComponent(`Hola AeroLex. Vengo del Filtro IA.\nServicio requerido: ${triageContext.service}\nEstado de Documentos: ${labelTyped}`);
-                let msg = `Excelente. Ha pasado el filtro técnico preliminar. <br><br>Su expediente está listo para ser revisado por un abogado especialista de nuestro equipo.<br>
-                           <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waText}" target="_blank" class="btn-wa-final"><i class="fab fa-whatsapp text-lg"></i> Iniciar Asesoría Humana</a>`;
-                injectBotMessage(msg);
-            } 
-            else if (nextState.startsWith('help_')) {
-                let msg = `Comprendo. No se preocupe, es un paso habitual. <br><br>${rule.helpHTML}<br><br>Le sugiero recopilar estos antecedentes y contactarnos a través de nuestra mesa central cuando los tenga, o si necesita que nosotros hagamos la gestión documental por usted.<br>
-                           <a href="https://wa.me/${WHATSAPP_NUMBER}?text=Hola,%20necesito%20ayuda%20gestionando%20documentos%20para%20${encodeURIComponent(triageContext.service)}" target="_blank" class="btn-wa-final"><i class="fab fa-whatsapp"></i> Contactar para Gestión</a>`;
-                injectBotMessage(msg);
-            }
-            else if (nextState === 'laboral_verbal') {
-                let waText = encodeURIComponent(`URGENTE: Posible despido verbal. Plazo corriendo.`);
-                injectBotMessage(`⚠️ <strong>Alerta Legal:</strong> El despido verbal es una vulneración grave. Existe un plazo muy corto para dejar constancia en la Inspección del Trabajo e interponer acciones de tutela. <br><br>Derivando su caso de urgencia a un abogado laboralista ahora mismo.<br>
-                                 <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waText}" target="_blank" class="btn-wa-final bg-red-600"><i class="fab fa-whatsapp"></i> Hablar URGENTE</a>`);
-            }
-        };
-
-        // ==========================================
-        // PROCESADOR DE TEXTO LIBRE (Input de usuario)
-        // ==========================================
-        aiInputForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const text = aiInput.value.trim();
-            if (!text) return;
-            
-            aiInput.value = '';
-            aiSendBtn.disabled = true;
-            addUserMessage(text);
-
-            // DETECCIÓN: ESTADO DE CAUSA
-            if (text.toUpperCase().startsWith("ALX-")) {
-                const caseData = casesDB[text.toUpperCase()];
-                if (caseData) {
-                    renderCaseTracker(caseData, text.toUpperCase());
-                } else {
-                    injectBotMessage("❌ No he encontrado registros en la base de datos para el código proporcionado. Verifique e intente nuevamente, o contacte a secretaría.");
-                }
-                return;
-            }
-
-            // Fallback Genérico si escriben en vez de usar botones
-            let waText = encodeURIComponent(`Consulta libre desde Bot: ${text.substring(0,50)}...`);
-            injectBotMessage(`He registrado su comentario en la bitácora técnica. Debido a la naturaleza de su solicitud, he habilitado un canal directo con nuestro equipo jurídico para analizar los detalles.<br>
-                             <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waText}" target="_blank" class="btn-wa-final"><i class="fab fa-whatsapp"></i> Conectar con Abogado</a>`);
-        });
-
-        aiInput.addEventListener('input', () => { aiSendBtn.disabled = aiInput.value.trim() === ''; });
-
-        // ==========================================
-        // RENDERIZADO DEL TRACKER DE CAUSA (TIMELINE UI)
-        // ==========================================
-        function renderCaseTracker(caseData, code) {
-            let html = `<strong>Expediente: ${code}</strong><br>
-                        <span class="text-[11px] text-mac-dark/60 uppercase tracking-wide">Materia: ${caseData.materia}</span><br>
-                        <span class="text-[11px] text-mac-dark/60">Tribunal: ${caseData.tribunal} | RIT: ${caseData.rit}</span>
-                        <div class="timeline-container mt-4">`;
-            
-            caseData.steps.forEach((step, index) => {
-                const isActive = index <= caseData.estadoActual;
-                html += `
-                    <div class="timeline-step ${isActive ? 'active' : ''}">
-                        <div class="step-title text-[13px] ${isActive ? 'text-mac-dark' : 'text-mac-dark/40'}">${step.title}</div>
-                        <div class="text-[10px] ${isActive ? 'text-green-600 font-medium' : 'text-mac-dark/40'}">${step.date}</div>
-                    </div>`;
-            });
-            
-            html += `</div>
-                     <a href="https://oficinajudicialvirtual.pjud.cl/" target="_blank" class="gov-link w-full text-center mt-2"><i class="fas fa-university"></i> Ver expediente oficial (PJUD)</a>`;
-            
-            injectBotMessage(html);
-        }
-
-        // ==========================================
-        // RENDERIZADO DEL CORE SYSTEM (La Base de Datos de la Web)
-        // ==========================================
-        const db = {
-            legal: [
-                { 
-                    id: 'familia', title: 'Derecho de Familia', icon: 'fa-users', desc: 'Protección patrimonial y resolución de conflictos familiares.', 
-                    items: [
-                        { title: "Juicios de Alimentos", desc: "Fijación, aumento, rebaja y apremios por no pago." },
-                        { title: "Divorcios Complejos", desc: "Mutuo acuerdo y unilaterales con compensación económica." },
-                        { title: "Cuidado Personal", desc: "Protección del interés superior del menor y visitas." }
-                    ] 
-                },
-                { 
-                    id: 'laboral', title: 'Derecho Laboral', icon: 'fa-user-tie', desc: 'Defensa corporativa y representación de trabajadores.', 
-                    items: [
-                        { title: "Despido Injustificado", desc: "Cobro de indemnizaciones legales y recargos." },
-                        { title: "Tutela Laboral", desc: "Defensa ante vulneración de derechos fundamentales." },
-                        { title: "Accidentes del Trabajo", desc: "Responsabilidad y demanda indemnizatoria." }
-                    ] 
-                },
-                { 
-                    id: 'inmobiliario', title: 'Derecho Inmobiliario', icon: 'fa-city', desc: 'Seguridad jurídica en bienes raíces y proyectos.', 
-                    items: [
-                        { title: "Estudio de Títulos", desc: "Auditoría preventiva antes de la compraventa." },
-                        { title: "Redacción de Escrituras", desc: "Compraventas, promesas y usufructos." },
-                        { title: "Saneamiento", desc: "Regularización de propiedades e inscripciones." }
-                    ] 
-                }
-            ]
-        };
-
         const navLegal = document.getElementById('sidebar-nav');
+        const navTech = document.getElementById('sidebar-nav-tech');
         const contentTitle = document.getElementById('content-title');
         const contentDesc = document.getElementById('content-desc');
         const contentIcon = document.getElementById('content-icon');
@@ -472,39 +446,155 @@
 
             contentTitle.innerHTML = dataObj.title;
             contentDesc.textContent = dataObj.desc;
-            contentIcon.className = `fas ${dataObj.icon} text-3xl`;
+            contentIcon.className = `fas ${dataObj.icon} text-2xl`;
             
             servicesGrid.innerHTML = '';
             
             dataObj.items.forEach((item, index) => {
                 const card = document.createElement('div');
                 card.className = 'service-widget fade-in p-5';
-                card.style.animationDelay = `${index * 0.05}s`;
+                card.style.animationDelay = `${index * 0.04}s`;
                 
-                // Aquí enlazamos la tarjeta con la IA y pasamos el área para el triage correcto
-                card.onclick = () => {
-                    openAIChat({ areaId: dataObj.id, serviceTitle: item.title });
-                };
+                card.onclick = () => openAIChat({ areaId: dataObj.id, serviceTitle: item.title });
 
                 card.innerHTML = `
                     <div class="flex flex-col gap-2">
-                        <h4 class="text-[15px] font-bold text-mac-dark">${item.title}</h4>
-                        <p class="text-[13px] text-mac-dark/70 leading-relaxed">${item.desc}</p>
-                        <span class="text-[10px] font-semibold text-mac-accent mt-2 uppercase tracking-wide flex items-center gap-1"><i class="fas fa-magic"></i> Analizar Caso</span>
+                        <h4 class="text-[14px] font-bold text-mac-dark leading-tight">${item.title}</h4>
+                        <p class="text-[12px] text-mac-dark/70 leading-relaxed">${item.desc}</p>
+                        <span class="text-[10px] font-semibold text-mac-accent mt-1 uppercase tracking-wide flex items-center gap-1"><i class="fas fa-robot"></i> Analizar Caso con IA</span>
                     </div>`;
                 servicesGrid.appendChild(card);
             });
         }
 
-        db.legal.forEach((cat, index) => {
-            const btn = document.createElement('button');
-            btn.className = 'sidebar-item w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-mac-dark/70 flex items-center gap-3 mb-1';
-            btn.innerHTML = `<i class="fas ${cat.icon} w-5 text-center opacity-60"></i> <span>${cat.title}</span>`;
+        function createSidebarButtons(categoryArray, container) {
+            categoryArray.forEach((cat, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'sidebar-item w-full text-left px-3 py-2.5 rounded-lg text-[13px] font-medium text-mac-dark/80 flex items-center gap-3 mb-1';
+                btn.innerHTML = `<i class="fas ${cat.icon} w-5 text-center opacity-60"></i> <span>${cat.title}</span>`;
+                
+                btn.addEventListener('click', () => {
+                    renderContent(cat, btn);
+                    if(window.innerWidth < 768) document.getElementById('content-header').scrollIntoView({ behavior: "smooth", block: "start" });
+                });
+                
+                container.appendChild(btn);
+                
+                // Auto-click el primer elemento (Derecho Civil) para que no salga "Cargando..."
+                if (index === 0 && cat.id === 'civil') setTimeout(() => btn.click(), 50);
+            });
+        }
+
+        createSidebarButtons(db.legal, navLegal);
+        createSidebarButtons(db.tech, navTech);
+
+
+        // ==========================================
+        // 4. LÓGICA DEL DIALOG (IA) Y CHAT
+        // ==========================================
+        const aiModal = document.getElementById('ai-modal');
+        const aiChatLog = document.getElementById('ai-chat-log');
+        const aiInput = document.getElementById('ai-input');
+        const aiSendBtn = document.getElementById('ai-send-btn');
+        let triageContext = { area: 'default', service: '', data: '' };
+
+        function openAIChat(triggerData = null) {
+            aiModal.showModal();
             
-            btn.addEventListener('click', () => renderContent(cat, btn));
-            navLegal.appendChild(btn);
-            if (index === 0) setTimeout(() => btn.click(), 50);
+            if (triggerData === 'ESTADO_CAUSA') {
+                aiChatLog.innerHTML = ''; 
+                injectBotMessage("Módulo de Rastreo Judicial. Por favor, <strong>ingrese su número de caso asignado</strong> (Ej: ALX-2026-01).");
+                return;
+            }
+
+            if (triggerData === 'GREETING_ONLY' && aiChatLog.children.length <= 1) {
+                injectBotMessage("Bienvenido al sistema de Triage Técnico. ¿En qué área requiere asistencia?");
+            }
+
+            if (typeof triggerData === 'object') {
+                triageContext.area = triggerData.areaId;
+                triageContext.service = triggerData.serviceTitle;
+                
+                addUserMessage(`Solicito evaluación para: ${triggerData.serviceTitle}`);
+                
+                const rule = triageRules[triggerData.areaId] || triageRules.default;
+                let responseHTML = `Iniciando protocolo de análisis para <strong>${triggerData.serviceTitle}</strong>.<br><br>${rule.question}`;
+                injectBotMessage(responseHTML, rule.options);
+            }
+        }
+
+        function closeAIChat() { aiModal.close(); }
+
+        function addUserMessage(text) {
+            const msgHtml = `<div class="ai-chat-bubble-user fade-in">${text}</div>`;
+            aiChatLog.insertAdjacentHTML('beforeend', msgHtml);
+            scrollToBottom();
+        }
+
+        function injectBotMessage(htmlContent, options = null) {
+            document.querySelectorAll('.quick-replies').forEach(el => el.remove());
+            const typingId = 'typing-' + Date.now();
+            aiChatLog.insertAdjacentHTML('beforeend', `<div id="${typingId}" class="ai-chat-bubble-bot typing-indicator"><span></span><span></span><span></span></div>`);
+            scrollToBottom();
+
+            setTimeout(() => {
+                document.getElementById(typingId)?.remove();
+                let finalHTML = `<div class="ai-chat-bubble-bot fade-in">${htmlContent}`;
+                if (options) {
+                    finalHTML += `<div class="quick-replies">`;
+                    options.forEach(opt => { finalHTML += `<button class="quick-reply-btn" onclick="handleQuickReply('${opt.nextState}', '${opt.label}')">${opt.label}</button>`; });
+                    finalHTML += `</div>`;
+                }
+                finalHTML += `</div>`;
+                aiChatLog.insertAdjacentHTML('beforeend', finalHTML);
+                scrollToBottom();
+            }, 800);
+        }
+
+        function scrollToBottom() { setTimeout(() => { aiChatLog.scrollTop = aiChatLog.scrollHeight; }, 50); }
+
+        window.handleQuickReply = function(nextState, labelTyped) {
+            addUserMessage(labelTyped);
+            const rule = triageRules[triageContext.area] || triageRules.default;
+
+            if (nextState === 'triage_success' || nextState === 'urgent_vif') {
+                let waText = encodeURIComponent(`Hola AeroLex. Vengo del Filtro IA.\nServicio: ${triageContext.service}\nDocumentos: ${labelTyped}`);
+                injectBotMessage(`Excelente. Su expediente está listo para ser revisado por un abogado especialista.<br>
+                           <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waText}" target="_blank" class="btn-wa-final"><i class="fab fa-whatsapp text-lg"></i> Iniciar Asesoría Humana</a>`);
+            } else if (nextState.startsWith('help_')) {
+                injectBotMessage(`Comprendo. No se preocupe.<br><br>${rule.helpHTML}<br><br>Le sugiero recopilar estos antecedentes o contactarnos para ayudarle con la gestión.<br>
+                           <a href="https://wa.me/${WHATSAPP_NUMBER}?text=Hola,%20necesito%20ayuda%20gestionando%20documentos" target="_blank" class="btn-wa-final"><i class="fab fa-whatsapp"></i> Contactar para Gestión</a>`);
+            } else if (nextState === 'laboral_verbal') {
+                injectBotMessage(`⚠️ <strong>Alerta Legal:</strong> El despido verbal tiene un plazo muy corto. Derivando de urgencia a un abogado laboralista.<br>
+                                 <a href="https://wa.me/${WHATSAPP_NUMBER}?text=URGENTE: Despido verbal" target="_blank" class="btn-wa-final bg-red-600"><i class="fab fa-whatsapp"></i> Hablar URGENTE</a>`);
+            }
+        };
+
+        aiInputForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = aiInput.value.trim();
+            if (!text) return;
+            
+            aiInput.value = '';
+            aiSendBtn.disabled = true;
+            addUserMessage(text);
+
+            if (text.toUpperCase().startsWith("ALX-")) {
+                // Simulación Estado de Causa
+                if(text.toUpperCase() === "ALX-2026-01") {
+                    injectBotMessage(`<strong>Expediente: ${text.toUpperCase()}</strong><br><span class="text-[11px] uppercase">Familia - Alimentos</span><div class="mt-3 text-sm text-green-600 font-bold">● Ingreso de Demanda (Completado)</div><div class="text-sm text-mac-dark/50">○ Audiencia (Pendiente)</div>`);
+                } else {
+                    injectBotMessage("❌ No he encontrado registros en la base de datos.");
+                }
+                return;
+            }
+
+            let waText = encodeURIComponent(`Consulta libre: ${text.substring(0,50)}...`);
+            injectBotMessage(`He registrado su comentario. Habilitando canal directo para analizar detalles.<br>
+                             <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waText}" target="_blank" class="btn-wa-final"><i class="fab fa-whatsapp"></i> Conectar con Abogado</a>`);
         });
+
+        aiInput.addEventListener('input', () => { aiSendBtn.disabled = aiInput.value.trim() === ''; });
     </script>
 </body>
 </html>
