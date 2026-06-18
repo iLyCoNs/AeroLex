@@ -51,36 +51,16 @@
         .mac-header { background: transparent; }
         .dock-nav { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.8); border-top: 1px solid rgba(255, 255, 255, 1); }
         
-        /* BADGE 4K HDR MEJORADO: Micro etiqueta, nowrap para que no se quiebre el texto */
-        .badge-4k { 
-            display: inline-flex; align-items: center; justify-content: center; 
-            background: linear-gradient(135deg, #788C9F 0%, #5A6B7C 100%); 
-            color: #fff; font-size: 0.5rem; font-weight: 700; 
-            padding: 0.15rem 0.35rem; border-radius: 4px; margin-left: 0.4rem; 
-            letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.4); 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.15); vertical-align: middle; 
-            white-space: nowrap; line-height: 1; height: max-content;
-        }
+        /* BADGE 4K HDR REDUCIDO */
+        .badge-4k { display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #788C9F 0%, #5A6B7C 100%); color: #fff; font-size: 0.45rem; font-weight: 700; padding: 0.1rem 0.25rem; border-radius: 3px; margin-left: 0.3rem; letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 1px 3px rgba(0,0,0,0.15); vertical-align: middle; line-height: 1; white-space: nowrap; }
         
         .sidebar-item { transition: all 0.2s ease; }
         .sidebar-item.active { background: #788C9F; color: #ffffff; font-weight: 500; box-shadow: 0 2px 10px rgba(120, 140, 159, 0.3); }
 
-        /* WIDGETS SERVICIOS (AQUA CRISTAL) */
-        .service-widget { 
-            background: rgba(235, 248, 255, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
-            border: 2px solid transparent; border-top: 1px solid rgba(255, 255, 255, 0.8); border-radius: 16px; 
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
-            box-shadow: 0 4px 15px rgba(0, 100, 150, 0.05), inset 0 1px 2px rgba(255,255,255,0.8); 
-            display: flex; flex-direction: column; padding: 1.25rem; cursor: pointer; 
-        }
+        /* WIDGETS SERVICIOS */
+        .service-widget { background: rgba(235, 248, 255, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 2px solid transparent; border-top: 1px solid rgba(255, 255, 255, 0.8); border-radius: 16px; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 4px 15px rgba(0, 100, 150, 0.05), inset 0 1px 2px rgba(255,255,255,0.8); display: flex; flex-direction: column; padding: 1.25rem; cursor: pointer; }
         .service-widget:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 12px 24px rgba(0, 100, 150, 0.1); background: rgba(240, 250, 255, 0.8); }
-        
-        /* Estado Activo del Widget */
-        .service-widget.widget-selected {
-            background: #ffffff; border-color: #788C9F; 
-            box-shadow: 0 10px 25px rgba(120, 140, 159, 0.25), inset 0 1px 2px rgba(255,255,255,1);
-            transform: scale(1.02);
-        }
+        .service-widget.widget-selected { background: #ffffff; border-color: #788C9F; box-shadow: 0 10px 25px rgba(120, 140, 159, 0.25), inset 0 1px 2px rgba(255,255,255,1); transform: scale(1.02); }
         .service-widget.widget-selected i { color: #788C9F; }
 
         /* FAB WHATSAPP */
@@ -107,7 +87,8 @@
         ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
 
-        .loader { border: 3px solid rgba(0,0,0,0.1); border-left-color: #788C9F; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        .loader { border: 2px solid rgba(0,0,0,0.1); border-left-color: #788C9F; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        .loader-white { border: 2px solid rgba(255,255,255,0.3); border-left-color: #ffffff; border-radius: 50%; width: 18px; height: 18px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -198,13 +179,13 @@
                         <input type="email" name="email" class="mac-input" placeholder="Correo electrónico" required>
                     </div>
                 </div>
-                <div class="intake-step hidden text-center py-10" id="step-5">
-                    <div class="loader mx-auto mb-4"></div><h3 class="text-lg font-bold text-mac-dark">Estableciendo conexión segura...</h3>
-                </div>
+                
                 <div class="mt-8 flex justify-between items-center" id="form-controls">
                     <button type="button" id="btn-prev" class="text-sm font-medium text-mac-dark/50 hover:text-mac-dark hidden transition-colors px-4 py-2">Volver</button>
                     <div class="flex-1"></div>
-                    <button type="button" id="btn-next" class="bg-mac-dark text-white px-6 py-2.5 rounded-xl text-sm font-medium shadow-md transition-all hover:bg-black">Siguiente</button>
+                    <button type="submit" id="btn-next" class="bg-mac-dark text-white px-6 py-2.5 rounded-xl text-sm font-medium shadow-md transition-all hover:bg-black flex items-center justify-center gap-2">
+                        <span>Siguiente</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -227,8 +208,8 @@
                 <input type="tel" id="svc-telefono" class="mac-input" placeholder="Teléfono de contacto" required>
                 <textarea id="svc-detalle" rows="4" class="mac-input resize-none" placeholder="Describa su caso o consulta aquí..." required></textarea>
                 
-                <button type="submit" class="mt-4 bg-mac-dark hover:bg-black text-white px-6 py-3.5 rounded-xl text-sm font-medium shadow-md transition-all flex items-center justify-center gap-2 w-full btn-pop">
-                    <i class="fas fa-paper-plane"></i> Enviar a Evaluación
+                <button type="submit" id="btn-submit-service" class="mt-4 bg-mac-dark hover:bg-black text-white px-6 py-3.5 rounded-xl text-sm font-medium shadow-md transition-all flex items-center justify-center gap-2 w-full btn-pop">
+                    <span class="flex items-center gap-2"><i class="fas fa-paper-plane"></i> Enviar a Evaluación</span>
                 </button>
             </form>
         </div>
@@ -256,7 +237,7 @@
             </div>
             <div class="bg-white/60 backdrop-blur-md border border-white p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default flex flex-col">
                 <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 text-mac-accent shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-drone text-sm"></i></div>
-                <h3 class="text-sm font-semibold text-mac-dark mb-2 tracking-wide">Deslindes & Prueba Judicial</h3>
+                <h3 class="text-sm font-semibold text-mac-dark mb-2 tracking-wide flex items-center">Deslindes & Prueba Judicial</h3>
                 <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light">Levantamiento FPV y fotogramétrico de precisión para fijar límites prediales, constatar ocupaciones y nutrir litigios con prueba inobjetable.</p>
             </div>
         </div>
@@ -324,7 +305,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            const WHATSAPP_NUMBER = "56900000000"; 
+            const WHATSAPP_NUMBER = "56987491964"; 
 
             // 1. MODAL ADMISIÓN GLOBAL
             const intakeModal = document.getElementById('intake-modal');
@@ -343,37 +324,38 @@
             function closeIntake() { intakeModal.classList.add('opacity-0'); intakeModalContent.classList.add('scale-95'); setTimeout(() => { intakeModal.classList.add('hidden'); form.reset(); currentStep = 1; updateSteps(); }, 300); }
 
             function updateSteps() {
-                if(currentStep > 1 && currentStep <= totalSteps) {
-                    const prevStepDiv = document.getElementById(`step-${currentStep-1}`);
-                    const inputs = prevStepDiv.querySelectorAll('input[required], textarea[required]');
-                    let valid = true;
-                    inputs.forEach(input => {
-                        if (input.type === 'radio') { if(!document.querySelector(`input[name="${input.name}"]:checked`)) valid = false; } 
-                        else { if(!input.value.trim()) valid = false; }
-                    });
-                    if(!valid) { currentStep--; alert("Complete los campos requeridos."); return; }
-                }
-
                 steps.forEach((step, index) => { if (index + 1 === currentStep) step.classList.remove('hidden'); else step.classList.add('hidden'); });
                 progressText.textContent = `Paso ${currentStep} de ${totalSteps}`;
 
-                if (currentStep === 1) { btnPrev.classList.add('hidden'); btnNext.textContent = 'Siguiente'; formControls.classList.remove('hidden'); }
-                else if (currentStep > 1 && currentStep < totalSteps) { btnPrev.classList.remove('hidden'); btnNext.textContent = 'Siguiente'; formControls.classList.remove('hidden'); }
-                else if (currentStep === totalSteps) { btnPrev.classList.remove('hidden'); btnNext.textContent = 'Solicitar Evaluación'; formControls.classList.remove('hidden'); }
-                else if (currentStep > totalSteps) { formControls.classList.add('hidden'); progressText.textContent = "Conectando..."; }
+                if (currentStep === 1) { btnPrev.classList.add('hidden'); btnNext.querySelector('span').textContent = 'Siguiente'; }
+                else if (currentStep > 1 && currentStep < totalSteps) { btnPrev.classList.remove('hidden'); btnNext.querySelector('span').textContent = 'Siguiente'; }
+                else if (currentStep === totalSteps) { btnPrev.classList.remove('hidden'); btnNext.querySelector('span').textContent = 'Solicitar Evaluación'; }
             }
 
-            btnNext.addEventListener('click', () => {
-                if (currentStep === totalSteps) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (currentStep < totalSteps) {
                     currentStep++; updateSteps();
+                } else {
+                    // Estado de Carga UI
+                    const originalBtnContent = btnNext.innerHTML;
+                    btnNext.innerHTML = '<div class="loader-white mr-2"></div><span>Procesando...</span>';
+                    btnNext.classList.add('opacity-80', 'pointer-events-none');
+                    btnPrev.classList.add('hidden');
+
                     setTimeout(() => {
                         const formData = new FormData(form);
                         const autoMsg = `*INGRESO MESA DE ENTRADA AEROLEX*\n\n*Tipo:* ${formData.get('tipo_req')}\n*Área:* ${formData.get('area_req')}\n*Detalle:* ${formData.get('detalle_caso')}\n*Nombre:* ${formData.get('nombre')}\n*RUT:* ${formData.get('rut')}\n*Tel:* ${formData.get('telefono')}\n*Email:* ${formData.get('email')}`;
+                        
                         window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMsg)}`, '_blank');
+                        
+                        btnNext.innerHTML = originalBtnContent;
+                        btnNext.classList.remove('opacity-80', 'pointer-events-none');
                         closeIntake();
-                    }, 1500);
-                } else { currentStep++; updateSteps(); }
+                    }, 1200);
+                }
             });
+
             btnPrev.addEventListener('click', () => { if (currentStep > 1) { currentStep--; updateSteps(); } });
             openIntakeBtns.forEach(btn => btn.addEventListener('click', openIntake));
             closeModalBtn.addEventListener('click', closeIntake);
@@ -385,6 +367,7 @@
             const closeServiceModalBtn = document.getElementById('close-service-modal');
             const serviceForm = document.getElementById('service-form');
             const serviceSubtitle = document.getElementById('service-modal-subtitle');
+            const btnSubmitService = document.getElementById('btn-submit-service');
             
             let selectedServiceContext = "";
 
@@ -402,13 +385,25 @@
 
             serviceForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const nombre = document.getElementById('svc-nombre').value;
-                const telefono = document.getElementById('svc-telefono').value;
-                const detalle = document.getElementById('svc-detalle').value;
-                const autoMessage = `Hola AeroLex, solicito evaluación técnica.\n\n*${selectedServiceContext}*\n\n*Nombre:* ${nombre}\n*Teléfono:* ${telefono}\n*Detalles del caso:* ${detalle}`;
                 
-                window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMessage)}`, '_blank');
-                closeServiceModal();
+                // Estado de Carga
+                const originalBtnContent = btnSubmitService.innerHTML;
+                btnSubmitService.innerHTML = '<span class="flex items-center gap-2"><div class="loader-white"></div> Procesando...</span>';
+                btnSubmitService.classList.add('opacity-80', 'pointer-events-none');
+
+                setTimeout(() => {
+                    const nombre = document.getElementById('svc-nombre').value;
+                    const telefono = document.getElementById('svc-telefono').value;
+                    const detalle = document.getElementById('svc-detalle').value;
+                    const autoMessage = `Hola AeroLex, solicito evaluación técnica.\n\n*${selectedServiceContext}*\n\n*Nombre:* ${nombre}\n*Teléfono:* ${telefono}\n*Detalles del caso:* ${detalle}`;
+                    
+                    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMessage)}`, '_blank');
+                    
+                    // Restaurar botón y cerrar
+                    btnSubmitService.innerHTML = originalBtnContent;
+                    btnSubmitService.classList.remove('opacity-80', 'pointer-events-none');
+                    closeServiceModal();
+                }, 1200);
             });
 
             // 3. BASE DE DATOS Y PANEL INTERACTIVO
@@ -434,7 +429,6 @@
             const contentDesc = document.getElementById('content-desc');
             const contentIcon = document.getElementById('content-icon');
             const servicesGrid = document.getElementById('services-grid');
-            
             const servicePanelBtn = document.getElementById('service-panel-btn');
             const servicePanelBtnMobile = document.getElementById('service-panel-btn-mobile');
             
@@ -461,10 +455,7 @@
                 [servicePanelBtn, servicePanelBtnMobile].forEach(btn => {
                     btn.className = "bg-mac-dark hover:bg-black text-white shadow-lg w-full md:w-auto px-5 py-2.5 md:py-3.5 rounded-xl text-sm font-medium transition-transform hover:scale-105 flex items-center justify-center gap-2 btn-pop";
                     btn.innerHTML = `<i class="fas fa-file-signature text-lg"></i> Iniciar Evaluación`;
-                    btn.onclick = (e) => {
-                        e.preventDefault();
-                        openServiceModal(cleanServ);
-                    };
+                    btn.onclick = (e) => { e.preventDefault(); openServiceModal(cleanServ); };
                 });
             }
 
@@ -532,13 +523,11 @@
             createSidebarButtons(db.legal, navLegal);
             createSidebarButtons(db.tech, navTech);
             
-            // Mobile menu toggle logic
-            document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-                document.getElementById('mobile-menu').classList.toggle('hidden');
-            });
-            document.querySelectorAll('.mobile-link').forEach(link => {
-                link.addEventListener('click', () => document.getElementById('mobile-menu').classList.add('hidden'));
-            });
+            // Mobile menu
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
+            document.querySelectorAll('.mobile-link').forEach(link => { link.addEventListener('click', () => document.getElementById('mobile-menu').classList.add('hidden')); });
         });
     </script>
 </body>
