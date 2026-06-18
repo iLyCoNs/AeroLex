@@ -89,7 +89,6 @@
             <nav class="hidden md:flex space-x-2 bg-white/60 backdrop-blur-md border border-white/80 shadow-[0_10px_30px_rgba(0,0,0,0.05)] rounded-full px-4 py-2 mx-auto">
                 <a href="#inicio" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Inicio</a>
                 <a href="#servicios" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Core System</a>
-                <!-- Botón Estado de Causa Restaurado -->
                 <button onclick="openAIChat('ESTADO_CAUSA', 'Estado de Causa')" class="px-4 py-1.5 rounded-full text-[13px] font-bold text-mac-accent bg-mac-accent/10 hover:bg-mac-accent/20 transition-all flex items-center gap-2">
                     <i class="fas fa-search"></i> Estado de mi Caso
                 </button>
@@ -114,7 +113,7 @@
             
             <div id="ai-chat-log" class="flex-1 p-5 overflow-y-auto flex flex-col gap-4 bg-gray-50/50 hide-scrollbar scroll-smooth"></div>
             
-            <!-- Barra de Input Restaurada (Con estilo moderno) -->
+            <!-- Barra de Input -->
             <form id="ai-input-form" class="p-3 bg-white border-t border-gray-100 shrink-0 flex gap-2 shadow-[0_-10px_20px_rgba(0,0,0,0.02)] z-10">
                 <input type="text" id="ai-input" class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-[13px] focus:outline-none focus:border-mac-accent focus:ring-1 focus:ring-mac-accent transition" placeholder="O ingrese su código de caso (Ej: ALX-2026-01)..." autocomplete="off">
                 <button type="submit" id="ai-send-btn" class="w-12 h-12 bg-mac-dark text-white rounded-xl flex items-center justify-center shadow-md hover:bg-black transition-colors disabled:opacity-50" disabled>
@@ -124,7 +123,7 @@
         </div>
     </dialog>
 
-    <!-- HERO SECTION MODIFICADA (Eslogan Estratégico Apple-Style) -->
+    <!-- HERO SECTION MODIFICADA -->
     <section id="inicio" class="pt-36 pb-12 flex flex-col items-center text-center px-4 relative z-10">
         <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-mac-dark tracking-tight mb-6">
             Soluciones Jurídicas Estratégicas.<br>
@@ -135,7 +134,7 @@
         </p>
     </section>
 
-    <!-- CORE SYSTEM UI (Ventana macOS Restaurada) -->
+    <!-- CORE SYSTEM UI (Ventana macOS) -->
     <section id="servicios" class="max-w-7xl mx-auto px-4 pb-20 w-full relative z-10">
         <div class="glass-effect rounded-[1.5rem] shadow-mac-window overflow-hidden flex flex-col h-[750px] border border-white/60">
             
@@ -181,7 +180,7 @@
         const WHATSAPP_NUMBER = "56900000000"; // Reemplaza con el número real de AeroLex
 
         // =========================================================================================
-        // 1. BASE DE DATOS ESTRUCTURAL (95 SERVICIOS COMPLETOS)
+        // 1. BASE DE DATOS ESTRUCTURAL (Sin Evidencia Digital, Compliance con ícono nuevo, Inspección movida)
         // =========================================================================================
         const db = {
             legal: [
@@ -273,7 +272,7 @@
                 ]}
             ],
             tech: [
-                { id: 'cat_comp', title: 'Compliance y Empresas', icon: 'fa-shield-check', desc: 'Gerencia legal y prevención de riesgos.', items: [
+                { id: 'cat_comp', title: 'Compliance y Empresas', icon: 'fa-shield-halved', desc: 'Gerencia legal y prevención de riesgos.', items: [
                     { id: 'emp_gerencia', title: "Gerencia legal externa", desc: "Dirección jurídica externalizada." },
                     { id: 'emp_compliance', title: "Compliance corporativo", desc: "Políticas ética y cumplimiento." },
                     { id: 'emp_delito', title: "Modelos prevención delitos", desc: "Matrices Ley 20.393." },
@@ -288,16 +287,7 @@
                     { id: 'emp_cobro', title: "Cobranza corporativa", desc: "Recuperación cartera B2B." },
                     { id: 'emp_activo', title: "Regularización activos", desc: "Saneamiento industrial." }
                 ]},
-                { id: 'cat_evi', title: 'Evidencia Digital', icon: 'fa-microchip', desc: 'Análisis de datos electrónicos forenses.', items: [
-                    { id: 'evi_levanta', title: "Levantamiento evidencia", desc: "Recolección forense validada." },
-                    { id: 'evi_informe', title: "Informes jurídicos", desc: "Análisis técnico con metadatos." },
-                    { id: 'evi_inves', title: "Investigación jurídica", desc: "Búsqueda profunda (OSINT)." },
-                    { id: 'evi_custodia', title: "Custodia documental", desc: "Almacenamiento encriptado." },
-                    { id: 'evi_respaldo', title: "Respaldo probatorio litigios", desc: "Aseguramiento pruebas electrónicas." },
-                    { id: 'evi_analisis', title: "Análisis documental", desc: "Trazabilidad información digital." }
-                ]},
                 { id: 'cat_dro_insp', title: 'Drones: Inspección', icon: 'fa-drone', desc: 'Inspección visual aérea precisión 4K.', items: [
-                    { id: 'dro_predio', title: "Inspección de predios", desc: "Evaluación extensiones tierra." },
                     { id: 'dro_obra', title: "Inspección de obras", desc: "Revisión avances constructivos." },
                     { id: 'dro_indus', title: "Inspección industrial", desc: "Evaluación infraestructuras críticas." },
                     { id: 'dro_techo', title: "Inspección de techumbres", desc: "Fallas estructurales térmicas/visuales." },
@@ -305,6 +295,7 @@
                     { id: 'dro_monitoreo', title: "Monitoreo de proyectos", desc: "Registro periódico avances." }
                 ]},
                 { id: 'cat_dro_liti', title: 'Drones: Litigios', icon: 'fa-camera', desc: 'Captura audiovisual para tribunales.', items: [
+                    { id: 'dro_predio', title: "Inspección de predios", desc: "Evaluación para conflictos territoriales." },
                     { id: 'dro_audio', title: "Registro audiovisual", desc: "Video 4K georreferenciado." },
                     { id: 'dro_deslinde', title: "Verificación deslindes", desc: "Constatación aérea límites." },
                     { id: 'dro_conflicto', title: "Conflictos propiedad", desc: "Evidencia judicial usurpaciones." },
@@ -355,7 +346,7 @@
         };
 
         // =========================================================================================
-        // 3. MOTOR DE TRIAGE JEDI (95 ÁRBOLES ESPECÍFICOS)
+        // 3. MOTOR DE TRIAGE JEDI (Actualizado con Inspección de Predios)
         // =========================================================================================
         const flows = {
             // CIVIL
@@ -459,23 +450,16 @@
             emp_cobro: { q: "¿El portafolio de cobranza B2B que desea traspasarnos está respaldado por facturas con acuse de recibo del SII?", o: [{l:"Sí, facturas con mérito ejecutivo", n:"_urg"}, {l:"No, son cheques u otros documentos", n:"_docs"}] },
             emp_activo: { q: "¿La regularización de activos comprende propiedades industriales, flotas de vehículos o maquinaria pesada?", o: [{l:"Propiedades o Naves Industriales", n:"_docs"}, {l:"Vehículos, Flotas o Maquinaria", n:"_docs"}] },
 
-            // EVIDENCIA DIGITAL
-            evi_levanta: { q: "¿Qué tipo de soporte informático o plataforma contiene la evidencia a recolectar forensemente?", o: [{l:"Smartphone / Móvil (WhatsApp)", n:"_urg"}, {l:"Computador / Servidor empresarial", n:"_docs"}, {l:"Nube / Redes Sociales", n:"_urg"}] },
-            evi_informe: { q: "¿Ante qué tipo de tribunal chileno se presentará este informe pericial informático?", o: [{l:"Penal (Garantía / TOP / Fiscalía)", n:"_urg"}, {l:"Laboral, Civil o de Familia", n:"_docs"}] },
-            evi_inves: { q: "¿La investigación de fuentes abiertas (OSINT) está dirigida a perfilar e investigar personas naturales o sociedades corporativas?", o: [{l:"Personas naturales (Ej. deudores/estafadores)", n:"_docs"}, {l:"Sociedades comerciales/Holdings", n:"_docs"}] },
-            evi_custodia: { q: "¿Cuál es el volumen aproximado en Gigabytes de los datos que requiere resguardar en cadena de custodia legal?", o: [{l:"Bajo (Mensajes, correos aislados)", n:"_docs"}, {l:"Alto (Discos duros enteros, bases SQL)", n:"_docs"}] },
-            evi_respaldo: { q: "¿Requiere que la extracción digital esté acompañada por certificación de Notario Público para evitar impugnaciones en juicio?", o: [{l:"Sí, exijo certificación notarial presencial", n:"_docs"}, {l:"No, solo peritaje técnico informático", n:"_docs"}] },
-            evi_analisis: { q: "¿El análisis de los documentos electrónicos cruza normativas de protección de datos o vulneración de propiedad intelectual?", o: [{l:"Protección de Datos y Privacidad", n:"_docs"}, {l:"Propiedad Intelectual / Industrial", n:"_docs"}] },
-
             // DRONES: INSPECCIÓN
-            dro_predio: { q: "¿Cuántas hectáreas aproximadas posee el predio a inspeccionar y cómo es su accesibilidad topográfica?", o: [{l:"Menos de 10 ha (Relieve plano/urbano)", n:"_docs"}, {l:"Más de 10 ha (Rural, Boscoso o Quebradas)", n:"_docs"}] },
             dro_obra: { q: "¿La inspección aérea busca verificar el avance físico visual de la obra o realizar un modelado para control de cubicaciones?", o: [{l:"Verificación visual y registro fotográfico", n:"_docs"}, {l:"Cálculo de cubicaciones y modelado 3D", n:"_docs"}] },
             dro_indus: { q: "¿A qué sector productivo pertenece la infraestructura industrial crítica a inspeccionar?", o: [{l:"Minería, Fundición o Celulosa", n:"_docs"}, {l:"Energía (Parques Solares, Eólicos, Alta Tensión)", n:"_docs"}, {l:"Galpones, Centros Logísticos u otro", n:"_docs"}] },
             dro_techo: { q: "¿El objetivo técnico es detectar fallas térmicas invisibles (cámara termográfica) o daños estructurales visuales (cámara RGB 4K)?", o: [{l:"Inspección Termográfica (Humedad/Calor)", n:"_docs"}, {l:"Inspección Visual 4K de alta resolución", n:"_docs"}] },
             dro_camino: { q: "¿Cuántos kilómetros lineales de extensión aproximada tiene la ruta, canal o servidumbre a relevar con el dron?", o: [{l:"Menos de 5 km lineales", n:"_docs"}, {l:"Más de 5 km (Exige vuelo fuera línea de vista BVLOS)", n:"_docs"}] },
             dro_monitoreo: { q: "¿Con qué frecuencia temporal requiere programar los vuelos de barrido aéreo del proyecto?", o: [{l:"Alta frecuencia (Semanal)", n:"_docs"}, {l:"Frecuencia media (Quincenal / Mensual)", n:"_docs"}, {l:"Vuelo único por hito específico", n:"_docs"}] },
 
-            // DRONES: LITIGIOS
+            // DRONES: LITIGIOS (INCLUYE INSPECCIÓN DE PREDIOS ACTUALIZADA)
+            dro_predio: { q: "¿Esta inspección de predios se enmarca en un litigio por herencias o se trata de otras acciones posesorias (ej. usurpación)?", o: [{l:"Litigio por Herencias / Partición", n:"dro_predio_ext"}, {l:"Acciones Posesorias / Usurpación", n:"dro_predio_ext"}, {l:"Otro motivo / Preventivo", n:"dro_predio_ext"}] },
+            dro_predio_ext: { q: "Para organizar la logística del vuelo: ¿Cuántas hectáreas aproximadas posee el predio a inspeccionar y cómo es su topografía?", o: [{l:"Menos de 10 ha (Relieve plano/urbano)", n:"_docs"}, {l:"Más de 10 ha (Rural, Boscoso o Quebradas)", n:"_docs"}] },
             dro_audio: { q: "¿La prueba audiovisual capturada por el dron será presentada en un juicio civil, ambiental o penal?", o: [{l:"Civil (Dominio, daños, servidumbres)", n:"_urg"}, {l:"Ambiental, Penal o Municipal", n:"_urg"}] },
             dro_deslinde: { q: "¿Existe superposición de límites ya constatada por topografía tradicional o se basa en escrituras y cercos contrapuestos?", o: [{l:"Sí, topógrafo ya advirtió superposición de planos", n:"_docs"}, {l:"Problema de cerco físico movido recientemente", n:"_urg"}] },
             dro_conflicto: { q: "¿El conflicto territorial deriva de un cierre arbitrario de caminos/servidumbres o derechamente una usurpación de terreno?", o: [{l:"Cierre ilegal de caminos o paso de servidumbres", n:"_urg"}, {l:"Usurpación física de superficie de terreno", n:"_urg"}] },
