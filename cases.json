@@ -1,0 +1,27 @@
+{
+    "ALX-2026-01": {
+        "materia": "Compraventa Inmobiliaria",
+        "tribunal": "Conservador de Bienes Raíces - Puerto Montt",
+        "rit": "Carpeta Interna N° 4592-2026",
+        "detalle": "Inmueble: Los Notros 455, Puerto Montt. Documentos base validados.",
+        "estadoActual": 2,
+        "steps": [
+            { "title": "Recopilación de Antecedentes", "date": "01 Jun 2026", "done": true },
+            { "title": "Estudio de Títulos Aprobado", "date": "10 Jun 2026", "done": true },
+            { "title": "Inscripción en Conservador (CBR)", "date": "En trámite actual", "done": false },
+            { "title": "Entrega Copias Autorizadas a Cliente", "date": "Pendiente", "done": false }
+        ]
+    },
+    "ALX-2026-02": {
+        "materia": "Despido Injustificado",
+        "tribunal": "1° Juzgado de Letras del Trabajo",
+        "rit": "O-321-2026",
+        "detalle": "Audiencia preparatoria fijada. Testigos notificados.",
+        "estadoActual": 1,
+        "steps": [
+            { "title": "Ingreso Demanda", "date": "02 Ene 2026", "done": true },
+            { "title": "Audiencia Preparatoria", "date": "10 Feb 2026", "done": true },
+            { "title": "Audiencia de Juicio", "date": "05 Mar 2026", "done": false }
+        ]
+    }
+}
