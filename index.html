@@ -38,7 +38,11 @@
     </script>
 
     <style>
-        body { background-color: #F9FAFB; color: #1D1D1F; -webkit-font-smoothing: antialiased; }
+        body {
+            background-color: #F9FAFB;
+            color: #1D1D1F;
+            -webkit-font-smoothing: antialiased;
+        }
 
         /* SVG DRONE PARCHE */
         .fa-drone::before { content: "" !important; }
@@ -61,9 +65,15 @@
             filter: blur(40px);
         }
 
-        .glass-effect { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 1); }
+        /* Glassmorphism */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 1);
+        }
         .mac-header { background: transparent; }
-        .dock-nav { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.8); border-top: 1px solid rgba(255, 255, 255, 1); }
+        .dock-nav {
+            background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8); border-top: 1px solid rgba(255, 255, 255, 1);
+        }
 
         /* Badge 4K HDR */
         .badge-4k {
@@ -78,12 +88,13 @@
         /* Tarjetas de Servicio Internas (Widget Style) */
         .service-widget {
             background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255, 255, 255, 1); border-radius: 16px;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
             display: flex; flex-direction: column; padding: 1.25rem;
         }
         .service-widget:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 12px 24px rgba(0,0,0,0.06); background: #ffffff; }
 
-        /* Botón WhatsApp Flotante Aqua Glass */
+        /* Botón WhatsApp Flotante (Abre Modal Chatbot) */
         .whatsapp-fab {
             position: fixed; bottom: 30px; right: 30px; background: rgba(255, 255, 255, 0.6);
             color: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
@@ -116,7 +127,9 @@
         <div class="max-w-7xl mx-auto px-4 md:px-6">
             <div class="flex justify-between items-center">
                 <div class="flex-shrink-0 flex items-center gap-2.5">
-                    <div class="w-9 h-9 bg-mac-dark/90 backdrop-blur-md rounded-xl flex items-center justify-center text-white shadow-sm border border-white/20"><i class="fas fa-gavel text-sm"></i></div>
+                    <div class="w-9 h-9 bg-mac-dark/90 backdrop-blur-md rounded-xl flex items-center justify-center text-white shadow-sm border border-white/20">
+                        <i class="fas fa-gavel text-sm"></i>
+                    </div>
                     <a href="#" class="font-semibold text-xl tracking-tight text-mac-dark">AeroLex</a>
                 </div>
                 
@@ -131,7 +144,9 @@
                         <i class="fas fa-robot text-xs"></i> Consultor Virtual
                     </button>
                 </div>
-                <button id="mobile-menu-btn" class="md:hidden text-mac-dark p-2 focus:outline-none bg-white/70 rounded-full backdrop-blur-md border border-white/80"><i class="fas fa-bars text-lg"></i></button>
+                <button id="mobile-menu-btn" class="md:hidden text-mac-dark p-2 focus:outline-none bg-white/70 rounded-full backdrop-blur-md border border-white/80">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
             </div>
         </div>
 
@@ -164,9 +179,9 @@
                 <button id="close-modal" class="text-mac-dark/40 hover:text-mac-dark transition-colors"><i class="fas fa-times text-sm"></i></button>
             </div>
 
-            <div id="chat-box-log" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4 bg-white/30">
-                <div class="chat-bubble-bot p-4 max-w-[85%] text-xs md:text-sm font-light leading-relaxed shadow-sm">
-                    Bienvenido al portal de consulta automatizado de <strong>AeroLex</strong>. Por favor, seleccione una de las opciones preestablecidas abajo para analizar su requerimiento.
+            <div id="chat-box-log" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4 bg-black/5">
+                <div class="chat-bubble-bot p-4 max-w-[85%] text-[13px] md:text-sm font-light leading-relaxed shadow-sm">
+                    Bienvenido al sistema de atención técnica y jurídica de <strong>AeroLex</strong>. Por favor, seleccione una de las consultas preestablecidas abajo para ayudarle de inmediato.
                 </div>
             </div>
 
@@ -181,7 +196,9 @@
     <section id="inicio" class="pt-40 pb-12 md:pb-24 flex flex-col items-center justify-center text-center px-4 relative z-10 flex-grow">
         <h1 class="text-4xl md:text-7xl font-bold tracking-tight text-mac-dark mb-4 md:mb-6 max-w-4xl leading-tight fade-in">
             Evidencia Irrefutable.<br>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-mac-accent to-gray-500">Estrategia Legal de Élite.</span>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-mac-accent to-gray-500">
+                Estrategia Legal de Élite.
+            </span>
         </h1>
         <p class="text-base md:text-xl text-mac-dark/70 max-w-3xl font-light mb-12 leading-relaxed fade-in" style="animation-delay: 0.1s;">
             Integramos derecho corporativo, litigación avanzada y la <strong>fijación exacta de deslindes</strong> territoriales para blindar sus registros probatorios judiciales. Un ecosistema único impulsado en colaboración con <a href="https://australdrone.cl" target="_blank" class="font-semibold text-mac-dark hover:text-mac-accent transition-colors border-b border-mac-accent/30 pb-0.5">AUSTRALDRONE.CL</a>.
@@ -208,7 +225,7 @@
     </section>
 
     <section id="servicios" class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pb-20 relative z-10 w-full">
-        <div class="glass-effect rounded-3xl shadow-mac-window overflow-hidden border border-white flex flex-col h-[650px] md:h-[750px] fade-in" style="animation-delay: 0.3s;">
+        <div class="glass-effect rounded-3xl shadow-mac-window overflow-hidden border border-white flex flex-col h-[750px] md:h-[800px] fade-in" style="animation-delay: 0.3s;">
             
             <div class="h-12 md:h-14 bg-white/60 border-b border-black/5 flex items-center justify-between px-4 md:px-6 backdrop-blur-md shrink-0">
                 <div class="flex items-center gap-2 md:gap-3">
@@ -221,9 +238,9 @@
                 </div>
             </div>
 
-            <div class="flex flex-col md:flex-row flex-1 overflow-hidden h-full">
+            <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
                 <div class="w-full md:w-64 bg-white/40 border-b md:border-b-0 md:border-r border-black/5 p-3 md:p-4 shrink-0 backdrop-blur-sm z-10">
-                    <div class="flex md:flex-col overflow-x-auto hide-scrollbar gap-3 md:gap-0 pb-1 md:pb-0 h-full">
+                    <div class="flex md:flex-col overflow-x-auto hide-scrollbar gap-3 md:gap-0 pb-1 md:pb-0">
                         <div class="flex md:block flex-row md:flex-col shrink-0 gap-2 md:gap-0">
                             <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-wider mb-2 px-3 hidden md:block">Ecosistema Legal</p>
                             <nav id="sidebar-nav" class="flex md:block flex-row md:flex-col gap-2 md:gap-0 md:space-y-1"></nav>
@@ -236,7 +253,7 @@
                     </div>
                 </div>
 
-                <div class="flex-1 bg-white/60 p-5 md:p-8 overflow-y-auto relative h-full">
+                <div class="flex-1 bg-white/60 p-5 md:p-8 overflow-y-auto relative">
                     <div id="content-header" class="mb-6 md:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
                         <div>
                             <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-4 text-mac-accent shadow-sm border border-white">
@@ -252,9 +269,9 @@
                         </div>
                     </div>
 
-                    <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-20"></div>
+                    <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8 md:pb-12"></div>
                     
-                    <div class="md:hidden mt-2 pb-16">
+                    <div class="md:hidden mt-6 pb-8">
                         <button id="wa-panel-btn-mobile" class="w-full bg-mac-dark text-white px-5 py-3.5 rounded-xl text-sm font-medium shadow-md flex items-center justify-center gap-2">
                             <i class="fas fa-robot"></i> Consultar este servicio
                         </button>
@@ -290,7 +307,7 @@
             const chatBoxLog = document.getElementById('chat-box-log');
             const promptsContainer = document.getElementById('chatbot-prompts-container');
 
-            // Disparadores
+            // Disparadores del Chatbot
             const triggerHeader = document.getElementById('open-chat-header');
             const triggerMobile = document.getElementById('open-chat-mobile');
             const triggerGlobal = document.getElementById('wa-global-trigger');
@@ -412,11 +429,17 @@
             triggerGlobal.addEventListener('click', () => openChatbot(selectedCategoryKey));
             triggerPanel.addEventListener('click', () => openChatbot(selectedCategoryKey));
             triggerPanelMobile.addEventListener('click', () => openChatbot(selectedCategoryKey));
-            
             closeModalBtn.addEventListener('click', closeModal);
             intakeModal.addEventListener('click', (e) => { if(e.target === intakeModal) closeModal(); });
 
-            /* BASE DE DATOS DE SERVICIOS COMPLETA (Integrando TODA la lista del prompt) */
+            /* MENÚ MÓVIL HAMBURGUESA */
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+            mobileBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
+            mobileLinks.forEach(link => { link.addEventListener('click', () => { mobileMenu.classList.add('hidden'); }); });
+
+            /* BASE DE DATOS DE SERVICIOS (MASIVA Y COMPLETA) */
             const db = {
                 legal: [
                     { 
@@ -455,7 +478,7 @@
                             { title: "Cobranza empresarial", desc: "Gestión corporativa integral y recuperación agresiva de flujos comerciales." },
                             { title: "Due diligence", desc: "Auditoría legal preventiva para detectar contingencias antes de invertir." },
                             { title: "Gobierno corporativo", desc: "Implementación de políticas directivas para la toma de decisiones." },
-                            { title: "Asesoría permanente a empresas", desc: "Asesoría continua, evaluación de riesgos y regularización de activos corporativos." },
+                            { title: "Asesoría permanente a empresas", desc: "Asesoría continua, evaluación de riesgos y regularización de activos." },
                             { title: "Auditoría legal preventiva", desc: "Elaboración de informes legales estratégicos y estudios de títulos corporativos." }
                         ] 
                     },
@@ -479,7 +502,7 @@
                         items: [
                             { title: "Asesoría ambiental", desc: "Acompañamiento en el desarrollo de proyectos y evaluación de impacto." },
                             { title: "Cumplimiento normativo", desc: "Auditoría y adaptación a las exigencias legales ambientales vigentes." },
-                            { title: "Procedimientos sancionatorios", desc: "Defensa ante organismos fiscalizadores como la Superintendencia del Medio Ambiente." },
+                            { title: "Procedimientos sancionatorios", desc: "Defensa ante organismos fiscalizadores como la Superintendencia." },
                             { title: "Denuncias y Daño ambiental", desc: "Litigación y representación en controversias por daño al patrimonio ecológico." }
                         ] 
                     },
@@ -578,17 +601,16 @@
                     
                     servicesGrid.innerHTML = '';
                     
-                    // RENDERIZANDO LAS TARJETAS (WIDGETS PREMIUM)
                     dataObj.items.forEach((item, index) => {
                         const card = document.createElement('div');
                         card.className = 'service-widget fade-in';
                         card.style.animationDelay = `${index * 0.04}s`;
                         card.innerHTML = `
                             <div class="flex items-center gap-2 mb-2">
-                                <i class="fas fa-check-circle text-mac-accent/80 text-sm shrink-0"></i>
+                                <i class="fas fa-check-circle text-mac-accent/80 text-sm"></i>
                                 <h4 class="text-[13px] md:text-sm font-semibold text-mac-dark leading-tight">${format4K(item.title)}</h4>
                             </div>
-                            <p class="text-[12px] md:text-[13px] text-mac-dark/70 leading-relaxed font-light pl-6">${format4K(item.desc)}</p>
+                            <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light pl-6">${format4K(item.desc)}</p>
                         `;
                         servicesGrid.appendChild(card);
                     });
