@@ -94,14 +94,14 @@
         }
         .service-widget:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 12px 24px rgba(0,0,0,0.06); background: #ffffff; }
 
-        /* Botón WhatsApp Flotante */
+        /* Botón WhatsApp Flotante con efecto Aqua Glass */
         .whatsapp-fab {
-            position: fixed; bottom: 30px; right: 30px; background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-            color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 30px; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4), inset 0 2px 4px rgba(255,255,255,0.3);
-            z-index: 90; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(255,255,255,0.2); cursor: pointer;
+            position: fixed; bottom: 30px; right: 30px; background: rgba(255, 255, 255, 0.6);
+            color: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.08), inset 0 1px 2px rgba(255,255,255,1);
+            z-index: 90; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(255,255,255,1); backdrop-filter: blur(20px); cursor: pointer;
         }
-        .whatsapp-fab:hover { transform: scale(1.1) translateY(-5px); }
+        .whatsapp-fab:hover { transform: scale(1.1) translateY(-5px); color: #128C7E; }
 
         .fade-in { opacity: 0; animation: fadeInApple 0.5s ease-out forwards; }
         @keyframes fadeInApple { from { opacity: 0; transform: translateY(10px) scale(0.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
@@ -112,6 +112,14 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
+
+        /* Estilos Burbujas Chat */
+        .chat-bubble-bot {
+            background: rgba(235, 240, 245, 0.8); color: #1D1D1F; border-radius: 18px 18px 18px 4px; align-self: flex-start;
+        }
+        .chat-bubble-user {
+            background: #788C9F; color: white; border-radius: 18px 18px 4px 18px; align-self: flex-end;
+        }
     </style>
 </head>
 <body class="relative flex flex-col min-h-screen">
@@ -136,8 +144,8 @@
                 </nav>
                 
                 <div class="hidden md:flex">
-                    <button class="open-intake bg-whatsapp hover:bg-whatsapp-dark text-white px-5 py-2 rounded-full text-xs font-semibold transition-all shadow-md flex items-center gap-2">
-                        <i class="fab fa-whatsapp text-sm"></i> Asesoría Rápida
+                    <button id="open-chat-header" class="bg-mac-dark text-white hover:bg-black px-5 py-2 rounded-full text-xs font-semibold transition-all shadow-md flex items-center gap-2">
+                        <i class="fas fa-robot text-xs"></i> Consultor Virtual
                     </button>
                 </div>
                 <button id="mobile-menu-btn" class="md:hidden text-mac-dark p-2 focus:outline-none bg-white/70 rounded-full backdrop-blur-md border border-white/80">
@@ -151,32 +159,43 @@
                 <a href="#inicio" class="mobile-link text-base font-medium text-mac-dark/80 hover:text-mac-dark flex items-center gap-3"><i class="fas fa-home opacity-50 w-5"></i> Inicio</a>
                 <a href="#servicios" class="mobile-link text-base font-medium text-mac-dark/80 hover:text-mac-dark flex items-center gap-3"><i class="fas fa-balance-scale opacity-50 w-5"></i> Portafolio Legal</a>
                 <a href="#servicios" class="mobile-link text-base font-medium text-mac-dark/80 hover:text-mac-dark flex items-center gap-3"><i class="fas fa-drone opacity-50 w-5"></i> Evidencia & Drones</a>
-                <button class="open-intake mobile-link mt-4 text-center bg-whatsapp text-white py-3.5 rounded-2xl text-sm font-semibold shadow-lg flex items-center justify-center gap-2 w-full">
-                    <i class="fab fa-whatsapp text-lg"></i> Iniciar Flujo de Admisión
+                <button id="open-chat-mobile" class="mobile-link mt-4 text-center bg-mac-dark text-white py-3.5 rounded-2xl text-sm font-semibold shadow-lg flex items-center justify-center gap-2 w-full">
+                    <i class="fas fa-robot"></i> Abrir Consultor Virtual
                 </button>
             </div>
         </div>
     </header>
 
-    <button class="whatsapp-fab open-intake" aria-label="Abrir Flujo de Admisión"><i class="fab fa-whatsapp"></i></button>
+    <button class="whatsapp-fab" id="wa-global-trigger" aria-label="Abrir Asistente Virtual">
+        <i class="fab fa-whatsapp"></i>
+    </button>
 
-    <div id="intake-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-mac-dark/50 backdrop-blur-sm opacity-0 transition-opacity duration-300">
-        <div class="glass-effect p-8 md:p-10 rounded-3xl max-w-md w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col" id="intake-modal-content">
-            <div class="flex justify-between items-start mb-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-mac-dark text-white rounded-xl flex items-center justify-center"><i class="fas fa-concierge-bell"></i></div>
-                    <div><h3 class="text-lg font-bold text-mac-dark leading-tight">Admisión AeroLex</h3><p class="text-xs text-mac-dark/60 font-medium">Asesoría de Alto Nivel</p></div>
+    <div id="intake-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-mac-dark/40 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+        <div class="glass-effect rounded-3xl max-w-lg w-full mx-4 shadow-mac-window border border-white overflow-hidden flex flex-col h-[580px] transform scale-95 transition-transform duration-300" id="intake-modal-content">
+            
+            <div class="h-14 bg-white/40 border-b border-black/5 flex items-center justify-between px-6 shrink-0 backdrop-blur-md">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-2.5 h-2.5 rounded-full bg-[#FF5F56]"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-[#27C93F]"></div>
+                    <span class="text-xs font-semibold text-mac-dark/70 tracking-wide ml-2 flex items-center gap-1.5">
+                        <i class="fas fa-shield-alt text-mac-accent"></i> AeroLex Virtual Assistant
+                    </span>
                 </div>
-                <button id="close-modal" class="text-mac-dark/40 hover:text-mac-dark text-xl transition-colors"><i class="fas fa-times"></i></button>
+                <button id="close-modal" class="text-mac-dark/40 hover:text-mac-dark transition-colors"><i class="fas fa-times text-sm"></i></button>
             </div>
-            <p class="text-sm text-mac-dark/80 mb-6 font-light">Para derivar su caso al equipo especialista de manera confidencial, indique su área de requerimiento:</p>
-            <div class="flex flex-col gap-3">
-                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Derecho Privado y Patrimonio"><span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-file-signature w-6 opacity-60"></i> Derecho Privado & Patrimonio</span><i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i></button>
-                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Asesoría Corporativa y Empresa"><span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-building w-6 opacity-60"></i> Asesoría Corporativa & Empresa</span><i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i></button>
-                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Litigación de Alta Complejidad"><span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-gavel w-6 opacity-60"></i> Litigación & Defensa Judicial</span><i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i></button>
-                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Fijación de Deslindes, Drones y Evidencia"><span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-drone w-6 opacity-60"></i> Deslindes & Evidencia Visual</span><i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i></button>
+
+            <div id="chat-box-log" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4 bg-white/30">
+                <div class="chat-bubble-bot p-4 max-w-[85%] text-xs md:text-sm font-light leading-relaxed shadow-sm">
+                    Bienvenido al portal de consulta automatizado de <strong>AeroLex</strong>. Por favor, seleccione una de las opciones preestablecidas abajo para analizar su requerimiento técnico o legal de forma inmediata.
+                </div>
             </div>
-            <p class="text-[10px] text-mac-dark/40 mt-6 text-center"><i class="fas fa-lock"></i> Sus datos y requerimientos están protegidos por secreto profesional.</p>
+
+            <div class="p-4 bg-white/50 border-t border-black/5 shrink-0 flex flex-col gap-2">
+                <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-wider px-1">Consultas Sugeridas</p>
+                <div id="chatbot-prompts-container" class="flex flex-col gap-1.5 max-h-[160px] overflow-y-auto py-1">
+                    </div>
+            </div>
         </div>
     </div>
 
@@ -205,7 +224,7 @@
             <div class="bg-white/60 backdrop-blur-md border border-white p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default flex flex-col">
                 <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 text-mac-accent shadow-sm group-hover:scale-110 transition-transform duration-300"><i class="fas fa-drone text-sm"></i></div>
                 <h3 class="text-sm font-semibold text-mac-dark mb-2 tracking-wide">Deslindes & Prueba Judicial</h3>
-                <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light">Levantamiento FPV y fotogramétrico de precisión para fijar límites prediales, constatar ocupaciones y nutrir litigios con prueba inobjetable.</p>
+                <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light">Levantamiento FPV y fotogrametria de precisión para fijar límites prediales, constatar ocupaciones y nutrir litigios con prueba inobjetable.</p>
             </div>
         </div>
         <div class="mt-16 animate-bounce text-mac-dark/30 hidden md:block fade-in" style="animation-delay: 0.4s;"><i class="fas fa-chevron-down"></i></div>
@@ -250,18 +269,18 @@
                             <p id="content-desc" class="text-sm md:text-base text-mac-dark/70 mt-1 md:mt-2 font-light transition-all duration-300">Seleccione una categoría para ver los servicios.</p>
                         </div>
                         <div class="mt-4 md:mt-0 hidden md:block">
-                            <a href="#" id="wa-panel-btn" target="_blank" class="bg-whatsapp hover:bg-whatsapp-dark text-white px-5 py-2.5 rounded-xl text-sm font-medium shadow-md transition-all flex items-center gap-2">
-                                <i class="fab fa-whatsapp text-lg"></i> Consultar este servicio
-                            </a>
+                            <button id="wa-panel-btn" class="bg-mac-dark text-white hover:bg-black px-5 py-2.5 rounded-xl text-sm font-medium shadow-md transition-all flex items-center gap-2">
+                                <i class="fas fa-robot"></i> Consultar este servicio
+                            </button>
                         </div>
                     </div>
 
                     <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-20"></div>
                     
                     <div class="md:hidden mt-2 pb-16">
-                        <a href="#" id="wa-panel-btn-mobile" target="_blank" class="w-full bg-whatsapp text-white px-5 py-3.5 rounded-xl text-sm font-medium shadow-md flex items-center justify-center gap-2">
-                            <i class="fab fa-whatsapp text-lg"></i> Consultar este servicio
-                        </a>
+                        <button id="wa-panel-btn-mobile" class="w-full bg-mac-dark text-white px-5 py-3.5 rounded-xl text-sm font-medium shadow-md flex items-center justify-center gap-2">
+                            <i class="fas fa-robot"></i> Consultar este servicio
+                        </button>
                     </div>
                 </div>
             </div>
@@ -285,22 +304,71 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            const WHATSAPP_NUMBER = "56900000000"; 
-
-            // Modal Logic
+            // Elementos del Modal/Chatbot
             const intakeModal = document.getElementById('intake-modal');
             const intakeModalContent = document.getElementById('intake-modal-content');
             const closeModalBtn = document.getElementById('close-modal');
-            const openIntakeBtns = document.querySelectorAll('.open-intake');
-            const intakeOptions = document.querySelectorAll('.intake-option');
+            const chatBoxLog = document.getElementById('chat-box-log');
+            const promptsContainer = document.getElementById('chatbot-prompts-container');
 
-            function openModal(e) {
-                if(e) e.preventDefault();
+            // Selectores de disparadores del Chatbot
+            const triggerHeader = document.getElementById('open-chat-header');
+            const triggerMobile = document.getElementById('open-chat-mobile');
+            const triggerGlobal = document.getElementById('wa-global-trigger');
+            const triggerPanel = document.getElementById('wa-panel-btn');
+            const triggerPanelMobile = document.getElementById('wa-panel-btn-mobile');
+
+            // Control de categoría seleccionada actualmente en el Dashboard
+            let selectedCategoryKey = 'civil';
+
+            /* PREGUNTAS PREESTABLECIDAS DEL CONSULTOR VIRTUAL */
+            const chatPromptsDatabase = {
+                general: [
+                    { q: "¿Cómo agendo una reunión de evaluación técnica?", r: "Para agendar una cita de evaluación, nuestro equipo requiere conocer el pilar (Legal o Tecnológico). Podemos agendar vía remota por Teams/Zoom o presencial en nuestras oficinas de Ciudad Empresarial." },
+                    { q: "¿Cuál es el flujo de trabajo conjunto con AustralDrone?", r: "AustralDrone ejecuta el despliegue de hardware (Drones FPV, cámaras multiespectrales) y fotogrametría en terreno. Toda la información geoespacial procesada es entregada a nuestros abogados corporativos o litigantes para ser convertida en prueba legal líquida." }
+                ],
+                civil: [
+                    { q: "¿Cómo aseguran el equilibrio de las prestaciones en un contrato?", r: "Estructuramos cláusulas penales simétricas y realizamos un análisis dogmático preventivo, mitigando vicios redhibitorios, nulidades y riesgos de lesión enorme en contratos civiles complejos." },
+                    { q: "¿Qué vigencia o requisitos tiene una prescripción adquisitiva?", r: "Requiere la posesión material ininterrumpida y pacífica del inmueble. El plazo varía según si es posesión regular (5 años) o irregular (10 años), sustentada con un riguroso estudio de títulos y planos registrales." }
+                ],
+                inmobiliario: [
+                    { q: "¿En qué consiste el estudio de títulos integral?", r: "Analizamos la historia hipotecaria, registral y societaria de la propiedad por un periodo mínimo de 30 años, detectando gravámenes ocultos, prohibiciones o vicios en la cadena de dominio." },
+                    { q: "¿Cómo asisten en las subdivisiones prediales?", r: "Coordinamos el levantamiento cartográfico exacto de cabidas con AustralDrone y gestionamos la tramitación normativa completa ante las Direcciones de Obras Municipales (DOM) y el SAG." }
+                ],
+                comercial: [
+                    { q: "¿Qué ventajas ofrece la SpA frente a una S.A. tradicional?", r: "La Sociedad por Acciones (SpA) ofrece flexibilidad estatutaria total, permitiendo un objeto amplio, administración ágil y un ingreso simplificado de capitales sin los costos de junta de una S.A." },
+                    { q: "¿Cómo estructuran un Due Diligence empresarial?", r: "Ejecutamos una auditoría legal profunda sobre contingencias civiles, pasivos laborales latentes, cumplimiento de marcas y riesgos tributarios previos a fusiones o adquisiciones (M&A)." }
+                ],
+                laboral: [
+                    { q: "¿Cómo mitigar multas ante la Inspección del Trabajo?", r: "Implementamos auditorías laborales internas preventivas, actualizando contratos individuales, anexos, reglamentos de orden e higiene y protocolos de acoso laboral vigentes." }
+                ],
+                familia: [
+                    { q: "¿Cuál es el criterio para la compensación económica?", r: "Se evalúa el menoscabo económico sufrido por el cónyuge que se dedicó al cuidado de los hijos o del hogar, ponderando su duración, capacitación profesional y opciones laborales." }
+                ],
+                litigacion: [
+                    { q: "¿Qué urgencia tiene un Recurso de Protección?", r: "Es una acción constitucional de alta prioridad. Debe presentarse idealmente dentro del plazo perentorio de 30 días corridos desde que se ejecutó o conoció el acto arbitrario e ilegal que vulnera sus derechos fundamentales." }
+                ],
+                drones: [
+                    { q: "¿Cómo se implementa la fijación de deslindes territoriales?", r: "AustralDrone ejecuta un mapeo aéreo milimétrico mediante drones. Con la cartografía procesada, nuestros abogados contrastan linderos materiales físicos contra las escrituras del Conservador para resolver disputas de deslindes o usurpaciones." }
+                ],
+                fotogrametria: [
+                    { q: "¿Qué entregables técnicos generan para peritajes?", r: "Generamos Ortomosaicos georreferenciados de alta resolución, modelos topográficos 3D detallados y cálculos exactos de volumetría o cabidas útiles, válidos como prueba material líquida en tribunales." }
+                ],
+                digital: [
+                    { q: "¿Cómo garantizan la cadena de custodia electrónica?", r: "Efectuamos copias forenses bit a bit de metadatos, correos o archivos digitales. Toda la información es encriptada y sellada con marca de tiempo inalterable para evitar impugnaciones procesales." }
+                ]
+            };
+
+            // Abrir Chatbot
+            function openChatbot(contextKey = 'general') {
                 intakeModal.classList.remove('hidden');
                 setTimeout(() => {
                     intakeModal.classList.remove('opacity-0');
                     intakeModalContent.classList.remove('scale-95');
                 }, 10);
+
+                // Cargar preguntas preestablecidas específicas del contexto
+                loadChatbotPrompts(contextKey);
             }
 
             function closeModal() {
@@ -309,27 +377,65 @@
                 setTimeout(() => { intakeModal.classList.add('hidden'); }, 300);
             }
 
-            openIntakeBtns.forEach(btn => btn.addEventListener('click', openModal));
+            // Inyectar preguntas sugeridas dinámicas en el footer del chat
+            function loadChatbotPrompts(key) {
+                promptsContainer.innerHTML = '';
+                
+                // Mezclar las sugerencias generales de AeroLex con las específicas del área activa
+                const specificPrompts = chatPromptsDatabase[key] || [];
+                const combinedPrompts = [...chatPromptsDatabase.general, ...specificPrompts];
+
+                combinedPrompts.forEach(prompt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'w-full text-left px-4 py-2.5 rounded-xl bg-white/80 hover:bg-white text-xs text-mac-dark font-medium border border-black/5 shadow-sm transition-all truncate shrink-0';
+                    btn.textContent = prompt.q;
+                    
+                    btn.addEventListener('click', () => {
+                        handleUserSelection(prompt.q, prompt.r);
+                    });
+                    promptsContainer.appendChild(btn);
+                });
+            }
+
+            // Simular interacción de burbujas de diálogo
+            function handleUserSelection(question, response) {
+                // 1. Añadir burbuja del usuario
+                const userMsg = document.createElement('div');
+                userMsg.className = 'chat-bubble-user p-3.5 max-w-[85%] text-xs md:text-sm leading-relaxed shadow-sm fade-in';
+                userMsg.textContent = question;
+                chatBoxLog.appendChild(userMsg);
+                
+                chatBoxLog.scrollTop = chatBoxLog.scrollHeight;
+
+                // 2. Simular respuesta del Asistente con leve delay
+                setTimeout(() => {
+                    const botMsg = document.createElement('div');
+                    botMsg.className = 'chat-bubble-bot p-4 max-w-[85%] text-xs md:text-sm font-light leading-relaxed shadow-sm fade-in';
+                    botMsg.innerHTML = response;
+                    chatBoxLog.appendChild(botMsg);
+                    
+                    chatBoxLog.scrollTop = chatBoxLog.scrollHeight;
+                }, 400);
+            }
+
+            // Escuchadores de eventos para abrir el Chatbot corporativo
+            triggerHeader.addEventListener('click', () => openChatbot('general'));
+            triggerMobile.addEventListener('click', () => openChatbot('general'));
+            triggerGlobal.addEventListener('click', () => openChatbot(selectedCategoryKey));
+            triggerPanel.addEventListener('click', () => openChatbot(selectedCategoryKey));
+            triggerPanelMobile.addEventListener('click', () => openChatbot(selectedCategoryKey));
+            
             closeModalBtn.addEventListener('click', closeModal);
             intakeModal.addEventListener('click', (e) => { if(e.target === intakeModal) closeModal(); });
 
-            intakeOptions.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const area = e.currentTarget.getAttribute('data-area');
-                    const autoMessage = `Hola AeroLex, deseo coordinar una evaluación confidencial para el área de: *${area}*.`;
-                    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMessage)}`, '_blank');
-                    closeModal();
-                });
-            });
-
-            // Mobile Menu
+            /* Menú Móvil Hamburguesa */
             const mobileBtn = document.getElementById('mobile-menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
             const mobileLinks = document.querySelectorAll('.mobile-link');
             mobileBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
             mobileLinks.forEach(link => { link.addEventListener('click', () => { mobileMenu.classList.add('hidden'); }); });
 
-            /* BASE DE DATOS DE SERVICIOS PREMIUM */
+            /* BASE DE DATOS DE SERVICIOS */
             const db = {
                 legal: [
                     { 
@@ -404,7 +510,7 @@
                             { title: "Gerencia legal y Compliance", desc: "Dirección jurídica externalizada y modelos de prevención de delitos corporativos." },
                             { title: "Modelos de prevención", desc: "Diseño e implementación de matrices de riesgo penal exclusivas para personas jurídicas." },
                             { title: "Auditorías y Gestión", desc: "Evaluación exhaustiva de procesos internos para mitigar riesgos legales de la empresa." },
-                            { title: "Negociación extrajudicial", desc: "Acercamiento estratégico para la resolución de conflictos complejos sin escalamiento judicial." },
+                            { title: "Negociación extrajudicial", desc: "Acciones estratégicas para la resolución de conflictos complejos sin escalamiento judicial." },
                             { title: "Reestructuración de deudas", desc: "Asesoría integral en reorganización financiera y liquidación conforme a la Ley de Insolvencia." }
                         ] 
                     }
@@ -443,21 +549,11 @@
                 ]
             };
 
-            const navLegal = document.getElementById('sidebar-nav');
-            const navTech = document.getElementById('sidebar-nav-tech');
-            const contentTitle = document.getElementById('content-title');
-            const contentDesc = document.getElementById('content-desc');
-            const contentIcon = document.getElementById('content-icon');
-            const servicesGrid = document.getElementById('services-grid');
-            const waPanelBtn = document.getElementById('wa-panel-btn');
-            const waPanelBtnMobile = document.getElementById('wa-panel-btn-mobile');
-            
-            let currentActiveBtn = null;
-
             function format4K(text) { return text.replace('_4k', '<span class="badge-4k">4K HDR</span>'); }
-            function cleanTextForURL(text) { return text.replace('_4k', '4K HDR'); }
 
             function renderContent(dataObj, btnElement) {
+                selectedCategoryKey = dataObj.id; // Fijar categoría en foco
+                
                 if (currentActiveBtn) {
                     currentActiveBtn.classList.remove('active', 'text-white', 'bg-mac-accent');
                     currentActiveBtn.classList.add('text-mac-dark/70', 'hover:bg-black/5');
@@ -492,13 +588,6 @@
                     contentTitle.style.opacity = '1'; contentDesc.style.opacity = '1'; contentIcon.style.opacity = '1';
                     servicesGrid.style.opacity = '1';
                 }, 150);
-
-                const cleanTitle = cleanTextForURL(dataObj.title);
-                const autoMessage = `Hola AeroLex, me gustaría recibir más información directa sobre el servicio de: *${cleanTitle}*.`;
-                const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMessage)}`;
-                
-                waPanelBtn.href = waUrl;
-                waPanelBtnMobile.href = waUrl;
             }
 
             function createSidebarButtons(categoryArray, container) {
