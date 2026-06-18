@@ -41,12 +41,7 @@
 
         /* SVG DRONE PARCHE */
         .fa-drone::before { content: "" !important; }
-        .fa-drone {
-            display: inline-block; width: 1em; height: 1em; background-color: currentColor;
-            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z'/%3E%3Cpath d='m13.41 10.59 5.3-5.3'/%3E%3Cpath d='m10.59 13.41-5.3 5.3'/%3E%3Cpath d='m13.41 13.41 5.3 5.3'/%3E%3Cpath d='m10.59 10.59-5.3-5.3'/%3E%3Ccircle cx='19' cy='5' r='2'/%3E%3Ccircle cx='5' cy='19' r='2'/%3E%3Ccircle cx='19' cy='19' r='2'/%3E%3Ccircle cx='5' cy='5' r='2'/%3E%3C/svg%3E") no-repeat center / contain;
-            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z'/%3E%3Cpath d='m13.41 10.59 5.3-5.3'/%3E%3Cpath d='m10.59 13.41-5.3 5.3'/%3E%3Cpath d='m13.41 13.41 5.3 5.3'/%3E%3Cpath d='m10.59 10.59-5.3-5.3'/%3E%3Ccircle cx='19' cy='5' r='2'/%3E%3Ccircle cx='5' cy='19' r='2'/%3E%3Ccircle cx='19' cy='19' r='2'/%3E%3Ccircle cx='5' cy='5' r='2'/%3E%3C/svg%3E") no-repeat center / contain;
-            vertical-align: middle;
-        }
+        .fa-drone { display: inline-block; width: 1em; height: 1em; background-color: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z'/%3E%3Cpath d='m13.41 10.59 5.3-5.3'/%3E%3Cpath d='m10.59 13.41-5.3 5.3'/%3E%3Cpath d='m13.41 13.41 5.3 5.3'/%3E%3Cpath d='m10.59 10.59-5.3-5.3'/%3E%3Ccircle cx='19' cy='5' r='2'/%3E%3Ccircle cx='5' cy='19' r='2'/%3E%3Ccircle cx='19' cy='19' r='2'/%3E%3Ccircle cx='5' cy='5' r='2'/%3E%3C/svg%3E") no-repeat center / contain; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z'/%3E%3Cpath d='m13.41 10.59 5.3-5.3'/%3E%3Cpath d='m10.59 13.41-5.3 5.3'/%3E%3Cpath d='m13.41 13.41 5.3 5.3'/%3E%3Cpath d='m10.59 10.59-5.3-5.3'/%3E%3Ccircle cx='19' cy='5' r='2'/%3E%3Ccircle cx='5' cy='19' r='2'/%3E%3Ccircle cx='19' cy='19' r='2'/%3E%3Ccircle cx='5' cy='5' r='2'/%3E%3C/svg%3E") no-repeat center / contain; vertical-align: middle; }
 
         /* FONDO LUMINOSO */
         .bg-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; background-image: url('https://images.unsplash.com/photo-1505664194779-8beaceb93744?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; filter: grayscale(100%); opacity: 0.05; }
@@ -62,13 +57,36 @@
         .sidebar-item { transition: all 0.2s ease; }
         .sidebar-item.active { background: #788C9F; color: #ffffff; font-weight: 500; box-shadow: 0 2px 10px rgba(120, 140, 159, 0.3); }
 
-        /* WIDGETS SERVICIOS (AQUA CRISTAL) */
-        .service-widget { background: rgba(235, 248, 255, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 16px; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 4px 15px rgba(0, 100, 150, 0.05), inset 0 1px 2px rgba(255,255,255,0.8); display: flex; flex-direction: column; padding: 1.25rem; }
+        /* WIDGETS SERVICIOS (AQUA CRISTAL E INTERACTIVOS) */
+        .service-widget { 
+            background: rgba(235, 248, 255, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
+            border: 2px solid transparent; border-top: 1px solid rgba(255, 255, 255, 0.8); border-radius: 16px; 
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+            box-shadow: 0 4px 15px rgba(0, 100, 150, 0.05), inset 0 1px 2px rgba(255,255,255,0.8); 
+            display: flex; flex-direction: column; padding: 1.25rem; cursor: pointer; 
+        }
         .service-widget:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 12px 24px rgba(0, 100, 150, 0.1); background: rgba(240, 250, 255, 0.8); }
+        
+        /* Estado Activo del Widget */
+        .service-widget.widget-selected {
+            background: #ffffff;
+            border-color: #788C9F; /* Borde Accent Mac */
+            box-shadow: 0 10px 25px rgba(120, 140, 159, 0.25), inset 0 1px 2px rgba(255,255,255,1);
+            transform: scale(1.02);
+        }
+        .service-widget.widget-selected i { color: #788C9F; }
 
         /* FAB WHATSAPP (Transparente tipo PNG) */
         .whatsapp-fab { position: fixed; bottom: 30px; right: 30px; background: transparent; color: #25D366; font-size: 65px; display: flex; align-items: center; justify-content: center; z-index: 90; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease; cursor: pointer; filter: drop-shadow(0 6px 8px rgba(37, 211, 102, 0.3)); }
         .whatsapp-fab:hover { transform: scale(1.1) translateY(-5px); filter: drop-shadow(0 10px 15px rgba(37, 211, 102, 0.45)); color: #128C7E; }
+
+        /* BOTONES DE PANEL DESACTIVADOS/ACTIVADOS */
+        .btn-panel-disabled {
+            background: rgba(0,0,0,0.05); color: rgba(0,0,0,0.4); pointer-events: none; border: 1px dashed rgba(0,0,0,0.1);
+        }
+        /* Animación Pop al activar botón */
+        .btn-pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
         /* INPUTS DEL FORMULARIO DE ADMISIÓN */
         .mac-input { width: 100%; background: rgba(255,255,255,0.8); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; padding: 14px 16px; font-size: 14px; color: #1D1D1F; outline: none; transition: all 0.2s; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02); }
@@ -148,33 +166,12 @@
                 <div class="intake-step active" id="step-1">
                     <p class="text-sm text-mac-dark/80 mb-4 font-semibold">¿Qué tipo de asistencia requiere?</p>
                     <div class="grid grid-cols-2 gap-3">
-                        <label class="cursor-pointer relative">
-                            <input type="radio" name="tipo_req" value="Cotización de Proyecto" class="form-radio sr-only" required>
-                            <div class="p-4 rounded-xl border border-black/10 bg-white/50 hover:bg-white transition-all text-center h-full flex flex-col items-center justify-center gap-2">
-                                <i class="fas fa-file-invoice text-xl text-mac-dark/50"></i><span class="text-xs font-medium">Cotización<br>Proyecto</span>
-                            </div>
-                        </label>
-                        <label class="cursor-pointer relative">
-                            <input type="radio" name="tipo_req" value="Asesoría/Litigio" class="form-radio sr-only">
-                            <div class="p-4 rounded-xl border border-black/10 bg-white/50 hover:bg-white transition-all text-center h-full flex flex-col items-center justify-center gap-2">
-                                <i class="fas fa-balance-scale text-xl text-mac-dark/50"></i><span class="text-xs font-medium">Asesoría /<br>Litigio</span>
-                            </div>
-                        </label>
-                        <label class="cursor-pointer relative">
-                            <input type="radio" name="tipo_req" value="Consulta Gratuita" class="form-radio sr-only">
-                            <div class="p-4 rounded-xl border border-black/10 bg-white/50 hover:bg-white transition-all text-center h-full flex flex-col items-center justify-center gap-2">
-                                <i class="fas fa-comments text-xl text-mac-dark/50"></i><span class="text-xs font-medium">Consulta<br>Gratuita</span>
-                            </div>
-                        </label>
-                        <label class="cursor-pointer relative">
-                            <input type="radio" name="tipo_req" value="Levantamiento/Drones" class="form-radio sr-only">
-                            <div class="p-4 rounded-xl border border-black/10 bg-white/50 hover:bg-white transition-all text-center h-full flex flex-col items-center justify-center gap-2">
-                                <i class="fas fa-drone text-xl text-mac-dark/50"></i><span class="text-xs font-medium">Drones &<br>Deslindes</span>
-                            </div>
-                        </label>
+                        <label class="cursor-pointer relative"><input type="radio" name="tipo_req" value="Cotización de Proyecto" class="form-radio sr-only" required><div class="p-4 rounded-xl border border-black/10 bg-white/50 hover:bg-white transition-all text-center h-full flex flex-col items-center justify-center gap-2"><i class="fas fa-file-invoice text-xl text-mac-dark/50"></i><span class="text-xs font-medium">Cotización<br>Proyecto</span></div></label>
+                        <label class="cursor-pointer relative"><input type="radio" name="tipo_req" value="Asesoría/Litigio" class="form-radio sr-only"><div class="p-4 rounded-xl border border-black/10 bg-white/50 hover:bg-white transition-all text-center h-full flex flex-col items-center justify-center gap-2"><i class="fas fa-balance-scale text-xl text-mac-dark/50"></i><span class="text-xs font-medium">Asesoría /<br>Litigio</span></div></label>
+                        <label class="cursor-pointer relative"><input type="radio" name="tipo_req" value="Consulta Gratuita" class="form-radio sr-only"><div class="p-4 rounded-xl border border-black/10 bg-white/50 hover:bg-white transition-all text-center h-full flex flex-col items-center justify-center gap-2"><i class="fas fa-comments text-xl text-mac-dark/50"></i><span class="text-xs font-medium">Consulta<br>Gratuita</span></div></label>
+                        <label class="cursor-pointer relative"><input type="radio" name="tipo_req" value="Levantamiento/Drones" class="form-radio sr-only"><div class="p-4 rounded-xl border border-black/10 bg-white/50 hover:bg-white transition-all text-center h-full flex flex-col items-center justify-center gap-2"><i class="fas fa-drone text-xl text-mac-dark/50"></i><span class="text-xs font-medium">Drones &<br>Deslindes</span></div></label>
                     </div>
                 </div>
-
                 <div class="intake-step hidden" id="step-2">
                     <p class="text-sm text-mac-dark/80 mb-4 font-semibold">Seleccione el área de práctica:</p>
                     <div class="flex flex-col gap-2">
@@ -184,31 +181,22 @@
                         <label class="cursor-pointer"><input type="radio" name="area_req" value="Evidencia Tecnológica y Drones" class="form-radio sr-only"><div class="p-3 rounded-lg border border-black/10 bg-white/50 text-sm font-medium transition-colors">Evidencia Tecnológica y Drones 4K</div></label>
                     </div>
                 </div>
-
                 <div class="intake-step hidden" id="step-3">
                     <p class="text-sm text-mac-dark/80 mb-2 font-semibold">Detalles de su caso o proyecto:</p>
-                    <p class="text-[11px] text-mac-dark/50 mb-4 font-light">Describa brevemente la situación, ubicación (si aplica a terrenos) y su objetivo principal. Esta información está resguardada bajo secreto profesional.</p>
+                    <p class="text-[11px] text-mac-dark/50 mb-4 font-light">Describa brevemente la situación, ubicación (si aplica) y su objetivo principal.</p>
                     <textarea name="detalle_caso" rows="5" class="mac-input resize-none" placeholder="Ej: Necesito regularizar un predio en Puerto Varas..." required></textarea>
                 </div>
-
                 <div class="intake-step hidden" id="step-4">
                     <p class="text-sm text-mac-dark/80 mb-4 font-semibold">Datos de Contacto:</p>
                     <div class="space-y-3">
                         <input type="text" name="nombre" class="mac-input" placeholder="Nombre completo o Empresa" required>
-                        <div class="grid grid-cols-2 gap-3">
-                            <input type="text" name="rut" class="mac-input" placeholder="RUT (Ej: 12.345.678-9)" required>
-                            <input type="tel" name="telefono" class="mac-input" placeholder="Teléfono" required>
-                        </div>
+                        <div class="grid grid-cols-2 gap-3"><input type="text" name="rut" class="mac-input" placeholder="RUT (Ej: 12.345.678-9)" required><input type="tel" name="telefono" class="mac-input" placeholder="Teléfono" required></div>
                         <input type="email" name="email" class="mac-input" placeholder="Correo electrónico" required>
                     </div>
                 </div>
-
                 <div class="intake-step hidden text-center py-10" id="step-5">
-                    <div class="loader mx-auto mb-4"></div>
-                    <h3 class="text-lg font-bold text-mac-dark">Encriptando y enviando...</h3>
-                    <p class="text-sm text-mac-dark/50">Generando expediente interno.</p>
+                    <div class="loader mx-auto mb-4"></div><h3 class="text-lg font-bold text-mac-dark">Encriptando y enviando...</h3>
                 </div>
-
                 <div class="intake-step hidden text-center py-8" id="step-6">
                     <div class="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4 text-success"><i class="fas fa-check text-2xl"></i></div>
                     <h3 class="text-xl font-bold text-mac-dark mb-2">Expediente Recibido</h3>
@@ -276,27 +264,28 @@
                     </div>
                 </div>
 
-                <div class="flex-1 bg-white/60 p-5 md:p-8 overflow-y-auto relative">
-                    <div id="content-header" class="mb-6 md:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div class="flex-1 bg-white/60 p-5 md:p-8 overflow-y-auto relative flex flex-col">
+                    <div id="content-header" class="mb-6 md:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center shrink-0">
                         <div>
                             <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-4 text-mac-accent shadow-sm border border-white">
-                                <i id="content-icon" class="fas fa-balance-scale text-xl md:text-2xl"></i>
+                                <i id="content-icon" class="fas fa-balance-scale text-xl md:text-2xl transition-all duration-300"></i>
                             </div>
-                            <h2 id="content-title" class="text-2xl md:text-3xl font-semibold text-mac-dark tracking-tight flex items-center flex-wrap">Cargando...</h2>
-                            <p id="content-desc" class="text-sm md:text-base text-mac-dark/70 mt-1 md:mt-2 font-light">Seleccione una categoría para ver los servicios.</p>
+                            <h2 id="content-title" class="text-2xl md:text-3xl font-semibold text-mac-dark tracking-tight transition-all duration-300 flex items-center flex-wrap">Cargando...</h2>
+                            <p id="content-desc" class="text-sm md:text-base text-mac-dark/70 mt-1 md:mt-2 font-light transition-all duration-300">Seleccione una categoría para ver los servicios.</p>
                         </div>
+                        
                         <div class="mt-4 md:mt-0 hidden md:block">
-                            <a href="#" id="wa-panel-btn" target="_blank" class="bg-whatsapp hover:bg-whatsapp-dark text-white px-5 py-2.5 rounded-xl text-sm font-medium shadow-md transition-all flex items-center gap-2">
-                                <i class="fab fa-whatsapp text-lg"></i> Consultar este servicio
+                            <a href="#" id="wa-panel-btn" target="_blank" class="btn-panel-disabled px-5 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center gap-2">
+                                <i class="fas fa-hand-pointer text-lg"></i> Seleccione un ítem abajo
                             </a>
                         </div>
                     </div>
 
-                    <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8 md:pb-12"></div>
+                    <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4 flex-1 content-start"></div>
                     
-                    <div class="md:hidden mt-6 pb-8">
-                        <a href="#" id="wa-panel-btn-mobile" target="_blank" class="w-full bg-whatsapp text-white px-5 py-3.5 rounded-xl text-sm font-medium shadow-md flex items-center justify-center gap-2">
-                            <i class="fab fa-whatsapp text-lg"></i> Consultar este servicio
+                    <div class="md:hidden mt-4 pb-8 shrink-0">
+                        <a href="#" id="wa-panel-btn-mobile" target="_blank" class="btn-panel-disabled w-full px-5 py-3.5 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2">
+                            <i class="fas fa-hand-pointer text-lg"></i> Seleccione un ítem arriba
                         </a>
                     </div>
                 </div>
@@ -304,22 +293,7 @@
         </div>
     </section>
 
-    <section id="contacto" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 relative z-10 text-center fade-in" style="animation-delay: 0.4s;">
-        <div class="glass-effect p-10 md:p-14 rounded-3xl border border-white shadow-mac-window">
-            <div class="w-16 h-16 bg-mac-dark/5 rounded-full flex items-center justify-center mx-auto mb-6">
-                <i class="fas fa-concierge-bell text-3xl text-mac-dark"></i>
-            </div>
-            <h2 class="text-3xl md:text-4xl font-bold text-mac-dark mb-4 tracking-tight">Acceso Preferencial</h2>
-            <p class="text-mac-dark/70 mb-8 max-w-xl mx-auto font-light">
-                Inicie nuestro flujo automatizado para derivar su requerimiento jurídico o tecnológico al equipo correspondiente.
-            </p>
-            <button class="open-intake inline-flex items-center justify-center gap-3 bg-mac-dark hover:bg-black text-white text-base font-semibold px-8 py-4 rounded-full shadow-lg transition-transform hover:scale-105">
-                <i class="fas fa-filter"></i> Iniciar Flujo de Admisión
-            </button>
-        </div>
-    </section>
-
-    <footer class="border-t border-black/5 bg-white/50 backdrop-blur-md py-6 md:py-8 relative z-10">
+    <footer class="border-t border-black/5 bg-white/50 backdrop-blur-md py-6 md:py-8 relative z-10 mt-10">
         <div class="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-center text-xs text-mac-dark/50">
             <div class="flex items-center gap-2 mb-4 md:mb-0"><i class="fas fa-gavel text-mac-dark/40"></i><p>&copy; 2026 AeroLex Corp. Todos los derechos reservados.</p></div>
             <div class="flex space-x-6"><a href="#" class="hover:text-mac-dark transition-colors">Privacidad</a><a href="#" class="hover:text-mac-dark transition-colors">Condiciones</a></div>
@@ -331,12 +305,11 @@
 
             const WHATSAPP_NUMBER = "56900000000"; 
 
-            // 1. LÓGICA DEL ASISTENTE DE ADMISIÓN (WIZARD)
+            // 1. MODAL DE ADMISIÓN (HEADER Y FAB INFERIOR)
             const intakeModal = document.getElementById('intake-modal');
             const intakeModalContent = document.getElementById('intake-modal-content');
             const closeModalBtn = document.getElementById('close-modal');
             const openIntakeBtns = document.querySelectorAll('.open-intake');
-            
             const steps = document.querySelectorAll('.intake-step');
             const btnNext = document.getElementById('btn-next');
             const btnPrev = document.getElementById('btn-prev');
@@ -350,26 +323,15 @@
             function openModal(e) {
                 if(e) e.preventDefault();
                 intakeModal.classList.remove('hidden');
-                setTimeout(() => {
-                    intakeModal.classList.remove('opacity-0');
-                    intakeModalContent.classList.remove('scale-95');
-                }, 10);
+                setTimeout(() => { intakeModal.classList.remove('opacity-0'); intakeModalContent.classList.remove('scale-95'); }, 10);
             }
 
             function closeModal() {
-                intakeModal.classList.add('opacity-0');
-                intakeModalContent.classList.add('scale-95');
-                setTimeout(() => { 
-                    intakeModal.classList.add('hidden'); 
-                    resetForm();
-                }, 300);
+                intakeModal.classList.add('opacity-0'); intakeModalContent.classList.add('scale-95');
+                setTimeout(() => { intakeModal.classList.add('hidden'); resetForm(); }, 300);
             }
 
-            function resetForm() {
-                form.reset();
-                currentStep = 1;
-                updateSteps();
-            }
+            function resetForm() { form.reset(); currentStep = 1; updateSteps(); }
 
             function updateSteps() {
                 if(currentStep > 1) {
@@ -384,64 +346,30 @@
                             if(!input.value.trim()) valid = false;
                         }
                     });
-                    if(!valid) {
-                        currentStep--;
-                        alert("Por favor, complete los campos requeridos para continuar.");
-                        return;
-                    }
+                    if(!valid) { currentStep--; alert("Complete los campos para continuar."); return; }
                 }
 
                 steps.forEach((step, index) => {
                     if (index + 1 === currentStep) step.classList.remove('hidden');
                     else step.classList.add('hidden');
                 });
-
                 progressText.textContent = `Paso ${currentStep} de ${totalSteps}`;
 
-                if (currentStep === 1) {
-                    btnPrev.classList.add('hidden');
-                    btnNext.textContent = 'Siguiente';
-                    formControls.classList.remove('hidden');
-                } else if (currentStep > 1 && currentStep < totalSteps) {
-                    btnPrev.classList.remove('hidden');
-                    btnNext.textContent = 'Siguiente';
-                    formControls.classList.remove('hidden');
-                } else if (currentStep === totalSteps) {
-                    btnPrev.classList.remove('hidden');
-                    btnNext.textContent = 'Enviar a Mesa de Entrada';
-                    formControls.classList.remove('hidden');
-                } else if (currentStep > totalSteps) {
-                    formControls.classList.add('hidden');
-                    progressText.textContent = "Procesando...";
-                }
+                if (currentStep === 1) { btnPrev.classList.add('hidden'); btnNext.textContent = 'Siguiente'; formControls.classList.remove('hidden'); }
+                else if (currentStep > 1 && currentStep < totalSteps) { btnPrev.classList.remove('hidden'); btnNext.textContent = 'Siguiente'; formControls.classList.remove('hidden'); }
+                else if (currentStep === totalSteps) { btnPrev.classList.remove('hidden'); btnNext.textContent = 'Enviar a Mesa de Entrada'; formControls.classList.remove('hidden'); }
+                else if (currentStep > totalSteps) { formControls.classList.add('hidden'); progressText.textContent = "Procesando..."; }
             }
 
             btnNext.addEventListener('click', () => {
                 if (currentStep === totalSteps) {
-                    currentStep++;
-                    updateSteps();
-                    enviarDatosAlServidor(); 
-                } else {
-                    currentStep++;
-                    updateSteps();
-                }
+                    currentStep++; updateSteps();
+                    // Simulación envío
+                    setTimeout(() => { currentStep = 6; progressText.textContent = "Completado"; updateSteps(); }, 2000);
+                } else { currentStep++; updateSteps(); }
             });
 
             btnPrev.addEventListener('click', () => { if (currentStep > 1) { currentStep--; updateSteps(); } });
-
-            function enviarDatosAlServidor() {
-                const formData = new FormData(form);
-                const data = Object.fromEntries(formData.entries());
-                
-                // NOTA: Para envío real, usa fetch() con Formspree/Make aquí.
-                
-                setTimeout(() => {
-                    currentStep = 6; 
-                    progressText.textContent = "Completado";
-                    updateSteps();
-                }, 2000);
-            }
-
             document.querySelector('.close-success').addEventListener('click', closeModal);
             openIntakeBtns.forEach(btn => btn.addEventListener('click', openModal));
             closeModalBtn.addEventListener('click', closeModal);
@@ -453,83 +381,83 @@
             mobileBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
             document.querySelectorAll('.mobile-link').forEach(link => { link.addEventListener('click', () => { mobileMenu.classList.add('hidden'); }); });
 
-            // 3. BASE DE DATOS DE SERVICIOS
+            // 3. BASE DE DATOS Y PANEL INTERACTIVO
             const db = {
                 legal: [
                     { 
                         id: 'civil', title: 'Derecho Civil', icon: 'fa-file-signature', desc: 'Gestión y estructuración del patrimonio privado con rigor técnico.', 
                         items: [
-                            { title: "Redacción y revisión de contratos", desc: "Aplicación rigurosa de la teoría del acto jurídico para resguardar la voluntad y el equilibrio contractual." },
-                            { title: "Cobranza judicial y extrajudicial", desc: "Estrategias de recuperación de activos mediante acciones ejecutivas y ordinarias con alta eficacia." },
-                            { title: "Juicios ordinarios y ejecutivos", desc: "Litigación patrimonial especializada, asegurando el debido proceso y la ejecución inobjetable de sentencias." },
-                            { title: "Responsabilidad contractual", desc: "Análisis dogmático de incumplimientos, cláusulas penales y resguardo ante lesión enorme u otros vicios." },
-                            { title: "Indemnización de perjuicios", desc: "Persecución de responsabilidad civil contractual y extracontractual para la reparación integral del daño." },
-                            { title: "Prescripción adquisitiva", desc: "Consolidación del dominio mediante la comprobación judicial de la posesión material ininterrumpida." },
-                            { title: "Servidumbres", desc: "Constitución, defensa y extinción de gravámenes reales sobre predios sirvientes de forma estratégica." },
-                            { title: "Acciones posesorias", desc: "Protección cautelar rápida y efectiva frente a turbaciones o despojos de la posesión de inmuebles." }
+                            { title: "Redacción y revisión de contratos", desc: "Aplicación rigurosa de la teoría del acto jurídico para resguardar el equilibrio contractual." },
+                            { title: "Cobranza judicial y extrajudicial", desc: "Estrategias de recuperación de activos mediante acciones ejecutivas con alta eficacia." },
+                            { title: "Juicios ordinarios y ejecutivos", desc: "Litigación especializada, asegurando el debido proceso y ejecución de sentencias." },
+                            { title: "Responsabilidad contractual", desc: "Análisis dogmático de incumplimientos y resguardo ante lesión enorme." },
+                            { title: "Indemnización de perjuicios", desc: "Persecución de responsabilidad civil para la reparación integral del daño." },
+                            { title: "Prescripción adquisitiva", desc: "Consolidación del dominio mediante la comprobación judicial de posesión." },
+                            { title: "Servidumbres", desc: "Constitución, defensa y extinción de gravámenes reales estratégicamente." },
+                            { title: "Acciones posesorias", desc: "Protección cautelar rápida y efectiva frente a turbaciones de inmuebles." }
                         ] 
                     },
                     { 
                         id: 'inmobiliario', title: 'Derecho Inmobiliario', icon: 'fa-city', desc: 'Seguridad jurídica integral para el desarrollo de proyectos y bienes raíces.', 
                         items: [
-                            { title: "Estudios de títulos", desc: "Revisión exhaustiva de la cadena de dominio y registros conservatorios para garantizar transacciones blindadas." },
-                            { title: "Compraventa de inmuebles", desc: "Asesoría integral desde la promesa hasta la inscripción, previniendo vicios redhibitorios y saneando reparos." },
-                            { title: "Regularización de propiedades", desc: "Saneamiento de la pequeña propiedad raíz y gestión experta de títulos de dominio irregulares." },
-                            { title: "Saneamiento de títulos", desc: "Corrección estratégica de vicios formales y materiales en inscripciones de dominio conservatorias." },
-                            { title: "Subdivisiones prediales", desc: "Gestión técnico-legal para la división de terrenos cumpliendo con la planimetría y normativa urbanística." },
-                            { title: "Constitución de servidumbres", desc: "Formalización de tránsitos, acueductos y vistas cruzando precisión topográfica y legal." },
-                            { title: "Asesoría inmobiliaria", desc: "Consultoría de alto nivel para el desarrollo, financiamiento y ejecución segura de proyectos inmobiliarios." }
+                            { title: "Estudios de títulos", desc: "Revisión exhaustiva de la cadena de dominio para transacciones blindadas." },
+                            { title: "Compraventa de inmuebles", desc: "Asesoría integral previniendo vicios redhibitorios y saneando reparos." },
+                            { title: "Regularización de propiedades", desc: "Saneamiento de la pequeña propiedad y gestión de títulos irregulares." },
+                            { title: "Saneamiento de títulos", desc: "Corrección estratégica de vicios formales en inscripciones de dominio." },
+                            { title: "Subdivisiones prediales", desc: "Gestión técnico-legal cumpliendo con planimetría y normativa urbanística." },
+                            { title: "Constitución de servidumbres", desc: "Formalización cruzando precisión topográfica y legal." },
+                            { title: "Asesoría inmobiliaria", desc: "Consultoría de alto nivel para el desarrollo y ejecución de proyectos." }
                         ] 
                     },
                     { 
                         id: 'comercial', title: 'Comercial y Corporativo', icon: 'fa-briefcase', desc: 'Estructuración societaria y protección legal para el crecimiento empresarial.', 
                         items: [
-                            { title: "Constitución de sociedades", desc: "Estructuración de vehículos societarios (SpA, Ltda., SA) adaptados al riesgo y necesidad de capital." },
-                            { title: "Fusiones y adquisiciones", desc: "Acompañamiento corporativo integral en la compraventa de empresas y procesos complejos de M&A." },
-                            { title: "Pactos de accionistas", desc: "Regulación de gobiernos corporativos, opciones de salida y prevención estratégica de bloqueos." },
-                            { title: "Due diligence", desc: "Auditoría legal preventiva para detectar contingencias laborales, tributarias y civiles antes de invertir." },
-                            { title: "Modificaciones societarias", desc: "Transformaciones, divisiones y aumentos de capital con estricto apego a los estatutos comerciales." },
-                            { title: "Contratos comerciales", desc: "Redacción meticulosa de acuerdos de distribución, franquicias, leasing y joint ventures empresariales." },
-                            { title: "Cobranza empresarial", desc: "Gestión corporativa integral de carteras castigadas y recuperación agresiva de flujos comerciales." },
-                            { title: "Gobierno corporativo", desc: "Implementación de políticas directivas sólidas para la toma de decisiones transparente y segura." }
+                            { title: "Constitución de sociedades", desc: "Estructuración de vehículos (SpA, Ltda, SA) adaptados al riesgo." },
+                            { title: "Fusiones y adquisiciones", desc: "Acompañamiento corporativo en procesos complejos de M&A." },
+                            { title: "Pactos de accionistas", desc: "Regulación de gobiernos corporativos y prevención de bloqueos." },
+                            { title: "Due diligence", desc: "Auditoría legal preventiva para detectar contingencias antes de invertir." },
+                            { title: "Modificaciones societarias", desc: "Transformaciones y divisiones con apego a los estatutos comerciales." },
+                            { title: "Contratos comerciales", desc: "Redacción de acuerdos de distribución, franquicias y joint ventures." },
+                            { title: "Cobranza empresarial", desc: "Gestión corporativa de carteras castigadas y flujos comerciales." },
+                            { title: "Gobierno corporativo", desc: "Políticas directivas para toma de decisiones transparente." }
                         ] 
                     },
                     { 
                         id: 'laboral', title: 'Laboral y Administrativo', icon: 'fa-users-cog', desc: 'Cumplimiento normativo patronal y relación con organismos del Estado.', 
                         items: [
-                            { title: "Asesoría a empleadores", desc: "Consultoría preventiva en contratación, reglamentos internos y cumplimiento estricto ante la DT." },
-                            { title: "Defensa laboral y Despidos", desc: "Representación patronal estratégica en juicios por despido injustificado y demandas de cobro." },
-                            { title: "Tutela laboral y Accidentes", desc: "Defensa especializada ante vulneración de derechos fundamentales y siniestralidad laboral grave." },
-                            { title: "Auditorías y Negociación", desc: "Revisión de cumplimiento normativo y manejo directivo en negociaciones colectivas sindicales." },
-                            { title: "Recursos y Procedimientos", desc: "Defensa administrativa y judicial frente a multas, clausuras y resoluciones fiscalizadoras del Estado." },
-                            { title: "Licitaciones y Compras", desc: "Asesoría técnica en bases de licitación, procesos de adjudicación y contratos públicos." },
-                            { title: "Reclamos ante organismos", desc: "Representación formal ante Contraloría, Superintendencias y diversas Municipalidades del país." },
-                            { title: "Solicitudes de transparencia", desc: "Gestión de acceso a la información pública y acciones de amparo ante el Consejo para la Transparencia." }
+                            { title: "Asesoría a empleadores", desc: "Consultoría preventiva en contratación y cumplimiento ante la DT." },
+                            { title: "Defensa laboral y Despidos", desc: "Representación estratégica en juicios por despido injustificado." },
+                            { title: "Tutela laboral y Accidentes", desc: "Defensa ante vulneración de derechos y siniestralidad grave." },
+                            { title: "Auditorías y Negociación", desc: "Revisión de normativas y manejo en negociaciones colectivas." },
+                            { title: "Recursos y Procedimientos", desc: "Defensa frente a multas, clausuras y resoluciones del Estado." },
+                            { title: "Licitaciones y Compras", desc: "Asesoría técnica en bases de licitación y contratos públicos." },
+                            { title: "Reclamos ante organismos", desc: "Representación ante Contraloría, Superintendencias y Municipios." },
+                            { title: "Solicitudes de transparencia", desc: "Acciones de amparo ante el Consejo para la Transparencia." }
                         ] 
                     },
                     { 
                         id: 'familia', title: 'Familia y Sucesorio', icon: 'fa-home', desc: 'Soluciones legales discretas y efectivas para la vida personal y hereditaria.', 
                         items: [
-                            { title: "Divorcios y Compensación", desc: "Tramitación de divorcios y blindaje patrimonial estratégico ante demandas de compensación económica." },
-                            { title: "Alimentos y Cuidado", desc: "Fijación y mediación técnica de pensiones alimenticias, enfocados en el resguardo de menores." },
-                            { title: "Relación directa y regular", desc: "Establecimiento de regímenes de visitas justos que protejan primordialmente el interés superior." },
-                            { title: "Posesiones efectivas", desc: "Tramitación notarial y judicial impecable para la correcta transmisión del patrimonio del causante." },
-                            { title: "Particiones y Testamentos", desc: "Redacción de voluntades testamentarias y litigación experta en juicios de comunidades hereditarias." },
-                            { title: "Litigios hereditarios", desc: "Acciones de petición de herencia, reforma de testamento y protección de asignaciones forzosas." },
-                            { title: "Violencia intrafamiliar", desc: "Gestión de medidas cautelares y representación en tribunales de familia con absoluta confidencialidad." }
+                            { title: "Divorcios y Compensación", desc: "Blindaje patrimonial estratégico ante demandas de compensación." },
+                            { title: "Alimentos y Cuidado", desc: "Fijación técnica de pensiones, resguardando a los menores." },
+                            { title: "Relación directa y regular", desc: "Establecimiento de regímenes de visitas justos y seguros." },
+                            { title: "Posesiones efectivas", desc: "Tramitación impecable para transmisión del patrimonio del causante." },
+                            { title: "Particiones y Testamentos", desc: "Litigación experta en juicios de comunidades hereditarias." },
+                            { title: "Litigios hereditarios", desc: "Petición de herencia y protección de asignaciones forzosas." },
+                            { title: "Violencia intrafamiliar", desc: "Representación en tribunales con absoluta confidencialidad." }
                         ] 
                     },
                     { 
                         id: 'litigacion', title: 'Litigación y Compliance', icon: 'fa-gavel', desc: 'Defensa estratégica ante tribunales y prevención de riesgos corporativos.', 
                         items: [
-                            { title: "Representación ante tribunales", desc: "Patrocinio experto y representación estratégica en todas las instancias y tribunales del país." },
-                            { title: "Juicios civiles y ejecutivos", desc: "Defensa patrimonial de alta intensidad en juicios de lato conocimiento y procedimientos de apremio." },
-                            { title: "Recursos de protección", desc: "Acciones constitucionales urgentes para restablecer el imperio del derecho ante actos arbitrarios." },
-                            { title: "Gerencia legal y Compliance", desc: "Dirección jurídica externalizada y modelos de prevención de delitos corporativos (Ley 20.393)." },
-                            { title: "Modelos de prevención", desc: "Diseño e implementación de matrices de riesgo penal exclusivas para personas jurídicas." },
-                            { title: "Auditorías y Gestión", desc: "Evaluación exhaustiva de procesos internos para mitigar riesgos legales y operacionales de la empresa." },
-                            { title: "Negociación extrajudicial", desc: "Acercamiento estratégico para la resolución de conflictos complejos sin escalamiento judicial." },
-                            { title: "Reestructuración de deudas", desc: "Asesoría integral en reorganización financiera y liquidación conforme a la Ley de Insolvencia." }
+                            { title: "Representación ante tribunales", desc: "Patrocinio experto en todas las instancias del país." },
+                            { title: "Juicios civiles y ejecutivos", desc: "Defensa patrimonial de alta intensidad en procedimientos." },
+                            { title: "Recursos de protección", desc: "Acciones urgentes para restablecer el imperio del derecho." },
+                            { title: "Gerencia legal y Compliance", desc: "Dirección jurídica y prevención de delitos (Ley 20.393)." },
+                            { title: "Modelos de prevención", desc: "Matrices de riesgo penal exclusivas para personas jurídicas." },
+                            { title: "Auditorías y Gestión", desc: "Evaluación para mitigar riesgos legales y operacionales." },
+                            { title: "Negociación extrajudicial", desc: "Resolución de conflictos complejos sin escalamiento judicial." },
+                            { title: "Reestructuración de deudas", desc: "Asesoría integral en reorganización y Ley de Insolvencia." }
                         ] 
                     }
                 ],
@@ -537,31 +465,31 @@
                     { 
                         id: 'drones', title: 'Inspección Aérea _4k', icon: 'fa-drone', desc: 'Operaciones de alta precisión en colaboración con AustralDrone.', 
                         items: [
-                            { title: "Fijación de deslindes _4k", desc: "Levantamiento aéreo milimétrico para constatar linderos, cercos y resolver conflictos de superposición." },
-                            { title: "Inspección FPV industrial", desc: "Vuelos técnicos de precisión para revisar techumbres, infraestructura mayor y zonas de alto riesgo." },
-                            { title: "Prueba visual judicial", desc: "Captura de evidencia material certificada y georreferenciada para nutrir litigios de usurpación o daños." },
-                            { title: "Monitoreo de proyectos", desc: "Seguimiento periódico de obras civiles con material visual inobjetable para el control de avance." },
-                            { title: "Videos Corporativos _4k", desc: "Producción audiovisual inmersiva de alta gama para proyectos inmobiliarios y comerciales." }
+                            { title: "Fijación de deslindes _4k", desc: "Levantamiento aéreo milimétrico para resolver conflictos de límites." },
+                            { title: "Inspección FPV industrial", desc: "Vuelos técnicos para revisar infraestructura mayor y alto riesgo." },
+                            { title: "Prueba visual judicial", desc: "Captura de evidencia georreferenciada para nutrir litigios." },
+                            { title: "Monitoreo de proyectos", desc: "Seguimiento periódico de obras civiles con material inobjetable." },
+                            { title: "Videos Corporativos _4k", desc: "Producción audiovisual inmersiva para proyectos inmobiliarios." }
                         ] 
                     },
                     { 
                         id: 'fotogrametria', title: 'Fotogrametría', icon: 'fa-layer-group', desc: 'Topografía digital de precisión milimétrica.', 
                         items: [
-                            { title: "Ortomosaicos de resolución _4k", desc: "Mapeo topográfico avanzado uniendo cientos de fotografías aéreas para crear planos ultra detallados." },
-                            { title: "Cálculo exacto de superficies", desc: "Determinación de cabidas reales mediante software de vanguardia, contrastando con información del SII." },
-                            { title: "Modelos 3D para peritajes", desc: "Reconstrucción digital topográfica del terreno, fundamental para informes técnicos y peritajes judiciales." },
-                            { title: "Mapeo para servidumbres", desc: "Planificación visual técnica de trazados para servidumbres de tránsito, acueducto o instalaciones eléctricas." },
-                            { title: "Informes documentados", desc: "Entregables técnicos firmados que combinan la rigurosidad legal probatoria con la data espacial exacta." }
+                            { title: "Ortomosaicos de resolución _4k", desc: "Mapeo avanzado uniendo fotografías para planos detallados." },
+                            { title: "Cálculo exacto de superficies", desc: "Determinación de cabidas reales mediante software de vanguardia." },
+                            { title: "Modelos 3D para peritajes", desc: "Reconstrucción digital para informes técnicos judiciales." },
+                            { title: "Mapeo para servidumbres", desc: "Planificación visual para servidumbres de tránsito o acueducto." },
+                            { title: "Informes documentados", desc: "Entregables técnicos combinando rigor legal y data espacial." }
                         ] 
                     },
                     { 
                         id: 'digital', title: 'Evidencia Digital', icon: 'fa-shield-alt', desc: 'Protección de datos y levantamiento de información corporativa.', 
                         items: [
-                            { title: "Levantamiento de evidencia", desc: "Recolección forense de datos electrónicos y digitales asegurando la impecabilidad de la cadena de custodia." },
-                            { title: "Protección de datos", desc: "Adecuación corporativa integral a las normativas vigentes de privacidad y tratamiento de información." },
-                            { title: "Informes especializados", desc: "Análisis técnico cruzado entre regulaciones complejas, leyes sustantivas y metadatos digitales." },
-                            { title: "Investigación y Análisis", desc: "Búsqueda profunda y estructurada de antecedentes registrales, comerciales y huellas digitales." },
-                            { title: "Custodia en la nube", desc: "Almacenamiento encriptado de expedientes, contratos y pruebas en servidores de máxima seguridad." }
+                            { title: "Levantamiento de evidencia", desc: "Recolección forense asegurando cadena de custodia." },
+                            { title: "Protección de datos", desc: "Adecuación corporativa a normativas vigentes de privacidad." },
+                            { title: "Informes especializados", desc: "Análisis cruzado entre regulaciones y metadatos digitales." },
+                            { title: "Investigación y Análisis", desc: "Búsqueda profunda de antecedentes registrales y comerciales." },
+                            { title: "Custodia en la nube", desc: "Almacenamiento encriptado de expedientes de máxima seguridad." }
                         ] 
                     }
                 ]
@@ -573,22 +501,52 @@
             const contentDesc = document.getElementById('content-desc');
             const contentIcon = document.getElementById('content-icon');
             const servicesGrid = document.getElementById('services-grid');
+            
+            // Botones WhatsApp del Panel
             const waPanelBtn = document.getElementById('wa-panel-btn');
             const waPanelBtnMobile = document.getElementById('wa-panel-btn-mobile');
             
-            let currentActiveBtn = null;
+            let currentActiveCategoryBtn = null;
 
             function format4K(text) { return text.replace('_4k', '<span class="badge-4k">4K HDR</span>'); }
-            function cleanTextForURL(text) { return text.replace('_4k', ''); }
+            function cleanTextForURL(text) { return text.replace('_4k', '').trim(); }
+
+            // Resetea los botones de WhatsApp al estado deshabilitado
+            function disableWhatsAppButtons() {
+                [waPanelBtn, waPanelBtnMobile].forEach(btn => {
+                    btn.className = "btn-panel-disabled w-full md:w-auto px-5 py-2.5 md:py-3.5 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2";
+                    btn.innerHTML = `<i class="fas fa-hand-pointer text-lg"></i> Seleccione un ítem abajo`;
+                    btn.removeAttribute('href');
+                    btn.classList.remove('btn-pop');
+                });
+                waPanelBtnMobile.innerHTML = `<i class="fas fa-hand-pointer text-lg"></i> Seleccione un ítem arriba`;
+            }
+
+            // Activa los botones de WhatsApp con el servicio seleccionado
+            function enableWhatsAppButtons(categoryTitle, serviceTitle) {
+                const cleanCat = cleanTextForURL(categoryTitle);
+                const cleanServ = cleanTextForURL(serviceTitle);
+                const autoMessage = `Hola AeroLex, solicito asesoría en el área de ${cleanCat}, específicamente para el servicio de: *${cleanServ}*.`;
+                const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMessage)}`;
+
+                [waPanelBtn, waPanelBtnMobile].forEach(btn => {
+                    btn.className = "bg-whatsapp hover:bg-whatsapp-dark text-white shadow-lg w-full md:w-auto px-5 py-2.5 md:py-3.5 rounded-xl text-sm font-medium transition-transform hover:scale-105 flex items-center justify-center gap-2 btn-pop";
+                    btn.innerHTML = `<i class="fab fa-whatsapp text-lg"></i> Consultar Especialista`;
+                    btn.href = waUrl;
+                });
+            }
 
             function renderContent(dataObj, btnElement) {
-                if (currentActiveBtn) {
-                    currentActiveBtn.classList.remove('active', 'text-white', 'bg-mac-accent');
-                    currentActiveBtn.classList.add('text-mac-dark/70', 'hover:bg-black/5');
+                if (currentActiveCategoryBtn) {
+                    currentActiveCategoryBtn.classList.remove('active', 'text-white', 'bg-mac-accent');
+                    currentActiveCategoryBtn.classList.add('text-mac-dark/70', 'hover:bg-black/5');
                 }
                 btnElement.classList.remove('text-mac-dark/70', 'hover:bg-black/5');
                 btnElement.classList.add('active', 'text-white', 'bg-mac-accent');
-                currentActiveBtn = btnElement;
+                currentActiveCategoryBtn = btnElement;
+
+                // Deshabilitar botones de WA al cambiar de categoría
+                disableWhatsAppButtons();
 
                 contentTitle.style.opacity = '0'; contentDesc.style.opacity = '0'; contentIcon.style.opacity = '0';
                 servicesGrid.style.opacity = '0';
@@ -605,24 +563,34 @@
                         card.style.animationDelay = `${index * 0.04}s`;
                         card.innerHTML = `
                             <div class="flex items-center gap-2 mb-2">
-                                <i class="fas fa-check-circle text-mac-accent/80 text-sm"></i>
+                                <i class="fas fa-check-circle widget-icon text-mac-accent/80 text-sm transition-colors"></i>
                                 <h4 class="text-sm font-semibold text-mac-dark leading-tight">${format4K(item.title)}</h4>
                             </div>
                             <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light pl-6">${format4K(item.desc)}</p>
                         `;
+
+                        // EVENTO DE SELECCIÓN DINÁMICA DEL WIDGET
+                        card.addEventListener('click', () => {
+                            // Limpiar todos los widgets
+                            document.querySelectorAll('.service-widget').forEach(w => {
+                                w.classList.remove('widget-selected');
+                                w.querySelector('.widget-icon').classList.replace('text-mac-accent', 'text-mac-accent/80');
+                            });
+                            
+                            // Activar este widget
+                            card.classList.add('widget-selected');
+                            card.querySelector('.widget-icon').classList.replace('text-mac-accent/80', 'text-mac-accent');
+
+                            // Activar los botones de WhatsApp
+                            enableWhatsAppButtons(dataObj.title, item.title);
+                        });
+
                         servicesGrid.appendChild(card);
                     });
 
                     contentTitle.style.opacity = '1'; contentDesc.style.opacity = '1'; contentIcon.style.opacity = '1';
                     servicesGrid.style.opacity = '1';
                 }, 150);
-
-                // BOTONES WHATSAPP DEL PANEL CENTRAL (VAN DIRECTO)
-                const cleanTitle = cleanTextForURL(dataObj.title);
-                const autoMessage = `Hola AeroLex, me gustaría recibir más información directa sobre el servicio de: *${cleanTitle}*.`;
-                const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMessage)}`;
-                waPanelBtn.href = waUrl;
-                waPanelBtnMobile.href = waUrl;
             }
 
             function createSidebarButtons(categoryArray, container) {
