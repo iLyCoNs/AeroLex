@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="AeroLex | Soluciones Jurídicas Estratégicas y Tecnológicas">
-    <title>AeroLex | LegalTech & Corporativo</title>
+    <title>AeroLex | Ecosistema Legal Autónomo</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,15 +17,16 @@
             theme: {
                 extend: {
                     colors: {
-                        'mac-bg': '#F9FAFB', 'mac-glass': 'rgba(255, 255, 255, 0.85)', 'mac-dark': '#1D1D1F',
-                        'mac-accent': '#788C9F', 'whatsapp': '#25D366', 'whatsapp-dark': '#128C7E',
-                        'legal-blue': '#0A2540',
+                        'mac-bg': '#F9FAFB', 
+                        'mac-glass': 'rgba(255, 255, 255, 0.85)', 
+                        'mac-dark': '#1D1D1F',
+                        'mac-accent': '#788C9F',
+                        'whatsapp': '#25D366',
                     },
                     fontFamily: { sans: ['-apple-system', 'BlinkMacSystemFont', '"Inter"', 'sans-serif'], },
                     boxShadow: {
                         'mac-window': '0 25px 50px -12px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(0,0,0,0.03)',
                         'mac-dock': '0 10px 30px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255,255,255,0.9)',
-                        'premium-hover': '0 20px 40px rgba(120, 140, 159, 0.12), 0 1px 3px rgba(0,0,0,0.05)',
                     }
                 }
             }
@@ -35,6 +36,7 @@
     <style>
         body { background-color: #F9FAFB; color: #1D1D1F; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
+        /* SVG DRONE PARCHE */
         .fa-drone::before { content: "" !important; }
         .fa-drone { display: inline-block; width: 1em; height: 1em; background-color: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z'/%3E%3Cpath d='m13.41 10.59 5.3-5.3'/%3E%3Cpath d='m10.59 13.41-5.3 5.3'/%3E%3Cpath d='m13.41 13.41 5.3 5.3'/%3E%3Cpath d='m10.59 10.59-5.3-5.3'/%3E%3Ccircle cx='19' cy='5' r='2'/%3E%3Ccircle cx='5' cy='19' r='2'/%3E%3Ccircle cx='19' cy='19' r='2'/%3E%3Ccircle cx='5' cy='5' r='2'/%3E%3C/svg%3E") no-repeat center / contain; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z'/%3E%3Cpath d='m13.41 10.59 5.3-5.3'/%3E%3Cpath d='m10.59 13.41-5.3 5.3'/%3E%3Cpath d='m13.41 13.41 5.3 5.3'/%3E%3Cpath d='m10.59 10.59-5.3-5.3'/%3E%3Ccircle cx='19' cy='5' r='2'/%3E%3Ccircle cx='5' cy='19' r='2'/%3E%3Ccircle cx='19' cy='19' r='2'/%3E%3Ccircle cx='5' cy='5' r='2'/%3E%3C/svg%3E") no-repeat center / contain; vertical-align: middle; }
 
@@ -42,52 +44,50 @@
         .mesh-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: radial-gradient(at 0% 0%, rgba(240, 244, 250, 0.9) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(255, 255, 255, 0.9) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(235, 240, 248, 0.9) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(250, 250, 252, 0.9) 0px, transparent 50%); filter: blur(40px); }
 
         .glass-effect { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 1); }
-        .dock-nav { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.8); border-top: 1px solid rgba(255, 255, 255, 1); }
+        .dock-nav { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.8); }
 
         .sidebar-item { transition: all 0.3s ease; border-left: 3px solid transparent; }
-        .sidebar-item:hover { background: rgba(255,255,255,0.8); }
         .sidebar-item.active { background: #ffffff; color: #1D1D1F; font-weight: 600; border-left-color: #788C9F; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
-        .sidebar-item.active i { color: #788C9F; opacity: 1; }
 
-        .service-widget { background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(249,250,251,0.9) 100%); border: 1px solid rgba(255, 255, 255, 1); border-radius: 20px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02); display: flex; flex-direction: column; padding: 1.5rem; position: relative; overflow: hidden; cursor: pointer; }
-        .service-widget::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, #788C9F, #cbd5e1); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
-        .service-widget:hover { transform: translateY(-4px); box-shadow: var(--tw-shadow-premium-hover); background: #ffffff; border-color: rgba(120, 140, 159, 0.2); }
-        .service-widget:hover::before { transform: scaleX(1); }
+        .service-widget { background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(249,250,251,0.9) 100%); border: 1px solid rgba(255, 255, 255, 1); border-radius: 20px; transition: all 0.3s ease; cursor: pointer; }
+        .service-widget:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(0,0,0,0.05); background: #ffffff; }
 
-        /* Estilos Chat y Cajas de Información */
-        .ai-chat-bubble-bot { background: #FFFFFF; color: #1D1D1F; border-radius: 12px 12px 12px 2px; align-self: flex-start; border: 1px solid rgba(0,0,0,0.05); font-size: 13.5px; padding: 16px; max-width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.03); line-height: 1.5; }
+        /* Estilos IA Chat Mejorados */
+        dialog::backdrop { background: rgba(29, 29, 31, 0.6); backdrop-filter: blur(8px); }
+        dialog[open] { animation: modalFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        .ai-chat-bubble-bot { background: #FFFFFF; color: #1D1D1F; border-radius: 12px 12px 12px 2px; align-self: flex-start; border: 1px solid rgba(0,0,0,0.05); font-size: 13.5px; padding: 14px 18px; max-width: 90%; box-shadow: 0 2px 10px rgba(0,0,0,0.03); line-height: 1.6; }
         .ai-chat-bubble-user { background: #1D1D1F; color: #FFFFFF; border-radius: 12px 12px 2px 12px; align-self: flex-end; font-size: 13.5px; padding: 12px 16px; max-width: 85%; box-shadow: 0 4px 10px rgba(29, 29, 31, 0.2); }
         
-        .info-box { background: #f8fafc; border-left: 3px solid #788C9F; padding: 12px; margin-top: 10px; border-radius: 0 8px 8px 0; font-size: 12.5px; }
-        .info-box h4 { font-weight: 700; color: #334155; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-        .info-box ul { list-style: none; padding: 0; margin: 0; }
-        .info-box ul li { position: relative; padding-left: 16px; margin-bottom: 4px; color: #475569; }
-        .info-box ul li::before { content: '•'; position: absolute; left: 0; color: #788C9F; font-weight: bold; }
-        .info-link { color: #0284c7; text-decoration: none; font-weight: 500; border-bottom: 1px solid transparent; transition: all 0.2s; }
-        .info-link:hover { border-bottom-color: #0284c7; }
-
-        .chat-wa-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #25D366; color: white !important; padding: 12px 20px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 13px; margin-top: 16px; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3); transition: all 0.3s; width: 100%; border: 1px solid rgba(255,255,255,0.2); }
-        .chat-wa-btn:hover { background: #128C7E; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4); }
-
-        /* Estilos Línea de Tiempo (Estado de Causa) */
-        .timeline { position: relative; padding-left: 20px; margin-top: 15px; }
-        .timeline::before { content: ''; position: absolute; left: 6px; top: 0; bottom: 0; width: 2px; background: #e2e8f0; }
-        .timeline-item { position: relative; margin-bottom: 15px; }
-        .timeline-item::before { content: ''; position: absolute; left: -19.5px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: #e2e8f0; border: 2px solid #fff; box-shadow: 0 0 0 1px #cbd5e1; }
-        .timeline-item.active::before { background: #25D366; box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.3); border-color: #fff; }
-        .timeline-item.past::before { background: #788C9F; box-shadow: 0 0 0 1px #788C9F; }
-        .timeline-content h5 { font-size: 13px; font-weight: 600; color: #1e293b; margin: 0 0 2px 0; }
-        .timeline-content p { font-size: 11.5px; color: #64748b; margin: 0; }
-
         .typing-indicator span { display: inline-block; width: 6px; height: 6px; background-color: #788C9F; border-radius: 50%; margin-right: 3px; animation: typing 1.2s infinite; opacity: 0.7;}
         .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
         .typing-indicator span:nth-child(3) { animation-delay: 0.4s; margin-right: 0; }
         @keyframes typing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 
-        .fade-in { opacity: 0; animation: fadeInApple 0.5s ease-out forwards; }
-        @keyframes fadeInApple { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        /* Botones Rápidos (Quick Replies) */
+        .quick-replies { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .quick-reply-btn { background: #F0F4F8; color: #1D1D1F; border: 1px solid #E2E8F0; padding: 8px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .quick-reply-btn:hover { background: #1D1D1F; color: #fff; border-color: #1D1D1F; }
+
+        /* Tarjeta Estado de Causa */
+        .timeline-container { position: relative; padding-left: 20px; margin-top: 15px; }
+        .timeline-container::before { content: ''; position: absolute; left: 5px; top: 0; bottom: 0; width: 2px; background: #E2E8F0; }
+        .timeline-step { position: relative; margin-bottom: 15px; }
+        .timeline-step::before { content: ''; position: absolute; left: -20px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: #E2E8F0; border: 2px solid #fff; box-shadow: 0 0 0 1px #E2E8F0; }
+        .timeline-step.active::before { background: #25D366; box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.3); border: none;}
+        .timeline-step.active .step-title { color: #1D1D1F; font-weight: 700; }
+        
+        .fade-in { opacity: 0; animation: fadeInApple 0.4s ease-out forwards; }
+        @keyframes fadeInApple { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Links Externos Oficiales */
+        .gov-link { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.04); padding: 6px 10px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; color: #1D1D1F; border: 1px solid rgba(0,0,0,0.05); margin-top: 6px; transition: background 0.2s;}
+        .gov-link:hover { background: rgba(0,0,0,0.08); }
+        .btn-wa-final { display: flex; align-items: center; justify-content: center; gap: 8px; background: #25D366; color: white; padding: 12px; border-radius: 8px; font-weight: 600; text-decoration: none; margin-top: 15px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.2); transition: transform 0.2s;}
+        .btn-wa-final:hover { transform: translateY(-2px); }
     </style>
 </head>
 <body class="relative flex flex-col min-h-screen">
@@ -95,445 +95,416 @@
     <div class="bg-container"></div>
     <div class="mesh-overlay"></div>
 
-    <header class="fixed w-full top-0 z-50 transition-all duration-300 pt-4">
+    <header class="fixed w-full top-0 z-40 transition-all duration-300 pt-4">
         <div class="max-w-7xl mx-auto px-4 md:px-6">
             <div class="flex justify-between items-center">
                 <div class="flex-shrink-0 flex items-center gap-2.5">
-                    <div class="w-9 h-9 bg-legal-blue backdrop-blur-md rounded-xl flex items-center justify-center text-white shadow-sm">
-                        <i class="fas fa-balance-scale-right text-sm"></i>
+                    <div class="w-9 h-9 bg-mac-dark/90 backdrop-blur-md rounded-xl flex items-center justify-center text-white shadow-sm">
+                        <i class="fas fa-gavel text-sm"></i>
                     </div>
                     <a href="#" class="font-semibold text-xl tracking-tight text-mac-dark">AeroLex</a>
                 </div>
                 
-                <nav class="hidden md:flex space-x-1 dock-nav shadow-mac-dock rounded-full px-4 py-2 mx-auto">
-                    <a href="#inicio" class="px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-mac-dark/80 hover:bg-white/50 transition-all">Inicio</a>
-                    <a href="#servicios" class="px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-mac-dark/80 hover:bg-white/50 transition-all">Plataforma Legal</a>
-                    <a href="#" onclick="openCaseStatusModal()" class="px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide text-legal-blue bg-blue-50/50 hover:bg-blue-100/50 transition-all flex items-center gap-1.5"><i class="fas fa-search"></i> Estado de Causa</a>
+                <nav class="hidden md:flex space-x-2 dock-nav rounded-full px-4 py-2 mx-auto">
+                    <a href="#inicio" class="px-4 py-1.5 rounded-full text-xs font-medium text-mac-dark/80 hover:bg-white/50 transition-all">Inicio</a>
+                    <a href="#servicios" class="px-4 py-1.5 rounded-full text-xs font-medium text-mac-dark/80 hover:bg-white/50 transition-all">Core System</a>
+                    <!-- Nuevo botón para Estado de Causa -->
+                    <button onclick="openAIChat('ESTADO_CAUSA')" class="px-4 py-1.5 rounded-full text-xs font-bold text-mac-accent bg-mac-accent/10 hover:bg-mac-accent/20 transition-all flex items-center gap-2">
+                        <i class="fas fa-search"></i> Estado de mi Caso
+                    </button>
                 </nav>
                 
                 <div class="hidden md:flex">
-                    <button id="open-ai-header-btn" class="bg-mac-dark text-white hover:bg-black px-5 py-2.5 rounded-full text-xs font-semibold transition-all shadow-md flex items-center gap-2">
-                        <i class="fas fa-user-tie text-mac-accent"></i> Paralegal Virtual
+                    <button onclick="openAIChat('GREETING_ONLY')" class="bg-mac-dark text-white hover:bg-black px-5 py-2 rounded-full text-xs font-semibold transition-all shadow-md flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                        Secretaría Virtual
                     </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- VENTANA DEL PARALEGAL VIRTUAL (SMART FILTER) -->
-    <div id="ai-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-mac-dark/60 backdrop-blur-sm opacity-0 transition-opacity duration-300">
-        <div class="glass-effect rounded-3xl w-full max-w-lg mx-4 shadow-2xl border border-white overflow-hidden flex flex-col h-[650px] transform scale-95 transition-transform duration-300" id="ai-modal-content">
+    <!-- EL NUEVO DIALOG NATIVO HTML5 PARA EL ASISTENTE -->
+    <dialog id="ai-modal" class="p-0 bg-transparent w-full max-w-lg m-auto rounded-3xl backdrop:bg-black/40">
+        <div class="glass-effect rounded-3xl shadow-2xl border border-white overflow-hidden flex flex-col h-[650px] w-full" id="ai-modal-content">
             
             <div class="h-16 bg-white/80 border-b border-black/5 flex items-center justify-between px-6 backdrop-blur-xl shrink-0">
                 <div class="flex items-center gap-3">
-                    <div class="relative flex items-center justify-center w-10 h-10 bg-legal-blue rounded-full text-white shadow-md">
-                        <i class="fas fa-user-tie"></i>
+                    <div class="relative flex items-center justify-center w-10 h-10 bg-mac-dark rounded-full text-white shadow-md">
+                        <i class="fas fa-robot"></i>
                         <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></div>
                     </div>
                     <div>
-                        <h3 class="text-sm font-bold text-mac-dark leading-tight">Secretaría Técnica AeroLex</h3>
-                        <p class="text-[10px] font-medium text-mac-dark/50 uppercase tracking-widest">Filtro Legal Inteligente</p>
+                        <h3 class="text-sm font-bold text-mac-dark leading-tight">Secretario Técnico AeroLex</h3>
+                        <p class="text-[10px] font-medium text-mac-dark/50 uppercase tracking-widest">Filtro Jurídico IA</p>
                     </div>
                 </div>
-                <button id="close-ai-modal" class="text-mac-dark/40 hover:text-mac-dark transition-colors w-8 h-8 flex items-center justify-center bg-black/5 rounded-full hover:bg-black/10"><i class="fas fa-times"></i></button>
+                <button onclick="closeAIChat()" class="text-mac-dark/40 hover:text-mac-dark transition-colors w-8 h-8 flex items-center justify-center bg-black/5 rounded-full hover:bg-black/10">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
-            <div id="ai-chat-log" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4 bg-gradient-to-b from-transparent to-black/[0.02] hide-scrollbar scroll-smooth">
-                <div class="text-center my-2"><span class="bg-white/80 border border-black/5 text-mac-dark/60 text-[10px] py-1 px-4 rounded-full font-medium shadow-sm uppercase tracking-wider">Mesa de Entrada Segura</span></div>
+            <div id="ai-chat-log" class="flex-1 p-5 overflow-y-auto flex flex-col gap-4 bg-black/[0.01] hide-scrollbar scroll-smooth">
+                <div class="text-center my-1"><span class="bg-black/5 text-mac-dark/60 text-[10px] py-1 px-3 rounded-full font-medium shadow-sm uppercase">Filtro Legal Activo</span></div>
             </div>
 
             <form id="ai-input-form" class="p-4 bg-white/90 border-t border-black/5 shrink-0 backdrop-blur-xl flex gap-3">
-                <input type="text" id="ai-input" class="flex-1 bg-white border border-black/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-legal-blue focus:ring-1 focus:ring-legal-blue shadow-sm" placeholder="Responda aquí o ingrese su ROL de causa..." autocomplete="off">
-                <button type="submit" id="ai-send-btn" class="w-12 h-12 bg-legal-blue text-white rounded-xl flex items-center justify-center shadow-md hover:bg-legal-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                    <i class="fas fa-arrow-up text-sm"></i>
+                <input type="text" id="ai-input" class="flex-1 bg-white border border-black/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-mac-accent focus:ring-1 shadow-sm" placeholder="Escriba su respuesta o consulta..." autocomplete="off">
+                <button type="submit" id="ai-send-btn" class="w-12 h-12 bg-mac-dark text-white rounded-xl flex items-center justify-center shadow-md hover:bg-black transition-colors disabled:opacity-50" disabled>
+                    <i class="fas fa-paper-plane text-sm"></i>
                 </button>
             </form>
         </div>
-    </div>
+    </dialog>
 
-    <!-- SECCIÓN HERO -->
-    <section id="inicio" class="pt-40 pb-12 md:pb-24 flex flex-col items-center justify-center text-center px-4 relative z-10">
-        <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-mac-dark mb-4 md:mb-6 max-w-4xl leading-tight fade-in">
-            Soluciones Jurídicas Estratégicas.<br>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-legal-blue to-mac-accent">Decisiones Seguras.</span>
+    <section id="inicio" class="pt-32 pb-12 flex flex-col items-center text-center px-4">
+        <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-mac-dark mb-4 max-w-4xl fade-in">
+            Ingeniería Legal. <span class="text-transparent bg-clip-text bg-gradient-to-r from-mac-accent to-gray-500">Decisiones Exactas.</span>
         </h1>
-        <p class="text-base md:text-lg text-mac-dark/70 max-w-3xl font-light mb-10 leading-relaxed fade-in" style="animation-delay: 0.1s;">
-            Brindamos asesoría a empresas y particulares en materias corporativas, civiles y de familia. Integramos <strong>análisis territorial avanzado y drones</strong> para construir antecedentes probatorios inobjetables.
-        </p>
-        <div class="flex gap-4 fade-in" style="animation-delay: 0.2s;">
-            <button onclick="document.getElementById('servicios').scrollIntoView({behavior: 'smooth'})" class="bg-legal-blue text-white px-6 py-3 rounded-full text-sm font-semibold shadow-lg hover:bg-legal-blue/90 transition-all">Explorar Servicios</button>
-            <button onclick="openCaseStatusModal()" class="bg-white text-legal-blue border border-legal-blue/20 px-6 py-3 rounded-full text-sm font-semibold shadow-sm hover:shadow-md transition-all flex items-center gap-2"><i class="fas fa-search"></i> Estado de Mi Causa</button>
-        </div>
     </section>
 
-    <!-- VENTANA CORE SYSTEM LEGALTECH -->
-    <section id="servicios" class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pb-20 relative z-10 w-full">
-        <div class="glass-effect rounded-[2.5rem] shadow-mac-window overflow-hidden border border-white flex flex-col h-[750px] md:h-[800px] fade-in" style="animation-delay: 0.3s;">
-            
-            <div class="h-14 bg-white/50 border-b border-black/5 flex items-center justify-between px-6 backdrop-blur-md shrink-0">
-                <div class="flex items-center gap-3">
-                    <div class="flex gap-2">
-                        <div class="w-3 h-3 rounded-full bg-[#FF5F56] border border-black/10"></div>
-                        <div class="w-3 h-3 rounded-full bg-[#FFBD2E] border border-black/10"></div>
-                        <div class="w-3 h-3 rounded-full bg-[#27C93F] border border-black/10"></div>
-                    </div>
-                    <span class="text-[11px] font-bold text-legal-blue/70 uppercase tracking-widest ml-4 hidden sm:block">AeroLex LegalTech Platform</span>
+    <section id="servicios" class="max-w-7xl mx-auto px-4 pb-20 w-full">
+        <div class="glass-effect rounded-[2.5rem] shadow-mac-window overflow-hidden border border-white flex flex-col h-[750px] fade-in" style="animation-delay: 0.1s;">
+            <div class="flex flex-col md:flex-row flex-1 overflow-hidden h-full">
+                <!-- Sidebar -->
+                <div class="w-full md:w-72 bg-white/60 border-r border-black/5 p-4 overflow-y-auto hide-scrollbar z-10">
+                    <p class="text-[10px] font-bold text-mac-dark/40 uppercase mb-3 px-3">Ecosistema Jurídico</p>
+                    <nav id="sidebar-nav" class="flex flex-col space-y-1"></nav>
                 </div>
-                <div class="flex space-x-4 text-[11px] font-medium text-mac-dark/40">
-                    <span class="flex items-center gap-1.5"><i class="fas fa-check-circle text-green-500"></i> Sistema Operativo</span>
-                </div>
-            </div>
-
-            <div class="flex flex-col md:flex-row flex-1 overflow-hidden h-full bg-white/30">
-                <div class="w-full md:w-72 bg-white/60 border-b md:border-b-0 md:border-r border-black/5 p-4 shrink-0 backdrop-blur-xl z-10 overflow-y-auto hide-scrollbar">
-                    <div class="mb-6">
-                        <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-widest mb-3 px-3">Ecosistema Jurídico</p>
-                        <nav id="sidebar-nav" class="flex flex-col space-y-1"></nav>
+                <!-- Content -->
+                <div class="flex-1 p-6 md:p-10 overflow-y-auto hide-scrollbar bg-white/30">
+                    <div id="content-header" class="mb-8">
+                        <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-4 text-mac-accent shadow-sm"><i id="content-icon" class="fas fa-balance-scale text-xl"></i></div>
+                        <h2 id="content-title" class="text-3xl font-bold text-mac-dark">Cargando...</h2>
+                        <p id="content-desc" class="text-mac-dark/60 mt-2 text-sm max-w-xl">Iniciando Motor...</p>
                     </div>
-                    <div class="my-6 border-t border-black/5 mx-3"></div>
-                    <div class="mb-6">
-                        <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-widest mb-3 px-3">Tecnología & Drones</p>
-                        <nav id="sidebar-nav-tech" class="flex flex-col space-y-1"></nav>
-                    </div>
-                </div>
-
-                <div class="flex-1 p-6 md:p-10 overflow-y-auto relative h-full bg-transparent scroll-smooth hide-scrollbar">
-                    <div id="content-header" class="mb-8 flex flex-col justify-start items-start">
-                        <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-5 text-legal-blue shadow-sm border border-black/5">
-                            <i id="content-icon" class="fas fa-balance-scale text-2xl transition-all duration-500"></i>
-                        </div>
-                        <h2 id="content-title" class="text-3xl md:text-4xl font-bold text-mac-dark tracking-tight transition-all duration-300 flex items-center flex-wrap gap-3">
-                            Cargando Plataforma...
-                        </h2>
-                        <p id="content-desc" class="text-base md:text-lg text-mac-dark/60 mt-3 font-light leading-relaxed max-w-2xl transition-all duration-300">
-                            Sincronizando base de conocimientos...
-                        </p>
-                    </div>
-                    <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5 pb-20"></div>
+                    <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-10"></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ============================================== -->
-    <!-- MOTOR LEGALTECH (PARALEGAL VIRTUAL + ESTADO CAUSA) -->
-    <!-- ============================================== -->
+    <!-- ===================================================================== -->
+    <!-- MOTOR JEDI DE TRIAGE LEGAL CHILENO Y ESTADO DE CAUSAS (SINGLE FILE)   -->
+    <!-- ===================================================================== -->
     <script>
-        // CONFIGURACIÓN DE CONTACTO
-        const WHATSAPP_NUMBER = "56900000000"; // Reemplaza con tu número real (Ej: 56912345678)
+        const WHATSAPP_NUMBER = "56900000000"; // Tu número aquí
 
-        // REFERENCIAS DOM CHAT
+        // 1. BASE DE DATOS DE REQUISITOS CHILENOS (TRIAGE RULES)
+        // Aquí mapeamos lo que el Secretario IA debe exigir según el área legal detectada.
+        const triageRules = {
+            familia: {
+                question: "Los asuntos de Familia requieren documentación estricta para proceder en Tribunales. ¿Cuenta usted con el <strong>Certificado de Mediación Frustrada</strong> o <strong>Certificados del Registro Civil</strong> (Matrimonio/Nacimiento)?",
+                options: [
+                    { label: "Sí, tengo todo", nextState: "triage_success" },
+                    { label: "No, ¿cómo los saco?", nextState: "help_familia_docs" },
+                    { label: "Es urgente (VIF/Medida Cautelar)", nextState: "urgent_vif" }
+                ],
+                helpHTML: `Para iniciar cualquier demanda de alimentos o visitas, la ley exige pasar por mediación. Puede solicitarla con su <strong>ClaveÚnica</strong> en el portal oficial.<br>
+                          <a href="https://mediacion.minjusticia.gob.cl/" target="_blank" class="gov-link"><i class="fas fa-external-link-alt"></i> Portal Mediación Chile</a><br>
+                          <a href="https://www.registrocivil.cl/" target="_blank" class="gov-link"><i class="fas fa-id-card"></i> Registro Civil (Certificados)</a>`
+            },
+            laboral: {
+                question: "Para evaluar la viabilidad de una demanda laboral, necesitamos revisar ciertos hitos. ¿Tiene en su poder la <strong>Carta de Despido</strong> o el <strong>Finiquito</strong> (firmado o con reserva de derechos)?",
+                options: [
+                    { label: "Sí, tengo los documentos", nextState: "triage_success" },
+                    { label: "No me dieron nada (Despido Verbal)", nextState: "laboral_verbal" },
+                    { label: "¿Dónde descargo mis cotizaciones?", nextState: "help_laboral_docs" }
+                ],
+                helpHTML: `Puede descargar sus certificados de cotizaciones y dejar constancias laborales directamente en la Dirección del Trabajo (Mi DT) usando su ClaveÚnica.<br>
+                          <a href="https://midt.dirtrab.cl/" target="_blank" class="gov-link"><i class="fas fa-briefcase"></i> Portal Mi DT (Dirección del Trabajo)</a>`
+            },
+            inmobiliario: {
+                question: "El Derecho Inmobiliario requiere precisión registral. Para estudiar su caso, ¿cuenta con el <strong>Certificado de Dominio Vigente</strong> o de <strong>Hipotecas y Gravámenes</strong> (GP)?",
+                options: [
+                    { label: "Sí, los tengo", nextState: "triage_success" },
+                    { label: "Solo tengo las escrituras", nextState: "triage_success" },
+                    { label: "No, ¿dónde los pido?", nextState: "help_inmobiliario_docs" }
+                ],
+                helpHTML: `Los certificados actualizados (máx. 30 días) se solicitan en el Conservador de Bienes Raíces (CBR) correspondiente a la comuna del inmueble.<br>
+                          <a href="https://www.conservadores.cl/" target="_blank" class="gov-link"><i class="fas fa-home"></i> Red de Conservadores (CBR)</a>`
+            },
+            default: {
+                question: "Para que nuestro equipo jurídico analice su requerimiento con la máxima rigurosidad, ¿cuenta actualmente con documentación de respaldo (contratos, correos, resoluciones)?",
+                options: [
+                    { label: "Sí, poseo antecedentes", nextState: "triage_success" },
+                    { label: "No, es solo una consulta", nextState: "triage_success" }
+                ],
+                helpHTML: ""
+            }
+        };
+
+        // 2. BASE DE DATOS SIMULADA DE ESTADOS DE CAUSA
+        const casesDB = {
+            "ALX-2026-01": {
+                materia: "Cuidado Personal y Alimentos",
+                tribunal: "2° Juzgado de Familia de Santiago",
+                rit: "C-1450-2025",
+                estadoActual: 2, // Índice del paso actual
+                steps: [
+                    { title: "Ingreso de Demanda", date: "12 Mar 2026", done: true },
+                    { title: "Notificación a Contraparte", date: "25 Mar 2026", done: true },
+                    { title: "Audiencia Preparatoria", date: "Fijada para 15 May 2026", done: false },
+                    { title: "Audiencia de Juicio", date: "Pendiente", done: false },
+                    { title: "Sentencia Definitiva", date: "Pendiente", done: false }
+                ]
+            },
+            "ALX-2026-02": {
+                materia: "Despido Injustificado",
+                tribunal: "1° Juzgado de Letras del Trabajo",
+                rit: "O-321-2026",
+                estadoActual: 4,
+                steps: [
+                    { title: "Ingreso Demanda", date: "02 Ene 2026", done: true },
+                    { title: "Audiencia Preparatoria", date: "10 Feb 2026", done: true },
+                    { title: "Audiencia de Juicio", date: "05 Mar 2026", done: true },
+                    { title: "Sentencia (Favorable)", date: "20 Mar 2026", done: true },
+                    { title: "Gestión de Cobro / Embargo", date: "En curso", done: false }
+                ]
+            }
+        };
+
+        // 3. LÓGICA DEL DIALOG NATIVO Y CHAT
         const aiModal = document.getElementById('ai-modal');
         const aiChatLog = document.getElementById('ai-chat-log');
         const aiInput = document.getElementById('ai-input');
-        const aiInputForm = document.getElementById('ai-input-form');
+        const aiSendBtn = document.getElementById('ai-send-btn');
         
-        // ESTADOS DE CONVERSACIÓN
-        let isChatOpen = false;
-        let flowState = { step: 0, categoryId: null, serviceName: null, userInputs: [] };
+        let triageContext = { area: 'default', service: '', data: '' };
 
-        // ==========================================
-        // BASE DE CONOCIMIENTO LEGAL (EL CEREBRO)
-        // ==========================================
-        const legalKnowledge = {
-            'civil': {
-                docs: [
-                    "Copia de contratos firmados o escrituras públicas (Notaría).",
-                    "Correos electrónicos o WhatsApps que demuestren acuerdos.",
-                    "En caso de deudas: Pagarés, cheques o facturas emitidas (SII)."
-                ],
-                source: "Puede obtener copias de escrituras en la Notaría de origen o en el Archivo Judicial si tienen más de un año.",
-                urgency: "¿Existe alguna fecha de vencimiento próxima estipulada en su contrato o ha recibido alguna notificación judicial recientemente?"
-            },
-            'inmobiliario': {
-                docs: [
-                    "Certificado de Dominio Vigente (CBR).",
-                    "Certificado de Hipotecas, Gravámenes y Prohibiciones (CBR).",
-                    "Certificado de Avalúo Fiscal detallado (<a href='https://homer.sii.cl/' target='_blank' class='info-link'>SII.cl</a>)."
-                ],
-                source: "Los certificados del CBR (Conservador de Bienes Raíces) son obligatorios para evaluar cualquier propiedad. Pueden solicitarse online en la web del conservador respectivo.",
-                urgency: "¿Se encuentra ad portas de firmar una Promesa de Compraventa o existe riesgo de remate del inmueble?"
-            },
-            'comercial': {
-                docs: [
-                    "Certificado de Vigencia de la Sociedad y Estatutos actualizados.",
-                    "Carpeta Tributaria para solicitar créditos (SII).",
-                    "Pactos de accionistas previos (si existen)."
-                ],
-                source: "Si su empresa se creó por 'Tu Empresa en Un Día', puede descargar todo gratuitamente desde el <a href='https://www.registrodeempresasysociedades.cl/' target='_blank' class='info-link'>Registro de Empresas</a>.",
-                urgency: "¿Existe algún bloqueo societario actual, auditoría del SII en curso o fecha límite para una licitación/fusión?"
-            },
-            'laboral': {
-                docs: [
-                    "Contrato de trabajo y anexos.",
-                    "Cartola de Cotizaciones Previsionales (AFP/Previred).",
-                    "Cartas de amonestación, despido o constancias de la Inspección del Trabajo."
-                ],
-                source: "Las constancias y reclamos puede realizarlos directamente con su Clave Única en el portal <a href='https://midt.dirtrab.cl/' target='_blank' class='info-link'>Mi DT</a>.",
-                urgency: "<strong>Atención:</strong> En materia laboral los plazos son brevísimos. Para demandas por despido injustificado o tutela laboral, el plazo general es de 60 días hábiles desde la separación. ¿Cuándo ocurrió el hecho?"
-            },
-            'familia': {
-                docs: [
-                    "Certificado de Matrimonio o Nacimiento de los hijos (<a href='https://www.registrocivil.cl/' target='_blank' class='info-link'>Registro Civil</a>).",
-                    "Certificado de Cese de Convivencia (si aplica).",
-                    "<strong>Certificado de Mediación Frustrada</strong> (Obligatorio por ley para Alimentos y Cuidado Personal)."
-                ],
-                source: "Los certificados de filiación son gratuitos obteniéndolos con Clave Única en la web del Registro Civil. La mediación previa debe solicitarse en un centro licitado o privado.",
-                urgency: "¿Existe alguna situación de Violencia Intrafamiliar (VIF) inminente o vulneración de derechos de menores que requiera una medida cautelar urgente?"
-            },
-            'default': {
-                docs: ["Cualquier antecedente, resolución o correo electrónico relacionado al caso."],
-                source: "Reúna la información en formato digital (PDF) para agilizar la revisión del abogado.",
-                urgency: "¿Ha sido notificado formalmente por algún tribunal o entidad del Estado? De ser así, ¿en qué fecha?"
-            }
-        };
-
-        // ==========================================
-        // FUNCIONES UI DEL PARALEGAL VIRTUAL
-        // ==========================================
-        function injectBotMessage(htmlContent) {
-            const typingId = 'typing-' + Date.now();
-            aiChatLog.insertAdjacentHTML('beforeend', `<div id="${typingId}" class="ai-chat-bubble-bot typing-indicator"><span></span><span></span><span></span></div>`);
-            aiChatLog.scrollTop = aiChatLog.scrollHeight;
-
-            setTimeout(() => {
-                const el = document.getElementById(typingId);
-                if(el) el.remove();
-                aiChatLog.insertAdjacentHTML('beforeend', `<div class="ai-chat-bubble-bot fade-in">${htmlContent}</div>`);
-                aiChatLog.scrollTop = aiChatLog.scrollHeight;
-            }, 1000);
-        }
-
-        function addUserMessage(text) {
-            aiChatLog.insertAdjacentHTML('beforeend', `<div class="ai-chat-bubble-user fade-in">${text}</div>`);
-            aiChatLog.scrollTop = aiChatLog.scrollHeight;
-            flowState.userInputs.push(text);
-        }
-
-        // ==========================================
-        // MOTOR LÓGICO DEL FILTRO (El Cuestionario)
-        // ==========================================
-        function processUserMessage(text) {
-            // DETECCIÓN ESTADO DE CAUSA (RUT o ROL)
-            if (text.match(/^[0-9]{1,2}\.?[0-9]{3}\.?[0-9]{3}[-][0-9kK]{1}$/) || text.match(/^[A-Za-z]-[0-9]+-[0-9]{4}$/)) {
-                simulateCaseTracking(text);
+        function openAIChat(triggerData = null) {
+            aiModal.showModal(); // API Nativa de HTML5 Dialog
+            
+            if (triggerData === 'ESTADO_CAUSA') {
+                aiChatLog.innerHTML = ''; // Limpiamos chat
+                injectBotMessage("Módulo de Rastreo Judicial activado. Por favor, <strong>ingrese su número de caso asignado por AeroLex</strong> (Ej: ALX-2026-01).");
                 return;
             }
 
-            // FLUJO NORMAL DE SECRETARÍA TÉCNICA
-            let kn = legalKnowledge[flowState.categoryId] || legalKnowledge['default'];
+            if (triggerData === 'GREETING_ONLY' && aiChatLog.children.length <= 1) {
+                injectBotMessage("Bienvenido al sistema de Triage Técnico de <strong>AeroLex</strong>. Nuestro objetivo es perfilar su caso legal antes de derivarlo a un abogado especialista. ¿En qué área requiere asistencia?");
+            }
 
-            if (flowState.step === 1) {
-                // El usuario respondió a la Urgencia. Ahora pedimos Documentos.
-                flowState.step = 2;
+            if (typeof triggerData === 'object') {
+                triageContext.area = triggerData.areaId;
+                triageContext.service = triggerData.serviceTitle;
                 
-                let docList = kn.docs.map(d => `<li>${d}</li>`).join('');
+                addUserMessage(`Solicito evaluación para: ${triggerData.serviceTitle}`);
                 
-                let response = `Entendido. Tomo nota de los plazos.<br><br>
-                                Como filtro técnico preliminar, para que el abogado especialista pueda analizar su caso con precisión y emitir un diagnóstico real, necesitaremos que reúna la siguiente documentación:<br>
-                                <div class="info-box">
-                                    <h4><i class="fas fa-folder-open"></i> Documentación Sugerida</h4>
-                                    <ul>${docList}</ul>
-                                    <p class="mt-2 pt-2 border-t border-black/10">💡 <em>${kn.source}</em></p>
-                                </div><br>
-                                ¿Cuenta actualmente con alguno de estos antecedentes o requiere apoyo para conseguirlos?`;
-                injectBotMessage(response);
+                // Buscar reglas de triage
+                const rule = triageRules[triggerData.areaId] || triageRules.default;
+                
+                let responseHTML = `Iniciando protocolo de análisis para <strong>${triggerData.serviceTitle}</strong>.<br><br>${rule.question}`;
+                injectBotMessage(responseHTML, rule.options);
+            }
+        }
+
+        function closeAIChat() {
+            aiModal.close();
+        }
+
+        // ==========================================
+        // RENDERIZADO DE MENSAJES (Efecto Jedi)
+        // ==========================================
+        function addUserMessage(text) {
+            const msgHtml = `<div class="ai-chat-bubble-user fade-in">${text}</div>`;
+            aiChatLog.insertAdjacentHTML('beforeend', msgHtml);
+            scrollToBottom();
+        }
+
+        function injectBotMessage(htmlContent, options = null) {
+            // Eliminar botones rápidos anteriores para que no se puedan volver a pulsar
+            document.querySelectorAll('.quick-replies').forEach(el => el.remove());
+
+            const typingId = 'typing-' + Date.now();
+            const typingHtml = `<div id="${typingId}" class="ai-chat-bubble-bot typing-indicator"><span></span><span></span><span></span></div>`;
+            aiChatLog.insertAdjacentHTML('beforeend', typingHtml);
+            scrollToBottom();
+
+            setTimeout(() => {
+                document.getElementById(typingId)?.remove();
+                
+                let finalHTML = `<div class="ai-chat-bubble-bot fade-in">${htmlContent}`;
+                
+                // Inyectar botones si existen
+                if (options) {
+                    finalHTML += `<div class="quick-replies">`;
+                    options.forEach(opt => {
+                        finalHTML += `<button class="quick-reply-btn" onclick="handleQuickReply('${opt.nextState}', '${opt.label}')">${opt.label}</button>`;
+                    });
+                    finalHTML += `</div>`;
+                }
+                
+                finalHTML += `</div>`;
+                aiChatLog.insertAdjacentHTML('beforeend', finalHTML);
+                scrollToBottom();
+            }, 800);
+        }
+
+        function scrollToBottom() {
+            setTimeout(() => { aiChatLog.scrollTop = aiChatLog.scrollHeight; }, 50);
+        }
+
+        // ==========================================
+        // MÁQUINA DE ESTADOS (Respuestas a Botones)
+        // ==========================================
+        window.handleQuickReply = function(nextState, labelTyped) {
+            addUserMessage(labelTyped);
+            
+            const rule = triageRules[triageContext.area] || triageRules.default;
+
+            if (nextState === 'triage_success' || nextState === 'urgent_vif') {
+                let waText = encodeURIComponent(`Hola AeroLex. Vengo del Filtro IA.\nServicio requerido: ${triageContext.service}\nEstado de Documentos: ${labelTyped}`);
+                let msg = `Excelente. Ha pasado el filtro técnico preliminar. <br><br>Su expediente está listo para ser revisado por un abogado especialista de nuestro equipo.<br>
+                           <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waText}" target="_blank" class="btn-wa-final"><i class="fab fa-whatsapp text-lg"></i> Iniciar Asesoría Humana</a>`;
+                injectBotMessage(msg);
             } 
-            else if (flowState.step === 2) {
-                // El usuario respondió a los Documentos. Fin del filtro -> Derivación.
-                flowState.step = 3;
-                
-                // Construir mensaje resumen para WhatsApp
-                let summary = `Hola AeroLex.%0A%0A*Mesa de Entrada Web*%0AÁrea: ${flowState.categoryId.toUpperCase()}%0AServicio: ${flowState.serviceName}%0A%0A*Antecedentes (Plazos/Hechos):*%0A"${flowState.userInputs[0]}"%0A%0A*Estado Documental:*%0A"${flowState.userInputs[1]}"%0A%0ASolicito evaluación de mi caso.`;
-
-                let response = `Perfecto. He registrado sus respuestas en su ficha preliminar. <br><br>
-                                Ya tenemos el contexto necesario. Ahora, el siguiente paso quirúrgico es transferir su ficha directamente al escritorio de nuestro abogado especialista en <strong>${flowState.serviceName}</strong>.<br><br>
-                                <strong>Haga clic en el botón inferior para abrir un canal seguro de WhatsApp. El sistema enviará automáticamente su resumen al abogado para iniciar la evaluación formal.</strong><br>
-                                <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${summary}" target="_blank" class="chat-wa-btn"><i class="fab fa-whatsapp text-lg"></i> Enviar Ficha al Especialista</a>`;
-                injectBotMessage(response);
+            else if (nextState.startsWith('help_')) {
+                let msg = `Comprendo. No se preocupe, es un paso habitual. <br><br>${rule.helpHTML}<br><br>Le sugiero recopilar estos antecedentes y contactarnos a través de nuestra mesa central cuando los tenga, o si necesita que nosotros hagamos la gestión documental por usted.<br>
+                           <a href="https://wa.me/${WHATSAPP_NUMBER}?text=Hola,%20necesito%20ayuda%20gestionando%20documentos%20para%20${encodeURIComponent(triageContext.service)}" target="_blank" class="btn-wa-final"><i class="fab fa-whatsapp"></i> Contactar para Gestión</a>`;
+                injectBotMessage(msg);
             }
-            else {
-                // Flujo genérico o fuera de contexto
-                let waGen = encodeURIComponent(`Hola AeroLex, necesito agendar una asesoría respecto a: ${text.substring(0, 50)}...`);
-                injectBotMessage(`Comprendo. En AeroLex somos especialistas en estructuración y resolución de conflictos de alta complejidad.<br><br>
-                                  Dado su requerimiento, lo más eficiente es que un miembro de nuestro equipo jurídico lo evalúe directamente.<br>
-                                  <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waGen}" target="_blank" class="chat-wa-btn"><i class="fab fa-whatsapp text-lg"></i> Hablar con un Abogado</a>`);
+            else if (nextState === 'laboral_verbal') {
+                let waText = encodeURIComponent(`URGENTE: Posible despido verbal. Plazo corriendo.`);
+                injectBotMessage(`⚠️ <strong>Alerta Legal:</strong> El despido verbal es una vulneración grave. Existe un plazo muy corto para dejar constancia en la Inspección del Trabajo e interponer acciones de tutela. <br><br>Derivando su caso de urgencia a un abogado laboralista ahora mismo.<br>
+                                 <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waText}" target="_blank" class="btn-wa-final bg-red-600"><i class="fab fa-whatsapp"></i> Hablar URGENTE</a>`);
             }
-        }
-
-        // ==========================================
-        // INICIO DEL FLUJO DESDE UNA TARJETA
-        // ==========================================
-        function triggerLegalFilter(categoryId, serviceName) {
-            aiModal.classList.remove('hidden');
-            setTimeout(() => { aiModal.classList.remove('opacity-0'); aiModalContent.classList.remove('scale-95'); }, 10);
-            
-            // Reiniciar Estado
-            aiChatLog.innerHTML = `<div class="text-center my-2"><span class="bg-white/80 border border-black/5 text-mac-dark/60 text-[10px] py-1 px-4 rounded-full font-medium shadow-sm uppercase tracking-wider">Mesa de Entrada Segura</span></div>`;
-            flowState = { step: 1, categoryId: categoryId, serviceName: serviceName, userInputs: [] };
-
-            let kn = legalKnowledge[categoryId] || legalKnowledge['default'];
-
-            let startHTML = `Ha seleccionado <strong>${serviceName}</strong>.<br>Soy el filtro técnico automatizado de AeroLex. Antes de derivarlo con el abogado encargado de esta materia, evaluaremos la urgencia probatoria de su caso.<br><br>
-                             ${kn.urgency}`;
-            
-            injectBotMessage(startHTML);
-        }
-
-        // ==========================================
-        // SIMULACIÓN "ESTADO DE CAUSA" (PORTAL CLIENTE)
-        // ==========================================
-        window.openCaseStatusModal = function() {
-            aiModal.classList.remove('hidden');
-            setTimeout(() => { aiModal.classList.remove('opacity-0'); aiModalContent.classList.remove('scale-95'); }, 10);
-            
-            aiChatLog.innerHTML = `<div class="text-center my-2"><span class="bg-white/80 border border-black/5 text-legal-blue text-[10px] py-1 px-4 rounded-full font-bold shadow-sm uppercase tracking-wider">Portal Cliente Privado</span></div>`;
-            flowState.step = 99; // Estado especial
-            
-            injectBotMessage(`Bienvenido al sistema de Seguimiento de Causas y Trámites de AeroLex.<br><br>
-                              Por favor, <strong>ingrese el ROL de su causa (Ej: C-1234-2026) o su RUT</strong> para verificar el estado de tramitación en nuestra base de datos interna.`);
         };
 
-        function simulateCaseTracking(code) {
-            // Se genera una tarjeta visual hermosa simulando datos de backend
-            let cardHTML = `
-                Buscando expediente asociado a: <strong>${code}</strong>...<br><br>
-                <div class="bg-white border border-black/10 rounded-xl p-4 shadow-sm">
-                    <div class="flex justify-between items-center mb-3 border-b border-black/5 pb-2">
-                        <span class="text-xs font-bold text-mac-dark/60 uppercase">Expediente Corporativo</span>
-                        <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-1 rounded font-bold">ACTIVA</span>
-                    </div>
-                    <h4 class="font-bold text-mac-dark text-sm mb-1">Reestructuración Societaria Inmobiliaria</h4>
-                    <p class="text-xs text-mac-dark/60 mb-4">Abogado a cargo: Departamento Corporativo AeroLex</p>
-                    
-                    <div class="timeline">
-                        <div class="timeline-item past">
-                            <div class="timeline-content">
-                                <h5>Fase 1: Auditoría (Due Diligence)</h5>
-                                <p>Estudio de títulos finalizado. (Completado)</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item active">
-                            <div class="timeline-content">
-                                <h5 class="text-green-600">Fase 2: Redacción y Firmas</h5>
-                                <p>El borrador de la escritura se encuentra en revisión para envío a Notaría. (En Curso)</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-content">
-                                <h5 class="text-mac-dark/40">Fase 3: Inscripción CBR</h5>
-                                <p>Pendiente de ingreso al Conservador de Bienes Raíces.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <br>Si tiene dudas sobre esta etapa, escriba su consulta y la derivaremos con el equipo a cargo.
-            `;
-            injectBotMessage(cardHTML);
-        }
-
         // ==========================================
-        // CONTROLADORES DE EVENTOS
+        // PROCESADOR DE TEXTO LIBRE (Input de usuario)
         // ==========================================
         aiInputForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const text = aiInput.value.trim();
             if (!text) return;
+            
             aiInput.value = '';
+            aiSendBtn.disabled = true;
             addUserMessage(text);
-            processUserMessage(text);
+
+            // DETECCIÓN: ESTADO DE CAUSA
+            if (text.toUpperCase().startsWith("ALX-")) {
+                const caseData = casesDB[text.toUpperCase()];
+                if (caseData) {
+                    renderCaseTracker(caseData, text.toUpperCase());
+                } else {
+                    injectBotMessage("❌ No he encontrado registros en la base de datos para el código proporcionado. Verifique e intente nuevamente, o contacte a secretaría.");
+                }
+                return;
+            }
+
+            // Fallback Genérico si escriben en vez de usar botones
+            let waText = encodeURIComponent(`Consulta libre desde Bot: ${text.substring(0,50)}...`);
+            injectBotMessage(`He registrado su comentario en la bitácora técnica. Debido a la naturaleza de su solicitud, he habilitado un canal directo con nuestro equipo jurídico para analizar los detalles.<br>
+                             <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waText}" target="_blank" class="btn-wa-final"><i class="fab fa-whatsapp"></i> Conectar con Abogado</a>`);
         });
 
-        document.getElementById('close-ai-modal').addEventListener('click', () => {
-            aiModal.classList.add('opacity-0'); aiModalContent.classList.add('scale-95');
-            setTimeout(() => { aiModal.classList.add('hidden'); }, 300);
-        });
+        aiInput.addEventListener('input', () => { aiSendBtn.disabled = aiInput.value.trim() === ''; });
 
         // ==========================================
-        // RENDERIZADO DEL CORE SYSTEM (Tarjetas)
+        // RENDERIZADO DEL TRACKER DE CAUSA (TIMELINE UI)
+        // ==========================================
+        function renderCaseTracker(caseData, code) {
+            let html = `<strong>Expediente: ${code}</strong><br>
+                        <span class="text-[11px] text-mac-dark/60 uppercase tracking-wide">Materia: ${caseData.materia}</span><br>
+                        <span class="text-[11px] text-mac-dark/60">Tribunal: ${caseData.tribunal} | RIT: ${caseData.rit}</span>
+                        <div class="timeline-container mt-4">`;
+            
+            caseData.steps.forEach((step, index) => {
+                const isActive = index <= caseData.estadoActual;
+                html += `
+                    <div class="timeline-step ${isActive ? 'active' : ''}">
+                        <div class="step-title text-[13px] ${isActive ? 'text-mac-dark' : 'text-mac-dark/40'}">${step.title}</div>
+                        <div class="text-[10px] ${isActive ? 'text-green-600 font-medium' : 'text-mac-dark/40'}">${step.date}</div>
+                    </div>`;
+            });
+            
+            html += `</div>
+                     <a href="https://oficinajudicialvirtual.pjud.cl/" target="_blank" class="gov-link w-full text-center mt-2"><i class="fas fa-university"></i> Ver expediente oficial (PJUD)</a>`;
+            
+            injectBotMessage(html);
+        }
+
+        // ==========================================
+        // RENDERIZADO DEL CORE SYSTEM (La Base de Datos de la Web)
         // ==========================================
         const db = {
             legal: [
-                { id: 'civil', title: 'Derecho Civil', icon: 'fa-file-signature', desc: 'Gestión y blindaje estructural del patrimonio privado.', items: [ { title: "Redacción y revisión de contratos", desc: "Auditoría técnica de instrumentos para resguardar equilibrios." }, { title: "Juicios ordinarios y ejecutivos", desc: "Litigación estratégica y cobro de títulos." }, { title: "Prescripción adquisitiva", desc: "Consolidación judicial del dominio mediante prueba material." } ] },
-                { id: 'inmobiliario', title: 'Derecho Inmobiliario', icon: 'fa-city', desc: 'Seguridad jurídica para el desarrollo de bienes raíces.', items: [ { title: "Estudios de títulos", desc: "Auditoría registral en el Conservador de Bienes Raíces." }, { title: "Subdivisiones prediales", desc: "Gestión legal fusionada con topografía territorial." }, { title: "Regularización de propiedades", desc: "Saneamiento técnico-legal de inscripciones irregulares." } ] },
-                { id: 'laboral', title: 'Derecho Laboral', icon: 'fa-user-tie', desc: 'Compliance laboral y defensa especializada.', items: [ { title: "Defensa por Despidos", desc: "Litigación por despido injustificado y cobro de prestaciones." }, { title: "Tutela laboral", desc: "Defensa ante vulneración de derechos fundamentales." }, { title: "Auditorías a Empleadores", desc: "Revisión preventiva de contratos y reglamentos internos." } ] },
-                { id: 'familia', title: 'Derecho de Familia', icon: 'fa-users', desc: 'Soluciones efectivas para la protección del patrimonio personal.', items: [ { title: "Divorcios y Compensación", desc: "Tramitación estratégica protegiendo el patrimonio." }, { title: "Alimentos y Cuidado Personal", desc: "Gestión judicial garantizando el interés superior." } ] }
-            ],
-            tech: [
-                { id: 'drones', title: 'Evidencia Drones _4k', icon: 'fa-drone', desc: 'Captura audiovisual para sustentar demandas en tribunales.', items: [ { title: "Verificación de deslindes", desc: "Constatación aérea del límite físico predial." }, { title: "Peritajes judiciales", desc: "Informes visuales técnicos validados para tribunales." } ] },
-                { id: 'digital', title: 'Evidencia Digital', icon: 'fa-microchip', desc: 'Extracción y análisis de datos electrónicos.', items: [ { title: "Levantamiento de correos/chats", desc: "Recolección asegurando validez probatoria judicial." } ] }
+                { 
+                    id: 'familia', title: 'Derecho de Familia', icon: 'fa-users', desc: 'Protección patrimonial y resolución de conflictos familiares.', 
+                    items: [
+                        { title: "Juicios de Alimentos", desc: "Fijación, aumento, rebaja y apremios por no pago." },
+                        { title: "Divorcios Complejos", desc: "Mutuo acuerdo y unilaterales con compensación económica." },
+                        { title: "Cuidado Personal", desc: "Protección del interés superior del menor y visitas." }
+                    ] 
+                },
+                { 
+                    id: 'laboral', title: 'Derecho Laboral', icon: 'fa-user-tie', desc: 'Defensa corporativa y representación de trabajadores.', 
+                    items: [
+                        { title: "Despido Injustificado", desc: "Cobro de indemnizaciones legales y recargos." },
+                        { title: "Tutela Laboral", desc: "Defensa ante vulneración de derechos fundamentales." },
+                        { title: "Accidentes del Trabajo", desc: "Responsabilidad y demanda indemnizatoria." }
+                    ] 
+                },
+                { 
+                    id: 'inmobiliario', title: 'Derecho Inmobiliario', icon: 'fa-city', desc: 'Seguridad jurídica en bienes raíces y proyectos.', 
+                    items: [
+                        { title: "Estudio de Títulos", desc: "Auditoría preventiva antes de la compraventa." },
+                        { title: "Redacción de Escrituras", desc: "Compraventas, promesas y usufructos." },
+                        { title: "Saneamiento", desc: "Regularización de propiedades e inscripciones." }
+                    ] 
+                }
             ]
         };
 
-        function format4K(text) { return text.replace(/_4k/g, '<span class="badge-4k">4K HDR</span>'); }
+        const navLegal = document.getElementById('sidebar-nav');
+        const contentTitle = document.getElementById('content-title');
+        const contentDesc = document.getElementById('content-desc');
+        const contentIcon = document.getElementById('content-icon');
+        const servicesGrid = document.getElementById('services-grid');
+        let currentActiveBtn = null;
 
-        function renderContent(dataObj) {
-            const contentTitle = document.getElementById('content-title');
-            const contentDesc = document.getElementById('content-desc');
-            const contentIcon = document.getElementById('content-icon');
-            const servicesGrid = document.getElementById('services-grid');
+        function renderContent(dataObj, btnElement) {
+            if (currentActiveBtn) currentActiveBtn.classList.remove('active');
+            btnElement.classList.add('active');
+            currentActiveBtn = btnElement;
 
-            contentTitle.style.opacity = '0'; contentDesc.style.opacity = '0'; contentIcon.style.opacity = '0'; servicesGrid.style.opacity = '0';
+            contentTitle.innerHTML = dataObj.title;
+            contentDesc.textContent = dataObj.desc;
+            contentIcon.className = `fas ${dataObj.icon} text-3xl`;
             
-            setTimeout(() => {
-                contentTitle.innerHTML = format4K(dataObj.title);
-                contentDesc.textContent = dataObj.desc;
-                contentIcon.className = `fas ${dataObj.icon} text-3xl md:text-4xl text-legal-blue transition-all duration-300`;
-                servicesGrid.innerHTML = '';
+            servicesGrid.innerHTML = '';
+            
+            dataObj.items.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'service-widget fade-in p-5';
+                card.style.animationDelay = `${index * 0.05}s`;
                 
-                dataObj.items.forEach((item, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'service-widget fade-in';
-                    card.style.animationDelay = `${index * 0.04}s`;
-                    
-                    // AL HACER CLIC: Llama a la Secretaría Técnica (IA Filtro)
-                    card.onclick = () => { triggerLegalFilter(dataObj.id, item.title.replace('_4k','')); };
+                // Aquí enlazamos la tarjeta con la IA y pasamos el área para el triage correcto
+                card.onclick = () => {
+                    openAIChat({ areaId: dataObj.id, serviceTitle: item.title });
+                };
 
-                    card.innerHTML = `
-                        <div class="flex items-start gap-3 mb-2">
-                            <div class="mt-1 w-6 h-6 rounded-full bg-legal-blue/10 flex items-center justify-center shrink-0 widget-icon transition-transform">
-                                <i class="fas fa-chevron-right text-legal-blue text-[10px]"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-[14px] md:text-[15px] font-bold text-mac-dark leading-snug">${format4K(item.title)}</h4>
-                                <p class="text-[12px] md:text-[13px] text-mac-dark/70 leading-relaxed font-normal mt-1">${format4K(item.desc)}</p>
-                            </div>
-                        </div>
-                    `;
-                    servicesGrid.appendChild(card);
-                });
-
-                contentTitle.style.opacity = '1'; contentDesc.style.opacity = '1'; contentIcon.style.opacity = '1'; servicesGrid.style.opacity = '1';
-            }, 200);
-        }
-
-        function createSidebarButtons(categoryArray, containerId) {
-            const container = document.getElementById(containerId);
-            categoryArray.forEach((cat, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'sidebar-item w-full text-left px-4 py-2.5 rounded-lg text-[13px] font-medium text-mac-dark/70 flex items-center gap-3';
-                btn.innerHTML = `<i class="fas ${cat.icon} w-4 text-center opacity-70 text-[14px]"></i> <span>${format4K(cat.title)}</span>`;
-                
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    renderContent(cat);
-                    if(window.innerWidth < 768) document.getElementById('content-header').scrollIntoView({ behavior: "smooth", block: "start" });
-                });
-                
-                container.appendChild(btn);
-                if (index === 0 && containerId === 'sidebar-nav') setTimeout(() => btn.click(), 100);
+                card.innerHTML = `
+                    <div class="flex flex-col gap-2">
+                        <h4 class="text-[15px] font-bold text-mac-dark">${item.title}</h4>
+                        <p class="text-[13px] text-mac-dark/70 leading-relaxed">${item.desc}</p>
+                        <span class="text-[10px] font-semibold text-mac-accent mt-2 uppercase tracking-wide flex items-center gap-1"><i class="fas fa-magic"></i> Analizar Caso</span>
+                    </div>`;
+                servicesGrid.appendChild(card);
             });
         }
 
-        createSidebarButtons(db.legal, 'sidebar-nav');
-        createSidebarButtons(db.tech, 'sidebar-nav-tech');
-
-        // Botón Header IA
-        document.getElementById('open-ai-header-btn').addEventListener('click', () => {
-            triggerLegalFilter('default', 'Asesoría General');
+        db.legal.forEach((cat, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'sidebar-item w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-mac-dark/70 flex items-center gap-3 mb-1';
+            btn.innerHTML = `<i class="fas ${cat.icon} w-5 text-center opacity-60"></i> <span>${cat.title}</span>`;
+            
+            btn.addEventListener('click', () => renderContent(cat, btn));
+            navLegal.appendChild(btn);
+            if (index === 0) setTimeout(() => btn.click(), 50);
         });
-    });
     </script>
 </body>
 </html>
