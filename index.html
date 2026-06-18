@@ -37,7 +37,7 @@
     </script>
 
     <style>
-        body { background-color: #F9FAFB; color: #1D1D1F; -webkit-font-smoothing: antialiased; }
+        body { background-color: #F9FAFB; color: #1D1D1F; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
         /* SVG DRONE PARCHE */
         .fa-drone::before { content: "" !important; }
@@ -51,7 +51,6 @@
         .mac-header { background: transparent; }
         .dock-nav { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.8); border-top: 1px solid rgba(255, 255, 255, 1); }
         
-        /* BADGE 4K HDR REDUCIDO */
         .badge-4k { display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #788C9F 0%, #5A6B7C 100%); color: #fff; font-size: 0.45rem; font-weight: 700; padding: 0.1rem 0.25rem; border-radius: 3px; margin-left: 0.3rem; letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 1px 3px rgba(0,0,0,0.15); vertical-align: middle; line-height: 1; white-space: nowrap; }
         
         .sidebar-item { transition: all 0.2s ease; }
@@ -63,11 +62,17 @@
         .service-widget.widget-selected { background: #ffffff; border-color: #788C9F; box-shadow: 0 10px 25px rgba(120, 140, 159, 0.25), inset 0 1px 2px rgba(255,255,255,1); transform: scale(1.02); }
         .service-widget.widget-selected i { color: #788C9F; }
 
-        /* FAB WHATSAPP */
+        /* FAB WHATSAPP & WIDGET CHAT */
         .whatsapp-fab { position: fixed; bottom: 30px; right: 30px; background: transparent; color: #25D366; font-size: 65px; display: flex; align-items: center; justify-content: center; z-index: 90; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease; cursor: pointer; filter: drop-shadow(0 6px 8px rgba(37, 211, 102, 0.3)); }
         .whatsapp-fab:hover { transform: scale(1.1) translateY(-5px); filter: drop-shadow(0 10px 15px rgba(37, 211, 102, 0.45)); color: #128C7E; }
+        
+        .wa-quick-popup {
+            position: fixed; bottom: 100px; right: 30px; z-index: 89;
+            width: 300px; opacity: 0; transform: translateY(20px) scale(0.95);
+            pointer-events: none; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .wa-quick-popup.active { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
 
-        /* BOTONES DE PANEL DESACTIVADOS/ACTIVADOS */
         .btn-panel-disabled { background: rgba(0,0,0,0.05); color: rgba(0,0,0,0.4); pointer-events: none; border: 1px dashed rgba(0,0,0,0.1); }
         .btn-pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
@@ -112,8 +117,8 @@
                 </nav>
                 
                 <div class="hidden md:flex">
-                    <button class="open-intake bg-mac-dark hover:bg-black text-white px-5 py-2 rounded-full text-xs font-semibold transition-all shadow-md flex items-center gap-2">
-                        <i class="fas fa-concierge-bell text-sm"></i> Admisión de Casos
+                    <button id="btn-header-intake" class="bg-mac-dark hover:bg-black text-white px-5 py-2 rounded-full text-xs font-semibold transition-all shadow-md flex items-center gap-2">
+                        <i class="fas fa-concierge-bell text-sm"></i> Mesa de Entrada
                     </button>
                 </div>
                 <button id="mobile-menu-btn" class="md:hidden text-mac-dark p-2 focus:outline-none bg-white/70 rounded-full backdrop-blur-md border border-white/80">
@@ -127,14 +132,30 @@
                 <a href="#inicio" class="mobile-link text-base font-medium text-mac-dark/80 hover:text-mac-dark flex items-center gap-3"><i class="fas fa-home opacity-50 w-5"></i> Inicio</a>
                 <a href="#servicios" class="mobile-link text-base font-medium text-mac-dark/80 hover:text-mac-dark flex items-center gap-3"><i class="fas fa-balance-scale opacity-50 w-5"></i> Portafolio Legal</a>
                 <a href="#servicios" class="mobile-link text-base font-medium text-mac-dark/80 hover:text-mac-dark flex items-center gap-3"><i class="fas fa-drone opacity-50 w-5"></i> Evidencia & Drones</a>
-                <button class="open-intake mobile-link mt-4 text-center bg-mac-dark text-white py-3.5 rounded-2xl text-sm font-semibold shadow-lg flex items-center justify-center gap-2 w-full">
-                    <i class="fas fa-concierge-bell text-lg"></i> Admisión de Casos
+                <button id="btn-mobile-intake" class="mobile-link mt-4 text-center bg-mac-dark text-white py-3.5 rounded-2xl text-sm font-semibold shadow-lg flex items-center justify-center gap-2 w-full">
+                    <i class="fas fa-concierge-bell text-lg"></i> Mesa de Entrada
                 </button>
             </div>
         </div>
     </header>
 
-    <button class="whatsapp-fab open-intake" aria-label="Abrir Flujo de Admisión"><i class="fab fa-whatsapp"></i></button>
+    <div id="wa-quick-popup" class="wa-quick-popup">
+        <div class="glass-effect p-5 rounded-3xl shadow-2xl border border-white/80 w-full flex flex-col gap-3">
+            <div class="flex items-center gap-3 border-b border-black/5 pb-3">
+                <div class="w-10 h-10 bg-whatsapp text-white rounded-full flex items-center justify-center text-xl shadow-md"><i class="fab fa-whatsapp"></i></div>
+                <div>
+                    <h4 class="text-sm font-bold text-mac-dark leading-tight">Chat Directo</h4>
+                    <p class="text-[11px] font-medium text-success">En línea</p>
+                </div>
+                <button id="close-wa-popup" class="ml-auto text-mac-dark/40 hover:text-mac-dark transition-colors"><i class="fas fa-times"></i></button>
+            </div>
+            <p class="text-xs text-mac-dark/70 font-light leading-relaxed">¿Necesita asistencia inmediata o agendar una consulta rápida? Hable directo con un asesor.</p>
+            <a href="https://wa.me/56987491964?text=Hola%20AeroLex,%20necesito%20realizar%20una%20consulta%20rápida." target="_blank" class="bg-whatsapp hover:bg-whatsapp-dark text-white px-4 py-3 rounded-xl text-sm font-semibold shadow-md transition-all text-center flex items-center justify-center gap-2 mt-1 btn-pop">
+                <i class="fas fa-paper-plane"></i> Iniciar Chat
+            </a>
+        </div>
+    </div>
+    <button id="btn-fab-wa" class="whatsapp-fab" aria-label="Abrir WhatsApp"><i class="fab fa-whatsapp"></i></button>
 
     <div id="intake-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-mac-dark/60 backdrop-blur-sm opacity-0 transition-opacity duration-300">
         <div class="glass-effect p-6 md:p-8 rounded-3xl max-w-lg w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh] overflow-y-auto hide-scrollbar" id="intake-modal-content">
@@ -209,7 +230,7 @@
                 <textarea id="svc-detalle" rows="4" class="mac-input resize-none" placeholder="Describa su caso o consulta aquí..." required></textarea>
                 
                 <button type="submit" id="btn-submit-service" class="mt-4 bg-mac-dark hover:bg-black text-white px-6 py-3.5 rounded-xl text-sm font-medium shadow-md transition-all flex items-center justify-center gap-2 w-full btn-pop">
-                    <span class="flex items-center gap-2"><i class="fas fa-paper-plane"></i> Enviar a Evaluación</span>
+                    <span class="flex items-center gap-2"><i class="fas fa-paper-plane"></i> Solicitar Evaluación</span>
                 </button>
             </form>
         </div>
@@ -307,23 +328,48 @@
 
             const WHATSAPP_NUMBER = "56987491964"; 
 
-            // 1. MODAL ADMISIÓN GLOBAL
+            // 1. MODAL ADMISIÓN (MESA DE ENTRADA) - Botón Header
             const intakeModal = document.getElementById('intake-modal');
             const intakeModalContent = document.getElementById('intake-modal-content');
             const closeModalBtn = document.getElementById('close-modal');
-            const openIntakeBtns = document.querySelectorAll('.open-intake');
+            const btnHeaderIntake = document.getElementById('btn-header-intake');
+            const btnMobileIntake = document.getElementById('btn-mobile-intake');
+            
             const steps = document.querySelectorAll('.intake-step');
             const btnNext = document.getElementById('btn-next');
             const btnPrev = document.getElementById('btn-prev');
             const formControls = document.getElementById('form-controls');
             const progressText = document.getElementById('intake-progress');
             const form = document.getElementById('intake-form');
+            
             let currentStep = 1; const totalSteps = 4;
 
-            function openIntake(e) { if(e) e.preventDefault(); intakeModal.classList.remove('hidden'); setTimeout(() => { intakeModal.classList.remove('opacity-0'); intakeModalContent.classList.remove('scale-95'); }, 10); }
-            function closeIntake() { intakeModal.classList.add('opacity-0'); intakeModalContent.classList.add('scale-95'); setTimeout(() => { intakeModal.classList.add('hidden'); form.reset(); currentStep = 1; updateSteps(); }, 300); }
+            function openIntake(e) { 
+                if(e) e.preventDefault(); 
+                intakeModal.classList.remove('hidden'); 
+                setTimeout(() => { intakeModal.classList.remove('opacity-0'); intakeModalContent.classList.remove('scale-95'); }, 10); 
+            }
+            function closeIntake() { 
+                intakeModal.classList.add('opacity-0'); intakeModalContent.classList.add('scale-95'); 
+                setTimeout(() => { intakeModal.classList.add('hidden'); form.reset(); currentStep = 1; updateSteps(); }, 300); 
+            }
 
             function updateSteps() {
+                if(currentStep > 1 && currentStep <= totalSteps) {
+                    const prevStepDiv = document.getElementById(`step-${currentStep-1}`);
+                    const inputs = prevStepDiv.querySelectorAll('input[required], textarea[required]');
+                    let valid = true;
+                    inputs.forEach(input => {
+                        if (input.type === 'radio') {
+                            const name = input.getAttribute('name');
+                            if(!prevStepDiv.querySelector(`input[name="${name}"]:checked`)) valid = false;
+                        } else {
+                            if(!input.value.trim()) valid = false;
+                        }
+                    });
+                    if(!valid) { currentStep--; alert("Por favor, complete los campos requeridos."); return; }
+                }
+
                 steps.forEach((step, index) => { if (index + 1 === currentStep) step.classList.remove('hidden'); else step.classList.add('hidden'); });
                 progressText.textContent = `Paso ${currentStep} de ${totalSteps}`;
 
@@ -337,7 +383,6 @@
                 if (currentStep < totalSteps) {
                     currentStep++; updateSteps();
                 } else {
-                    // Estado de Carga UI
                     const originalBtnContent = btnNext.innerHTML;
                     btnNext.innerHTML = '<div class="loader-white mr-2"></div><span>Procesando...</span>';
                     btnNext.classList.add('opacity-80', 'pointer-events-none');
@@ -345,8 +390,7 @@
 
                     setTimeout(() => {
                         const formData = new FormData(form);
-                        const autoMsg = `*INGRESO MESA DE ENTRADA AEROLEX*\n\n*Tipo:* ${formData.get('tipo_req')}\n*Área:* ${formData.get('area_req')}\n*Detalle:* ${formData.get('detalle_caso')}\n*Nombre:* ${formData.get('nombre')}\n*RUT:* ${formData.get('rut')}\n*Tel:* ${formData.get('telefono')}\n*Email:* ${formData.get('email')}`;
-                        
+                        const autoMsg = `*MESA DE ENTRADA AEROLEX*\n\n*Tipo:* ${formData.get('tipo_req')}\n*Área:* ${formData.get('area_req')}\n*Detalle:* ${formData.get('detalle_caso')}\n*Nombre:* ${formData.get('nombre')}\n*RUT:* ${formData.get('rut')}\n*Tel:* ${formData.get('telefono')}\n*Email:* ${formData.get('email')}`;
                         window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMsg)}`, '_blank');
                         
                         btnNext.innerHTML = originalBtnContent;
@@ -357,11 +401,28 @@
             });
 
             btnPrev.addEventListener('click', () => { if (currentStep > 1) { currentStep--; updateSteps(); } });
-            openIntakeBtns.forEach(btn => btn.addEventListener('click', openIntake));
+            
+            // Asignar eventos solo a los botones correctos de Mesa de Entrada
+            if(btnHeaderIntake) btnHeaderIntake.addEventListener('click', openIntake);
+            if(btnMobileIntake) btnMobileIntake.addEventListener('click', openIntake);
             closeModalBtn.addEventListener('click', closeIntake);
             intakeModal.addEventListener('click', (e) => { if(e.target === intakeModal) closeIntake(); });
 
-            // 2. MODAL SERVICIO ESPECIFICO (WIDGETS)
+            // 2. WIDGET CHAT RÁPIDO (FAB WHATSAPP INFERIOR)
+            const waFabBtn = document.getElementById('btn-fab-wa');
+            const waQuickPopup = document.getElementById('wa-quick-popup');
+            const closeWaPopup = document.getElementById('close-wa-popup');
+            
+            waFabBtn.addEventListener('click', () => {
+                waQuickPopup.classList.toggle('hidden');
+                setTimeout(() => { waQuickPopup.classList.toggle('active'); }, 10);
+            });
+            closeWaPopup.addEventListener('click', () => {
+                waQuickPopup.classList.remove('active');
+                setTimeout(() => { waQuickPopup.classList.add('hidden'); }, 300);
+            });
+
+            // 3. MODAL SERVICIO ESPECIFICO (DESDE EL PANEL CORE SYSTEM)
             const serviceModal = document.getElementById('service-modal');
             const serviceModalContent = document.getElementById('service-modal-content');
             const closeServiceModalBtn = document.getElementById('close-service-modal');
@@ -386,7 +447,6 @@
             serviceForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 
-                // Estado de Carga
                 const originalBtnContent = btnSubmitService.innerHTML;
                 btnSubmitService.innerHTML = '<span class="flex items-center gap-2"><div class="loader-white"></div> Procesando...</span>';
                 btnSubmitService.classList.add('opacity-80', 'pointer-events-none');
@@ -399,14 +459,13 @@
                     
                     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMessage)}`, '_blank');
                     
-                    // Restaurar botón y cerrar
                     btnSubmitService.innerHTML = originalBtnContent;
                     btnSubmitService.classList.remove('opacity-80', 'pointer-events-none');
                     closeServiceModal();
                 }, 1200);
             });
 
-            // 3. BASE DE DATOS Y PANEL INTERACTIVO
+            // 4. BASE DE DATOS Y PANEL INTERACTIVO
             const db = {
                 legal: [
                     { id: 'civil', title: 'Derecho Civil', icon: 'fa-file-signature', desc: 'Gestión y estructuración del patrimonio privado con rigor técnico.', items: [{ title: "Redacción y revisión de contratos", desc: "Aplicación rigurosa de la teoría del acto jurídico para resguardar el equilibrio contractual." }, { title: "Cobranza judicial y extrajudicial", desc: "Estrategias de recuperación de activos mediante acciones ejecutivas con alta eficacia." }, { title: "Juicios ordinarios y ejecutivos", desc: "Litigación especializada, asegurando el debido proceso y ejecución de sentencias." }, { title: "Responsabilidad contractual", desc: "Análisis dogmático de incumplimientos y resguardo ante lesión enorme." }, { title: "Indemnización de perjuicios", desc: "Persecución de responsabilidad civil para la reparación integral del daño." }, { title: "Prescripción adquisitiva", desc: "Consolidación del dominio mediante la comprobación judicial de posesión." }, { title: "Servidumbres", desc: "Constitución, defensa y extinción de gravámenes reales estratégicamente." }, { title: "Acciones posesorias", desc: "Protección cautelar rápida y efectiva frente a turbaciones de inmuebles." }] },
@@ -429,6 +488,7 @@
             const contentDesc = document.getElementById('content-desc');
             const contentIcon = document.getElementById('content-icon');
             const servicesGrid = document.getElementById('services-grid');
+            
             const servicePanelBtn = document.getElementById('service-panel-btn');
             const servicePanelBtnMobile = document.getElementById('service-panel-btn-mobile');
             
@@ -522,12 +582,6 @@
 
             createSidebarButtons(db.legal, navLegal);
             createSidebarButtons(db.tech, navTech);
-            
-            // Mobile menu
-            const mobileBtn = document.getElementById('mobile-menu-btn');
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
-            document.querySelectorAll('.mobile-link').forEach(link => { link.addEventListener('click', () => document.getElementById('mobile-menu').classList.add('hidden')); });
         });
     </script>
 </body>
