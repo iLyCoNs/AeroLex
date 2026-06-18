@@ -29,7 +29,7 @@
                     },
                     boxShadow: {
                         'mac-window': '0 25px 50px -12px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(0,0,0,0.03)',
-                        'mac-card': '0 4px 15px rgba(0, 0, 0, 0.03)',
+                        'mac-card': '0 10px 30px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0,0,0,0.02)',
                         'mac-dock': '0 10px 30px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255,255,255,0.9)',
                     }
                 }
@@ -44,7 +44,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* * SVG DRONE PARCHE * */
+        /* SVG DRONE PARCHE */
         .fa-drone::before { content: "" !important; }
         .fa-drone {
             display: inline-block; width: 1em; height: 1em; background-color: currentColor;
@@ -53,76 +53,53 @@
             vertical-align: middle;
         }
 
-        /* * FONDO LUMINOSO PREMIUM * */
+        /* FONDO LUMINOSO PREMIUM */
         .bg-container {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: -2;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
             background-image: url('https://images.unsplash.com/photo-1505664194779-8beaceb93744?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
-            filter: grayscale(100%);
-            opacity: 0.05; 
+            background-size: cover; background-position: center; filter: grayscale(100%); opacity: 0.05; 
         }
-
         .mesh-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: -1;
-            background: 
-                radial-gradient(at 0% 0%, rgba(240, 244, 250, 0.9) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(255, 255, 255, 0.9) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(235, 240, 248, 0.9) 0px, transparent 50%),
-                radial-gradient(at 0% 100%, rgba(250, 250, 252, 0.9) 0px, transparent 50%);
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
+            background: radial-gradient(at 0% 0%, rgba(240, 244, 250, 0.9) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(255, 255, 255, 0.9) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(235, 240, 248, 0.9) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(250, 250, 252, 0.9) 0px, transparent 50%);
             filter: blur(40px);
         }
 
-        /* Glassmorphism General */
+        /* Glassmorphism */
         .glass-effect {
-            background: rgba(255, 255, 255, 0.7); 
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 1);
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 1);
         }
-
         .mac-header { background: transparent; }
-
         .dock-nav {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            border-top: 1px solid rgba(255, 255, 255, 1);
+            background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8); border-top: 1px solid rgba(255, 255, 255, 1);
         }
 
-        /* Badge 4K HDR (Aún existe en CSS por si lo usamos dentro del panel) */
+        /* Badge 4K HDR */
         .badge-4k {
-            display: inline-flex; align-items: center; justify-content: center;
-            background: linear-gradient(135deg, #788C9F 0%, #5A6B7C 100%);
-            color: #fff; font-size: 0.55rem; font-weight: 700;
-            padding: 0.15rem 0.4rem; border-radius: 4px; margin-left: 0.4rem;
-            letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.4);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15); vertical-align: middle;
+            display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #788C9F 0%, #5A6B7C 100%);
+            color: #fff; font-size: 0.55rem; font-weight: 700; padding: 0.15rem 0.4rem; border-radius: 4px; margin-left: 0.4rem;
+            letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 2px 5px rgba(0,0,0,0.15); vertical-align: middle;
         }
 
         .sidebar-item { transition: all 0.2s ease; }
         .sidebar-item.active { background: #788C9F; color: #ffffff; font-weight: 500; box-shadow: 0 2px 10px rgba(120, 140, 159, 0.3); }
 
-        .service-card {
+        /* Tarjetas de Servicio Internas (Widget Style) */
+        .service-widget {
             background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255, 255, 255, 1); border-radius: 16px;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            display: flex; flex-direction: column; padding: 1.25rem;
         }
-        .service-card:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 12px 24px rgba(0,0,0,0.06); background: #ffffff; }
+        .service-widget:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 12px 24px rgba(0,0,0,0.06); background: #ffffff; }
 
         /* Botón WhatsApp Flotante */
         .whatsapp-fab {
-            position: fixed; bottom: 30px; right: 30px;
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-            color: white; width: 60px; height: 60px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
+            position: fixed; bottom: 30px; right: 30px; background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
             font-size: 30px; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4), inset 0 2px 4px rgba(255,255,255,0.3);
-            z-index: 90; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid rgba(255,255,255,0.2); cursor: pointer;
+            z-index: 90; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(255,255,255,0.2); cursor: pointer;
         }
         .whatsapp-fab:hover { transform: scale(1.1) translateY(-5px); }
 
@@ -149,9 +126,7 @@
                     <div class="w-9 h-9 bg-mac-dark/90 backdrop-blur-md rounded-xl flex items-center justify-center text-white shadow-sm border border-white/20">
                         <i class="fas fa-gavel text-sm"></i>
                     </div>
-                    <a href="#" class="font-semibold text-xl tracking-tight text-mac-dark">
-                        AeroLex
-                    </a>
+                    <a href="#" class="font-semibold text-xl tracking-tight text-mac-dark">AeroLex</a>
                 </div>
                 
                 <nav class="hidden md:flex space-x-1 dock-nav shadow-mac-dock rounded-full px-4 py-2 mx-auto">
@@ -165,7 +140,6 @@
                         <i class="fab fa-whatsapp text-sm"></i> Asesoría Rápida
                     </button>
                 </div>
-
                 <button id="mobile-menu-btn" class="md:hidden text-mac-dark p-2 focus:outline-none bg-white/70 rounded-full backdrop-blur-md border border-white/80">
                     <i class="fas fa-bars text-lg"></i>
                 </button>
@@ -184,43 +158,23 @@
         </div>
     </header>
 
-    <button class="whatsapp-fab open-intake" aria-label="Abrir Flujo de Admisión">
-        <i class="fab fa-whatsapp"></i>
-    </button>
+    <button class="whatsapp-fab open-intake" aria-label="Abrir Flujo de Admisión"><i class="fab fa-whatsapp"></i></button>
 
     <div id="intake-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-mac-dark/50 backdrop-blur-sm opacity-0 transition-opacity duration-300">
         <div class="glass-effect p-8 md:p-10 rounded-3xl max-w-md w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col" id="intake-modal-content">
-            
             <div class="flex justify-between items-start mb-6">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-mac-dark text-white rounded-xl flex items-center justify-center"><i class="fas fa-concierge-bell"></i></div>
-                    <div>
-                        <h3 class="text-lg font-bold text-mac-dark leading-tight">Admisión AeroLex</h3>
-                        <p class="text-xs text-mac-dark/60 font-medium">Asesoría de Alto Nivel</p>
-                    </div>
+                    <div><h3 class="text-lg font-bold text-mac-dark leading-tight">Admisión AeroLex</h3><p class="text-xs text-mac-dark/60 font-medium">Asesoría de Alto Nivel</p></div>
                 </div>
                 <button id="close-modal" class="text-mac-dark/40 hover:text-mac-dark text-xl transition-colors"><i class="fas fa-times"></i></button>
             </div>
-
             <p class="text-sm text-mac-dark/80 mb-6 font-light">Para derivar su caso al equipo especialista de manera confidencial, indique su área de requerimiento:</p>
-            
             <div class="flex flex-col gap-3">
-                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Derecho Privado y Patrimonio">
-                    <span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-file-signature w-6 opacity-60"></i> Derecho Privado & Patrimonio</span>
-                    <i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i>
-                </button>
-                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Asesoría Corporativa y Empresa">
-                    <span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-building w-6 opacity-60"></i> Asesoría Corporativa & Empresa</span>
-                    <i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i>
-                </button>
-                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Litigación de Alta Complejidad">
-                    <span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-gavel w-6 opacity-60"></i> Litigación & Defensa Judicial</span>
-                    <i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i>
-                </button>
-                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Fijación de Deslindes, Drones y Evidencia">
-                    <span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-drone w-6 opacity-60"></i> Deslindes & Evidencia Visual</span>
-                    <i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i>
-                </button>
+                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Derecho Privado y Patrimonio"><span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-file-signature w-6 opacity-60"></i> Derecho Privado & Patrimonio</span><i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i></button>
+                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Asesoría Corporativa y Empresa"><span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-building w-6 opacity-60"></i> Asesoría Corporativa & Empresa</span><i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i></button>
+                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Litigación de Alta Complejidad"><span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-gavel w-6 opacity-60"></i> Litigación & Defensa Judicial</span><i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i></button>
+                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Fijación de Deslindes, Drones y Evidencia"><span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-drone w-6 opacity-60"></i> Deslindes & Evidencia Visual</span><i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i></button>
             </div>
             <p class="text-[10px] text-mac-dark/40 mt-6 text-center"><i class="fas fa-lock"></i> Sus datos y requerimientos están protegidos por secreto profesional.</p>
         </div>
@@ -239,37 +193,26 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl w-full fade-in" style="animation-delay: 0.2s;">
             <div class="bg-white/60 backdrop-blur-md border border-white p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default">
-                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 text-mac-accent shadow-sm group-hover:scale-110 transition-transform duration-300">
-                    <i class="fas fa-building text-sm"></i>
-                </div>
+                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 text-mac-accent shadow-sm group-hover:scale-110 transition-transform duration-300"><i class="fas fa-building text-sm"></i></div>
                 <h3 class="text-sm font-semibold text-mac-dark mb-2 tracking-wide">Estructuración Corporativa</h3>
                 <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light">Diseñamos vehículos legales exactos para escalar sus negocios, prevenir riesgos y resguardar su patrimonio ante contingencias.</p>
             </div>
-
             <div class="bg-white/60 backdrop-blur-md border border-white p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default">
-                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 text-mac-accent shadow-sm group-hover:scale-110 transition-transform duration-300">
-                    <i class="fas fa-gavel text-sm"></i>
-                </div>
+                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 text-mac-accent shadow-sm group-hover:scale-110 transition-transform duration-300"><i class="fas fa-gavel text-sm"></i></div>
                 <h3 class="text-sm font-semibold text-mac-dark mb-2 tracking-wide">Litigación de Complejidad</h3>
                 <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light">Defensa judicial estratégica y resolución de conflictos civiles o comerciales, garantizando protección técnica de sus intereses.</p>
             </div>
-
             <div class="bg-white/60 backdrop-blur-md border border-white p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default flex flex-col">
-                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 text-mac-accent shadow-sm group-hover:scale-110 transition-transform duration-300">
-                    <i class="fas fa-drone text-sm"></i>
-                </div>
+                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 text-mac-accent shadow-sm group-hover:scale-110 transition-transform duration-300"><i class="fas fa-drone text-sm"></i></div>
                 <h3 class="text-sm font-semibold text-mac-dark mb-2 tracking-wide">Deslindes & Prueba Judicial</h3>
                 <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light">Levantamiento FPV y fotogramétrico de precisión para fijar límites prediales, constatar ocupaciones y nutrir litigios con prueba inobjetable.</p>
             </div>
         </div>
-        
-        <div class="mt-16 animate-bounce text-mac-dark/30 hidden md:block fade-in" style="animation-delay: 0.4s;">
-            <i class="fas fa-chevron-down"></i>
-        </div>
+        <div class="mt-16 animate-bounce text-mac-dark/30 hidden md:block fade-in" style="animation-delay: 0.4s;"><i class="fas fa-chevron-down"></i></div>
     </section>
 
     <section id="servicios" class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pb-20 relative z-10">
-        <div class="glass-effect rounded-3xl shadow-mac-window overflow-hidden border border-white flex flex-col h-[700px] md:h-[750px] fade-in" style="animation-delay: 0.3s;">
+        <div class="glass-effect rounded-3xl shadow-mac-window overflow-hidden border border-white flex flex-col h-[750px] md:h-[800px] fade-in" style="animation-delay: 0.3s;">
             
             <div class="h-12 md:h-14 bg-white/60 border-b border-black/5 flex items-center justify-between px-4 md:px-6 backdrop-blur-md shrink-0">
                 <div class="flex items-center gap-2 md:gap-3">
@@ -313,7 +256,7 @@
                         </div>
                     </div>
 
-                    <div id="services-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 pb-8 md:pb-12"></div>
+                    <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8 md:pb-12"></div>
                     
                     <div class="md:hidden mt-6 pb-8">
                         <a href="#" id="wa-panel-btn-mobile" target="_blank" class="w-full bg-whatsapp text-white px-5 py-3.5 rounded-xl text-sm font-medium shadow-md flex items-center justify-center gap-2">
@@ -357,10 +300,9 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            /* 1. NÚMERO DE WHATSAPP EMPRESA */
-            const WHATSAPP_NUMBER = "56900000000"; // Reemplaza con tu número real
+            const WHATSAPP_NUMBER = "56900000000"; 
 
-            /* 2. LÓGICA DEL PORTAL DE ADMISIÓN (MODAL) */
+            // Modal Logic
             const intakeModal = document.getElementById('intake-modal');
             const intakeModalContent = document.getElementById('intake-modal-content');
             const closeModalBtn = document.getElementById('close-modal');
@@ -379,50 +321,140 @@
             function closeModal() {
                 intakeModal.classList.add('opacity-0');
                 intakeModalContent.classList.add('scale-95');
-                setTimeout(() => {
-                    intakeModal.classList.add('hidden');
-                }, 300);
+                setTimeout(() => { intakeModal.classList.add('hidden'); }, 300);
             }
 
             openIntakeBtns.forEach(btn => btn.addEventListener('click', openModal));
             closeModalBtn.addEventListener('click', closeModal);
-
-            intakeModal.addEventListener('click', (e) => {
-                if(e.target === intakeModal) closeModal();
-            });
+            intakeModal.addEventListener('click', (e) => { if(e.target === intakeModal) closeModal(); });
 
             intakeOptions.forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const area = e.currentTarget.getAttribute('data-area');
                     const autoMessage = `Hola AeroLex, deseo coordinar una evaluación confidencial para el área de: *${area}*.`;
-                    const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMessage)}`;
-                    window.open(waUrl, '_blank');
+                    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMessage)}`, '_blank');
                     closeModal();
                 });
             });
 
-            /* 3. MENÚ MÓVIL */
+            // Mobile Menu
             const mobileBtn = document.getElementById('mobile-menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
             const mobileLinks = document.querySelectorAll('.mobile-link');
-
             mobileBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
             mobileLinks.forEach(link => { link.addEventListener('click', () => { mobileMenu.classList.add('hidden'); }); });
 
-            /* 4. BASE DE DATOS DE SERVICIOS */
+            /* BASE DE DATOS DE SERVICIOS (Tarjetas Premium con Descripciones Técnicas) */
             const db = {
                 legal: [
-                    { id: 'civil', title: 'Derecho Civil', icon: 'fa-file-signature', desc: 'Gestión y estructuración del patrimonio privado con rigor técnico.', items: ["Redacción y revisión de contratos", "Cobranza judicial y extrajudicial", "Juicios ordinarios y ejecutivos", "Indemnización de perjuicios", "Responsabilidad contractual y extracontractual", "Prescripción adquisitiva", "Servidumbres", "Acciones posesorias"] },
-                    { id: 'inmobiliario', title: 'Derecho Inmobiliario', icon: 'fa-city', desc: 'Seguridad jurídica integral para el desarrollo de proyectos y bienes raíces.', items: ["Estudios de títulos", "Compraventa de inmuebles", "Regularización de propiedades", "Saneamiento de títulos", "Subdivisiones prediales", "Constitución de servidumbres", "Asesoría inmobiliaria"] },
-                    { id: 'comercial', title: 'Comercial y Corporativo', icon: 'fa-briefcase', desc: 'Estructuración societaria y protección legal para el crecimiento empresarial.', items: ["Constitución de sociedades", "Modificaciones societarias", "Fusiones y adquisiciones", "Pactos de accionistas", "Contratos comerciales", "Cobranza empresarial", "Due diligence", "Gobierno corporativo"] },
-                    { id: 'laboral', title: 'Laboral y Administrativo', icon: 'fa-users-cog', desc: 'Cumplimiento normativo patronal y relación con organismos del Estado.', items: ["Asesoría a empleadores", "Defensa laboral y Despidos", "Tutela laboral y Accidentes del trabajo", "Auditorías y Negociación laboral", "Recursos y Procedimientos sancionatorios", "Licitaciones y Compras públicas", "Reclamos ante organismos públicos", "Solicitudes de transparencia"] },
-                    { id: 'familia', title: 'Familia y Sucesorio', icon: 'fa-home', desc: 'Soluciones legales discretas y efectivas para la vida personal y hereditaria.', items: ["Divorcios y Compensación económica", "Alimentos y Cuidado personal", "Relación directa y regular", "Violencia intrafamiliar", "Posesiones efectivas y Herencias", "Particiones y Testamentos", "Litigios hereditarios"] },
-                    { id: 'litigacion', title: 'Litigación y Compliance', icon: 'fa-gavel', desc: 'Defensa estratégica ante tribunales y prevención de riesgos corporativos.', items: ["Representación ante tribunales", "Juicios civiles, laborales y ejecutivos", "Recursos de protección y amparo", "Gerencia legal externa y Compliance", "Modelos de prevención de delitos", "Auditorías legales y Gestión de riesgos", "Negociación extrajudicial", "Reestructuración de deudas"] }
+                    { 
+                        id: 'civil', title: 'Derecho Civil', icon: 'fa-file-signature', desc: 'Gestión y estructuración del patrimonio privado con rigor técnico.', 
+                        items: [
+                            { title: "Redacción y revisión de contratos", desc: "Aplicación rigurosa de la teoría del acto jurídico para resguardar la voluntad y el equilibrio contractual." },
+                            { title: "Cobranza judicial y extrajudicial", desc: "Estrategias de recuperación de activos mediante acciones ejecutivas y ordinarias con alta eficacia." },
+                            { title: "Juicios ordinarios y ejecutivos", desc: "Litigación patrimonial especializada, asegurando el debido proceso y la ejecución inobjetable de sentencias." },
+                            { title: "Responsabilidad contractual", desc: "Análisis dogmático de incumplimientos, cláusulas penales y resguardo ante lesión enorme u otros vicios." },
+                            { title: "Indemnización de perjuicios", desc: "Persecución de responsabilidad civil contractual y extracontractual para la reparación integral del daño." },
+                            { title: "Prescripción adquisitiva", desc: "Consolidación del dominio mediante la comprobación judicial de la posesión material ininterrumpida." },
+                            { title: "Servidumbres", desc: "Constitución, defensa y extinción de gravámenes reales sobre predios sirvientes de forma estratégica." },
+                            { title: "Acciones posesorias", desc: "Protección cautelar rápida y efectiva frente a turbaciones o despojos de la posesión de inmuebles." }
+                        ] 
+                    },
+                    { 
+                        id: 'inmobiliario', title: 'Derecho Inmobiliario', icon: 'fa-city', desc: 'Seguridad jurídica integral para el desarrollo de proyectos y bienes raíces.', 
+                        items: [
+                            { title: "Estudios de títulos", desc: "Revisión exhaustiva de la cadena de dominio y registros conservatorios para garantizar transacciones blindadas." },
+                            { title: "Compraventa de inmuebles", desc: "Asesoría integral desde la promesa hasta la inscripción, previniendo vicios redhibitorios y saneando reparos." },
+                            { title: "Regularización de propiedades", desc: "Saneamiento de la pequeña propiedad raíz y gestión experta de títulos de dominio irregulares." },
+                            { title: "Saneamiento de títulos", desc: "Corrección estratégica de vicios formales y materiales en inscripciones de dominio conservatorias." },
+                            { title: "Subdivisiones prediales", desc: "Gestión técnico-legal para la división de terrenos cumpliendo con la planimetría y normativa urbanística." },
+                            { title: "Constitución de servidumbres", desc: "Formalización de tránsitos, acueductos y vistas cruzando precisión topográfica y legal." },
+                            { title: "Asesoría inmobiliaria", desc: "Consultoría de alto nivel para el desarrollo, financiamiento y ejecución segura de proyectos inmobiliarios." }
+                        ] 
+                    },
+                    { 
+                        id: 'comercial', title: 'Comercial y Corporativo', icon: 'fa-briefcase', desc: 'Estructuración societaria y protección legal para el crecimiento empresarial.', 
+                        items: [
+                            { title: "Constitución de sociedades", desc: "Estructuración de vehículos societarios (SpA, Ltda., SA) adaptados al riesgo y necesidad de capital." },
+                            { title: "Fusiones y adquisiciones", desc: "Acompañamiento corporativo integral en la compraventa de empresas y procesos complejos de M&A." },
+                            { title: "Pactos de accionistas", desc: "Regulación de gobiernos corporativos, opciones de salida y prevención estratégica de bloqueos." },
+                            { title: "Due diligence", desc: "Auditoría legal preventiva para detectar contingencias laborales, tributarias y civiles antes de invertir." },
+                            { title: "Modificaciones societarias", desc: "Transformaciones, divisiones y aumentos de capital con estricto apego a los estatutos comerciales." },
+                            { title: "Contratos comerciales", desc: "Redacción meticulosa de acuerdos de distribución, franquicias, leasing y joint ventures empresariales." },
+                            { title: "Cobranza empresarial", desc: "Gestión corporativa integral de carteras castigadas y recuperación agresiva de flujos comerciales." },
+                            { title: "Gobierno corporativo", desc: "Implementación de políticas directivas sólidas para la toma de decisiones transparente y segura." }
+                        ] 
+                    },
+                    { 
+                        id: 'laboral', title: 'Laboral y Administrativo', icon: 'fa-users-cog', desc: 'Cumplimiento normativo patronal y relación con organismos del Estado.', 
+                        items: [
+                            { title: "Asesoría a empleadores", desc: "Consultoría preventiva en contratación, reglamentos internos y cumplimiento estricto ante la DT." },
+                            { title: "Defensa laboral y Despidos", desc: "Representación patronal estratégica en juicios por despido injustificado y demandas de cobro." },
+                            { title: "Tutela laboral y Accidentes", desc: "Defensa especializada ante vulneración de derechos fundamentales y siniestralidad laboral grave." },
+                            { title: "Auditorías y Negociación", desc: "Revisión de cumplimiento normativo y manejo directivo en negociaciones colectivas sindicales." },
+                            { title: "Recursos y Procedimientos", desc: "Defensa administrativa y judicial frente a multas, clausuras y resoluciones fiscalizadoras del Estado." },
+                            { title: "Licitaciones y Compras", desc: "Asesoría técnica en bases de licitación, procesos de adjudicación y contratos públicos." },
+                            { title: "Reclamos ante organismos", desc: "Representación formal ante Contraloría, Superintendencias y diversas Municipalidades del país." },
+                            { title: "Solicitudes de transparencia", desc: "Gestión de acceso a la información pública y acciones de amparo ante el Consejo para la Transparencia." }
+                        ] 
+                    },
+                    { 
+                        id: 'familia', title: 'Familia y Sucesorio', icon: 'fa-home', desc: 'Soluciones legales discretas y efectivas para la vida personal y hereditaria.', 
+                        items: [
+                            { title: "Divorcios y Compensación", desc: "Tramitación de divorcios y blindaje patrimonial estratégico ante demandas de compensación económica." },
+                            { title: "Alimentos y Cuidado", desc: "Fijación y mediación técnica de pensiones alimenticias, enfocados en el resguardo de menores." },
+                            { title: "Relación directa y regular", desc: "Establecimiento de regímenes de visitas justos que protejan primordialmente el interés superior." },
+                            { title: "Posesiones efectivas", desc: "Tramitación notarial y judicial impecable para la correcta transmisión del patrimonio del causante." },
+                            { title: "Particiones y Testamentos", desc: "Redacción de voluntades testamentarias y litigación experta en juicios de comunidades hereditarias." },
+                            { title: "Litigios hereditarios", desc: "Acciones de petición de herencia, reforma de testamento y protección de asignaciones forzosas." },
+                            { title: "Violencia intrafamiliar", desc: "Gestión de medidas cautelares y representación en tribunales de familia con absoluta confidencialidad." }
+                        ] 
+                    },
+                    { 
+                        id: 'litigacion', title: 'Litigación y Compliance', icon: 'fa-gavel', desc: 'Defensa estratégica ante tribunales y prevención de riesgos corporativos.', 
+                        items: [
+                            { title: "Representación ante tribunales", desc: "Patrocinio experto y representación estratégica en todas las instancias y tribunales del país." },
+                            { title: "Juicios civiles y ejecutivos", desc: "Defensa patrimonial de alta intensidad en juicios de lato conocimiento y procedimientos de apremio." },
+                            { title: "Recursos de protección", desc: "Acciones constitucionales urgentes para restablecer el imperio del derecho ante actos arbitrarios." },
+                            { title: "Gerencia legal y Compliance", desc: "Dirección jurídica externalizada y modelos de prevención de delitos corporativos (Ley 20.393)." },
+                            { title: "Modelos de prevención", desc: "Diseño e implementación de matrices de riesgo penal exclusivas para personas jurídicas." },
+                            { title: "Auditorías y Gestión", desc: "Evaluación exhaustiva de procesos internos para mitigar riesgos legales y operacionales de la empresa." },
+                            { title: "Negociación extrajudicial", desc: "Acercamiento estratégico para la resolución de conflictos complejos sin escalamiento judicial." },
+                            { title: "Reestructuración de deudas", desc: "Asesoría integral en reorganización financiera y liquidación conforme a la Ley de Insolvencia." }
+                        ] 
+                    }
                 ],
                 tech: [
-                    { id: 'drones', title: 'Inspección Aérea _4k', icon: 'fa-drone', desc: 'Operaciones de alta precisión en colaboración con AustralDrone.', items: ["Fijación de deslindes y linderos _4k", "Constatación de ocupaciones irregulares", "Inspección FPV industrial y techumbres", "Monitoreo constante de proyectos y obras", "Generación de prueba visual judicial"] },
-                    { id: 'fotogrametria', title: 'Fotogrametría', icon: 'fa-layer-group', desc: 'Topografía digital de precisión milimétrica.', items: ["Ortomosaicos de alta resolución _4k", "Modelos 3D para peritajes técnicos", "Cálculo exacto de superficies y cabidas", "Mapeo para litigios de servidumbres", "Informes topográficos documentados"] },
-                    { id: 'digital', title: 'Evidencia Digital', icon: 'fa-shield-alt', desc: 'Protección de datos y levantamiento de información corporativa.', items: ["Levantamiento de evidencia lícita", "Protección de datos personales", "Informes jurídicos especializados", "Investigación jurídica y Análisis", "Custodia documental en la nube"] }
+                    { 
+                        id: 'drones', title: 'Inspección Aérea _4k', icon: 'fa-drone', desc: 'Operaciones de alta precisión en colaboración con AustralDrone.', 
+                        items: [
+                            { title: "Fijación de deslindes _4k", desc: "Levantamiento aéreo milimétrico para constatar linderos, cercos y resolver conflictos de superposición." },
+                            { title: "Inspección FPV industrial", desc: "Vuelos técnicos de precisión para revisar techumbres, infraestructura mayor y zonas de alto riesgo." },
+                            { title: "Prueba visual judicial", desc: "Captura de evidencia material certificada y georreferenciada para nutrir litigios de usurpación o daños." },
+                            { title: "Monitoreo de proyectos", desc: "Seguimiento periódico de obras civiles con material visual inobjetable para el control de avance." },
+                            { title: "Videos Corporativos _4k", desc: "Producción audiovisual inmersiva de alta gama para proyectos inmobiliarios y comerciales." }
+                        ] 
+                    },
+                    { 
+                        id: 'fotogrametria', title: 'Fotogrametría', icon: 'fa-layer-group', desc: 'Topografía digital de precisión milimétrica.', 
+                        items: [
+                            { title: "Ortomosaicos de resolución _4k", desc: "Mapeo topográfico avanzado uniendo cientos de fotografías aéreas para crear planos ultra detallados." },
+                            { title: "Cálculo exacto de superficies", desc: "Determinación de cabidas reales mediante software de vanguardia, contrastando con información del SII." },
+                            { title: "Modelos 3D para peritajes", desc: "Reconstrucción digital topográfica del terreno, fundamental para informes técnicos y peritajes judiciales." },
+                            { title: "Mapeo para servidumbres", desc: "Planificación visual técnica de trazados para servidumbres de tránsito, acueducto o instalaciones eléctricas." },
+                            { title: "Informes documentados", desc: "Entregables técnicos firmados que combinan la rigurosidad legal probatoria con la data espacial exacta." }
+                        ] 
+                    },
+                    { 
+                        id: 'digital', title: 'Evidencia Digital', icon: 'fa-shield-alt', desc: 'Protección de datos y levantamiento de información corporativa.', 
+                        items: [
+                            { title: "Levantamiento de evidencia", desc: "Recolección forense de datos electrónicos y digitales asegurando la impecabilidad de la cadena de custodia." },
+                            { title: "Protección de datos", desc: "Adecuación corporativa integral a las normativas vigentes de privacidad y tratamiento de información." },
+                            { title: "Informes especializados", desc: "Análisis técnico cruzado entre regulaciones complejas, leyes sustantivas y metadatos digitales." },
+                            { title: "Investigación y Análisis", desc: "Búsqueda profunda y estructurada de antecedentes registrales, comerciales y huellas digitales." },
+                            { title: "Custodia en la nube", desc: "Almacenamiento encriptado de expedientes, contratos y pruebas en servidores de máxima seguridad." }
+                        ] 
+                    }
                 ]
             };
 
@@ -450,23 +482,32 @@
                 currentActiveBtn = btnElement;
 
                 contentTitle.style.opacity = '0'; contentDesc.style.opacity = '0'; contentIcon.style.opacity = '0';
+                servicesGrid.style.opacity = '0';
                 
                 setTimeout(() => {
                     contentTitle.innerHTML = format4K(dataObj.title);
                     contentDesc.textContent = dataObj.desc;
                     contentIcon.className = `fas ${dataObj.icon} text-xl md:text-2xl transition-all duration-300`;
                     
-                    contentTitle.style.opacity = '1'; contentDesc.style.opacity = '1'; contentIcon.style.opacity = '1';
-                }, 150);
+                    servicesGrid.innerHTML = '';
+                    // Renderizado de las nuevas Tarjetas (Widgets Premium)
+                    dataObj.items.forEach((item, index) => {
+                        const card = document.createElement('div');
+                        card.className = 'service-widget fade-in';
+                        card.style.animationDelay = `${index * 0.04}s`;
+                        card.innerHTML = `
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fas fa-check-circle text-mac-accent/80 text-sm"></i>
+                                <h4 class="text-sm font-semibold text-mac-dark leading-tight">${format4K(item.title)}</h4>
+                            </div>
+                            <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light pl-6">${format4K(item.desc)}</p>
+                        `;
+                        servicesGrid.appendChild(card);
+                    });
 
-                servicesGrid.innerHTML = '';
-                dataObj.items.forEach((item, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'service-card p-3 md:p-4 fade-in flex items-start gap-2.5';
-                    card.style.animationDelay = `${index * 0.04}s`;
-                    card.innerHTML = `<div class="mt-0.5 text-mac-accent opacity-90 text-sm"><i class="fas fa-check"></i></div><div class="text-xs md:text-[13px] font-medium text-mac-dark/90 leading-snug">${format4K(item)}</div>`;
-                    servicesGrid.appendChild(card);
-                });
+                    contentTitle.style.opacity = '1'; contentDesc.style.opacity = '1'; contentIcon.style.opacity = '1';
+                    servicesGrid.style.opacity = '1';
+                }, 150);
 
                 const cleanTitle = cleanTextForURL(dataObj.title);
                 const autoMessage = `Hola AeroLex, me gustaría recibir más información directa sobre el servicio de: *${cleanTitle}*.`;
