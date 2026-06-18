@@ -228,9 +228,11 @@
 
     <script>
         const WHATSAPP_NUMBER = "56900000000"; // Reemplaza con el número real de AeroLex
+        const GITHUB_REPO_OWNER = "ilycons";
+        const GITHUB_REPO_NAME = "AeroLex";
 
         // =========================================================================================
-        // 1. BASE DE DATOS ESTRUCTURAL (Sin Inspección, Drone movido a Litigios)
+        // 1. BASE DE DATOS ESTRUCTURAL
         // =========================================================================================
         const db = {
             legal: [
@@ -358,38 +360,40 @@
         };
 
         // =========================================================================================
-        // 2. BASE DE DATOS DE ESTADOS DE CAUSA (Para el rastreador ALX)
+        // 2. SISTEMA VIVO DE RASTREO (FETCH DESDE GITHUB API / LOCAL FALLBACK)
         // =========================================================================================
-        const casesDB = {
+        let casesDB = {
             "ALX-2026-01": {
-                materia: "Cuidado Personal y Alimentos",
-                tribunal: "2° Juzgado de Familia de Santiago",
-                rit: "C-1450-2025",
+                materia: "Compraventa Inmobiliaria",
+                tribunal: "Conservador de Bienes Raíces - Puerto Montt",
+                rit: "Carpeta Interna N° 4592-2026",
+                detalle: "Inmueble: Los Notros 455, Puerto Montt. Documentos base validados.",
                 estadoActual: 2, 
                 steps: [
-                    { title: "Ingreso de Demanda", date: "12 Mar 2026", done: true },
-                    { title: "Notificación a Contraparte", date: "25 Mar 2026", done: true },
-                    { title: "Audiencia Preparatoria", date: "Fijada para 15 May 2026", done: false },
-                    { title: "Audiencia de Juicio", date: "Pendiente", done: false }
-                ]
-            },
-            "ALX-2026-02": {
-                materia: "Despido Injustificado",
-                tribunal: "1° Juzgado de Letras del Trabajo",
-                rit: "O-321-2026",
-                estadoActual: 3,
-                steps: [
-                    { title: "Ingreso Demanda", date: "02 Ene 2026", done: true },
-                    { title: "Audiencia Preparatoria", date: "10 Feb 2026", done: true },
-                    { title: "Audiencia de Juicio", date: "05 Mar 2026", done: true },
-                    { title: "Sentencia (Favorable)", date: "20 Mar 2026", done: true },
-                    { title: "Gestión de Cobro / Embargo", date: "En curso", done: false }
+                    { title: "Recopilación de Antecedentes", date: "01 Jun 2026", done: true },
+                    { title: "Estudio de Títulos Aprobado", date: "10 Jun 2026", done: true },
+                    { title: "Inscripción en Conservador (CBR)", date: "En trámite actual", done: false },
+                    { title: "Entrega Copias Autorizadas a Cliente", date: "Pendiente", done: false }
                 ]
             }
         };
 
+        async function syncLiveCases() {
+            try {
+                // Fetch silencioso saltándose la caché con timestamp
+                const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/main/cases.json?t=${Date.now()}`);
+                if (response.ok) {
+                    const liveData = await response.json();
+                    casesDB = liveData;
+                    console.log("Holocrón Sincronizado: Base de datos de causas actualizada desde GitHub.");
+                }
+            } catch (error) {
+                console.warn("Fallo de red al sincronizar Bóveda. Operando con base de datos de respaldo local.");
+            }
+        }
+
         // =========================================================================================
-        // 3. MOTOR DE TRIAGE JEDI (Actualizado)
+        // 3. MOTOR DE TRIAGE JEDI
         // =========================================================================================
         const flows = {
             // CIVIL
@@ -540,8 +544,8 @@
             aiChatLog.innerHTML = '';
             
             if (serviceId === 'ESTADO_CAUSA') {
-                document.getElementById('ai-subtitle').innerText = "Rastreo Judicial";
-                injectBotMessage("Módulo de Rastreo Judicial activado. Por favor, <strong>escriba en la barra inferior su número de caso asignado por AeroLex</strong> (Ej: ALX-2026-01 o ALX-2026-02).");
+                document.getElementById('ai-subtitle').innerText = "Rastreo Judicial (Conexión Segura)";
+                injectBotMessage("Módulo de Rastreo Judicial en vivo activado. Por favor, <strong>escriba en la barra inferior su código único asignado por AeroLex</strong> (Ej: ALX-2026-01).");
                 return;
             }
 
@@ -625,7 +629,7 @@
             }, 900);
         }
 
-        // --- MANEJO DEL INPUT LIBRE Y RASTREADOR DE CAUSAS ---
+        // --- MANEJO DEL INPUT LIBRE Y RASTREADOR DE CAUSAS (CONECTADO A LA BASE DE DATOS DINÁMICA) ---
         aiInput.addEventListener('input', () => { aiSendBtn.disabled = aiInput.value.trim() === ''; });
         
         aiInputForm.addEventListener('submit', (e) => {
@@ -642,8 +646,15 @@
                 if (caseData) {
                     let html = `<strong>Expediente: ${text.toUpperCase()}</strong><br>
                         <span class="text-[11px] text-mac-dark/60 uppercase tracking-wide">Materia: ${caseData.materia}</span><br>
-                        <span class="text-[11px] text-mac-dark/60">Tribunal: ${caseData.tribunal} | RIT: ${caseData.rit}</span>
-                        <div class="timeline-container mt-4">`;
+                        <span class="text-[11px] text-mac-dark/60">Tribunal/Oficina: ${caseData.tribunal} | RIT: ${caseData.rit}</span>`;
+                        
+                    if(caseData.detalle) {
+                        html += `<div class="mt-2 text-[12px] p-2 bg-blue-50 border border-blue-100 rounded-lg text-blue-800">
+                            <i class="fas fa-info-circle"></i> <strong>Apunte Interno:</strong> ${caseData.detalle}
+                        </div>`;
+                    }
+                        
+                    html += `<div class="timeline-container mt-4">`;
                     
                     caseData.steps.forEach((step, index) => {
                         const isActive = index <= caseData.estadoActual;
@@ -656,7 +667,7 @@
                     html += `</div>`;
                     injectBotMessage(html);
                 } else {
-                    injectBotMessage("❌ No he encontrado registros en la base de datos para el código proporcionado.");
+                    injectBotMessage("❌ No he encontrado registros en la base de datos para el código proporcionado. Compruebe si está bien escrito.");
                 }
                 return;
             }
@@ -682,7 +693,6 @@
         const contentHeader = document.getElementById('content-header');
         let activeBtn = null;
 
-        // DIAPOSITIVA DE BIENVENIDA (ONBOARDING AUTOMÁTICO)
         function renderWelcomeView() {
             if(activeBtn) activeBtn.classList.remove('active');
             activeBtn = null;
@@ -760,12 +770,13 @@
             });
         }
 
-        // Inicializar
-        buildMenu(db.legal, navLegal);
-        buildMenu(db.tech, navTech);
-        
-        // Cargar Diapositiva de Bienvenida por defecto
-        document.addEventListener('DOMContentLoaded', renderWelcomeView);
+        // Inicializar Sistema
+        document.addEventListener('DOMContentLoaded', () => {
+            buildMenu(db.legal, navLegal);
+            buildMenu(db.tech, navTech);
+            renderWelcomeView();
+            syncLiveCases(); // Llama a la base de datos de GitHub al iniciar
+        });
     </script>
 </body>
 </html>
