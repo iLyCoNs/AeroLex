@@ -6,13 +6,11 @@
     <meta name="description" content="AeroLex | High-End Legal & Tech Firm">
     <title>AeroLex | Soluciones Corporativas y Tecnológicas</title>
 
-    <!-- Fuentes Apple-like (Inter imita a San Francisco) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -39,12 +37,28 @@
         }
     </script>
 
-    <!-- Estilos Personalizados -->
     <style>
         body {
             background-color: #F5F5F7;
             color: #1D1D1F;
             -webkit-font-smoothing: antialiased;
+        }
+
+        /* * CORRECCIÓN DEL ÍCONO DE DRONE (CUSTOM SVG PARCHE)
+         * Reemplaza el ícono roto de FontAwesome por un Drone dibujado vectorialmente 
+         * que adapta su color y tamaño a la caja donde esté.
+         */
+        .fa-drone::before {
+            content: "" !important; /* Borra el caracter erróneo de la fuente */
+        }
+        .fa-drone {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            background-color: currentColor;
+            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z'/%3E%3Cpath d='m13.41 10.59 5.3-5.3'/%3E%3Cpath d='m10.59 13.41-5.3 5.3'/%3E%3Cpath d='m13.41 13.41 5.3 5.3'/%3E%3Cpath d='m10.59 10.59-5.3-5.3'/%3E%3Ccircle cx='19' cy='5' r='2'/%3E%3Ccircle cx='5' cy='19' r='2'/%3E%3Ccircle cx='19' cy='19' r='2'/%3E%3Ccircle cx='5' cy='5' r='2'/%3E%3C/svg%3E") no-repeat center / contain;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z'/%3E%3Cpath d='m13.41 10.59 5.3-5.3'/%3E%3Cpath d='m10.59 13.41-5.3 5.3'/%3E%3Cpath d='m13.41 13.41 5.3 5.3'/%3E%3Cpath d='m10.59 10.59-5.3-5.3'/%3E%3Ccircle cx='19' cy='5' r='2'/%3E%3Ccircle cx='5' cy='19' r='2'/%3E%3Ccircle cx='19' cy='19' r='2'/%3E%3Ccircle cx='5' cy='5' r='2'/%3E%3C/svg%3E") no-repeat center / contain;
+            vertical-align: middle;
         }
 
         /* Fondo Híbrido */
@@ -181,15 +195,12 @@
 </head>
 <body class="relative">
 
-    <!-- Capas de Fondo -->
     <div class="bg-container"></div>
     <div class="mesh-overlay"></div>
 
-    <!-- Header Estilo Minimalista -->
     <header class="fixed w-full top-0 z-50 mac-header transition-all duration-300 pt-4">
         <div class="max-w-7xl mx-auto px-4 md:px-6">
             <div class="flex justify-between items-center">
-                <!-- Logo con Martillo Legal -->
                 <div class="flex-shrink-0 flex items-center gap-2.5">
                     <div class="w-9 h-9 bg-mac-dark/90 backdrop-blur-md rounded-xl flex items-center justify-center text-white shadow-sm border border-white/20">
                         <i class="fas fa-gavel text-sm"></i>
@@ -199,28 +210,24 @@
                     </a>
                 </div>
                 
-                <!-- Menú Central Desktop (Dock Aqua Style) -->
                 <nav class="hidden md:flex space-x-1 dock-nav shadow-mac-dock rounded-full px-4 py-2 mx-auto">
                     <a href="#inicio" class="px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-mac-dark/80 hover:bg-white/50 hover:text-mac-dark transition-all">Inicio</a>
                     <a href="#servicios" class="px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-mac-dark/80 hover:bg-white/50 hover:text-mac-dark transition-all">Portafolio Legal</a>
                     <a href="#servicios" class="px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-mac-dark/80 hover:bg-white/50 hover:text-mac-dark transition-all">Tecnología <span class="badge-4k">4K HDR</span></a>
                 </nav>
                 
-                <!-- Botón de Contacto Desktop -->
                 <div class="hidden md:flex">
                     <a href="#contacto" class="bg-whatsapp hover:bg-whatsapp-dark text-white px-5 py-2 rounded-full text-xs font-semibold transition-all shadow-md flex items-center gap-2">
                         <i class="fab fa-whatsapp text-sm"></i> Asesoría Rápida
                     </a>
                 </div>
 
-                <!-- Botón Menú Móvil -->
                 <button id="mobile-menu-btn" class="md:hidden text-mac-dark p-2 focus:outline-none bg-white/50 rounded-full backdrop-blur-md border border-white/60">
                     <i class="fas fa-bars text-lg"></i>
                 </button>
             </div>
         </div>
 
-        <!-- Menú Móvil Desplegable -->
         <div id="mobile-menu" class="hidden md:hidden bg-white/95 backdrop-blur-3xl border-b border-black/5 absolute w-full left-0 top-20 shadow-2xl z-50 rounded-b-3xl">
             <div class="flex flex-col px-6 pt-4 pb-8 space-y-5">
                 <a href="#inicio" class="mobile-link text-base font-medium text-mac-dark/80 hover:text-mac-dark flex items-center gap-3"><i class="fas fa-home opacity-50 w-5"></i> Inicio</a>
@@ -233,12 +240,10 @@
         </div>
     </header>
 
-    <!-- Botón Flotante de WhatsApp Global -->
     <a href="https://wa.me/56900000000?text=Hola%20AeroLex,%20me%20gustaría%20solicitar%20asesoría." target="_blank" class="whatsapp-fab" id="wa-fab-global">
         <i class="fab fa-whatsapp"></i>
     </a>
 
-    <!-- Hero Section con Bento Grid Interactivo -->
     <section id="inicio" class="pt-40 pb-12 md:pb-24 flex flex-col items-center justify-center text-center px-4 relative z-10">
         
         <h1 class="text-4xl md:text-7xl font-bold tracking-tight text-mac-dark mb-4 md:mb-6 max-w-4xl leading-tight fade-in">
@@ -251,7 +256,6 @@
             Asesoría corporativa de élite, gestión patrimonial avanzada y servicios audiovisuales con drones de alta precisión para proyectos de alta complejidad.
         </p>
 
-        <!-- Bento Grid Interactivo -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl w-full fade-in" style="animation-delay: 0.2s;">
             
             <div class="bg-white/40 backdrop-blur-md border border-white/60 p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default">
@@ -291,12 +295,10 @@
         </div>
     </section>
 
-    <!-- Interfaz de Servicios (Dashboard Legal) -->
     <section id="servicios" class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pb-20 relative z-10">
         
         <div class="glass-effect rounded-3xl shadow-mac-window overflow-hidden border border-white/60 flex flex-col h-[700px] md:h-[750px] fade-in" style="animation-delay: 0.3s;">
             
-            <!-- Barra Superior Dashboard -->
             <div class="h-12 md:h-14 bg-white/40 border-b border-black/5 flex items-center justify-between px-4 md:px-6 backdrop-blur-md shrink-0">
                 <div class="flex items-center gap-2 md:gap-3">
                     <i class="fas fa-shield-alt text-mac-accent opacity-80 text-sm md:text-base"></i>
@@ -310,7 +312,6 @@
 
             <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
                 
-                <!-- Sidebar -->
                 <div class="w-full md:w-64 bg-white/20 border-b md:border-b-0 md:border-r border-black/5 p-3 md:p-4 shrink-0 backdrop-blur-sm z-10">
                     <div class="flex md:flex-col overflow-x-auto hide-scrollbar gap-3 md:gap-0 pb-1 md:pb-0">
                         <div class="flex md:block flex-row md:flex-col shrink-0 gap-2 md:gap-0">
@@ -325,7 +326,6 @@
                     </div>
                 </div>
 
-                <!-- Panel Principal de Contenido -->
                 <div class="flex-1 bg-white/40 p-5 md:p-8 overflow-y-auto relative">
                     <div id="content-header" class="mb-6 md:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
                         <div>
@@ -335,7 +335,6 @@
                             <h2 id="content-title" class="text-2xl md:text-3xl font-semibold text-mac-dark tracking-tight transition-all duration-300 flex items-center flex-wrap">Cargando...</h2>
                             <p id="content-desc" class="text-sm md:text-base text-mac-dark/60 mt-1 md:mt-2 font-light transition-all duration-300">Seleccione una categoría para ver los servicios.</p>
                         </div>
-                        <!-- Botón Dinámico de WhatsApp en el Panel -->
                         <div class="mt-4 md:mt-0 hidden md:block">
                             <a href="#" id="wa-panel-btn" target="_blank" class="bg-whatsapp hover:bg-whatsapp-dark text-white px-5 py-2.5 rounded-xl text-sm font-medium shadow-md transition-all flex items-center gap-2">
                                 <i class="fab fa-whatsapp text-lg"></i> Consultar este servicio
@@ -344,10 +343,8 @@
                     </div>
 
                     <div id="services-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 pb-8 md:pb-12">
-                        <!-- Tarjetas inyectadas por JS -->
-                    </div>
+                        </div>
                     
-                    <!-- Botón WhatsApp Móvil visible solo en pantallas pequeñas -->
                     <div class="md:hidden mt-6 pb-8">
                         <a href="#" id="wa-panel-btn-mobile" target="_blank" class="w-full bg-whatsapp text-white px-5 py-3.5 rounded-xl text-sm font-medium shadow-md flex items-center justify-center gap-2">
                             <i class="fab fa-whatsapp text-lg"></i> Consultar este servicio
@@ -358,7 +355,6 @@
         </div>
     </section>
 
-    <!-- Sección de Contacto Dedicada -->
     <section id="contacto" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 relative z-10 text-center fade-in" style="animation-delay: 0.4s;">
         <div class="glass-effect p-10 md:p-14 rounded-3xl border border-white/60 shadow-mac-window">
             <div class="w-16 h-16 bg-whatsapp/10 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -374,7 +370,6 @@
         </div>
     </section>
 
-    <!-- Footer Apple Style -->
     <footer class="border-t border-black/5 bg-white/30 backdrop-blur-md py-6 md:py-8 relative z-10">
         <div class="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-center text-xs text-mac-dark/50">
             <div class="flex items-center gap-2 mb-4 md:mb-0">
@@ -389,7 +384,6 @@
         </div>
     </footer>
 
-    <!-- Lógica JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
