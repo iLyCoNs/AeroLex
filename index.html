@@ -68,7 +68,7 @@
         .service-widget:hover::before { transform: scaleX(1); }
         .service-widget:hover .widget-icon { transform: scale(1.1) rotate(5deg); color: #1D1D1F; }
 
-        .whatsapp-fab { position: fixed; bottom: 30px; right: 30px; background: rgba(255, 255, 255, 0.8); color: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.08), inset 0 1px 2px rgba(255,255,255,1); z-index: 90; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(255,255,255,1); backdrop-filter: blur(20px); }
+        .whatsapp-fab { position: fixed; bottom: 30px; right: 30px; background: rgba(255, 255, 255, 0.8); color: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.08), inset 0 1px 2px rgba(255,255,255,1); z-index: 90; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(255,255,255,1); backdrop-filter: blur(20px); cursor: pointer; }
         .whatsapp-fab:hover { transform: scale(1.1) translateY(-5px); color: #128C7E; }
 
         /* Estilos IA Chat */
@@ -116,13 +116,14 @@
         </div>
     </header>
 
-    <!-- Botón WhatsApp Tradicional -->
+    <!-- Botón WhatsApp Tradicional (Número Irreal) -->
     <a href="https://wa.me/56900000000?text=Hola%20AeroLex,%20necesito%20asistencia%20legal." target="_blank" class="whatsapp-fab" aria-label="WhatsApp humano"><i class="fab fa-whatsapp"></i></a>
 
     <!-- VENTANA DEL ASISTENTE VIRTUAL IA -->
     <div id="ai-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-mac-dark/50 backdrop-blur-md opacity-0 transition-opacity duration-300">
         <div class="glass-effect rounded-3xl w-full max-w-lg mx-4 shadow-2xl border border-white overflow-hidden flex flex-col h-[600px] transform scale-95 transition-transform duration-300" id="ai-modal-content">
             
+            <!-- Cabecera IA -->
             <div class="h-16 bg-white/60 border-b border-black/5 flex items-center justify-between px-6 backdrop-blur-xl shrink-0">
                 <div class="flex items-center gap-3">
                     <div class="relative flex items-center justify-center w-10 h-10 bg-mac-dark rounded-full text-white shadow-md border border-white/50">
@@ -137,10 +138,12 @@
                 <button id="close-ai-modal" class="text-mac-dark/40 hover:text-mac-dark transition-colors w-8 h-8 flex items-center justify-center bg-white/50 rounded-full hover:bg-white"><i class="fas fa-times"></i></button>
             </div>
 
+            <!-- Área de Mensajes -->
             <div id="ai-chat-log" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4 bg-black/[0.02] hide-scrollbar scroll-smooth">
                 <div class="text-center my-2"><span class="bg-black/5 text-mac-dark/60 text-[10px] py-1 px-3 rounded-full font-medium shadow-sm uppercase tracking-wider">Hoy</span></div>
             </div>
 
+            <!-- Input Formulario -->
             <form id="ai-input-form" class="p-4 bg-white/80 border-t border-black/5 shrink-0 backdrop-blur-xl flex gap-3">
                 <input type="text" id="ai-input" class="flex-1 bg-white border border-black/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-mac-accent focus:ring-1 focus:ring-mac-accent shadow-sm" placeholder="Consulte sus dudas legales aquí..." autocomplete="off">
                 <button type="submit" id="ai-send-btn" class="w-12 h-12 bg-mac-dark text-white rounded-xl flex items-center justify-center shadow-md hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
@@ -150,7 +153,7 @@
         </div>
     </div>
 
-    <!-- SECCIÓN HERO -->
+    <!-- SECCIÓN HERO (Eslogan Optimizado) -->
     <section id="inicio" class="pt-40 pb-12 md:pb-24 flex flex-col items-center justify-center text-center px-4 relative z-10">
         <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-mac-dark mb-4 md:mb-6 max-w-4xl leading-tight fade-in">
             Soluciones Jurídicas Estratégicas.<br>
@@ -181,6 +184,7 @@
 
             <div class="flex flex-col md:flex-row flex-1 overflow-hidden h-full bg-white/30">
                 
+                <!-- Sidebar (Menú Izquierdo) -->
                 <div class="w-full md:w-72 bg-white/60 border-b md:border-b-0 md:border-r border-black/5 p-4 shrink-0 backdrop-blur-xl z-10 overflow-y-auto hide-scrollbar">
                     <div class="mb-6">
                         <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-widest mb-3 px-3">Ecosistema Jurídico</p>
@@ -193,6 +197,7 @@
                     </div>
                 </div>
 
+                <!-- Área de Contenido (Derecha) -->
                 <div class="flex-1 p-6 md:p-10 overflow-y-auto relative h-full bg-transparent scroll-smooth hide-scrollbar">
                     
                     <div id="content-header" class="mb-8 flex flex-col justify-start items-start">
@@ -219,13 +224,14 @@
         </div>
     </footer>
 
-    <!-- LÓGICA DE LA PLATAFORMA E INTELIGENCIA ARTIFICIAL -->
+    <!-- ============================================== -->
+    <!-- MOTOR JAVASCRIPT Y CONEXIÓN IA GEMINI          -->
+    <!-- ============================================== -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            // --- 1. CONFIGURACIÓN IA (Gemini) ---
-            // AQUÍ HE INYECTADO LA API KEY DE TU CAPTURA DE PANTALLA
-            const GEMINI_API_KEY = "AQ.Ab8RN6LOQQNStgZljN7CSA19oI-3HtuNv8Qx-thJJQxBFyNCMw"; 
+            // TOKEN EXTRAÍDO DIRECTAMENTE DE TU CAPTURA
+            const GEMINI_API_KEY = "AQ.Ab8RN6LGi52qF8hR7R_Fit4N1Qdoj5onTRdhIaE8PHpDUFh15Q"; 
             
             const aiModal = document.getElementById('ai-modal');
             const aiModalContent = document.getElementById('ai-modal-content');
@@ -238,14 +244,12 @@
             let chatHistory = [];
             let isChatInitialized = false;
 
-            const systemInstruction = `Eres el Consultor Virtual de Inteligencia Artificial de AeroLex. Tu objetivo es explicar de forma elegante, profesional y persuasiva nuestros servicios legales (civiles, corporativos, familia) o tecnológicos (drones, fotogrametría). 
-Actúas como un experto asesor. Brindas respuestas directas, útiles y que generen confianza. NO das asesoría legal definitiva, pero sí muestras profundo conocimiento. Tu objetivo final es invitar amablemente al usuario a que deje su número o email para que un abogado o ingeniero humano evalúe su caso sin costo inicial. Formatea tus respuestas de manera limpia (usa negritas si es necesario). Máximo 50 a 70 palabras por respuesta.`;
+            const systemInstruction = `Eres el Consultor Virtual de Inteligencia Artificial de AeroLex. Tu objetivo es explicar de forma elegante, profesional y persuasiva nuestros servicios legales (civiles, corporativos, familia) o tecnológicos (drones, fotogrametría). Actúas como un experto asesor. Brindas respuestas directas, útiles y que generen confianza. NO das asesoría legal definitiva. Tu objetivo final es invitar amablemente al usuario a que deje su número o email para que un especialista humano evalúe su caso sin costo inicial. Máximo 50 a 70 palabras por respuesta.`;
 
             function parseMarkdown(text) {
                 return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
             }
 
-            // --- 2. FUNCIONES DE INTERFAZ DEL CHAT ---
             function openAIChat(initialPrompt = null) {
                 aiModal.classList.remove('hidden');
                 setTimeout(() => { 
@@ -255,7 +259,7 @@ Actúas como un experto asesor. Brindas respuestas directas, útiles y que gener
 
                 if (!isChatInitialized && !initialPrompt) {
                     isChatInitialized = true;
-                    // El saludo visual (false significa que NO se sube al historial de Google)
+                    // El saludo NO se sube a Google para evitar conflictos de roles en el historial
                     addBotMessage("Bienvenido al sistema de inteligencia corporativa de AeroLex. Soy su consultor virtual. ¿Desea explorar un servicio en particular o requiere orientación sobre su caso legal?", false);
                 }
 
@@ -286,7 +290,6 @@ Actúas como un experto asesor. Brindas respuestas directas, útiles y que gener
                         aiChatLog.insertAdjacentHTML('beforeend', msgHtml);
                         aiChatLog.scrollTop = aiChatLog.scrollHeight;
                         
-                        // Solo se guarda en memoria si es respuesta a una consulta
                         if (addToHistory) {
                             chatHistory.push({ role: "model", parts: [{ text: text }] });
                         }
@@ -302,15 +305,20 @@ Actúas como un experto asesor. Brindas respuestas directas, útiles y que gener
                 chatHistory.push({ role: "user", parts: [{ text: text }] });
             }
 
+            // FUNCIÓN CENTRAL REESCRITA PARA COMPATIBILIDAD CON LLAVES "AQ."
             async function fetchAIResponse(userText) {
                 const typingId = 'typing-' + Date.now();
                 aiChatLog.insertAdjacentHTML('beforeend', `<div id="${typingId}" class="ai-chat-bubble-bot typing-indicator"><span></span><span></span><span></span></div>`);
                 aiChatLog.scrollTop = aiChatLog.scrollHeight;
 
                 try {
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                    // SE UTILIZAN HEADERS (x-goog-api-key) EN VEZ DE URL PARAMS PARA LA LLAVE
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'x-goog-api-key': GEMINI_API_KEY
+                        },
                         body: JSON.stringify({
                             systemInstruction: { parts: [{ text: systemInstruction }] },
                             contents: chatHistory,
@@ -321,11 +329,10 @@ Actúas como un experto asesor. Brindas respuestas directas, útiles y que gener
                     const tEl = document.getElementById(typingId);
                     if(tEl) tEl.remove();
 
-                    // SI GOOGLE DEVUELVE ERROR, LO CAPTURAMOS AQUÍ
+                    // MANEJADOR DE ERRORES EXPLÍCITO
                     if (!response.ok) {
                         const errorData = await response.json();
-                        console.error("Detalle Error Gemini:", errorData);
-                        throw new Error(errorData.error.message || "Error desconocido en los servidores de Google.");
+                        throw new Error(errorData.error.message || "Error desconocido de servidor");
                     }
                     
                     const data = await response.json();
@@ -338,19 +345,19 @@ Actúas como un experto asesor. Brindas respuestas directas, útiles y que gener
                     aiChatLog.scrollTop = aiChatLog.scrollHeight;
 
                 } catch (error) {
+                    console.error("Fallo IA:", error);
                     const tEl = document.getElementById(typingId);
                     if(tEl) tEl.remove();
                     
-                    // IMPRIME EL ERROR REAL EN PANTALLA
                     const errorMsgHtml = `
                         <div class="ai-chat-bubble-bot fade-in border border-red-200 bg-red-50 text-red-700 text-xs">
-                            <i class="fas fa-exclamation-triangle mb-1"></i> <b>Fallo en conexión:</b><br>
+                            <i class="fas fa-exclamation-triangle mb-1"></i> <b>Fallo en conexión API:</b><br>
                             ${error.message}
                         </div>`;
                     aiChatLog.insertAdjacentHTML('beforeend', errorMsgHtml);
                     aiChatLog.scrollTop = aiChatLog.scrollHeight;
                     
-                    chatHistory.pop(); // Limpiamos el mensaje fallido para no romper el historial futuro
+                    chatHistory.pop(); // Limpiamos el error de la memoria
                 }
             }
 
@@ -366,7 +373,6 @@ Actúas como un experto asesor. Brindas respuestas directas, útiles y que gener
                 fetchAIResponse(text);
             });
 
-            // Disparadores Chat IA
             document.getElementById('open-ai-header-btn').addEventListener('click', () => openAIChat());
             closeAiBtn.addEventListener('click', closeAIChat);
             aiModal.addEventListener('click', (e) => { if (e.target === aiModal) closeAIChat(); });
