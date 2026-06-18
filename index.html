@@ -17,8 +17,8 @@
             theme: {
                 extend: {
                     colors: {
-                        'mac-bg': '#F9FAFB', /* Fondo base aclarado */
-                        'mac-glass': 'rgba(255, 255, 255, 0.85)', /* Cristal más blanco y puro */
+                        'mac-bg': '#F9FAFB', 
+                        'mac-glass': 'rgba(255, 255, 255, 0.85)', 
                         'mac-dark': '#1D1D1F',
                         'mac-accent': '#788C9F',
                         'whatsapp': '#25D366',
@@ -62,14 +62,13 @@
             background-size: cover;
             background-position: center;
             filter: grayscale(100%);
-            opacity: 0.05; /* Muy tenue para no molestar la lectura */
+            opacity: 0.05; 
         }
 
         .mesh-overlay {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: -1;
-            /* Degradados más blancos y claros para asegurar contraste con las letras oscuras */
             background: 
                 radial-gradient(at 0% 0%, rgba(240, 244, 250, 0.9) 0px, transparent 50%),
                 radial-gradient(at 100% 0%, rgba(255, 255, 255, 0.9) 0px, transparent 50%),
@@ -80,7 +79,7 @@
 
         /* Glassmorphism General */
         .glass-effect {
-            background: rgba(255, 255, 255, 0.7); /* Más opaco para mejor lectura */
+            background: rgba(255, 255, 255, 0.7); 
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
             border: 1px solid rgba(255, 255, 255, 1);
@@ -96,7 +95,7 @@
             border-top: 1px solid rgba(255, 255, 255, 1);
         }
 
-        /* Badge 4K HDR */
+        /* Badge 4K HDR (Aún existe en CSS por si lo usamos dentro del panel) */
         .badge-4k {
             display: inline-flex; align-items: center; justify-content: center;
             background: linear-gradient(135deg, #788C9F 0%, #5A6B7C 100%);
@@ -141,7 +140,6 @@
 <body class="relative">
 
     <div class="bg-container"></div>
-    
     <div class="mesh-overlay"></div>
 
     <header class="fixed w-full top-0 z-50 mac-header transition-all duration-300 pt-4">
@@ -159,7 +157,7 @@
                 <nav class="hidden md:flex space-x-1 dock-nav shadow-mac-dock rounded-full px-4 py-2 mx-auto">
                     <a href="#inicio" class="px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-mac-dark/80 hover:bg-white/50 hover:text-mac-dark transition-all">Inicio</a>
                     <a href="#servicios" class="px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-mac-dark/80 hover:bg-white/50 hover:text-mac-dark transition-all">Portafolio Legal</a>
-                    <a href="#servicios" class="px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-mac-dark/80 hover:bg-white/50 hover:text-mac-dark transition-all">Tecnología <span class="badge-4k">4K HDR</span></a>
+                    <a href="#servicios" class="px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-mac-dark/80 hover:bg-white/50 hover:text-mac-dark transition-all">Evidencia & Drones</a>
                 </nav>
                 
                 <div class="hidden md:flex">
@@ -178,7 +176,7 @@
             <div class="flex flex-col px-6 pt-4 pb-8 space-y-5">
                 <a href="#inicio" class="mobile-link text-base font-medium text-mac-dark/80 hover:text-mac-dark flex items-center gap-3"><i class="fas fa-home opacity-50 w-5"></i> Inicio</a>
                 <a href="#servicios" class="mobile-link text-base font-medium text-mac-dark/80 hover:text-mac-dark flex items-center gap-3"><i class="fas fa-balance-scale opacity-50 w-5"></i> Portafolio Legal</a>
-                <a href="#servicios" class="mobile-link text-base font-medium text-mac-dark/80 hover:text-mac-dark flex items-center gap-3"><i class="fas fa-drone opacity-50 w-5"></i> Drones y Tecnología <span class="badge-4k ml-auto">4K HDR</span></a>
+                <a href="#servicios" class="mobile-link text-base font-medium text-mac-dark/80 hover:text-mac-dark flex items-center gap-3"><i class="fas fa-drone opacity-50 w-5"></i> Evidencia & Drones</a>
                 <button class="open-intake mobile-link mt-4 text-center bg-whatsapp text-white py-3.5 rounded-2xl text-sm font-semibold shadow-lg flex items-center justify-center gap-2 w-full">
                     <i class="fab fa-whatsapp text-lg"></i> Iniciar Flujo de Admisión
                 </button>
@@ -219,8 +217,8 @@
                     <span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-gavel w-6 opacity-60"></i> Litigación & Defensa Judicial</span>
                     <i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i>
                 </button>
-                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Tecnología, Drones 4K y Evidencia">
-                    <span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-drone w-6 opacity-60"></i> Evidencia Tecnológica & Drones</span>
+                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Fijación de Deslindes, Drones y Evidencia">
+                    <span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-drone w-6 opacity-60"></i> Deslindes & Evidencia Visual</span>
                     <i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i>
                 </button>
             </div>
@@ -230,13 +228,13 @@
 
     <section id="inicio" class="pt-40 pb-12 md:pb-24 flex flex-col items-center justify-center text-center px-4 relative z-10">
         <h1 class="text-4xl md:text-7xl font-bold tracking-tight text-mac-dark mb-4 md:mb-6 max-w-4xl leading-tight fade-in">
-            Ingeniería Legal.<br>
+            Evidencia Irrefutable.<br>
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-mac-accent to-gray-500">
-                Precisión Tecnológica.
+                Estrategia Legal de Élite.
             </span>
         </h1>
-        <p class="text-base md:text-xl text-mac-dark/70 max-w-2xl font-light mb-12 leading-relaxed fade-in" style="animation-delay: 0.1s;">
-            Asesoría corporativa de élite, gestión patrimonial avanzada y servicios audiovisuales con drones de alta precisión para proyectos de alta complejidad.
+        <p class="text-base md:text-xl text-mac-dark/70 max-w-3xl font-light mb-12 leading-relaxed fade-in" style="animation-delay: 0.1s;">
+            Integramos derecho corporativo, litigación avanzada y la <strong>fijación exacta de deslindes</strong> territoriales para blindar sus registros probatorios judiciales. Un ecosistema único impulsado en colaboración con <a href="https://australdrone.cl" target="_blank" class="font-semibold text-mac-dark hover:text-mac-accent transition-colors border-b border-mac-accent/30 pb-0.5">AUSTRALDRONE.CL</a>.
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl w-full fade-in" style="animation-delay: 0.2s;">
@@ -253,15 +251,15 @@
                     <i class="fas fa-gavel text-sm"></i>
                 </div>
                 <h3 class="text-sm font-semibold text-mac-dark mb-2 tracking-wide">Litigación de Complejidad</h3>
-                <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light">Defensa judicial estratégica y resolución de conflictos civiles o corporativos, enfocada en resultados certeros.</p>
+                <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light">Defensa judicial estratégica y resolución de conflictos civiles o comerciales, garantizando protección técnica de sus intereses.</p>
             </div>
 
-            <div class="bg-white/60 backdrop-blur-md border border-white p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default">
+            <div class="bg-white/60 backdrop-blur-md border border-white p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default flex flex-col">
                 <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 text-mac-accent shadow-sm group-hover:scale-110 transition-transform duration-300">
                     <i class="fas fa-drone text-sm"></i>
                 </div>
-                <h3 class="text-sm font-semibold text-mac-dark mb-2 tracking-wide flex items-center">Evidencia Visual <span class="badge-4k">4K HDR</span></h3>
-                <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light">Levantamiento topográfico, fotogrametría e inspección aérea con drones para nutrir con prueba irrefutable sus litigios.</p>
+                <h3 class="text-sm font-semibold text-mac-dark mb-2 tracking-wide">Deslindes & Prueba Judicial</h3>
+                <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light">Levantamiento FPV y fotogramétrico de precisión para fijar límites prediales, constatar ocupaciones y nutrir litigios con prueba inobjetable.</p>
             </div>
         </div>
         
@@ -369,7 +367,6 @@
             const openIntakeBtns = document.querySelectorAll('.open-intake');
             const intakeOptions = document.querySelectorAll('.intake-option');
 
-            // Abrir Modal
             function openModal(e) {
                 if(e) e.preventDefault();
                 intakeModal.classList.remove('hidden');
@@ -379,7 +376,6 @@
                 }, 10);
             }
 
-            // Cerrar Modal
             function closeModal() {
                 intakeModal.classList.add('opacity-0');
                 intakeModalContent.classList.add('scale-95');
@@ -424,9 +420,9 @@
                     { id: 'litigacion', title: 'Litigación y Compliance', icon: 'fa-gavel', desc: 'Defensa estratégica ante tribunales y prevención de riesgos corporativos.', items: ["Representación ante tribunales", "Juicios civiles, laborales y ejecutivos", "Recursos de protección y amparo", "Gerencia legal externa y Compliance", "Modelos de prevención de delitos", "Auditorías legales y Gestión de riesgos", "Negociación extrajudicial", "Reestructuración de deudas"] }
                 ],
                 tech: [
-                    { id: 'drones', title: 'Inspección Aérea _4k', icon: 'fa-drone', desc: 'Operaciones con drones de alta gama para proyectos industriales.', items: ["Videos Corporativos _4k", "Inspección industrial y de techumbres", "Inspección de obras y caminos", "Monitoreo constante de proyectos", "Integración de servicios avanzados"] },
-                    { id: 'fotogrametria', title: 'Fotogrametría', icon: 'fa-layer-group', desc: 'Topografía digital de precisión milimétrica.', items: ["Ortomosaicos de alta resolución _4k", "Modelos 3D del terreno", "Cálculo de superficies y volumetrías", "Seguimiento técnico de obras", "Informes técnicos documentados"] },
-                    { id: 'digital', title: 'Evidencia Digital', icon: 'fa-shield-alt', desc: 'Protección de datos y levantamiento de información corporativa.', items: ["Levantamiento de evidencia", "Protección de datos personales", "Informes jurídicos especializados", "Investigación jurídica y Análisis", "Custodia documental en la nube"] }
+                    { id: 'drones', title: 'Inspección Aérea _4k', icon: 'fa-drone', desc: 'Operaciones de alta precisión en colaboración con AustralDrone.', items: ["Fijación de deslindes y linderos _4k", "Constatación de ocupaciones irregulares", "Inspección FPV industrial y techumbres", "Monitoreo constante de proyectos y obras", "Generación de prueba visual judicial"] },
+                    { id: 'fotogrametria', title: 'Fotogrametría', icon: 'fa-layer-group', desc: 'Topografía digital de precisión milimétrica.', items: ["Ortomosaicos de alta resolución _4k", "Modelos 3D para peritajes técnicos", "Cálculo exacto de superficies y cabidas", "Mapeo para litigios de servidumbres", "Informes topográficos documentados"] },
+                    { id: 'digital', title: 'Evidencia Digital', icon: 'fa-shield-alt', desc: 'Protección de datos y levantamiento de información corporativa.', items: ["Levantamiento de evidencia lícita", "Protección de datos personales", "Informes jurídicos especializados", "Investigación jurídica y Análisis", "Custodia documental en la nube"] }
                 ]
             };
 
