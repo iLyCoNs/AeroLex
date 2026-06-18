@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroLex | Bóveda de Administración</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0b0f14;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-image: radial-gradient(circle at 50% -20%, #1a2a3a 0%, #0b0f14 60%);
+        }
+        
+        .boveda-container {
+            background: #11161d;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .input-dark {
+            background: #0d1117;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+        .input-dark:focus {
+            outline: none;
+            border-color: #00a8e8;
+            box-shadow: 0 0 0 1px #00a8e8;
+        }
+
+        .btn-cyan {
+            background: #00a8e8;
+            color: #fff;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            border-radius: 8px;
+            padding: 14px;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 168, 232, 0.4);
+            transition: all 0.2s ease;
+        }
+        .btn-cyan:hover {
+            background: #0096d1;
+            box-shadow: 0 0 25px rgba(0, 168, 232, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .label-text {
+            font-size: 10px;
+            font-weight: 700;
+            color: #788C9F;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* Editor JSON Nativo Minimalista */
+        #editor-container { display: none; width: 100%; max-width: 800px; }
+        .json-editor {
+            width: 100%;
+            height: 400px;
+            background: #0d1117;
+            color: #56b6c2;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 13px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PANTALLA 1: LOGIN (Conexión a GitHub) -->
+    <div id="login-screen" class="w-full flex flex-col items-center px-4">
+        <h1 class="text-3xl font-light tracking-[0.2em] mb-2 text-center text-gray-200">BÓVEDA DE ADMINISTRACIÓN</h1>
+        <p class="text-[10px] font-bold text-[#00a8e8] tracking-[0.3em] uppercase mb-10 text-center">Panel Comercial • Conexión Segura</p>
+
+        <div class="boveda-container">
+            <form id="login-form">
+                <div class="mb-6">
+                    <label class="label-text">Usuario de GitHub</label>
+                    <input type="text" id="gh-user" class="input-dark" value="ilycons" required>
+                </div>
+                <div class="mb-6">
+                    <label class="label-text">Nombre del Repositorio</label>
+                    <input type="text" id="gh-repo" class="input-dark" value="AeroLex" required>
+                </div>
+                <div class="mb-8">
+                    <label class="label-text">Llave Maestra (Token de Acceso)</label>
+                    <input type="password" id="gh-token" class="input-dark" placeholder="••••••••••••••••••••••••••••••••••••••••" required>
+                </div>
+                <button type="submit" class="btn-cyan" id="btn-connect">CONECTAR A LA BÓVEDA</button>
+            </form>
+            <p id="error-msg" class="text-red-400 text-xs text-center mt-4 hidden"></p>
+        </div>
+    </div>
+
+    <!-- PANTALLA 2: EDITOR DE CAUSAS VIVAS -->
+    <div id="editor-container" class="flex flex-col px-4">
+        <div class="flex justify-between items-end mb-6">
+            <div>
+                <h2 class="text-2xl font-bold tracking-wide">Matriz de Causas (cases.json)</h2>
+                <p class="text-xs text-gray-400 mt-1">Modifique el JSON para actualizar la base de datos de los clientes en tiempo real.</p>
+            </div>
+            <button onclick="logout()" class="text-xs text-gray-500 hover:text-white transition">Cerrar Sesión</button>
+        </div>
+        
+        <textarea id="json-input" class="json-editor focus:outline-none focus:border-[#00a8e8]" spellcheck="false"></textarea>
+        
+        <div class="mt-4 flex gap-4">
+            <button onclick="saveToGithub()" id="btn-save" class="btn-cyan w-auto px-8">Guardar Cambios y Publicar</button>
+            <button onclick="formatJson()" class="bg-transparent border border-gray-600 text-gray-300 rounded-lg px-6 py-3 text-sm hover:bg-gray-800 transition">Formatear Código</button>
+        </div>
+        <p id="status-msg" class="text-xs mt-4"></p>
+    </div>
+
+    <script>
+        let ghData = { user: '', repo: '', token: '', sha: '' };
+
+        // Codificación segura Base64 para caracteres especiales y tildes en Español
+        function utf8_to_b64(str) { return window.btoa(unescape(encodeURIComponent(str))); }
+        function b64_to_utf8(str) { return decodeURIComponent(escape(window.atob(str))); }
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-connect');
+            btn.innerText = "AUTENTICANDO...";
+            btn.disabled = true;
+
+            ghData.user = document.getElementById('gh-user').value.trim();
+            ghData.repo = document.getElementById('gh-repo').value.trim();
+            ghData.token = document.getElementById('gh-token').value.trim();
+
+            await fetchDatabase();
+        });
+
+        async function fetchDatabase() {
+            const url = `https://api.github.com/repos/${ghData.user}/${ghData.repo}/contents/cases.json`;
+            try {
+                const response = await fetch(url, {
+                    headers: { 'Authorization': `token ${ghData.token}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    ghData.sha = data.sha;
+                    const jsonContent = b64_to_utf8(data.content);
+                    document.getElementById('json-input').value = jsonContent;
+                    showEditor();
+                } else if (response.status === 404) {
+                    // Si el archivo no existe, inyectar el código por defecto del caso de Los Notros
+                    const defaultDB = {
+                        "ALX-2026-01": {
+                            "materia": "Compraventa Inmobiliaria",
+                            "tribunal": "Conservador de Bienes Raíces - Puerto Montt",
+                            "rit": "Carpeta Interna N° 4592-2026",
+                            "detalle": "Inmueble: Los Notros 455, Puerto Montt. Documentos base validados.",
+                            "estadoActual": 2,
+                            "steps": [
+                                { "title": "Recopilación de Antecedentes", "date": "01 Jun 2026", "done": true },
+                                { "title": "Estudio de Títulos Aprobado", "date": "10 Jun 2026", "done": true },
+                                { "title": "Inscripción en Conservador (CBR)", "date": "En trámite actual", "done": false },
+                                { "title": "Entrega Copias Autorizadas a Cliente", "date": "Pendiente", "done": false }
+                            ]
+                        }
+                    };
+                    document.getElementById('json-input').value = JSON.stringify(defaultDB, null, 4);
+                    ghData.sha = ''; // No existe sha previo
+                    showEditor();
+                } else {
+                    throw new Error("Credenciales inválidas o repositorio no encontrado.");
+                }
+            } catch (error) {
+                const btn = document.getElementById('btn-connect');
+                btn.innerText = "CONECTAR A LA BÓVEDA";
+                btn.disabled = false;
+                document.getElementById('error-msg').innerText = "❌ " + error.message;
+                document.getElementById('error-msg').classList.remove('hidden');
+            }
+        }
+
+        async function saveToGithub() {
+            const btn = document.getElementById('btn-save');
+            const statusMsg = document.getElementById('status-msg');
+            btn.innerText = "Empujando a Servidor...";
+            btn.disabled = true;
+
+            const newContent = document.getElementById('json-input').value;
+            
+            try {
+                // Validar que el JSON está bien escrito antes de empujar
+                JSON.parse(newContent); 
+
+                const url = `https://api.github.com/repos/${ghData.user}/${ghData.repo}/contents/cases.json`;
+                const body = {
+                    message: "Bóveda AeroLex: Actualización de Matriz de Causas",
+                    content: utf8_to_b64(newContent)
+                };
+                if (ghData.sha) body.sha = ghData.sha; // Si el archivo ya existía
+
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${ghData.token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    ghData.sha = data.content.sha; // Actualizar el SHA con el nuevo archivo
+                    statusMsg.className = "text-xs mt-4 text-[#00a8e8] font-bold";
+                    statusMsg.innerText = "✅ Sincronización exitosa. El sistema cliente se actualizará en unos segundos.";
+                } else {
+                    throw new Error("Fallo al guardar en el servidor de Github.");
+                }
+            } catch (error) {
+                statusMsg.className = "text-xs mt-4 text-red-400";
+                statusMsg.innerText = "❌ Error: Compruebe que el código JSON esté bien estructurado.";
+            } finally {
+                btn.innerText = "Guardar Cambios y Publicar";
+                btn.disabled = false;
+                setTimeout(() => { statusMsg.innerText = ""; }, 5000);
+            }
+        }
+
+        function showEditor() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('editor-container').style.display = 'block';
+            formatJson();
+        }
+
+        function formatJson() {
+            try {
+                const val = JSON.parse(document.getElementById('json-input').value);
+                document.getElementById('json-input').value = JSON.stringify(val, null, 4);
+            } catch(e) {
+                alert("El JSON actual tiene errores de sintaxis y no se puede formatear.");
+            }
+        }
+
+        function logout() { location.reload(); }
+    </script>
+</body>
+</html>
