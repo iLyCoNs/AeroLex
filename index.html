@@ -29,7 +29,7 @@
                     },
                     boxShadow: {
                         'mac-window': '0 25px 50px -12px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(0,0,0,0.03)',
-                        'mac-card': '0 4px 15px rgba(0, 0, 0, 0.03)',
+                        'mac-card': '0 10px 30px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0,0,0,0.02)',
                         'mac-dock': '0 10px 30px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255,255,255,0.9)',
                     }
                 }
@@ -88,27 +88,32 @@
 
         /* TARJETAS DE SERVICIO AQUA CRISTAL */
         .service-widget {
-            background: rgba(235, 248, 255, 0.65); /* Tono Aqua Translúcido */
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 16px;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background: rgba(235, 248, 255, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 16px; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             box-shadow: 0 4px 15px rgba(0, 100, 150, 0.05), inset 0 1px 2px rgba(255,255,255,0.8);
             display: flex; flex-direction: column; padding: 1.25rem;
         }
-        .service-widget:hover { 
-            transform: translateY(-3px) scale(1.01); 
-            box-shadow: 0 12px 24px rgba(0, 100, 150, 0.1); 
-            background: rgba(240, 250, 255, 0.8); 
+        .service-widget:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 12px 24px rgba(0, 100, 150, 0.1); background: rgba(240, 250, 255, 0.8); }
+
+        /* NUEVO BOTÓN WHATSAPP FLOTANTE: Transparente, tipo PNG */
+        .whatsapp-fab {
+            position: fixed; bottom: 30px; right: 30px;
+            background: transparent; color: #25D366; /* Mismo color del botón superior derecho */
+            font-size: 65px; /* Tamaño del icono PNG */
+            display: flex; align-items: center; justify-content: center;
+            z-index: 90; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease;
+            cursor: pointer;
+            filter: drop-shadow(0 6px 8px rgba(37, 211, 102, 0.3)); /* Sombra difuminada para despegar del fondo */
+        }
+        .whatsapp-fab:hover { 
+            transform: scale(1.1) translateY(-5px); 
+            filter: drop-shadow(0 10px 15px rgba(37, 211, 102, 0.45));
+            color: #128C7E;
         }
 
-        /* Botón WhatsApp Flotante */
-        .whatsapp-fab {
-            position: fixed; bottom: 30px; right: 30px; background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-            color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 30px; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4), inset 0 2px 4px rgba(255,255,255,0.3);
-            z-index: 90; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(255,255,255,0.2); cursor: pointer;
-        }
-        .whatsapp-fab:hover { transform: scale(1.1) translateY(-5px); }
+        /* Elementos del Diagrama Interactivo */
+        .diagram-step { transition: all 0.4s ease; opacity: 0; transform: translateY(20px); }
+        .diagram-step.show { opacity: 1; transform: translateY(0); }
 
         .fade-in { opacity: 0; animation: fadeInApple 0.5s ease-out forwards; }
         @keyframes fadeInApple { from { opacity: 0; transform: translateY(10px) scale(0.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
@@ -171,8 +176,8 @@
         <div class="glass-effect p-8 md:p-10 rounded-3xl max-w-md w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col" id="intake-modal-content">
             <div class="flex justify-between items-start mb-6">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-mac-dark text-white rounded-xl flex items-center justify-center"><i class="fas fa-concierge-bell"></i></div>
-                    <div><h3 class="text-lg font-bold text-mac-dark leading-tight">Admisión AeroLex</h3><p class="text-xs text-mac-dark/60 font-medium">Asesoría de Alto Nivel</p></div>
+                    <div class="w-10 h-10 bg-whatsapp text-white rounded-xl flex items-center justify-center"><i class="fas fa-headset"></i></div>
+                    <div><h3 class="text-lg font-bold text-mac-dark leading-tight">Admisión AeroLex</h3><p class="text-xs text-mac-dark/60 font-medium">Derivación Automática</p></div>
                 </div>
                 <button id="close-modal" class="text-mac-dark/40 hover:text-mac-dark text-xl transition-colors"><i class="fas fa-times"></i></button>
             </div>
@@ -183,7 +188,48 @@
                 <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Litigación de Alta Complejidad"><span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-gavel w-6 opacity-60"></i> Litigación & Defensa Judicial</span><i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i></button>
                 <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Fijación de Deslindes, Drones y Evidencia"><span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-drone w-6 opacity-60"></i> Deslindes & Evidencia Visual</span><i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i></button>
             </div>
-            <p class="text-[10px] text-mac-dark/40 mt-6 text-center"><i class="fas fa-lock"></i> Sus datos y requerimientos están protegidos por secreto profesional.</p>
+        </div>
+    </div>
+
+    <div id="diagram-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-mac-dark/60 backdrop-blur-md opacity-0 transition-opacity duration-300">
+        <div class="glass-effect p-8 md:p-10 rounded-3xl max-w-4xl w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col" id="diagram-modal-content">
+            <div class="flex justify-between items-start mb-10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-mac-dark text-white rounded-xl flex items-center justify-center shadow-md"><i class="fas fa-sitemap text-lg"></i></div>
+                    <div>
+                        <h3 class="text-lg font-bold text-mac-dark leading-tight" id="diagram-title">Metodología de Trabajo</h3>
+                        <p class="text-xs text-mac-dark/60 font-medium">Flujo Operativo Interactivo</p>
+                    </div>
+                </div>
+                <button id="close-diagram" class="text-mac-dark/40 hover:text-mac-dark text-xl transition-colors"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 relative">
+                <div class="hidden md:block absolute top-1/2 left-10 right-10 h-0.5 bg-mac-accent/30 -z-10 transform -translate-y-1/2"></div>
+                <div class="md:hidden absolute top-10 bottom-10 left-1/2 w-0.5 bg-mac-accent/30 -z-10 transform -translate-x-1/2"></div>
+
+                <div class="diagram-step bg-white/90 p-6 rounded-2xl border border-white shadow-sm w-full md:w-1/3 text-center relative group hover:-translate-y-2">
+                    <div class="w-14 h-14 bg-mac-dark text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform"><i class="fas fa-search text-xl"></i></div>
+                    <h4 class="font-bold text-[15px] text-mac-dark mb-2">1. Análisis y Diagnóstico</h4>
+                    <p class="text-[13px] text-mac-dark/70 font-light leading-snug">Levantamiento exhaustivo de antecedentes, estudio de títulos y análisis de factibilidad.</p>
+                </div>
+
+                <div class="diagram-step bg-white/90 p-6 rounded-2xl border border-white shadow-sm w-full md:w-1/3 text-center relative group hover:-translate-y-2">
+                    <div class="w-14 h-14 bg-mac-accent text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform"><i class="fas fa-cogs text-xl"></i></div>
+                    <h4 class="font-bold text-[15px] text-mac-dark mb-2">2. Diseño Estratégico</h4>
+                    <p class="text-[13px] text-mac-dark/70 font-light leading-snug">Estructuración jurídica, despliegue de tecnología dron e integración de prueba forense.</p>
+                </div>
+
+                <div class="diagram-step bg-white/90 p-6 rounded-2xl border border-white shadow-sm w-full md:w-1/3 text-center relative group hover:-translate-y-2">
+                    <div class="w-14 h-14 bg-[#1D1D1F] text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform"><i class="fas fa-check-double text-xl"></i></div>
+                    <h4 class="font-bold text-[15px] text-mac-dark mb-2">3. Resolución Legal</h4>
+                    <p class="text-[13px] text-mac-dark/70 font-light leading-snug">Ejecución del litigio, firma de blindaje corporativo o sentencias favorables confirmadas.</p>
+                </div>
+            </div>
+            
+            <button class="open-intake mt-10 w-full md:w-auto mx-auto bg-mac-dark hover:bg-black text-white px-8 py-3.5 rounded-xl text-sm font-semibold shadow-xl transition-transform hover:scale-105 flex items-center gap-2">
+                <i class="fab fa-whatsapp"></i> Requerir Evaluación Confidencial
+            </button>
         </div>
     </div>
 
@@ -211,7 +257,7 @@
             </div>
             <div class="bg-white/60 backdrop-blur-md border border-white p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default flex flex-col">
                 <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 text-mac-accent shadow-sm group-hover:scale-110 transition-transform duration-300"><i class="fas fa-drone text-sm"></i></div>
-                <h3 class="text-sm font-semibold text-mac-dark mb-2 tracking-wide">Deslindes & Prueba Judicial</h3>
+                <h3 class="text-sm font-semibold text-mac-dark mb-2 tracking-wide flex items-center">Deslindes & Prueba Judicial</h3>
                 <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light">Levantamiento FPV y fotogramétrico de precisión para fijar límites prediales, constatar ocupaciones y nutrir litigios con prueba inobjetable.</p>
             </div>
         </div>
@@ -256,19 +302,20 @@
                             <h2 id="content-title" class="text-2xl md:text-3xl font-semibold text-mac-dark tracking-tight transition-all duration-300 flex items-center flex-wrap">Cargando...</h2>
                             <p id="content-desc" class="text-sm md:text-base text-mac-dark/70 mt-1 md:mt-2 font-light transition-all duration-300">Seleccione una categoría para ver los servicios.</p>
                         </div>
+                        
                         <div class="mt-4 md:mt-0 hidden md:block">
-                            <a href="#" id="wa-panel-btn" target="_blank" class="bg-whatsapp hover:bg-whatsapp-dark text-white px-5 py-2.5 rounded-xl text-sm font-medium shadow-md transition-all flex items-center gap-2">
-                                <i class="fab fa-whatsapp text-lg"></i> Consultar este servicio
-                            </a>
+                            <button class="open-diagram bg-mac-dark hover:bg-black text-white px-5 py-2.5 rounded-xl text-sm font-medium shadow-md transition-all flex items-center gap-2">
+                                <i class="fas fa-sitemap text-lg"></i> Esquema de Trabajo
+                            </button>
                         </div>
                     </div>
 
                     <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8 md:pb-12"></div>
                     
                     <div class="md:hidden mt-6 pb-8">
-                        <a href="#" id="wa-panel-btn-mobile" target="_blank" class="w-full bg-whatsapp text-white px-5 py-3.5 rounded-xl text-sm font-medium shadow-md flex items-center justify-center gap-2">
-                            <i class="fab fa-whatsapp text-lg"></i> Consultar este servicio
-                        </a>
+                        <button class="open-diagram w-full bg-mac-dark hover:bg-black text-white px-5 py-3.5 rounded-xl text-sm font-medium shadow-md flex items-center justify-center gap-2">
+                            <i class="fas fa-sitemap text-lg"></i> Esquema de Trabajo
+                        </button>
                     </div>
                 </div>
             </div>
@@ -278,11 +325,11 @@
     <section id="contacto" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 relative z-10 text-center fade-in" style="animation-delay: 0.4s;">
         <div class="glass-effect p-10 md:p-14 rounded-3xl border border-white shadow-mac-window">
             <div class="w-16 h-16 bg-whatsapp/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <i class="fas fa-concierge-bell text-3xl text-whatsapp-dark"></i>
+                <i class="fas fa-fingerprint text-3xl text-mac-dark"></i>
             </div>
-            <h2 class="text-3xl md:text-4xl font-bold text-mac-dark mb-4 tracking-tight">Comunicación Inteligente</h2>
+            <h2 class="text-3xl md:text-4xl font-bold text-mac-dark mb-4 tracking-tight">Acceso Preferencial</h2>
             <p class="text-mac-dark/70 mb-8 max-w-xl mx-auto font-light">
-                Nuestro sistema procesa su solicitud para derivarla al área legal o técnica correspondiente al instante de manera confidencial.
+                Inicie nuestro flujo automatizado para derivar su requerimiento jurídico o tecnológico al equipo de especialistas correspondientes.
             </p>
             <button class="open-intake inline-flex items-center justify-center gap-3 bg-mac-dark hover:bg-black text-white text-base font-semibold px-8 py-4 rounded-full shadow-lg transition-transform hover:scale-105">
                 <i class="fas fa-filter"></i> Iniciar Flujo de Admisión
@@ -309,15 +356,18 @@
 
             const WHATSAPP_NUMBER = "56900000000"; 
 
-            // Modal Logic
+            // 1. MODAL ADMISIÓN WHATSAPP
             const intakeModal = document.getElementById('intake-modal');
             const intakeModalContent = document.getElementById('intake-modal-content');
             const closeModalBtn = document.getElementById('close-modal');
             const openIntakeBtns = document.querySelectorAll('.open-intake');
             const intakeOptions = document.querySelectorAll('.intake-option');
 
-            function openModal(e) {
+            function openIntake(e) {
                 if(e) e.preventDefault();
+                // Cerrar diagrama si está abierto
+                closeDiagramFunc();
+                
                 intakeModal.classList.remove('hidden');
                 setTimeout(() => {
                     intakeModal.classList.remove('opacity-0');
@@ -325,33 +375,75 @@
                 }, 10);
             }
 
-            function closeModal() {
+            function closeIntake() {
                 intakeModal.classList.add('opacity-0');
                 intakeModalContent.classList.add('scale-95');
                 setTimeout(() => { intakeModal.classList.add('hidden'); }, 300);
             }
 
-            openIntakeBtns.forEach(btn => btn.addEventListener('click', openModal));
-            closeModalBtn.addEventListener('click', closeModal);
-            intakeModal.addEventListener('click', (e) => { if(e.target === intakeModal) closeModal(); });
+            openIntakeBtns.forEach(btn => btn.addEventListener('click', openIntake));
+            closeModalBtn.addEventListener('click', closeIntake);
+            intakeModal.addEventListener('click', (e) => { if(e.target === intakeModal) closeIntake(); });
 
             intakeOptions.forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const area = e.currentTarget.getAttribute('data-area');
                     const autoMessage = `Hola AeroLex, deseo coordinar una evaluación confidencial para el área de: *${area}*.`;
                     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMessage)}`, '_blank');
-                    closeModal();
+                    closeIntake();
                 });
             });
 
-            // Mobile Menu
+            // 2. MODAL DIAGRAMA (METODOLOGÍA)
+            const diagramModal = document.getElementById('diagram-modal');
+            const diagramModalContent = document.getElementById('diagram-modal-content');
+            const closeDiagram = document.getElementById('close-diagram');
+            const openDiagramBtns = document.querySelectorAll('.open-diagram');
+            const diagramSteps = document.querySelectorAll('.diagram-step');
+            const diagramTitle = document.getElementById('diagram-title');
+
+            function openDiagramFunc(e) {
+                if(e) e.preventDefault();
+                diagramModal.classList.remove('hidden');
+                
+                // Setear titulo segun categoría actual (opcional, le da un toque pro)
+                if(currentActiveBtn) {
+                    const cleanTxt = cleanTextForURL(currentActiveBtn.textContent.trim());
+                    diagramTitle.innerHTML = `Metodología: ${cleanTxt}`;
+                }
+
+                setTimeout(() => {
+                    diagramModal.classList.remove('opacity-0');
+                    diagramModalContent.classList.remove('scale-95');
+                    
+                    // Animar pasos en cascada
+                    diagramSteps.forEach((step, index) => {
+                        setTimeout(() => {
+                            step.classList.add('show');
+                        }, 200 + (index * 200));
+                    });
+                }, 10);
+            }
+
+            function closeDiagramFunc() {
+                diagramModal.classList.add('opacity-0');
+                diagramModalContent.classList.add('scale-95');
+                diagramSteps.forEach(step => step.classList.remove('show'));
+                setTimeout(() => { diagramModal.classList.add('hidden'); }, 300);
+            }
+
+            openDiagramBtns.forEach(btn => btn.addEventListener('click', openDiagramFunc));
+            closeDiagram.addEventListener('click', closeDiagramFunc);
+            diagramModal.addEventListener('click', (e) => { if(e.target === diagramModal) closeDiagramFunc(); });
+
+            // 3. MENÚ MÓVIL
             const mobileBtn = document.getElementById('mobile-menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
             const mobileLinks = document.querySelectorAll('.mobile-link');
             mobileBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
             mobileLinks.forEach(link => { link.addEventListener('click', () => { mobileMenu.classList.add('hidden'); }); });
 
-            /* BASE DE DATOS DE SERVICIOS */
+            // 4. BASE DE DATOS DE SERVICIOS
             const db = {
                 legal: [
                     { 
@@ -471,13 +563,11 @@
             const contentDesc = document.getElementById('content-desc');
             const contentIcon = document.getElementById('content-icon');
             const servicesGrid = document.getElementById('services-grid');
-            const waPanelBtn = document.getElementById('wa-panel-btn');
-            const waPanelBtnMobile = document.getElementById('wa-panel-btn-mobile');
             
             let currentActiveBtn = null;
 
             function format4K(text) { return text.replace('_4k', '<span class="badge-4k">4K HDR</span>'); }
-            function cleanTextForURL(text) { return text.replace('_4k', '4K HDR'); }
+            function cleanTextForURL(text) { return text.replace('_4k', ''); }
 
             function renderContent(dataObj, btnElement) {
                 if (currentActiveBtn) {
@@ -514,13 +604,6 @@
                     contentTitle.style.opacity = '1'; contentDesc.style.opacity = '1'; contentIcon.style.opacity = '1';
                     servicesGrid.style.opacity = '1';
                 }, 150);
-
-                const cleanTitle = cleanTextForURL(dataObj.title);
-                const autoMessage = `Hola AeroLex, me gustaría recibir más información directa sobre el servicio de: *${cleanTitle}*.`;
-                const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMessage)}`;
-                
-                waPanelBtn.href = waUrl;
-                waPanelBtnMobile.href = waUrl;
             }
 
             function createSidebarButtons(categoryArray, container) {
