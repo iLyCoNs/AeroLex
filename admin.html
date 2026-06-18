@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AeroLex | Bóveda Interactiva macOS</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +20,7 @@
         }
     </script>
     <style>
-        body { background-color: #1e1e1e; color: #e5e5e5; overflow: hidden; }
+        body { background-color: #1e1e1e; color: #e5e5e5; overflow: hidden; -webkit-font-smoothing: antialiased; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
@@ -49,28 +49,31 @@
 <body class="h-screen flex flex-col">
 
     <!-- LOGIN SCREEN -->
+    <!-- Seguridad: autocomplete="off" global forzado -->
     <div id="login-screen" class="flex-1 flex items-center justify-center bg-[#111111] p-4">
-        <div class="bg-[#1e1e1e] border border-[#3e3e42] rounded-2xl p-10 w-full max-w-md shadow-2xl relative overflow-hidden">
+        <div class="bg-[#1e1e1e] border border-[#3e3e42] rounded-2xl p-8 md:p-10 w-full max-w-md shadow-2xl relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-[#0A84FF]"></div>
             <div class="text-center mb-8">
                 <i class="fas fa-fingerprint text-4xl text-[#0A84FF] mb-4"></i>
-                <h1 class="text-2xl font-bold text-white tracking-tight">Acceso Confidencial</h1>
-                <p class="text-xs text-gray-400 mt-1 uppercase tracking-widest">Bóveda AeroLex</p>
+                <h1 class="text-xl md:text-2xl font-bold text-white tracking-tight">Acceso Confidencial</h1>
+                <p class="text-[10px] md:text-xs text-gray-400 mt-1 uppercase tracking-widest">Bóveda AeroLex</p>
             </div>
-            <form id="login-form" class="space-y-5">
+            
+            <!-- Formulario blindado sin rastros -->
+            <form id="login-form" class="space-y-5" autocomplete="off">
                 <div>
                     <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wide block mb-1.5">Usuario GitHub</label>
-                    <input type="text" id="gh-user" class="mac-input bg-[#111111]" value="ilycons" required>
+                    <input type="text" id="gh-user" class="mac-input bg-[#111111]" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Usuario" required>
                 </div>
                 <div>
                     <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wide block mb-1.5">Repositorio</label>
-                    <input type="text" id="gh-repo" class="mac-input bg-[#111111]" value="AeroLex" required>
+                    <input type="text" id="gh-repo" class="mac-input bg-[#111111]" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Repositorio" required>
                 </div>
                 <div>
-                    <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wide block mb-1.5">Personal Access Token (Grano Fino)</label>
-                    <input type="password" id="gh-token" class="mac-input bg-[#111111]" placeholder="github_pat_..." required>
+                    <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wide block mb-1.5">Personal Access Token</label>
+                    <input type="password" id="gh-token" class="mac-input bg-[#111111]" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="github_pat_..." required>
                 </div>
-                <button type="submit" id="btn-connect" class="w-full bg-[#0A84FF] hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg text-sm transition-colors mt-2 shadow-[0_4px_14px_rgba(10,132,255,0.3)]">
+                <button type="submit" id="btn-connect" class="w-full bg-[#0A84FF] hover:bg-blue-600 text-white font-bold py-3.5 px-4 rounded-lg text-sm transition-colors mt-2 shadow-[0_4px_14px_rgba(10,132,255,0.3)]">
                     Desbloquear Bóveda
                 </button>
             </form>
@@ -79,10 +82,10 @@
     </div>
 
     <!-- MAIN DASHBOARD -->
-    <div id="app-container" class="flex-1 flex overflow-hidden">
+    <div id="app-container" class="flex-1 flex overflow-hidden relative w-full h-full">
         
-        <!-- SIDEBAR: LISTA DE CAUSAS -->
-        <div class="w-72 bg-[#1e1e1e] border-r border-[#3e3e42] flex flex-col z-10 shadow-lg shrink-0">
+        <!-- SIDEBAR: LISTA DE CAUSAS (Ancho completo en móvil, fijo en PC) -->
+        <div id="sidebar" class="w-full md:w-72 bg-[#1e1e1e] border-r border-[#3e3e42] flex flex-col shadow-lg shrink-0 absolute md:relative h-full z-10 transition-transform duration-300 transform translate-x-0">
             <div class="h-16 flex items-center justify-between px-5 border-b border-[#3e3e42] shrink-0 bg-[#252526]">
                 <span class="font-bold text-white tracking-wide"><i class="fas fa-layer-group text-[#0A84FF] mr-2"></i> Expedientes</span>
                 <button onclick="createNewCase()" class="w-8 h-8 rounded-full bg-[#3e3e42] hover:bg-[#0A84FF] text-white flex items-center justify-center transition" title="Nuevo Expediente">
@@ -92,52 +95,59 @@
             <div class="p-3 border-b border-[#3e3e42] shrink-0">
                 <div class="relative">
                     <i class="fas fa-search absolute left-3 top-2.5 text-gray-500 text-xs"></i>
-                    <input type="text" id="search-case" onkeyup="filterCases()" class="mac-input pl-8 py-2 bg-[#111111] text-xs border-none" placeholder="Buscar RIT o ALX...">
+                    <input type="text" id="search-case" onkeyup="filterCases()" class="mac-input pl-8 py-2 bg-[#111111] text-xs border-none" placeholder="Buscar RIT o ALX..." autocomplete="off">
                 </div>
             </div>
-            <div id="cases-list" class="flex-1 overflow-y-auto hide-scrollbar py-2">
+            <div id="cases-list" class="flex-1 overflow-y-auto hide-scrollbar py-2 pb-20 md:pb-2">
                 <!-- Causas inyectadas aquí -->
             </div>
-            <div class="p-3 border-t border-[#3e3e42] text-center shrink-0">
-                <button onclick="logout()" class="text-xs text-gray-500 hover:text-white transition w-full py-2"><i class="fas fa-sign-out-alt mr-1"></i> Cerrar Sesión</button>
+            <div class="p-3 border-t border-[#3e3e42] text-center shrink-0 bg-[#1e1e1e]">
+                <button onclick="logout()" class="text-xs font-bold text-red-400 hover:text-red-300 transition w-full py-2"><i class="fas fa-sign-out-alt mr-1"></i> Destruir Sesión Segura</button>
             </div>
         </div>
 
-        <!-- AREA DE EDICIÓN CENTRAL -->
-        <div class="flex-1 flex flex-col bg-[#111111] relative">
+        <!-- AREA DE EDICIÓN CENTRAL (Deslizable en móvil) -->
+        <div id="editor-view" class="w-full md:flex-1 flex flex-col bg-[#111111] absolute md:relative h-full z-20 transition-transform duration-300 transform translate-x-full md:translate-x-0">
             
             <!-- Header Editor -->
-            <div class="h-16 border-b border-[#3e3e42] flex items-center justify-between px-8 bg-[#1e1e1e] shrink-0">
-                <div id="editor-header" class="font-bold text-lg text-white">Seleccione un expediente</div>
-                <div class="flex gap-3">
-                    <span id="sync-status" class="text-xs font-semibold flex items-center text-gray-500 mr-2"></span>
-                    <button onclick="deleteCurrentCase()" id="btn-delete" class="hidden px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-lg text-xs font-bold transition">Eliminar</button>
-                    <button onclick="syncToGithub()" id="btn-sync" class="hidden px-6 py-2 bg-[#34C759] hover:bg-green-500 text-white rounded-lg text-xs font-bold transition shadow-[0_4px_10px_rgba(52,199,89,0.2)] flex items-center gap-2">
-                        <i class="fas fa-cloud-upload-alt"></i> Publicar Cambios
+            <div class="h-16 border-b border-[#3e3e42] flex items-center justify-between px-4 md:px-8 bg-[#1e1e1e] shrink-0">
+                <div class="flex items-center gap-3 overflow-hidden">
+                    <button onclick="closeMobileEditor()" class="md:hidden w-8 h-8 flex items-center justify-center text-[#0A84FF] hover:bg-[#3e3e42] rounded-full transition shrink-0">
+                        <i class="fas fa-chevron-left text-lg"></i>
+                    </button>
+                    <div id="editor-header" class="font-bold text-sm md:text-lg text-white truncate">Seleccione un expediente</div>
+                </div>
+                <div class="flex items-center gap-2 md:gap-3 shrink-0">
+                    <span id="sync-status" class="text-[10px] md:text-xs font-semibold flex items-center text-gray-500"></span>
+                    <button onclick="deleteCurrentCase()" id="btn-delete" class="hidden w-9 h-9 md:w-auto md:px-4 md:py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-lg text-xs font-bold transition flex items-center justify-center">
+                        <i class="fas fa-trash-alt md:hidden"></i><span class="hidden md:inline">Eliminar</span>
+                    </button>
+                    <button onclick="syncToGithub()" id="btn-sync" class="hidden w-9 h-9 md:w-auto md:px-6 md:py-2 bg-[#34C759] hover:bg-green-500 text-white rounded-lg text-xs font-bold transition shadow-[0_4px_10px_rgba(52,199,89,0.2)] flex items-center justify-center gap-2">
+                        <i class="fas fa-cloud-upload-alt"></i><span class="hidden md:inline">Publicar</span>
                     </button>
                 </div>
             </div>
 
             <!-- Formulario Editor -->
-            <div id="editor-body" class="flex-1 overflow-y-auto hide-scrollbar p-8 hidden">
-                <div class="max-w-4xl mx-auto space-y-6 pb-20">
+            <div id="editor-body" class="flex-1 overflow-y-auto hide-scrollbar p-4 md:p-8 hidden">
+                <div class="max-w-4xl mx-auto space-y-6 pb-24">
                     
                     <!-- Ficha General -->
-                    <div class="bg-[#1e1e1e] border border-[#3e3e42] rounded-xl p-6 shadow-md fade-in">
+                    <div class="bg-[#1e1e1e] border border-[#3e3e42] rounded-xl p-5 md:p-6 shadow-md fade-in">
                         <h3 class="text-sm font-bold text-white uppercase tracking-widest mb-5 border-b border-[#3e3e42] pb-2 text-[#0A84FF]"><i class="fas fa-folder-open mr-2"></i> Información Estructural</h3>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-5">
                             <div>
                                 <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Código AeroLex (ID)</label>
                                 <input type="text" id="case-id" class="mac-input font-mono text-[#0A84FF] font-bold" disabled>
                             </div>
                             <div>
                                 <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">RIT / Identificador Interno</label>
-                                <input type="text" id="case-rit" class="mac-input" placeholder="Ej: C-1450-2026" oninput="markUnsaved()">
+                                <input type="text" id="case-rit" class="mac-input" placeholder="Ej: C-1450-2026" autocomplete="off" oninput="markUnsaved()">
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-5">
                             <div>
                                 <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Categoría Legal/Técnica</label>
                                 <select id="case-category" class="mac-input mac-select" onchange="updateServicesDropdown(); markUnsaved()"></select>
@@ -150,25 +160,25 @@
 
                         <div class="mb-5">
                             <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Tribunal u Oficina</label>
-                            <input type="text" id="case-tribunal" class="mac-input" placeholder="Ej: 1° Juzgado Civil / CBR Puerto Montt" oninput="markUnsaved()">
+                            <input type="text" id="case-tribunal" class="mac-input" placeholder="Ej: 1° Juzgado Civil / CBR Puerto Montt" autocomplete="off" oninput="markUnsaved()">
                         </div>
 
                         <div>
-                            <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Apunte Interno del Abogado (Visible para el cliente en caja azul)</label>
-                            <textarea id="case-detail" class="mac-input resize-none h-20" placeholder="Escriba aquí observaciones, instrucciones para el cliente o estado actual." oninput="markUnsaved()"></textarea>
+                            <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Apunte Interno del Abogado (Visible para el cliente)</label>
+                            <textarea id="case-detail" class="mac-input resize-none h-24" placeholder="Escriba aquí observaciones, instrucciones para el cliente o estado actual." autocomplete="off" oninput="markUnsaved()"></textarea>
                         </div>
                     </div>
 
                     <!-- Línea de Tiempo (Hitos) -->
-                    <div class="bg-[#1e1e1e] border border-[#3e3e42] rounded-xl p-6 shadow-md fade-in" style="animation-delay: 0.1s;">
+                    <div class="bg-[#1e1e1e] border border-[#3e3e42] rounded-xl p-5 md:p-6 shadow-md fade-in" style="animation-delay: 0.1s;">
                         <div class="flex items-center justify-between border-b border-[#3e3e42] pb-2 mb-5">
-                            <h3 class="text-sm font-bold text-white uppercase tracking-widest text-[#0A84FF]"><i class="fas fa-stream mr-2"></i> Construcción de Hitos (Timeline)</h3>
+                            <h3 class="text-sm font-bold text-white uppercase tracking-widest text-[#0A84FF]"><i class="fas fa-stream mr-2"></i> Construcción de Hitos</h3>
                             <button onclick="addStep()" class="bg-[#3e3e42] hover:bg-[#4a4a4e] text-white px-3 py-1.5 rounded-md text-[11px] font-bold transition flex items-center gap-1">
-                                <i class="fas fa-plus"></i> Añadir Hito
+                                <i class="fas fa-plus"></i> <span class="hidden sm:inline">Añadir Hito</span>
                             </button>
                         </div>
                         
-                        <p class="text-xs text-gray-500 mb-4">Añada los pasos del procedimiento judicial o técnico. Marque el interruptor verde para avanzar el progreso del cliente en la plataforma.</p>
+                        <p class="text-xs text-gray-500 mb-4">Añada los pasos del procedimiento judicial o técnico. Marque el interruptor verde para avanzar el progreso del cliente.</p>
                         
                         <div id="steps-container" class="space-y-3">
                             <!-- Los pasos se renderizan dinámicamente aquí -->
@@ -178,8 +188,8 @@
                 </div>
             </div>
 
-            <!-- Empty State -->
-            <div id="editor-empty" class="flex-1 flex flex-col items-center justify-center text-gray-500">
+            <!-- Empty State (Solo visible en PC) -->
+            <div id="editor-empty" class="hidden md:flex flex-1 flex-col items-center justify-center text-gray-500">
                 <i class="fas fa-fingerprint text-6xl mb-4 opacity-20"></i>
                 <p class="text-sm">Seleccione o cree un expediente en el panel lateral.</p>
             </div>
@@ -213,7 +223,7 @@
         // 2. LÓGICA CORE (GITHUB & DATA)
         // =========================================================================
         let ghData = { user: '', repo: '', token: '', sha: '' };
-        let casesDB = {}; // Aquí vivirá el JSON parseado
+        let casesDB = {}; 
         let currentEditingId = null;
         let hasUnsavedChanges = false;
 
@@ -245,7 +255,6 @@
                     casesDB = jsonContent.trim() ? JSON.parse(jsonContent) : {};
                     initDashboard();
                 } else if (response.status === 404) {
-                    // Si el archivo no existe, arrancar vacío
                     casesDB = {};
                     ghData.sha = '';
                     initDashboard();
@@ -262,11 +271,12 @@
         }
 
         async function syncToGithub() {
-            saveCurrentFormToDB(); // Guarda lo que haya en la pantalla antes de subir
+            saveCurrentFormToDB(); 
 
             const btn = document.getElementById('btn-sync');
             const status = document.getElementById('sync-status');
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Subiendo...`;
+            const btnContent = btn.innerHTML; // Guarda el html original
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
             btn.disabled = true;
 
             try {
@@ -285,32 +295,29 @@
                 if (response.ok) {
                     const data = await response.json();
                     ghData.sha = data.content.sha;
-                    status.innerHTML = `<span class="text-[#34C759]"><i class="fas fa-check-circle"></i> Nube Sincronizada</span>`;
+                    status.innerHTML = `<span class="text-[#34C759]"><i class="fas fa-check-circle"></i> Sincronizado</span>`;
                     hasUnsavedChanges = false;
-                } else { throw new Error("Fallo al escribir en GitHub"); }
+                } else { throw new Error("Fallo al escribir"); }
             } catch (error) {
-                status.innerHTML = `<span class="text-red-500"><i class="fas fa-times-circle"></i> Error de Red</span>`;
+                status.innerHTML = `<span class="text-red-500"><i class="fas fa-times-circle"></i> Error</span>`;
             } finally {
-                btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Publicar Cambios`;
+                btn.innerHTML = btnContent;
                 btn.disabled = false;
                 setTimeout(() => { status.innerHTML = ""; }, 4000);
             }
         }
 
         // =========================================================================
-        // 3. UI DASHBOARD & FORMULARIO
+        // 3. UI DASHBOARD & FORMULARIO & RESPONSIVE MÓVIL
         // =========================================================================
         
         function initDashboard() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app-container').style.display = 'flex';
             
-            // Llenar dropdown de categorías
             const catSelect = document.getElementById('case-category');
             catSelect.innerHTML = '';
-            Object.keys(MATERIAS).forEach(cat => {
-                catSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
-            });
+            Object.keys(MATERIAS).forEach(cat => { catSelect.innerHTML += `<option value="${cat}">${cat}</option>`; });
             updateServicesDropdown();
 
             renderSidebar();
@@ -321,17 +328,27 @@
             const servSelect = document.getElementById('case-service');
             servSelect.innerHTML = '';
             if(MATERIAS[cat]) {
-                MATERIAS[cat].forEach(serv => {
-                    servSelect.innerHTML += `<option value="${serv}">${serv}</option>`;
-                });
+                MATERIAS[cat].forEach(serv => { servSelect.innerHTML += `<option value="${serv}">${serv}</option>`; });
             }
+        }
+
+        // Control del Drawer Móvil
+        function openMobileEditor() {
+            document.getElementById('editor-view').classList.remove('translate-x-full');
+            // En móvil, el editor se superpone (z-20) sobre el sidebar. No necesitamos mover el sidebar.
+        }
+
+        function closeMobileEditor() {
+            if (hasUnsavedChanges) saveCurrentFormToDB();
+            document.getElementById('editor-view').classList.add('translate-x-full');
+            renderSidebar(); // Actualiza la lista
         }
 
         function renderSidebar(filterText = "") {
             const list = document.getElementById('cases-list');
             list.innerHTML = '';
             
-            let caseIds = Object.keys(casesDB).reverse(); // Más nuevos arriba
+            let caseIds = Object.keys(casesDB).reverse(); 
             
             if (filterText) {
                 caseIds = caseIds.filter(id => id.toLowerCase().includes(filterText) || 
@@ -347,7 +364,6 @@
                 const c = casesDB[id];
                 const isActive = id === currentEditingId ? 'active' : '';
                 
-                // Calcular progreso
                 let total = c.steps ? c.steps.length : 0;
                 let done = c.steps ? c.steps.filter(s => s.done).length : 0;
                 let progColor = done === total && total > 0 ? 'text-[#34C759]' : 'text-[#0A84FF]';
@@ -413,21 +429,22 @@
             document.getElementById('case-tribunal').value = c.tribunal || '';
             document.getElementById('case-detail').value = c.detalle || '';
 
-            // Auto-seleccionar categoría basada en el servicio
             let foundCat = "Derecho Civil";
             for (let cat in MATERIAS) { if (MATERIAS[cat].includes(c.materia)) { foundCat = cat; break; } }
             document.getElementById('case-category').value = foundCat;
             updateServicesDropdown();
             
-            // Seleccionar servicio (o dejar por defecto si no existe)
             const servSelect = document.getElementById('case-service');
             if (Array.from(servSelect.options).some(o => o.value === c.materia)) {
                 servSelect.value = c.materia;
             }
 
             renderStepsUI(c.steps || []);
-            renderSidebar(); // Refrescar clase active
+            renderSidebar(); 
             hasUnsavedChanges = false;
+            
+            // Si está en móvil, deslizar el panel
+            if (window.innerWidth < 768) openMobileEditor();
         }
 
         function saveCurrentFormToDB() {
@@ -455,7 +472,6 @@
                 estadoActual: lastDoneIndex,
                 steps: newSteps
             };
-
             renderSidebar();
         }
 
@@ -470,6 +486,7 @@
                 document.getElementById('editor-header').innerText = "Expediente Eliminado";
                 renderSidebar();
                 markUnsaved();
+                if (window.innerWidth < 768) closeMobileEditor(); // Vuelve a la lista en móvil
             }
         }
 
@@ -483,7 +500,6 @@
         }
 
         function addStep() {
-            // Fecha formato corto: Ej: "15 Jun 2026"
             const today = new Date();
             const dateStr = today.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '');
             appendStepHTML("Nueva etapa", dateStr, false, document.querySelectorAll('.step-item').length);
@@ -495,19 +511,29 @@
             const checkedAttr = done ? 'checked' : '';
             
             const html = `
-                <div class="step-item flex items-center gap-3 bg-[#111111] border border-[#3e3e42] p-3 rounded-lg fade-in">
-                    <!-- Toggle Button -->
-                    <div class="relative inline-block w-[44px] shrink-0 align-middle select-none transition duration-200 ease-in mt-1">
-                        <input type="checkbox" class="step-done toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-[#3e3e42] appearance-none cursor-pointer z-10" ${checkedAttr} onchange="markUnsaved()">
-                        <label class="toggle-label block overflow-hidden h-6 rounded-full bg-[#3e3e42] cursor-pointer"></label>
+                <div class="step-item flex flex-col sm:flex-row sm:items-center gap-3 bg-[#111111] border border-[#3e3e42] p-3 rounded-lg fade-in">
+                    
+                    <div class="flex items-center justify-between sm:justify-start w-full sm:w-auto">
+                        <!-- Toggle Button -->
+                        <div class="relative inline-block w-[44px] shrink-0 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" class="step-done toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-[#3e3e42] appearance-none cursor-pointer z-10" ${checkedAttr} onchange="markUnsaved()">
+                            <label class="toggle-label block overflow-hidden h-6 rounded-full bg-[#3e3e42] cursor-pointer"></label>
+                        </div>
+                        
+                        <!-- Botón Borrar en Móvil (Visible solo en móvil) -->
+                        <button onclick="this.closest('.step-item').remove(); markUnsaved();" class="sm:hidden shrink-0 w-8 h-8 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition flex items-center justify-center">
+                            <i class="fas fa-trash-alt text-xs"></i>
+                        </button>
                     </div>
                     
-                    <div class="flex-1 grid grid-cols-3 gap-2">
-                        <input type="text" class="step-title mac-input col-span-2" value="${title}" placeholder="Título del hito (Ej: Ingreso Demanda)" oninput="markUnsaved()">
-                        <input type="text" class="step-date mac-input col-span-1 text-center" value="${date}" placeholder="15 Jun 2026" oninput="markUnsaved()">
+                    <!-- Inputs Responsivos -->
+                    <div class="flex-1 flex flex-col sm:flex-row gap-2 w-full">
+                        <input type="text" class="step-title mac-input flex-1" value="${title}" placeholder="Título del hito" autocomplete="off" oninput="markUnsaved()">
+                        <input type="text" class="step-date mac-input w-full sm:w-32 text-center" value="${date}" placeholder="Fecha" autocomplete="off" oninput="markUnsaved()">
                     </div>
                     
-                    <button onclick="this.closest('.step-item').remove(); markUnsaved();" class="shrink-0 w-8 h-8 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition flex items-center justify-center">
+                    <!-- Botón Borrar en PC (Visible solo en PC) -->
+                    <button onclick="this.closest('.step-item').remove(); markUnsaved();" class="hidden sm:flex shrink-0 w-8 h-8 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition items-center justify-center">
                         <i class="fas fa-trash-alt text-xs"></i>
                     </button>
                 </div>
@@ -517,10 +543,14 @@
 
         function markUnsaved() {
             hasUnsavedChanges = true;
-            document.getElementById('sync-status').innerHTML = `<span class="text-yellow-500"><i class="fas fa-exclamation-circle"></i> Hay cambios sin guardar</span>`;
+            document.getElementById('sync-status').innerHTML = `<span class="text-yellow-500"><i class="fas fa-exclamation-circle"></i> Cambios pendientes</span>`;
         }
 
-        function logout() { location.reload(); }
+        // Destruir sesión y limpiar la URL si hace falta
+        function logout() { 
+            // Forzar recarga desde el servidor ignorando la caché para limpiar todo
+            window.location.href = window.location.href.split('?')[0] + '?t=' + new Date().getTime(); 
+        }
     </script>
 </body>
 </html>
