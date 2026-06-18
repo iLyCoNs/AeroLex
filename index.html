@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="AeroLex | High-End Legal & Tech Firm">
+    <meta name="description" content="AeroLex | Soluciones Jurídicas Estratégicas y Tecnológicas">
     <title>AeroLex | Soluciones Corporativas y Tecnológicas</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,7 +29,6 @@
                     },
                     boxShadow: {
                         'mac-window': '0 25px 50px -12px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(0,0,0,0.03)',
-                        'mac-card': '0 10px 30px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0,0,0,0.02)',
                         'mac-dock': '0 10px 30px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255,255,255,0.9)',
                         'premium-hover': '0 20px 40px rgba(120, 140, 159, 0.12), 0 1px 3px rgba(0,0,0,0.05)',
                     }
@@ -39,7 +38,7 @@
     </script>
 
     <style>
-        body { background-color: #F9FAFB; color: #1D1D1F; -webkit-font-smoothing: antialiased; }
+        body { background-color: #F9FAFB; color: #1D1D1F; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
         /* SVG DRONE PARCHE */
         .fa-drone::before { content: "" !important; }
@@ -50,60 +49,35 @@
             vertical-align: middle;
         }
 
-        /* FONDO LUMINOSO PREMIUM */
-        .bg-container {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
-            background-image: url('https://images.unsplash.com/photo-1505664194779-8beaceb93744?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-            background-size: cover; background-position: center; filter: grayscale(100%); opacity: 0.05; 
-        }
-        .mesh-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
-            background: radial-gradient(at 0% 0%, rgba(240, 244, 250, 0.9) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(255, 255, 255, 0.9) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(235, 240, 248, 0.9) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(250, 250, 252, 0.9) 0px, transparent 50%);
-            filter: blur(40px);
-        }
+        .bg-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; background-image: url('https://images.unsplash.com/photo-1505664194779-8beaceb93744?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; filter: grayscale(100%); opacity: 0.05; }
+        .mesh-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: radial-gradient(at 0% 0%, rgba(240, 244, 250, 0.9) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(255, 255, 255, 0.9) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(235, 240, 248, 0.9) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(250, 250, 252, 0.9) 0px, transparent 50%); filter: blur(40px); }
 
         .glass-effect { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 1); }
         .dock-nav { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.8); border-top: 1px solid rgba(255, 255, 255, 1); }
 
-        /* Badge 4K HDR */
-        .badge-4k {
-            display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1D1D1F 0%, #434345 100%);
-            color: #fff; font-size: 0.55rem; font-weight: 700; padding: 0.15rem 0.4rem; border-radius: 4px; margin-left: 0.4rem;
-            letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 2px 5px rgba(0,0,0,0.15); vertical-align: middle;
-        }
+        .badge-4k { display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1D1D1F 0%, #434345 100%); color: #fff; font-size: 0.55rem; font-weight: 700; padding: 0.15rem 0.4rem; border-radius: 4px; margin-left: 0.4rem; letter-spacing: 0.5px; vertical-align: middle; }
 
-        /* Sidebar Item */
         .sidebar-item { transition: all 0.3s ease; border-left: 3px solid transparent; }
         .sidebar-item:hover { background: rgba(255,255,255,0.8); }
         .sidebar-item.active { background: #ffffff; color: #1D1D1F; font-weight: 600; border-left-color: #788C9F; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
         .sidebar-item.active i { color: #788C9F; opacity: 1; }
 
-        /* NUEVAS TARJETAS PREMIUM */
-        .service-widget {
-            background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(249,250,251,0.9) 100%);
-            border: 1px solid rgba(255, 255, 255, 1); border-radius: 20px;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-            display: flex; flex-direction: column; padding: 1.5rem; position: relative; overflow: hidden;
-            cursor: pointer;
-        }
-        .service-widget::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, #788C9F, #cbd5e1);
-            transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease;
-        }
-        .service-widget:hover {
-            transform: translateY(-4px); box-shadow: var(--tw-shadow-premium-hover); background: #ffffff; border-color: rgba(120, 140, 159, 0.2);
-        }
+        .service-widget { background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(249,250,251,0.9) 100%); border: 1px solid rgba(255, 255, 255, 1); border-radius: 20px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02); display: flex; flex-direction: column; padding: 1.5rem; position: relative; overflow: hidden; cursor: pointer; }
+        .service-widget::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, #788C9F, #cbd5e1); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
+        .service-widget:hover { transform: translateY(-4px); box-shadow: var(--tw-shadow-premium-hover); background: #ffffff; border-color: rgba(120, 140, 159, 0.2); }
         .service-widget:hover::before { transform: scaleX(1); }
         .service-widget:hover .widget-icon { transform: scale(1.1) rotate(5deg); color: #1D1D1F; }
 
-        /* Botón WhatsApp Flotante */
-        .whatsapp-fab {
-            position: fixed; bottom: 30px; right: 30px; background: rgba(255, 255, 255, 0.8);
-            color: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.08), inset 0 1px 2px rgba(255,255,255,1);
-            z-index: 90; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(255,255,255,1); backdrop-filter: blur(20px); cursor: pointer;
-        }
+        .whatsapp-fab { position: fixed; bottom: 30px; right: 30px; background: rgba(255, 255, 255, 0.8); color: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.08), inset 0 1px 2px rgba(255,255,255,1); z-index: 90; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(255,255,255,1); backdrop-filter: blur(20px); }
         .whatsapp-fab:hover { transform: scale(1.1) translateY(-5px); color: #128C7E; }
+
+        /* Estilos IA Chat */
+        .ai-chat-bubble-bot { background: #FFFFFF; color: #1D1D1F; border-radius: 12px 12px 12px 2px; align-self: flex-start; border: 1px solid rgba(0,0,0,0.05); font-size: 13.5px; padding: 12px 16px; max-width: 85%; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .ai-chat-bubble-user { background: #1D1D1F; color: #FFFFFF; border-radius: 12px 12px 2px 12px; align-self: flex-end; font-size: 13.5px; padding: 12px 16px; max-width: 85%; box-shadow: 0 4px 10px rgba(29, 29, 31, 0.2); }
+        .typing-indicator span { display: inline-block; width: 6px; height: 6px; background-color: #788C9F; border-radius: 50%; margin-right: 3px; animation: typing 1.2s infinite; opacity: 0.7;}
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; margin-right: 0; }
+        @keyframes typing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 
         .fade-in { opacity: 0; animation: fadeInApple 0.5s ease-out forwards; }
         @keyframes fadeInApple { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -133,31 +107,68 @@
                 </nav>
                 
                 <div class="hidden md:flex">
-                    <button id="open-chat-header" class="bg-mac-dark text-white hover:bg-black px-5 py-2 rounded-full text-xs font-semibold transition-all shadow-md flex items-center gap-2">
-                        <i class="fas fa-robot text-xs"></i> Consultor Virtual
+                    <button id="open-ai-header-btn" class="bg-mac-dark text-white hover:bg-black px-5 py-2 rounded-full text-xs font-semibold transition-all shadow-md flex items-center gap-2 border border-white/20">
+                        <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                        Consultor Virtual IA
                     </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <button class="whatsapp-fab" id="wa-global-trigger" aria-label="Abrir Asistente Virtual"><i class="fab fa-whatsapp"></i></button>
+    <!-- Botón WhatsApp Tradicional (Número Irreal) -->
+    <a href="https://wa.me/56900000000?text=Hola%20AeroLex,%20necesito%20asistencia%20legal." target="_blank" class="whatsapp-fab" aria-label="WhatsApp humano"><i class="fab fa-whatsapp"></i></a>
 
+    <!-- VENTANA DEL ASISTENTE VIRTUAL IA -->
+    <div id="ai-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-mac-dark/50 backdrop-blur-md opacity-0 transition-opacity duration-300">
+        <div class="glass-effect rounded-3xl w-full max-w-lg mx-4 shadow-2xl border border-white overflow-hidden flex flex-col h-[600px] transform scale-95 transition-transform duration-300" id="ai-modal-content">
+            
+            <!-- Cabecera IA -->
+            <div class="h-16 bg-white/60 border-b border-black/5 flex items-center justify-between px-6 backdrop-blur-xl shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="relative flex items-center justify-center w-10 h-10 bg-mac-dark rounded-full text-white shadow-md border border-white/50">
+                        <i class="fas fa-robot"></i>
+                        <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></div>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-mac-dark leading-tight">AeroLex AI</h3>
+                        <p class="text-[10px] font-medium text-mac-dark/50 uppercase tracking-widest">En línea</p>
+                    </div>
+                </div>
+                <button id="close-ai-modal" class="text-mac-dark/40 hover:text-mac-dark transition-colors w-8 h-8 flex items-center justify-center bg-white/50 rounded-full hover:bg-white"><i class="fas fa-times"></i></button>
+            </div>
+
+            <!-- Área de Mensajes -->
+            <div id="ai-chat-log" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4 bg-black/[0.02] hide-scrollbar scroll-smooth">
+                <div class="text-center my-2"><span class="bg-black/5 text-mac-dark/60 text-[10px] py-1 px-3 rounded-full font-medium shadow-sm uppercase tracking-wider">Hoy</span></div>
+                <!-- Los mensajes irán aquí -->
+            </div>
+
+            <!-- Input Formulario -->
+            <form id="ai-input-form" class="p-4 bg-white/80 border-t border-black/5 shrink-0 backdrop-blur-xl flex gap-3">
+                <input type="text" id="ai-input" class="flex-1 bg-white border border-black/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-mac-accent focus:ring-1 focus:ring-mac-accent shadow-sm" placeholder="Consulte sus dudas legales aquí..." autocomplete="off">
+                <button type="submit" id="ai-send-btn" class="w-12 h-12 bg-mac-dark text-white rounded-xl flex items-center justify-center shadow-md hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-paper-plane text-sm"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SECCIÓN HERO (Con Eslogan de Neuromarketing) -->
     <section id="inicio" class="pt-40 pb-12 md:pb-24 flex flex-col items-center justify-center text-center px-4 relative z-10">
-        <h1 class="text-4xl md:text-7xl font-bold tracking-tight text-mac-dark mb-4 md:mb-6 max-w-4xl leading-tight fade-in">
-            Evidencia Irrefutable.<br>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-mac-accent to-gray-500">Estrategia Legal de Élite.</span>
+        <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-mac-dark mb-4 md:mb-6 max-w-4xl leading-tight fade-in">
+            Soluciones Jurídicas Estratégicas.<br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-mac-accent to-gray-500">Decisiones Seguras.</span>
         </h1>
-        <p class="text-base md:text-xl text-mac-dark/70 max-w-3xl font-light mb-12 leading-relaxed fade-in" style="animation-delay: 0.1s;">
-            Integramos derecho corporativo, litigación avanzada y tecnología para blindar sus registros probatorios judiciales. Un ecosistema único impulsado en colaboración con <a href="https://australdrone.cl" target="_blank" class="font-semibold text-mac-dark hover:text-mac-accent transition-colors border-b border-mac-accent/30 pb-0.5">AUSTRALDRONE.CL</a>.
+        <p class="text-base md:text-lg text-mac-dark/70 max-w-3xl font-light mb-12 leading-relaxed fade-in" style="animation-delay: 0.1s;">
+            Brindamos asesoría a empresas y particulares en materias corporativas, civiles y de familia. Integramos <strong>análisis territorial avanzado y drones</strong> para construir antecedentes técnicos inobjetables que respaldan su negocio.
         </p>
     </section>
 
-    <!-- VENTANA CORE SYSTEM: LA SECCIÓN PRINCIPAL -->
+    <!-- VENTANA CORE SYSTEM -->
     <section id="servicios" class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pb-20 relative z-10 w-full">
         <div class="glass-effect rounded-[2.5rem] shadow-mac-window overflow-hidden border border-white flex flex-col h-[750px] md:h-[800px] fade-in" style="animation-delay: 0.2s;">
             
-            <!-- Barra Superior Tipo Mac -->
             <div class="h-14 bg-white/50 border-b border-black/5 flex items-center justify-between px-6 backdrop-blur-md shrink-0">
                 <div class="flex items-center gap-3">
                     <div class="flex gap-2">
@@ -165,37 +176,29 @@
                         <div class="w-3 h-3 rounded-full bg-[#FFBD2E] border border-black/10"></div>
                         <div class="w-3 h-3 rounded-full bg-[#27C93F] border border-black/10"></div>
                     </div>
-                    <span class="text-[11px] font-semibold text-mac-dark/60 uppercase tracking-widest ml-4">AeroLex Core System</span>
+                    <span class="text-[11px] font-semibold text-mac-dark/60 uppercase tracking-widest ml-4 hidden sm:block">AeroLex Core System</span>
                 </div>
                 <div class="flex space-x-4 text-[11px] font-medium text-mac-dark/40">
-                    <span class="flex items-center gap-1.5"><i class="fas fa-lock"></i> AES-256 Encrypted</span>
+                    <span class="flex items-center gap-1.5"><i class="fas fa-robot text-mac-accent"></i> Conectado a IA</span>
                 </div>
             </div>
 
-            <!-- Contenedor Principal (Sidebar + Grid) -->
             <div class="flex flex-col md:flex-row flex-1 overflow-hidden h-full bg-white/30">
                 
-                <!-- Sidebar (Menú Izquierdo) -->
                 <div class="w-full md:w-72 bg-white/60 border-b md:border-b-0 md:border-r border-black/5 p-4 shrink-0 backdrop-blur-xl z-10 overflow-y-auto hide-scrollbar">
-                    
                     <div class="mb-6">
                         <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-widest mb-3 px-3">Ecosistema Jurídico</p>
                         <nav id="sidebar-nav" class="flex flex-col space-y-1"></nav>
                     </div>
-
                     <div class="my-6 border-t border-black/5 mx-3"></div>
-                    
                     <div class="mb-6">
                         <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-widest mb-3 px-3">Tecnología & Drones</p>
                         <nav id="sidebar-nav-tech" class="flex flex-col space-y-1"></nav>
                     </div>
-
                 </div>
 
-                <!-- Área de Contenido (Derecha) -->
                 <div class="flex-1 p-6 md:p-10 overflow-y-auto relative h-full bg-transparent scroll-smooth hide-scrollbar">
                     
-                    <!-- Header Dinámico del Contenido -->
                     <div id="content-header" class="mb-8 flex flex-col justify-start items-start">
                         <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-5 text-mac-accent shadow-sm border border-black/5">
                             <i id="content-icon" class="fas fa-balance-scale text-2xl transition-all duration-500"></i>
@@ -204,14 +207,11 @@
                             Cargando Plataforma...
                         </h2>
                         <p id="content-desc" class="text-base md:text-lg text-mac-dark/60 mt-3 font-light leading-relaxed max-w-2xl transition-all duration-300">
-                            Iniciando base de datos de servicios...
+                            Iniciando base de datos...
                         </p>
                     </div>
 
-                    <!-- Grid de Tarjetas -->
-                    <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5 pb-20">
-                        <!-- Las tarjetas se inyectan aquí con JS -->
-                    </div>
+                    <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5 pb-20"></div>
                 </div>
             </div>
         </div>
@@ -223,13 +223,144 @@
         </div>
     </footer>
 
-    <!-- LÓGICA DE LA PLATAFORMA (CORE SYSTEM) -->
+    <!-- LÓGICA DE LA PLATAFORMA E INTELIGENCIA ARTIFICIAL -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            const WHATSAPP_NUMBER = "56900000000"; // Reemplaza con el número real
+            // --- 1. CONFIGURACIÓN IA (Gemini) ---
+            const GEMINI_API_KEY = "AQ.Ab8RN6LdOQNHCopZV-h7MkWgyIp04dRPPFuFe-Yl0Ln0D3yqFw"; 
+            
+            const aiModal = document.getElementById('ai-modal');
+            const aiModalContent = document.getElementById('ai-modal-content');
+            const closeAiBtn = document.getElementById('close-ai-modal');
+            const aiChatLog = document.getElementById('ai-chat-log');
+            const aiInputForm = document.getElementById('ai-input-form');
+            const aiInput = document.getElementById('ai-input');
+            const aiSendBtn = document.getElementById('ai-send-btn');
+            
+            let chatHistory = [];
+            let isChatInitialized = false;
 
-            // REFERENCIAS DOM
+            // Prompt de personalidad para la IA
+            const systemInstruction = `Eres el Consultor Virtual de Inteligencia Artificial de AeroLex. Tu objetivo es explicar de forma elegante, profesional y persuasiva nuestros servicios legales (civiles, corporativos, familia) o tecnológicos (drones, fotogrametría). 
+Actúas como un experto asesor. Brindas respuestas directas, útiles y que generen confianza. NO das asesoría legal definitiva, pero sí muestras profundo conocimiento. Tu objetivo final es invitar amablemente al usuario a que deje su número o email para que un abogado o ingeniero humano evalúe su caso sin costo inicial. Formatea tus respuestas de manera limpia (usa negritas si es necesario). Máximo 50 a 70 palabras por respuesta.`;
+
+            // Utilidad: Formateo de Markdown simple a HTML
+            function parseMarkdown(text) {
+                return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+            }
+
+            // --- 2. FUNCIONES DE INTERFAZ DEL CHAT ---
+            function openAIChat(initialPrompt = null) {
+                aiModal.classList.remove('hidden');
+                setTimeout(() => { 
+                    aiModal.classList.remove('opacity-0'); 
+                    aiModalContent.classList.remove('scale-95');
+                }, 10);
+
+                if (!isChatInitialized && !initialPrompt) {
+                    isChatInitialized = true;
+                    addBotMessage("Bienvenido al sistema de inteligencia corporativa de AeroLex. Soy su consultor virtual. ¿Desea explorar un servicio en particular o requiere orientación sobre su caso legal?");
+                }
+
+                if (initialPrompt) {
+                    // Si se abrió haciendo clic en una tarjeta de servicio
+                    isChatInitialized = true;
+                    addUserMessage(initialPrompt);
+                    fetchAIResponse(initialPrompt);
+                }
+            }
+
+            function closeAIChat() {
+                aiModal.classList.add('opacity-0');
+                aiModalContent.classList.add('scale-95');
+                setTimeout(() => { aiModal.classList.add('hidden'); }, 300);
+            }
+
+            function addBotMessage(text) {
+                const typingId = 'typing-' + Date.now();
+                const typingHtml = `<div id="${typingId}" class="ai-chat-bubble-bot typing-indicator"><span></span><span></span><span></span></div>`;
+                aiChatLog.insertAdjacentHTML('beforeend', typingHtml);
+                aiChatLog.scrollTop = aiChatLog.scrollHeight;
+
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        const tEl = document.getElementById(typingId);
+                        if(tEl) tEl.remove();
+                        const msgHtml = `<div class="ai-chat-bubble-bot fade-in">${parseMarkdown(text)}</div>`;
+                        aiChatLog.insertAdjacentHTML('beforeend', msgHtml);
+                        aiChatLog.scrollTop = aiChatLog.scrollHeight;
+                        // Guardamos en la memoria interna de la IA para contexto
+                        chatHistory.push({ role: "model", parts: [{ text: text }] });
+                        resolve();
+                    }, 1200); // Simulamos que la IA "piensa/escribe"
+                });
+            }
+
+            function addUserMessage(text) {
+                const msgHtml = `<div class="ai-chat-bubble-user fade-in">${text}</div>`;
+                aiChatLog.insertAdjacentHTML('beforeend', msgHtml);
+                aiChatLog.scrollTop = aiChatLog.scrollHeight;
+                // Guardar en la memoria
+                chatHistory.push({ role: "user", parts: [{ text: text }] });
+            }
+
+            async function fetchAIResponse(userText) {
+                const typingId = 'typing-' + Date.now();
+                aiChatLog.insertAdjacentHTML('beforeend', `<div id="${typingId}" class="ai-chat-bubble-bot typing-indicator"><span></span><span></span><span></span></div>`);
+                aiChatLog.scrollTop = aiChatLog.scrollHeight;
+
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            systemInstruction: { parts: [{ text: systemInstruction }] },
+                            contents: chatHistory,
+                            generationConfig: { temperature: 0.3, maxOutputTokens: 250 }
+                        })
+                    });
+
+                    const tEl = document.getElementById(typingId);
+                    if(tEl) tEl.remove();
+
+                    if (!response.ok) throw new Error("API Error");
+                    const data = await response.json();
+                    
+                    const botResponseText = data.candidates[0].content.parts[0].text;
+                    
+                    chatHistory.push({ role: "model", parts: [{ text: botResponseText }] });
+                    
+                    const msgHtml = `<div class="ai-chat-bubble-bot fade-in">${parseMarkdown(botResponseText)}</div>`;
+                    aiChatLog.insertAdjacentHTML('beforeend', msgHtml);
+                    aiChatLog.scrollTop = aiChatLog.scrollHeight;
+
+                } catch (error) {
+                    const tEl = document.getElementById(typingId);
+                    if(tEl) tEl.remove();
+                    aiChatLog.insertAdjacentHTML('beforeend', `<div class="ai-chat-bubble-bot fade-in text-red-500">Error de conexión con el servidor IA. Por favor, intente de nuevo.</div>`);
+                    chatHistory.pop(); 
+                }
+            }
+
+            // Eventos Formulario Chat
+            aiInput.addEventListener('input', () => { aiSendBtn.disabled = aiInput.value.trim() === ''; });
+            aiInputForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const text = aiInput.value.trim();
+                if (!text) return;
+                aiInput.value = '';
+                aiSendBtn.disabled = true;
+                addUserMessage(text);
+                fetchAIResponse(text);
+            });
+
+            // Disparadores Chat IA
+            document.getElementById('open-ai-header-btn').addEventListener('click', () => openAIChat());
+            closeAiBtn.addEventListener('click', closeAIChat);
+            aiModal.addEventListener('click', (e) => { if (e.target === aiModal) closeAIChat(); });
+
+            // --- 3. BASE DE DATOS Y RENDERIZADO DEL CORE SYSTEM ---
             const navLegal = document.getElementById('sidebar-nav');
             const navTech = document.getElementById('sidebar-nav-tech');
             const contentTitle = document.getElementById('content-title');
@@ -239,12 +370,10 @@
 
             let currentActiveBtn = null;
 
-            // BASE DE DATOS COMPLETA DE SERVICIOS (Con descripciones lujosas y técnicas)
             const db = {
                 legal: [
                     { 
-                        id: 'civil', title: 'Derecho Civil', icon: 'fa-file-signature', 
-                        desc: 'Gestión y blindaje estructural del patrimonio privado, garantizando seguridad jurídica en cada transacción.', 
+                        id: 'civil', title: 'Derecho Civil', icon: 'fa-file-signature', desc: 'Gestión y blindaje estructural del patrimonio privado, garantizando seguridad jurídica en cada transacción.', 
                         items: [
                             { title: "Redacción y revisión de contratos", desc: "Auditoría exhaustiva y elaboración técnica de instrumentos para resguardar el equilibrio contractual." },
                             { title: "Cobranza judicial y extrajudicial", desc: "Estrategias de recuperación de activos mediante acciones ejecutivas de alta eficacia." },
@@ -257,8 +386,7 @@
                         ] 
                     },
                     { 
-                        id: 'inmobiliario', title: 'Derecho Inmobiliario', icon: 'fa-city', 
-                        desc: 'Seguridad jurídica integral para el desarrollo seguro de proyectos y bienes raíces de alto valor.', 
+                        id: 'inmobiliario', title: 'Derecho Inmobiliario', icon: 'fa-city', desc: 'Seguridad jurídica integral para el desarrollo seguro de proyectos y bienes raíces de alto valor.', 
                         items: [
                             { title: "Estudios de títulos", desc: "Auditoría registral minuciosa para detectar contingencias ocultas previas a la inversión." },
                             { title: "Compraventa de inmuebles", desc: "Acompañamiento corporativo desde la promesa hasta la inscripción conservatoria final." },
@@ -270,8 +398,7 @@
                         ] 
                     },
                     { 
-                        id: 'comercial', title: 'Derecho Comercial', icon: 'fa-briefcase', 
-                        desc: 'Estructuración societaria avanzada y protección legal para el crecimiento corporativo escalable.', 
+                        id: 'comercial', title: 'Derecho Comercial', icon: 'fa-briefcase', desc: 'Estructuración societaria avanzada y protección legal para el crecimiento corporativo escalable.', 
                         items: [
                             { title: "Constitución de sociedades", desc: "Diseño de vehículos societarios a medida, adaptados al riesgo y necesidad de capital." },
                             { title: "Modificaciones societarias", desc: "Transformaciones, divisiones y aumentos de capital ejecutados con precisión registral." },
@@ -284,8 +411,7 @@
                         ] 
                     },
                     { 
-                        id: 'laboral', title: 'Derecho Laboral', icon: 'fa-user-tie', 
-                        desc: 'Asesoría estratégica en relaciones del trabajo, compliance laboral y defensa ante tribunales.', 
+                        id: 'laboral', title: 'Derecho Laboral', icon: 'fa-user-tie', desc: 'Asesoría estratégica en relaciones del trabajo, compliance laboral y defensa ante tribunales.', 
                         items: [
                             { title: "Asesoría a empleadores", desc: "Consultoría preventiva en contratación, reglamentos internos y cumplimiento normativo." },
                             { title: "Defensa laboral", desc: "Representación corporativa en juicios complejos de despido injustificado." },
@@ -297,8 +423,7 @@
                         ] 
                     },
                     { 
-                        id: 'administrativo', title: 'Derecho Administrativo', icon: 'fa-university', 
-                        desc: 'Intermediación técnica y representación frente a los actos de los organismos del Estado.', 
+                        id: 'administrativo', title: 'Derecho Administrativo', icon: 'fa-university', desc: 'Intermediación técnica y representación frente a los actos de los organismos del Estado.', 
                         items: [
                             { title: "Recursos administrativos", desc: "Impugnación técnica de actos de la administración que vulneren sus intereses." },
                             { title: "Procedimientos sancionatorios", desc: "Defensa férrea ante multas, clausuras o sumarios de entidades públicas." },
@@ -309,8 +434,7 @@
                         ] 
                     },
                     { 
-                        id: 'ambiental', title: 'Derecho Ambiental', icon: 'fa-leaf', 
-                        desc: 'Viabilidad técnica de proyectos y defensa especializada frente a contingencias ecológicas.', 
+                        id: 'ambiental', title: 'Derecho Ambiental', icon: 'fa-leaf', desc: 'Viabilidad técnica de proyectos y defensa especializada frente a contingencias ecológicas.', 
                         items: [
                             { title: "Asesoría ambiental", desc: "Acompañamiento estratégico en el Sistema de Evaluación de Impacto Ambiental (SEIA)." },
                             { title: "Cumplimiento normativo", desc: "Adaptación proactiva a las exigencias medioambientales vigentes para evitar paralizaciones." },
@@ -320,8 +444,7 @@
                         ] 
                     },
                     { 
-                        id: 'familia', title: 'Derecho de Familia', icon: 'fa-users', 
-                        desc: 'Soluciones legales de máxima discreción y efectividad para la protección del patrimonio personal.', 
+                        id: 'familia', title: 'Derecho de Familia', icon: 'fa-users', desc: 'Soluciones legales de máxima discreción y efectividad para la protección del patrimonio personal.', 
                         items: [
                             { title: "Divorcios", desc: "Tramitación estratégica de divorcios de mutuo acuerdo y litigios unilaterales complejos." },
                             { title: "Alimentos", desc: "Acciones de fijación, aumento, rebaja y medidas de apremio patrimonial." },
@@ -332,8 +455,7 @@
                         ] 
                     },
                     { 
-                        id: 'sucesorio', title: 'Derecho Sucesorio', icon: 'fa-scroll', 
-                        desc: 'Planificación hereditaria y resolución de conflictos para la transmisión segura del patrimonio.', 
+                        id: 'sucesorio', title: 'Derecho Sucesorio', icon: 'fa-scroll', desc: 'Planificación hereditaria y resolución de conflictos para la transmisión segura del patrimonio.', 
                         items: [
                             { title: "Posesiones efectivas", desc: "Gestión ágil ante el Registro Civil o Tribunales para la apertura de la sucesión." },
                             { title: "Herencias", desc: "Asesoría integral en la aceptación, inventario y carga tributaria hereditaria." },
@@ -343,8 +465,7 @@
                         ] 
                     },
                     { 
-                        id: 'litigacion', title: 'Litigación y Defensa', icon: 'fa-gavel', 
-                        desc: 'Defensa implacable y representación en tribunales, fusionando la ley con evidencia técnica.', 
+                        id: 'litigacion', title: 'Litigación y Defensa', icon: 'fa-gavel', desc: 'Defensa implacable y representación en tribunales, fusionando la ley con evidencia técnica.', 
                         items: [
                             { title: "Representación ante tribunales", desc: "Patrocinio experto en tribunales ordinarios, especiales y Cortes de Apelaciones." },
                             { title: "Patrocinio y poder", desc: "Asunción de la representación jurídica formal con absoluta lealtad al cliente." },
@@ -358,8 +479,7 @@
                         ] 
                     },
                     { 
-                        id: 'compliance', title: 'Compliance y Asesoría', icon: 'fa-shield-check', 
-                        desc: 'Gerencia legal y prevención de riesgos corporativos para operar con absoluta seguridad normativa.', 
+                        id: 'compliance', title: 'Compliance y Asesoría', icon: 'fa-shield-check', desc: 'Gerencia legal y prevención de riesgos corporativos para operar con absoluta seguridad normativa.', 
                         items: [
                             { title: "Gerencia legal externa", desc: "Dirección jurídica externalizada (General Counsel) para la operatividad diaria." },
                             { title: "Compliance corporativo", desc: "Implementación de políticas de cumplimiento, ética y transparencia interna." },
@@ -373,8 +493,7 @@
                         ] 
                     },
                     { 
-                        id: 'mediacion', title: 'Mediación y Negociación', icon: 'fa-handshake', 
-                        desc: 'Resolución inteligente de conflictos mediante estrategias de acercamiento extrajudicial.', 
+                        id: 'mediacion', title: 'Mediación y Negociación', icon: 'fa-handshake', desc: 'Resolución inteligente de conflictos mediante estrategias de acercamiento extrajudicial.', 
                         items: [
                             { title: "Negociación extrajudicial", desc: "Intervención estratégica para evitar el desgaste y costo del litigio." },
                             { title: "Resolución de conflictos", desc: "Diseño de vías alternativas (ADR) para alcanzar acuerdos eficientes." },
@@ -386,8 +505,7 @@
                 ],
                 tech: [
                     { 
-                        id: 'evidencia_digital', title: 'Evidencia Digital', icon: 'fa-microchip', 
-                        desc: 'Extracción, resguardo y análisis de datos electrónicos con cadena de custodia judicial.', 
+                        id: 'evidencia_digital', title: 'Evidencia Digital', icon: 'fa-microchip', desc: 'Extracción, resguardo y análisis de datos electrónicos con cadena de custodia judicial.', 
                         items: [
                             { title: "Levantamiento de evidencia", desc: "Recolección forense de correos, chats y datos asegurando su validez probatoria." },
                             { title: "Informes jurídicos", desc: "Análisis especializado cruzando regulaciones complejas con metadatos electrónicos." },
@@ -397,20 +515,18 @@
                         ] 
                     },
                     { 
-                        id: 'drones_registro', title: 'Registro Aéreo _4k', icon: 'fa-drone', 
-                        desc: 'Inspección visual de alta precisión mediante sistemas aéreos no tripulados.', 
+                        id: 'drones_registro', title: 'Registro Aéreo _4k', icon: 'fa-drone', desc: 'Inspección visual de alta precisión mediante sistemas aéreos no tripulados.', 
                         items: [
                             { title: "Inspección de predios", desc: "Vuelos de reconocimiento para evaluar el estado real de grandes extensiones de tierra." },
                             { title: "Inspección de obras", desc: "Revisión en altura de avances constructivos y calidad de ejecución." },
-                            { title: "Inspección industrial", desc: "Evaluación visual de infraestructuras críticas (torres, plantas) minimizando riesgos." },
+                            { title: "Inspección industrial", desc: "Evaluación visual de infraestructuras críticas minimizando riesgos." },
                             { title: "Inspección de techumbres", desc: "Detección de fallas estructurales o filtraciones mediante cámaras de alta resolución." },
                             { title: "Inspección de caminos", desc: "Levantamiento visual de rutas y servidumbres de tránsito terrestre." },
                             { title: "Monitoreo de proyectos", desc: "Registro periódico del estado de grandes proyectos mineros o de ingeniería." }
                         ] 
                     },
                     { 
-                        id: 'drones_litigios', title: 'Evidencia Litigios _4k', icon: 'fa-camera', 
-                        desc: 'Captura audiovisual georreferenciada para sustentar o desestimar demandas en tribunales.', 
+                        id: 'drones_litigios', title: 'Evidencia Litigios _4k', icon: 'fa-camera', desc: 'Captura audiovisual georreferenciada para sustentar o desestimar demandas en tribunales.', 
                         items: [
                             { title: "Registro audiovisual", desc: "Generación de prueba material en video 4K, geolocalizada e inobjetable." },
                             { title: "Verificación de deslindes", desc: "Constatación aérea del límite físico en contraste con la inscripción registral." },
@@ -421,8 +537,7 @@
                         ] 
                     },
                     { 
-                        id: 'fotogrametria', title: 'Fotogrametría', icon: 'fa-layer-group', 
-                        desc: 'Mapeo espacial y modelado 3D para cálculo de superficies y validación topográfica.', 
+                        id: 'fotogrametria', title: 'Fotogrametría', icon: 'fa-layer-group', desc: 'Mapeo espacial y modelado 3D para cálculo de superficies y validación topográfica.', 
                         items: [
                             { title: "Ortomosaicos", desc: "Creación de mapas 2D de ultra alta resolución a partir de miles de fotografías aéreas." },
                             { title: "Modelos 3D", desc: "Reconstrucción digital volumétrica de terrenos y edificaciones complejas." },
@@ -433,8 +548,7 @@
                         ] 
                     },
                     { 
-                        id: 'empresas', title: 'Servicios Corporativos', icon: 'fa-building', 
-                        desc: 'Externalización de la inteligencia legal y técnica para el blindaje de la empresa moderna.', 
+                        id: 'empresas', title: 'Servicios Corporativos', icon: 'fa-building', desc: 'Externalización de la inteligencia legal y técnica para el blindaje de la empresa moderna.', 
                         items: [
                             { title: "Asesoría permanente", desc: "Acompañamiento legal constante (Retainer) para la toma de decisiones gerenciales." },
                             { title: "Gestión de contratos", desc: "Administración, renovación y auditoría del ciclo de vida de los contratos corporativos." },
@@ -454,42 +568,37 @@
             function format4K(text) { return text.replace(/_4k/g, '<span class="badge-4k">4K HDR</span>'); }
 
             function renderContent(dataObj, btnElement) {
-                // Manejo visual de los botones del menú lateral
-                if (currentActiveBtn) {
-                    currentActiveBtn.classList.remove('active');
-                }
+                if (currentActiveBtn) currentActiveBtn.classList.remove('active');
                 btnElement.classList.add('active');
                 currentActiveBtn = btnElement;
 
-                // Transición Fade Out
-                contentTitle.style.opacity = '0'; contentDesc.style.opacity = '0'; contentIcon.style.opacity = '0';
-                servicesGrid.style.opacity = '0';
+                contentTitle.style.opacity = '0'; contentDesc.style.opacity = '0'; contentIcon.style.opacity = '0'; servicesGrid.style.opacity = '0';
                 
                 setTimeout(() => {
-                    // Actualizar Textos
                     contentTitle.innerHTML = format4K(dataObj.title);
                     contentDesc.textContent = dataObj.desc;
                     contentIcon.className = `fas ${dataObj.icon} text-3xl md:text-4xl text-[#788C9F] transition-all duration-300`;
                     
-                    // Limpiar Grid
                     servicesGrid.innerHTML = '';
                     
-                    // Inyectar nuevas Tarjetas Premium
                     dataObj.items.forEach((item, index) => {
                         const card = document.createElement('div');
                         card.className = 'service-widget fade-in';
                         card.style.animationDelay = `${index * 0.04}s`;
                         
-                        // Acción al hacer clic en la tarjeta (Deriva a WhatsApp como consultor)
+                        // AL HACER CLIC EN LA TARJETA:
+                        // Se abre el Consultor IA y se le envía automáticamente un mensaje pidiendo información
                         card.onclick = () => {
-                            const waMessage = `Hola AeroLex. Me interesa obtener más información sobre el servicio de: *${item.title.replace('_4k','')}* (Área: ${dataObj.title.replace('_4k','')}).`;
-                            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`, '_blank');
+                            const cleanTitle = item.title.replace('_4k','').trim();
+                            const cleanArea = dataObj.title.replace('_4k','').trim();
+                            const contextPrompt = `Me interesa el servicio de "${cleanTitle}" en el área de ${cleanArea}. ¿Qué implica exactamente y cómo podemos iniciar este proceso en AeroLex?`;
+                            openAIChat(contextPrompt);
                         };
 
                         card.innerHTML = `
                             <div class="flex items-start gap-3 mb-2">
                                 <div class="mt-1 w-6 h-6 rounded-full bg-mac-accent/10 flex items-center justify-center shrink-0 widget-icon transition-transform">
-                                    <i class="fas fa-check text-mac-accent text-[10px]"></i>
+                                    <i class="fas fa-robot text-mac-accent text-[10px]"></i>
                                 </div>
                                 <div>
                                     <h4 class="text-[14px] md:text-[15px] font-bold text-mac-dark leading-snug">${format4K(item.title)}</h4>
@@ -500,9 +609,7 @@
                         servicesGrid.appendChild(card);
                     });
 
-                    // Transición Fade In
-                    contentTitle.style.opacity = '1'; contentDesc.style.opacity = '1'; contentIcon.style.opacity = '1';
-                    servicesGrid.style.opacity = '1';
+                    contentTitle.style.opacity = '1'; contentDesc.style.opacity = '1'; contentIcon.style.opacity = '1'; servicesGrid.style.opacity = '1';
                 }, 200);
             }
 
@@ -514,18 +621,11 @@
                     
                     btn.addEventListener('click', () => {
                         renderContent(cat, btn);
-                        // Auto-scroll suave en móviles al hacer clic en una pestaña
-                        if(window.innerWidth < 768) {
-                            document.getElementById('content-header').scrollIntoView({ behavior: "smooth", block: "start" });
-                        }
+                        if(window.innerWidth < 768) document.getElementById('content-header').scrollIntoView({ behavior: "smooth", block: "start" });
                     });
                     
                     container.appendChild(btn);
-                    
-                    // Click automático en el primer elemento al cargar la página
-                    if (index === 0 && container === navLegal) {
-                        setTimeout(() => btn.click(), 100);
-                    }
+                    if (index === 0 && container === navLegal) setTimeout(() => btn.click(), 100);
                 });
             }
 
