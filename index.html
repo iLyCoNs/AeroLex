@@ -6,11 +6,13 @@
     <meta name="description" content="AeroLex | High-End Legal & Tech Firm">
     <title>AeroLex | Soluciones Corporativas y Tecnológicas</title>
 
+    <!-- Fuentes Apple-like (Inter imita a San Francisco) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -34,6 +36,7 @@
         }
     </script>
 
+    <!-- Estilos Personalizados -->
     <style>
         body {
             background-color: #F5F5F7;
@@ -107,6 +110,7 @@
 
         /* Animación de entrada suave */
         .fade-in {
+            opacity: 0;
             animation: fadeInApple 0.5s ease-out forwards;
         }
         @keyframes fadeInApple {
@@ -132,12 +136,15 @@
 </head>
 <body class="relative">
 
+    <!-- Capas de Fondo -->
     <div class="bg-container"></div>
     <div class="mesh-overlay"></div>
 
+    <!-- Header Estilo Minimalista -->
     <header class="fixed w-full top-0 z-50 mac-header transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 md:px-6">
             <div class="flex justify-between items-center h-16">
+                <!-- Logo con Martillo Legal -->
                 <div class="flex-shrink-0 flex items-center gap-2.5">
                     <div class="w-8 h-8 bg-mac-dark rounded-md flex items-center justify-center text-white shadow-sm">
                         <i class="fas fa-gavel text-sm"></i>
@@ -147,25 +154,29 @@
                     </a>
                 </div>
                 
+                <!-- Menú Central Desktop -->
                 <nav class="hidden md:flex space-x-8">
                     <a href="#inicio" class="text-xs font-medium tracking-wide text-mac-dark/70 hover:text-mac-dark transition-colors">Inicio</a>
                     <a href="#servicios" class="text-xs font-medium tracking-wide text-mac-dark/70 hover:text-mac-dark transition-colors">Portafolio</a>
                     <a href="#servicios" class="text-xs font-medium tracking-wide text-mac-dark/70 hover:text-mac-dark transition-colors">Tecnología</a>
                 </nav>
                 
+                <!-- Botón de Contacto Desktop -->
                 <div class="hidden md:flex">
                     <a href="#contacto" class="bg-mac-dark text-white hover:bg-black px-5 py-1.5 rounded-full text-xs font-medium transition-all shadow-sm">
                         Contactar
                     </a>
                 </div>
 
+                <!-- Botón Menú Móvil -->
                 <button id="mobile-menu-btn" class="md:hidden text-mac-dark p-2 focus:outline-none">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
             </div>
         </div>
 
-        <div id="mobile-menu" class="hidden md:hidden bg-white/90 backdrop-blur-3xl border-b border-black/5 absolute w-full left-0 top-16 shadow-lg">
+        <!-- Menú Móvil Desplegable -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white/90 backdrop-blur-3xl border-b border-black/5 absolute w-full left-0 top-16 shadow-lg z-50">
             <div class="flex flex-col px-4 pt-2 pb-6 space-y-4">
                 <a href="#inicio" class="mobile-link text-sm font-medium text-mac-dark/80 hover:text-mac-dark">Inicio</a>
                 <a href="#servicios" class="mobile-link text-sm font-medium text-mac-dark/80 hover:text-mac-dark">Portafolio Legal</a>
@@ -175,22 +186,71 @@
         </div>
     </header>
 
-    <section id="inicio" class="pt-32 pb-12 md:pb-16 flex flex-col items-center justify-center text-center px-4">
-        <h1 class="text-4xl md:text-7xl font-bold tracking-tight text-mac-dark mb-4 md:mb-6 max-w-4xl leading-tight">
+    <!-- Hero Section con Bento Grid Interactivo -->
+    <section id="inicio" class="pt-32 pb-12 md:pb-24 flex flex-col items-center justify-center text-center px-4 relative z-10">
+        
+        <!-- Textos principales -->
+        <h1 class="text-4xl md:text-7xl font-bold tracking-tight text-mac-dark mb-4 md:mb-6 max-w-4xl leading-tight fade-in">
             Ingeniería Legal.<br>
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-mac-accent to-gray-500">
                 Precisión Tecnológica.
             </span>
         </h1>
-        <p class="text-base md:text-xl text-mac-dark/60 max-w-2xl font-light mb-8 md:mb-10 leading-relaxed">
+        <p class="text-base md:text-xl text-mac-dark/60 max-w-2xl font-light mb-12 leading-relaxed fade-in" style="animation-delay: 0.1s;">
             Asesoría corporativa de élite, gestión patrimonial avanzada y servicios audiovisuales con drones 4K para proyectos de alta complejidad.
         </p>
+
+        <!-- Bento Grid Interactivo (Primera Impresión Visual) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl w-full fade-in" style="animation-delay: 0.2s;">
+            
+            <!-- Pilar 1: Corporativo & Patrimonio -->
+            <div class="bg-white/40 backdrop-blur-md border border-white/60 p-6 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default">
+                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 text-mac-accent shadow-sm group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-building text-sm"></i>
+                </div>
+                <h3 class="text-sm font-semibold text-mac-dark mb-2 tracking-wide">Estructuración Corporativa</h3>
+                <p class="text-[13px] text-mac-dark/60 leading-relaxed font-light">
+                    Diseñamos vehículos legales exactos para escalar sus negocios, prevenir riesgos y resguardar su patrimonio ante cualquier contingencia.
+                </p>
+            </div>
+
+            <!-- Pilar 2: Litigación -->
+            <div class="bg-white/40 backdrop-blur-md border border-white/60 p-6 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default">
+                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 text-mac-accent shadow-sm group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-gavel text-sm"></i>
+                </div>
+                <h3 class="text-sm font-semibold text-mac-dark mb-2 tracking-wide">Litigación de Alta Complejidad</h3>
+                <p class="text-[13px] text-mac-dark/60 leading-relaxed font-light">
+                    Defensa judicial estratégica y resolución de conflictos civiles o corporativos, enfocada en resultados certeros y protección de intereses.
+                </p>
+            </div>
+
+            <!-- Pilar 3: Tecnología -->
+            <div class="bg-white/40 backdrop-blur-md border border-white/60 p-6 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default">
+                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 text-mac-accent shadow-sm group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-drone text-sm"></i>
+                </div>
+                <h3 class="text-sm font-semibold text-mac-dark mb-2 tracking-wide">Evidencia Tecnológica 4K</h3>
+                <p class="text-[13px] text-mac-dark/60 leading-relaxed font-light">
+                    Levantamiento topográfico, fotogrametría e inspección aérea con drones para nutrir con prueba irrefutable sus proyectos o litigios.
+                </p>
+            </div>
+
+        </div>
+        
+        <!-- Flecha indicadora de scroll -->
+        <div class="mt-16 animate-bounce text-mac-dark/30 hidden md:block fade-in" style="animation-delay: 0.4s;">
+            <i class="fas fa-chevron-down"></i>
+        </div>
     </section>
 
-    <section id="servicios" class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pb-32">
+    <!-- Interfaz de Servicios (Dashboard Legal) -->
+    <section id="servicios" class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pb-32 relative z-10">
         
-        <div class="glass-effect rounded-2xl shadow-mac-window overflow-hidden border border-white/60 flex flex-col h-[700px] md:h-[750px]">
+        <!-- Contenedor Principal (Glassmorphism) -->
+        <div class="glass-effect rounded-2xl shadow-mac-window overflow-hidden border border-white/60 flex flex-col h-[700px] md:h-[750px] fade-in" style="animation-delay: 0.3s;">
             
+            <!-- Barra Superior Rediseñada (Dashboard Header) -->
             <div class="h-12 md:h-14 bg-white/40 border-b border-black/5 flex items-center justify-between px-4 md:px-6 backdrop-blur-md shrink-0">
                 <div class="flex items-center gap-2 md:gap-3">
                     <i class="fas fa-shield-alt text-mac-accent opacity-80 text-sm md:text-base"></i>
@@ -202,46 +262,58 @@
                 </div>
             </div>
 
+            <!-- Contenido del Panel -->
             <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
                 
+                <!-- Sidebar (Transformada en menú deslizable en móvil) -->
                 <div class="w-full md:w-64 bg-white/20 border-b md:border-b-0 md:border-r border-black/5 p-3 md:p-4 shrink-0 backdrop-blur-sm z-10">
                     
+                    <!-- Contenedor flex para scroll horizontal en móvil -->
                     <div class="flex md:flex-col overflow-x-auto hide-scrollbar gap-3 md:gap-0 pb-1 md:pb-0">
                         
+                        <!-- Sección Legal -->
                         <div class="flex md:block flex-row md:flex-col shrink-0 gap-2 md:gap-0">
                             <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-wider mb-2 px-3 hidden md:block">Ecosistema Legal</p>
                             <nav id="sidebar-nav" class="flex md:block flex-row md:flex-col gap-2 md:gap-0 md:space-y-1">
-                                </nav>
+                                <!-- Botones inyectados por JS -->
+                            </nav>
                         </div>
 
+                        <!-- Separador visual solo desktop -->
                         <div class="hidden md:block my-5 border-t border-black/5 mx-3"></div>
 
+                        <!-- Sección Tech -->
                         <div class="flex md:block flex-row md:flex-col shrink-0 gap-2 md:gap-0">
                             <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-wider mb-2 px-3 hidden md:block">Tecnología y Drones</p>
                             <nav id="sidebar-nav-tech" class="flex md:block flex-row md:flex-col gap-2 md:gap-0 md:space-y-1">
-                                </nav>
+                                <!-- Botones inyectados por JS -->
+                            </nav>
                         </div>
 
                     </div>
                 </div>
 
+                <!-- Panel Principal de Contenido -->
                 <div class="flex-1 bg-white/40 p-5 md:p-8 overflow-y-auto relative">
-                    <div id="content-header" class="mb-6 md:mb-8 fade-in">
+                    <div id="content-header" class="mb-6 md:mb-8">
                         <div class="w-12 h-12 md:w-16 md:h-16 bg-white/80 rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-4 text-mac-accent shadow-sm border border-white">
-                            <i id="content-icon" class="fas fa-balance-scale text-xl md:text-2xl"></i>
+                            <i id="content-icon" class="fas fa-balance-scale text-xl md:text-2xl transition-all duration-300"></i>
                         </div>
-                        <h2 id="content-title" class="text-2xl md:text-3xl font-semibold text-mac-dark tracking-tight">Cargando...</h2>
-                        <p id="content-desc" class="text-sm md:text-base text-mac-dark/60 mt-1 md:mt-2 font-light">Seleccione una categoría para ver los servicios.</p>
+                        <h2 id="content-title" class="text-2xl md:text-3xl font-semibold text-mac-dark tracking-tight transition-all duration-300">Cargando...</h2>
+                        <p id="content-desc" class="text-sm md:text-base text-mac-dark/60 mt-1 md:mt-2 font-light transition-all duration-300">Seleccione una categoría para ver los servicios.</p>
                     </div>
 
+                    <!-- Grid de Servicios (Cards) -->
                     <div id="services-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 pb-8 md:pb-12">
-                        </div>
+                        <!-- Tarjetas inyectadas por JS -->
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="border-t border-black/5 bg-white/30 backdrop-blur-md py-6 md:py-8 mt-12">
+    <!-- Footer Apple Style -->
+    <footer class="border-t border-black/5 bg-white/30 backdrop-blur-md py-6 md:py-8 mt-12 relative z-10">
         <div class="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-center text-xs text-mac-dark/50">
             <div class="flex items-center gap-2 mb-4 md:mb-0">
                 <i class="fas fa-gavel text-mac-dark/40"></i>
@@ -255,6 +327,7 @@
         </div>
     </footer>
 
+    <!-- Lógica JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -307,14 +380,24 @@
                 btnElement.classList.add('active', 'text-white', 'bg-mac-accent');
                 currentActiveBtn = btnElement;
 
-                contentTitle.textContent = dataObj.title;
-                contentDesc.textContent = dataObj.desc;
-                contentIcon.className = `fas ${dataObj.icon} text-xl md:text-2xl`;
+                // Transición sutil de textos
+                contentTitle.style.opacity = '0';
+                contentDesc.style.opacity = '0';
+                contentIcon.style.opacity = '0';
+                
+                setTimeout(() => {
+                    contentTitle.textContent = dataObj.title;
+                    contentDesc.textContent = dataObj.desc;
+                    contentIcon.className = `fas ${dataObj.icon} text-xl md:text-2xl transition-all duration-300`;
+                    
+                    contentTitle.style.opacity = '1';
+                    contentDesc.style.opacity = '1';
+                    contentIcon.style.opacity = '1';
+                }, 150);
 
                 servicesGrid.innerHTML = '';
                 dataObj.items.forEach((item, index) => {
                     const card = document.createElement('div');
-                    // Ajuste de card padding responsive
                     card.className = 'service-card p-3 md:p-4 fade-in flex items-start gap-2.5';
                     card.style.animationDelay = `${index * 0.04}s`;
                     
@@ -333,13 +416,11 @@
             function createSidebarButtons(categoryArray, container) {
                 categoryArray.forEach((cat, index) => {
                     const btn = document.createElement('button');
-                    // Clases responsive: rounded-full en móvil para parecer botones de tabs, rounded-lg en desktop
                     btn.className = 'sidebar-item w-auto md:w-full shrink-0 text-left px-4 md:px-3 py-2 rounded-full md:rounded-lg text-[13px] md:text-sm font-medium text-mac-dark/70 hover:bg-black/5 flex items-center gap-2 md:gap-2.5 whitespace-nowrap md:whitespace-normal';
                     btn.innerHTML = `<i class="fas ${cat.icon} w-3 md:w-4 text-center opacity-70"></i> ${cat.title}`;
                     
                     btn.addEventListener('click', () => {
                         renderContent(cat, btn);
-                        // En móvil, desplazar suavemente el foco hacia abajo si es necesario
                         if(window.innerWidth < 768) {
                             btn.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
                         }
