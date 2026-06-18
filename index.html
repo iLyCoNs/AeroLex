@@ -17,8 +17,8 @@
             theme: {
                 extend: {
                     colors: {
-                        'mac-bg': '#F5F5F7',
-                        'mac-glass': 'rgba(255, 255, 255, 0.70)',
+                        'mac-bg': '#F9FAFB', /* Fondo base aclarado */
+                        'mac-glass': 'rgba(255, 255, 255, 0.85)', /* Cristal más blanco y puro */
                         'mac-dark': '#1D1D1F',
                         'mac-accent': '#788C9F',
                         'whatsapp': '#25D366',
@@ -28,9 +28,9 @@
                         sans: ['-apple-system', 'BlinkMacSystemFont', '"Inter"', 'sans-serif'],
                     },
                     boxShadow: {
-                        'mac-window': '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0,0,0,0.02)',
+                        'mac-window': '0 25px 50px -12px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(0,0,0,0.03)',
                         'mac-card': '0 4px 15px rgba(0, 0, 0, 0.03)',
-                        'mac-dock': '0 10px 30px rgba(0,0,0,0.08), inset 0 1px 1px rgba(255,255,255,0.8)',
+                        'mac-dock': '0 10px 30px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255,255,255,0.9)',
                     }
                 }
             }
@@ -39,7 +39,7 @@
 
     <style>
         body {
-            background-color: #F5F5F7;
+            background-color: #F9FAFB;
             color: #1D1D1F;
             -webkit-font-smoothing: antialiased;
         }
@@ -53,49 +53,47 @@
             vertical-align: middle;
         }
 
-        /* * FONDO DE VIDEO INMERSIVO * */
-        .video-background {
+        /* * FONDO LUMINOSO PREMIUM * */
+        .bg-container {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: -2;
-            overflow: hidden;
-            background-color: #1D1D1F; /* Respaldo */
-        }
-        .video-background video {
-            width: 100vw;
-            height: 100vh;
-            object-fit: cover;
-            filter: grayscale(100%) opacity(0.12); /* Mezcla perfecta sin saturar */
+            background-image: url('https://images.unsplash.com/photo-1505664194779-8beaceb93744?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            filter: grayscale(100%);
+            opacity: 0.05; /* Muy tenue para no molestar la lectura */
         }
 
         .mesh-overlay {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: -1;
+            /* Degradados más blancos y claros para asegurar contraste con las letras oscuras */
             background: 
-                radial-gradient(at 0% 0%, rgba(220, 226, 235, 0.8) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(245, 245, 247, 0.9) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(215, 222, 232, 0.8) 0px, transparent 50%),
-                radial-gradient(at 0% 100%, rgba(245, 245, 247, 0.9) 0px, transparent 50%);
+                radial-gradient(at 0% 0%, rgba(240, 244, 250, 0.9) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(255, 255, 255, 0.9) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(235, 240, 248, 0.9) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(250, 250, 252, 0.9) 0px, transparent 50%);
             filter: blur(40px);
         }
 
-        /* Glassmorphism */
+        /* Glassmorphism General */
         .glass-effect {
-            background: rgba(255, 255, 255, 0.55);
+            background: rgba(255, 255, 255, 0.7); /* Más opaco para mejor lectura */
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 1);
         }
 
         .mac-header { background: transparent; }
 
         .dock-nav {
-            background: rgba(255, 255, 255, 0.45);
+            background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            border-top: 1px solid rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 1);
         }
 
         /* Badge 4K HDR */
@@ -112,7 +110,7 @@
         .sidebar-item.active { background: #788C9F; color: #ffffff; font-weight: 500; box-shadow: 0 2px 10px rgba(120, 140, 159, 0.3); }
 
         .service-card {
-            background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(255, 255, 255, 0.9); border-radius: 16px;
+            background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255, 255, 255, 1); border-radius: 16px;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         .service-card:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 12px 24px rgba(0,0,0,0.06); background: #ffffff; }
@@ -142,11 +140,7 @@
 </head>
 <body class="relative">
 
-    <div class="video-background">
-        <video autoplay loop muted playsinline>
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-modern-city-aerial-view-33069-large.mp4" type="video/mp4">
-        </video>
-    </div>
+    <div class="bg-container"></div>
     
     <div class="mesh-overlay"></div>
 
@@ -174,7 +168,7 @@
                     </button>
                 </div>
 
-                <button id="mobile-menu-btn" class="md:hidden text-mac-dark p-2 focus:outline-none bg-white/50 rounded-full backdrop-blur-md border border-white/60">
+                <button id="mobile-menu-btn" class="md:hidden text-mac-dark p-2 focus:outline-none bg-white/70 rounded-full backdrop-blur-md border border-white/80">
                     <i class="fas fa-bars text-lg"></i>
                 </button>
             </div>
@@ -213,19 +207,19 @@
             <p class="text-sm text-mac-dark/80 mb-6 font-light">Para derivar su caso al equipo especialista de manera confidencial, indique su área de requerimiento:</p>
             
             <div class="flex flex-col gap-3">
-                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/60 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Derecho Privado y Patrimonio">
+                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Derecho Privado y Patrimonio">
                     <span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-file-signature w-6 opacity-60"></i> Derecho Privado & Patrimonio</span>
                     <i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i>
                 </button>
-                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/60 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Asesoría Corporativa y Empresa">
+                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Asesoría Corporativa y Empresa">
                     <span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-building w-6 opacity-60"></i> Asesoría Corporativa & Empresa</span>
                     <i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i>
                 </button>
-                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/60 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Litigación de Alta Complejidad">
+                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Litigación de Alta Complejidad">
                     <span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-gavel w-6 opacity-60"></i> Litigación & Defensa Judicial</span>
                     <i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i>
                 </button>
-                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/60 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Tecnología, Drones 4K y Evidencia">
+                <button class="intake-option flex items-center justify-between p-4 rounded-2xl bg-white/80 hover:bg-white border border-white shadow-sm transition-all text-left group" data-area="Tecnología, Drones 4K y Evidencia">
                     <span class="text-sm font-medium text-mac-dark group-hover:text-mac-accent transition-colors"><i class="fas fa-drone w-6 opacity-60"></i> Evidencia Tecnológica & Drones</span>
                     <i class="fas fa-chevron-right text-xs text-mac-dark/30 group-hover:text-mac-accent"></i>
                 </button>
@@ -241,33 +235,33 @@
                 Precisión Tecnológica.
             </span>
         </h1>
-        <p class="text-base md:text-xl text-mac-dark/60 max-w-2xl font-light mb-12 leading-relaxed fade-in" style="animation-delay: 0.1s;">
+        <p class="text-base md:text-xl text-mac-dark/70 max-w-2xl font-light mb-12 leading-relaxed fade-in" style="animation-delay: 0.1s;">
             Asesoría corporativa de élite, gestión patrimonial avanzada y servicios audiovisuales con drones de alta precisión para proyectos de alta complejidad.
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl w-full fade-in" style="animation-delay: 0.2s;">
-            <div class="bg-white/40 backdrop-blur-md border border-white/60 p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default">
+            <div class="bg-white/60 backdrop-blur-md border border-white p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default">
                 <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 text-mac-accent shadow-sm group-hover:scale-110 transition-transform duration-300">
                     <i class="fas fa-building text-sm"></i>
                 </div>
                 <h3 class="text-sm font-semibold text-mac-dark mb-2 tracking-wide">Estructuración Corporativa</h3>
-                <p class="text-[13px] text-mac-dark/60 leading-relaxed font-light">Diseñamos vehículos legales exactos para escalar sus negocios, prevenir riesgos y resguardar su patrimonio ante contingencias.</p>
+                <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light">Diseñamos vehículos legales exactos para escalar sus negocios, prevenir riesgos y resguardar su patrimonio ante contingencias.</p>
             </div>
 
-            <div class="bg-white/40 backdrop-blur-md border border-white/60 p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default">
+            <div class="bg-white/60 backdrop-blur-md border border-white p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default">
                 <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 text-mac-accent shadow-sm group-hover:scale-110 transition-transform duration-300">
                     <i class="fas fa-gavel text-sm"></i>
                 </div>
                 <h3 class="text-sm font-semibold text-mac-dark mb-2 tracking-wide">Litigación de Complejidad</h3>
-                <p class="text-[13px] text-mac-dark/60 leading-relaxed font-light">Defensa judicial estratégica y resolución de conflictos civiles o corporativos, enfocada en resultados certeros.</p>
+                <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light">Defensa judicial estratégica y resolución de conflictos civiles o corporativos, enfocada en resultados certeros.</p>
             </div>
 
-            <div class="bg-white/40 backdrop-blur-md border border-white/60 p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default">
+            <div class="bg-white/60 backdrop-blur-md border border-white p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-left group cursor-default">
                 <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 text-mac-accent shadow-sm group-hover:scale-110 transition-transform duration-300">
                     <i class="fas fa-drone text-sm"></i>
                 </div>
                 <h3 class="text-sm font-semibold text-mac-dark mb-2 tracking-wide flex items-center">Evidencia Visual <span class="badge-4k">4K HDR</span></h3>
-                <p class="text-[13px] text-mac-dark/60 leading-relaxed font-light">Levantamiento topográfico, fotogrametría e inspección aérea con drones para nutrir con prueba irrefutable sus litigios.</p>
+                <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light">Levantamiento topográfico, fotogrametría e inspección aérea con drones para nutrir con prueba irrefutable sus litigios.</p>
             </div>
         </div>
         
@@ -277,9 +271,9 @@
     </section>
 
     <section id="servicios" class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pb-20 relative z-10">
-        <div class="glass-effect rounded-3xl shadow-mac-window overflow-hidden border border-white/60 flex flex-col h-[700px] md:h-[750px] fade-in" style="animation-delay: 0.3s;">
+        <div class="glass-effect rounded-3xl shadow-mac-window overflow-hidden border border-white flex flex-col h-[700px] md:h-[750px] fade-in" style="animation-delay: 0.3s;">
             
-            <div class="h-12 md:h-14 bg-white/40 border-b border-black/5 flex items-center justify-between px-4 md:px-6 backdrop-blur-md shrink-0">
+            <div class="h-12 md:h-14 bg-white/60 border-b border-black/5 flex items-center justify-between px-4 md:px-6 backdrop-blur-md shrink-0">
                 <div class="flex items-center gap-2 md:gap-3">
                     <i class="fas fa-shield-alt text-mac-accent opacity-80 text-sm md:text-base"></i>
                     <span class="text-[10px] md:text-xs font-semibold text-mac-dark/70 uppercase tracking-widest truncate">AeroLex Core System</span>
@@ -291,7 +285,7 @@
             </div>
 
             <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
-                <div class="w-full md:w-64 bg-white/20 border-b md:border-b-0 md:border-r border-black/5 p-3 md:p-4 shrink-0 backdrop-blur-sm z-10">
+                <div class="w-full md:w-64 bg-white/40 border-b md:border-b-0 md:border-r border-black/5 p-3 md:p-4 shrink-0 backdrop-blur-sm z-10">
                     <div class="flex md:flex-col overflow-x-auto hide-scrollbar gap-3 md:gap-0 pb-1 md:pb-0">
                         <div class="flex md:block flex-row md:flex-col shrink-0 gap-2 md:gap-0">
                             <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-wider mb-2 px-3 hidden md:block">Ecosistema Legal</p>
@@ -305,14 +299,14 @@
                     </div>
                 </div>
 
-                <div class="flex-1 bg-white/40 p-5 md:p-8 overflow-y-auto relative">
+                <div class="flex-1 bg-white/60 p-5 md:p-8 overflow-y-auto relative">
                     <div id="content-header" class="mb-6 md:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
                         <div>
-                            <div class="w-12 h-12 md:w-16 md:h-16 bg-white/80 rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-4 text-mac-accent shadow-sm border border-white">
+                            <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-4 text-mac-accent shadow-sm border border-white">
                                 <i id="content-icon" class="fas fa-balance-scale text-xl md:text-2xl transition-all duration-300"></i>
                             </div>
                             <h2 id="content-title" class="text-2xl md:text-3xl font-semibold text-mac-dark tracking-tight transition-all duration-300 flex items-center flex-wrap">Cargando...</h2>
-                            <p id="content-desc" class="text-sm md:text-base text-mac-dark/60 mt-1 md:mt-2 font-light transition-all duration-300">Seleccione una categoría para ver los servicios.</p>
+                            <p id="content-desc" class="text-sm md:text-base text-mac-dark/70 mt-1 md:mt-2 font-light transition-all duration-300">Seleccione una categoría para ver los servicios.</p>
                         </div>
                         <div class="mt-4 md:mt-0 hidden md:block">
                             <a href="#" id="wa-panel-btn" target="_blank" class="bg-whatsapp hover:bg-whatsapp-dark text-white px-5 py-2.5 rounded-xl text-sm font-medium shadow-md transition-all flex items-center gap-2">
@@ -334,12 +328,12 @@
     </section>
 
     <section id="contacto" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 relative z-10 text-center fade-in" style="animation-delay: 0.4s;">
-        <div class="glass-effect p-10 md:p-14 rounded-3xl border border-white/60 shadow-mac-window">
+        <div class="glass-effect p-10 md:p-14 rounded-3xl border border-white shadow-mac-window">
             <div class="w-16 h-16 bg-whatsapp/10 rounded-full flex items-center justify-center mx-auto mb-6">
                 <i class="fas fa-concierge-bell text-3xl text-whatsapp-dark"></i>
             </div>
             <h2 class="text-3xl md:text-4xl font-bold text-mac-dark mb-4 tracking-tight">Comunicación Inteligente</h2>
-            <p class="text-mac-dark/60 mb-8 max-w-xl mx-auto font-light">
+            <p class="text-mac-dark/70 mb-8 max-w-xl mx-auto font-light">
                 Nuestro sistema procesa su solicitud para derivarla al área legal o técnica correspondiente al instante de manera confidencial.
             </p>
             <button class="open-intake inline-flex items-center justify-center gap-3 bg-mac-dark hover:bg-black text-white text-base font-semibold px-8 py-4 rounded-full shadow-lg transition-transform hover:scale-105">
@@ -348,7 +342,7 @@
         </div>
     </section>
 
-    <footer class="border-t border-black/5 bg-white/30 backdrop-blur-md py-6 md:py-8 relative z-10">
+    <footer class="border-t border-black/5 bg-white/50 backdrop-blur-md py-6 md:py-8 relative z-10">
         <div class="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-center text-xs text-mac-dark/50">
             <div class="flex items-center gap-2 mb-4 md:mb-0">
                 <i class="fas fa-gavel text-mac-dark/40"></i>
@@ -379,7 +373,6 @@
             function openModal(e) {
                 if(e) e.preventDefault();
                 intakeModal.classList.remove('hidden');
-                // Timeout mínimo para que la transición CSS funcione después de quitar 'hidden'
                 setTimeout(() => {
                     intakeModal.classList.remove('opacity-0');
                     intakeModalContent.classList.remove('scale-95');
@@ -392,18 +385,16 @@
                 intakeModalContent.classList.add('scale-95');
                 setTimeout(() => {
                     intakeModal.classList.add('hidden');
-                }, 300); // Espera a que termine la animación
+                }, 300);
             }
 
             openIntakeBtns.forEach(btn => btn.addEventListener('click', openModal));
             closeModalBtn.addEventListener('click', closeModal);
 
-            // Cerrar modal si hacen clic fuera de la caja
             intakeModal.addEventListener('click', (e) => {
                 if(e.target === intakeModal) closeModal();
             });
 
-            // Enviar a WhatsApp según opción seleccionada
             intakeOptions.forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const area = e.currentTarget.getAttribute('data-area');
@@ -414,7 +405,7 @@
                 });
             });
 
-            /* 3. MENÚ MÓVIL (HAMBURGUESA) */
+            /* 3. MENÚ MÓVIL */
             const mobileBtn = document.getElementById('mobile-menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
             const mobileLinks = document.querySelectorAll('.mobile-link');
@@ -481,7 +472,6 @@
                     servicesGrid.appendChild(card);
                 });
 
-                // Este botón SÍ va directo a WhatsApp porque el usuario ya está viendo un servicio específico
                 const cleanTitle = cleanTextForURL(dataObj.title);
                 const autoMessage = `Hola AeroLex, me gustaría recibir más información directa sobre el servicio de: *${cleanTitle}*.`;
                 const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMessage)}`;
