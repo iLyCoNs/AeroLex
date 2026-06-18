@@ -154,19 +154,19 @@
             
             <div class="h-14 bg-white/40 border-b border-black/5 flex items-center justify-between px-6 shrink-0 backdrop-blur-md">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
-                    <div class="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
-                    <div class="w-3 h-3 rounded-full bg-[#27C93F]"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-[#FF5F56]"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-[#27C93F]"></div>
                     <span class="text-xs font-semibold text-mac-dark/70 tracking-wide ml-2 flex items-center gap-1.5">
                         <i class="fas fa-shield-alt text-mac-accent"></i> AeroLex Virtual Assistant
                     </span>
                 </div>
-                <button id="close-modal" class="text-mac-dark/40 hover:text-mac-dark transition-colors"><i class="fas fa-times text-lg"></i></button>
+                <button id="close-modal" class="text-mac-dark/40 hover:text-mac-dark transition-colors"><i class="fas fa-times text-sm"></i></button>
             </div>
 
-            <div id="chat-box-log" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4 bg-black/5">
-                <div class="chat-bubble-bot p-4 max-w-[85%] text-[13px] md:text-sm font-light leading-relaxed shadow-sm">
-                    Bienvenido al sistema de atención técnica y jurídica de <strong>AeroLex</strong>. Por favor, seleccione una de las consultas preestablecidas abajo para ayudarle de inmediato.
+            <div id="chat-box-log" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4 bg-white/30">
+                <div class="chat-bubble-bot p-4 max-w-[85%] text-xs md:text-sm font-light leading-relaxed shadow-sm">
+                    Bienvenido al portal de consulta automatizado de <strong>AeroLex</strong>. Por favor, seleccione una de las opciones preestablecidas abajo para analizar su requerimiento.
                 </div>
             </div>
 
@@ -290,7 +290,7 @@
             const chatBoxLog = document.getElementById('chat-box-log');
             const promptsContainer = document.getElementById('chatbot-prompts-container');
 
-            // Disparadores del Chatbot
+            // Disparadores
             const triggerHeader = document.getElementById('open-chat-header');
             const triggerMobile = document.getElementById('open-chat-mobile');
             const triggerGlobal = document.getElementById('wa-global-trigger');
@@ -298,9 +298,9 @@
             const triggerPanelMobile = document.getElementById('wa-panel-btn-mobile');
 
             let currentActiveBtn = null;
-            let selectedCategoryKey = 'civil'; // Categoría por defecto
+            let selectedCategoryKey = 'civil'; 
 
-            /* BD DEL CHATBOT VIRTUAL */
+            /* BASE DE DATOS DEL CHATBOT VIRTUAL */
             const chatPromptsDatabase = {
                 general: [
                     { q: "¿Cómo agendo una evaluación con un abogado?", r: "Para agendar, necesito derivarte con nuestro equipo. Selecciona una materia o haz clic en el botón de abajo para ir a WhatsApp y coordinar la cita." },
@@ -311,13 +311,16 @@
                     { q: "¿Cómo tramitan una prescripción adquisitiva?", r: "Revisamos la posesión material y realizamos el estudio de títulos para consolidar tu dominio judicialmente. ¿Requieres iniciar este proceso?" }
                 ],
                 inmobiliario: [
-                    { q: "¿Qué es un estudio de títulos?", r: "Una auditoría completa (mínimo 10 años) de la historia registral de la propiedad para detectar embargos o hipotecas ocultas. ¿Estás por comprar un terreno?" }
+                    { q: "¿Qué es un estudio de títulos?", r: "Una auditoría completa de la historia registral de la propiedad para detectar embargos o hipotecas ocultas. ¿Estás por comprar un terreno?" }
                 ],
-                comercial: [
+                corporativo: [
                     { q: "¿Hacen auditorías preventivas (Due Diligence)?", r: "Sí. Evaluamos riesgos laborales, tributarios y comerciales antes de fusiones o compras de empresas. ¿Necesitas auditar una sociedad?" }
                 ],
                 laboral: [
-                    { q: "¿Asesoran a empresas ante la Inspección del Trabajo?", r: "Exacto. Implementamos reglamentos, revisamos contratos y te defendemos en procedimientos sancionatorios o tutelas. ¿Tienes alguna multa pendiente?" }
+                    { q: "¿Asesoran a empresas ante la Inspección del Trabajo?", r: "Exacto. Implementamos reglamentos, revisamos contratos y te defendemos en procedimientos sancionatorios. ¿Tienes alguna multa pendiente?" }
+                ],
+                ambiental: [
+                    { q: "¿Defienden ante denuncias de daño ambiental?", r: "Sí, brindamos representación ante procedimientos sancionatorios de organismos fiscalizadores y asesoría de cumplimiento normativo." }
                 ],
                 familia: [
                     { q: "¿Ven temas de divorcio y compensación?", r: "Tramitamos divorcios protegiendo estratégicamente tu patrimonio ante demandas de compensación económica. ¿Necesitas agendar una sesión reservada?" }
@@ -325,14 +328,17 @@
                 litigacion: [
                     { q: "¿Representan en juicios ejecutivos o cobranzas?", r: "Sí, defendemos patrimonio embargado y también perseguimos judicialmente deudas y facturas impagas. ¿Deseas evaluar la viabilidad de tu juicio?" }
                 ],
+                compliance: [
+                    { q: "¿Implementan modelos de prevención de delitos?", r: "Sí, diseñamos matrices de riesgo penal para personas jurídicas y ofrecemos servicio de gerencia legal externa corporativa." }
+                ],
                 drones: [
-                    { q: "¿Cómo sirve el dron para fijar deslindes?", r: "El dron levanta un mapa exacto del terreno. Nosotros cruzamos ese mapa con las escrituras del Conservador para evidenciar quién está ocupando qué. ¿Tienes conflicto de límites?" }
+                    { q: "¿Cómo sirve el dron para fijar deslindes?", r: "El dron levanta un mapa exacto del terreno. Nosotros cruzamos ese mapa con las escrituras del Conservador para evidenciar quién está ocupando qué." }
                 ],
                 fotogrametria: [
-                    { q: "¿Los modelos 3D sirven para juicios?", r: "Totalmente. Entregamos Ortomosaicos y peritajes topográficos firmados que tribunales y direcciones de obras aceptan como prueba material. ¿Requieres un levantamiento?" }
+                    { q: "¿Los modelos 3D sirven para juicios?", r: "Totalmente. Entregamos Ortomosaicos y peritajes topográficos firmados que tribunales y direcciones de obras aceptan como prueba material." }
                 ],
                 digital: [
-                    { q: "¿Qué es el resguardo de evidencia digital?", r: "Recopilamos correos o datos electrónicos con cadena de custodia y sellado de tiempo para que sean pruebas inobjetables. ¿Necesitas resguardar información crítica?" }
+                    { q: "¿Qué es el resguardo de evidencia digital?", r: "Recopilamos correos o datos electrónicos con cadena de custodia para que sean pruebas inobjetables. ¿Necesitas resguardar información crítica?" }
                 ]
             };
 
@@ -352,12 +358,10 @@
                 setTimeout(() => { intakeModal.classList.add('hidden'); }, 300);
             }
 
-            function cleanTextForURL(text) { return text.replace(/<[^>]*>?/gm, '').replace('_4k', '4K HDR'); }
-
             function loadChatbotPrompts(key) {
                 promptsContainer.innerHTML = '';
                 const specificPrompts = chatPromptsDatabase[key] || [];
-                const combinedPrompts = [...specificPrompts, ...chatPromptsDatabase.general].slice(0, 4); // Mostrar máximo 4 opciones
+                const combinedPrompts = [...specificPrompts, ...chatPromptsDatabase.general].slice(0, 4); 
 
                 combinedPrompts.forEach(prompt => {
                     const btn = document.createElement('button');
@@ -369,17 +373,14 @@
             }
 
             function handleUserSelection(question, response) {
-                // Borrar opciones para evitar spam
-                promptsContainer.innerHTML = '';
+                promptsContainer.innerHTML = ''; 
 
-                // Burbuja Usuario
                 const userMsg = document.createElement('div');
                 userMsg.className = 'chat-bubble-user p-3.5 max-w-[85%] text-xs md:text-[13px] leading-relaxed shadow-sm fade-in';
                 userMsg.textContent = question;
                 chatBoxLog.appendChild(userMsg);
                 chatBoxLog.scrollTop = chatBoxLog.scrollHeight;
 
-                // Burbuja Bot (Respuesta)
                 setTimeout(() => {
                     const botMsg = document.createElement('div');
                     botMsg.className = 'chat-bubble-bot p-4 max-w-[85%] text-xs md:text-[13px] font-medium leading-relaxed shadow-sm fade-in';
@@ -387,18 +388,17 @@
                     chatBoxLog.appendChild(botMsg);
                     chatBoxLog.scrollTop = chatBoxLog.scrollHeight;
 
-                    // Burbuja Bot (Llamado a la acción WhatsApp)
                     setTimeout(() => {
                         const actionMsg = document.createElement('div');
                         actionMsg.className = 'chat-bubble-bot p-4 max-w-[85%] text-xs md:text-[13px] leading-relaxed shadow-sm fade-in border border-whatsapp/30';
                         
-                        const autoMessage = `Hola AeroLex, necesito asistencia en base a esta consulta: "${question}"`;
+                        const autoMessage = `Hola AeroLex, necesito asistencia sobre: "${question}"`;
                         const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMessage)}`;
                         
                         actionMsg.innerHTML = `
-                            <p class="mb-3 font-light">¿Desea conversar directamente con un asesor de AeroLex sobre este tema?</p>
+                            <p class="mb-3 font-light">¿Desea conversar directamente con un asesor legal sobre este tema?</p>
                             <a href="${waUrl}" target="_blank" class="inline-flex items-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white px-4 py-2 rounded-lg font-semibold transition-all">
-                                <i class="fab fa-whatsapp text-base"></i> Ir a WhatsApp Seguro
+                                <i class="fab fa-whatsapp text-base"></i> Iniciar Chat Asesor
                             </a>
                         `;
                         chatBoxLog.appendChild(actionMsg);
@@ -407,140 +407,158 @@
                 }, 500);
             }
 
-            // Listeners del Chatbot
             triggerHeader.addEventListener('click', () => openChatbot('general'));
             triggerMobile.addEventListener('click', () => openChatbot('general'));
             triggerGlobal.addEventListener('click', () => openChatbot(selectedCategoryKey));
             triggerPanel.addEventListener('click', () => openChatbot(selectedCategoryKey));
             triggerPanelMobile.addEventListener('click', () => openChatbot(selectedCategoryKey));
+            
             closeModalBtn.addEventListener('click', closeModal);
             intakeModal.addEventListener('click', (e) => { if(e.target === intakeModal) closeModal(); });
 
-            /* MENÚ MÓVIL */
-            const mobileBtn = document.getElementById('mobile-menu-btn');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const mobileLinks = document.querySelectorAll('.mobile-link');
-            mobileBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
-            mobileLinks.forEach(link => { link.addEventListener('click', () => { mobileMenu.classList.add('hidden'); }); });
-
-            /* BASE DE DATOS DE WIDGETS DE SERVICIOS */
+            /* BASE DE DATOS DE SERVICIOS COMPLETA (Integrando TODA la lista del prompt) */
             const db = {
                 legal: [
                     { 
-                        id: 'civil', title: 'Derecho Civil', icon: 'fa-file-signature', desc: 'Gestión y estructuración del patrimonio privado con rigor técnico.', 
+                        id: 'civil', title: 'Derecho Civil y Sucesorio', icon: 'fa-file-signature', desc: 'Gestión y estructuración del patrimonio privado con rigor técnico.', 
                         items: [
-                            { title: "Redacción y revisión de contratos", desc: "Aplicación rigurosa de la teoría del acto jurídico para resguardar la voluntad y el equilibrio contractual." },
-                            { title: "Cobranza judicial y extrajudicial", desc: "Estrategias de recuperación de activos mediante acciones ejecutivas y ordinarias con alta eficacia." },
-                            { title: "Juicios ordinarios y ejecutivos", desc: "Litigación patrimonial especializada, asegurando el debido proceso y la ejecución inobjetable." },
-                            { title: "Responsabilidad contractual", desc: "Análisis dogmático de incumplimientos, cláusulas penales y resguardo ante lesión enorme." },
-                            { title: "Indemnización de perjuicios", desc: "Persecución de responsabilidad civil contractual y extracontractual para la reparación integral." },
-                            { title: "Prescripción adquisitiva", desc: "Consolidación del dominio mediante la comprobación judicial de la posesión material ininterrumpida." },
-                            { title: "Servidumbres", desc: "Constitución, defensa y extinción de gravámenes reales sobre predios sirvientes de forma estratégica." },
-                            { title: "Acciones posesorias", desc: "Protección cautelar rápida y efectiva frente a turbaciones o despojos de la posesión de inmuebles." }
+                            { title: "Redacción y revisión de contratos", desc: "Elaboración técnica y auditoría de instrumentos públicos y privados." },
+                            { title: "Cobranza judicial y extrajudicial", desc: "Estrategias de recuperación de activos mediante acciones ejecutivas y ordinarias." },
+                            { title: "Juicios ordinarios y ejecutivos", desc: "Litigación patrimonial asegurando el debido proceso y ejecución de sentencias." },
+                            { title: "Indemnización de perjuicios", desc: "Persecución civil para la reparación integral del daño sufrido." },
+                            { title: "Responsabilidad contractual", desc: "Análisis de incumplimientos, cláusulas penales y responsabilidad extracontractual." },
+                            { title: "Prescripción adquisitiva", desc: "Consolidación del dominio mediante posesión material ininterrumpida." },
+                            { title: "Servidumbres", desc: "Constitución y defensa de gravámenes reales sobre predios sirvientes." },
+                            { title: "Acciones posesorias", desc: "Protección cautelar rápida frente a turbaciones de la posesión de inmuebles." }
                         ] 
                     },
                     { 
                         id: 'inmobiliario', title: 'Derecho Inmobiliario', icon: 'fa-city', desc: 'Seguridad jurídica integral para el desarrollo de proyectos y bienes raíces.', 
                         items: [
-                            { title: "Estudios de títulos", desc: "Revisión exhaustiva de la cadena de dominio y registros conservatorios para garantizar transacciones." },
-                            { title: "Compraventa de inmuebles", desc: "Asesoría integral desde la promesa hasta la inscripción, previniendo vicios y saneando reparos." },
-                            { title: "Regularización de propiedades", desc: "Saneamiento de la pequeña propiedad raíz y gestión experta de títulos de dominio irregulares." },
-                            { title: "Saneamiento de títulos", desc: "Corrección estratégica de vicios formales y materiales en inscripciones de dominio conservatorias." },
-                            { title: "Subdivisiones prediales", desc: "Gestión técnico-legal para la división de terrenos cumpliendo con la planimetría urbanística." },
-                            { title: "Constitución de servidumbres", desc: "Formalización de tránsitos, acueductos y vistas cruzando precisión topográfica y legal." },
-                            { title: "Asesoría inmobiliaria", desc: "Consultoría de alto nivel para el desarrollo, financiamiento y ejecución segura de proyectos." }
+                            { title: "Estudios de títulos", desc: "Revisión exhaustiva de la cadena de dominio y registros conservatorios." },
+                            { title: "Compraventa de inmuebles", desc: "Asesoría integral desde la promesa de compraventa hasta la inscripción." },
+                            { title: "Regularización de propiedades", desc: "Saneamiento de la pequeña propiedad raíz y gestión de títulos irregulares." },
+                            { title: "Saneamiento de títulos", desc: "Corrección estratégica de vicios formales en inscripciones de dominio." },
+                            { title: "Subdivisiones prediales", desc: "Gestión técnico-legal para la división de terrenos cumpliendo planimetría." },
+                            { title: "Constitución de servidumbres", desc: "Formalización de tránsitos y acueductos cruzando topografía y derecho." },
+                            { title: "Asesoría inmobiliaria", desc: "Consultoría de alto nivel para el desarrollo y financiamiento de proyectos." }
                         ] 
                     },
                     { 
-                        id: 'comercial', title: 'Comercial y Corporativo', icon: 'fa-briefcase', desc: 'Estructuración societaria y protección legal para el crecimiento empresarial.', 
+                        id: 'corporativo', title: 'Comercial, Corporativo y Empresas', icon: 'fa-briefcase', desc: 'Estructuración societaria y protección legal para el crecimiento.', 
                         items: [
-                            { title: "Constitución de sociedades", desc: "Estructuración de vehículos societarios adaptados al riesgo y necesidad de capital." },
-                            { title: "Fusiones y adquisiciones", desc: "Acompañamiento corporativo integral en la compraventa de empresas y procesos de M&A." },
-                            { title: "Pactos de accionistas", desc: "Regulación de gobiernos corporativos, opciones de salida y prevención de bloqueos." },
-                            { title: "Due diligence", desc: "Auditoría legal preventiva para detectar contingencias laborales y civiles antes de invertir." },
-                            { title: "Modificaciones societarias", desc: "Transformaciones, divisiones y aumentos de capital con estricto apego a los estatutos comerciales." },
-                            { title: "Contratos comerciales", desc: "Redacción meticulosa de acuerdos de distribución, franquicias, leasing y joint ventures." },
-                            { title: "Cobranza empresarial", desc: "Gestión corporativa integral de carteras castigadas y recuperación de flujos comerciales." },
-                            { title: "Gobierno corporativo", desc: "Implementación de políticas directivas sólidas para la toma de decisiones transparente." }
+                            { title: "Constitución de sociedades", desc: "Diseño de vehículos societarios adaptados al riesgo y necesidad de capital." },
+                            { title: "Modificaciones societarias", desc: "Transformaciones, divisiones y aumentos de capital societario." },
+                            { title: "Fusiones y adquisiciones", desc: "Acompañamiento corporativo integral en procesos complejos de M&A." },
+                            { title: "Pactos de accionistas", desc: "Regulación de gobiernos corporativos y prevención de bloqueos societarios." },
+                            { title: "Contratos comerciales", desc: "Redacción de acuerdos de distribución, franquicias y joint ventures." },
+                            { title: "Cobranza empresarial", desc: "Gestión corporativa integral y recuperación agresiva de flujos comerciales." },
+                            { title: "Due diligence", desc: "Auditoría legal preventiva para detectar contingencias antes de invertir." },
+                            { title: "Gobierno corporativo", desc: "Implementación de políticas directivas para la toma de decisiones." },
+                            { title: "Asesoría permanente a empresas", desc: "Asesoría continua, evaluación de riesgos y regularización de activos corporativos." },
+                            { title: "Auditoría legal preventiva", desc: "Elaboración de informes legales estratégicos y estudios de títulos corporativos." }
                         ] 
                     },
                     { 
-                        id: 'laboral', title: 'Laboral y Administrativo', icon: 'fa-users-cog', desc: 'Cumplimiento normativo patronal y relación con organismos del Estado.', 
+                        id: 'laboral', title: 'Laboral y Administrativo', icon: 'fa-users-cog', desc: 'Cumplimiento normativo y relación con organismos del Estado.', 
                         items: [
-                            { title: "Asesoría a empleadores", desc: "Consultoría preventiva en contratación, reglamentos internos y cumplimiento ante la DT." },
-                            { title: "Defensa laboral y Despidos", desc: "Representación patronal estratégica en juicios por despido injustificado y demandas de cobro." },
-                            { title: "Tutela laboral y Accidentes", desc: "Defensa especializada ante vulneración de derechos fundamentales y siniestralidad laboral." },
-                            { title: "Auditorías y Negociación", desc: "Revisión de cumplimiento normativo y manejo directivo en negociaciones colectivas sindicales." },
-                            { title: "Recursos y Procedimientos", desc: "Defensa administrativa y judicial frente a multas, clausuras y resoluciones fiscalizadoras." },
-                            { title: "Licitaciones y Compras", desc: "Asesoría técnica en bases de licitación, procesos de adjudicación y contratos públicos." },
-                            { title: "Reclamos ante organismos", desc: "Representación formal ante Contraloría, Superintendencias y diversas Municipalidades del país." },
-                            { title: "Solicitudes de transparencia", desc: "Gestión de acceso a la información pública y acciones de amparo ante el CPLT." }
+                            { title: "Asesoría a empleadores", desc: "Consultoría en contratación, reglamentos internos y cumplimiento ante la DT." },
+                            { title: "Defensa laboral", desc: "Representación estratégica en juicios por despido injustificado y tutelas." },
+                            { title: "Despidos y Tutela laboral", desc: "Gestión legal ante vulneración de derechos fundamentales y desvinculaciones." },
+                            { title: "Accidentes del trabajo", desc: "Defensa y asesoría ante siniestralidad laboral grave o fatal." },
+                            { title: "Auditorías y Negociación laboral", desc: "Revisión de cumplimiento normativo y manejo en negociaciones sindicales." },
+                            { title: "Recursos administrativos", desc: "Defensa frente a resoluciones fiscalizadoras del Estado." },
+                            { title: "Procedimientos sancionatorios", desc: "Representación ante multas o clausuras de entidades públicas." },
+                            { title: "Licitaciones y Compras públicas", desc: "Asesoría técnica en bases de licitación y procesos de adjudicación." },
+                            { title: "Reclamos ante organismos", desc: "Representación formal ante Contraloría, Superintendencias y Municipalidades." },
+                            { title: "Solicitudes de transparencia", desc: "Gestión de acceso a la información pública y acciones de amparo." }
                         ] 
                     },
                     { 
-                        id: 'familia', title: 'Familia y Sucesorio', icon: 'fa-home', desc: 'Soluciones legales discretas y efectivas para la vida personal y hereditaria.', 
+                        id: 'ambiental', title: 'Derecho Ambiental', icon: 'fa-leaf', desc: 'Defensa y cumplimiento normativo en proyectos con impacto medioambiental.', 
                         items: [
-                            { title: "Divorcios y Compensación", desc: "Tramitación de divorcios y blindaje patrimonial estratégico ante demandas de compensación económica." },
-                            { title: "Alimentos y Cuidado", desc: "Fijación y mediación técnica de pensiones alimenticias, enfocados en el resguardo de menores." },
-                            { title: "Relación directa y regular", desc: "Establecimiento de regímenes de visitas justos que protejan primordialmente el interés superior." },
-                            { title: "Posesiones efectivas", desc: "Tramitación notarial y judicial impecable para la correcta transmisión del patrimonio del causante." },
-                            { title: "Particiones y Testamentos", desc: "Redacción de voluntades testamentarias y litigación experta en juicios de comunidades hereditarias." },
-                            { title: "Litigios hereditarios", desc: "Acciones de petición de herencia, reforma de testamento y protección de asignaciones forzosas." },
-                            { title: "Violencia intrafamiliar", desc: "Gestión de medidas cautelares y representación en tribunales de familia con confidencialidad." }
+                            { title: "Asesoría ambiental", desc: "Acompañamiento en el desarrollo de proyectos y evaluación de impacto." },
+                            { title: "Cumplimiento normativo", desc: "Auditoría y adaptación a las exigencias legales ambientales vigentes." },
+                            { title: "Procedimientos sancionatorios", desc: "Defensa ante organismos fiscalizadores como la Superintendencia del Medio Ambiente." },
+                            { title: "Denuncias y Daño ambiental", desc: "Litigación y representación en controversias por daño al patrimonio ecológico." }
                         ] 
                     },
                     { 
-                        id: 'litigacion', title: 'Litigación y Compliance', icon: 'fa-gavel', desc: 'Defensa estratégica ante tribunales y prevención de riesgos corporativos.', 
+                        id: 'familia', title: 'Derecho de Familia', icon: 'fa-home', desc: 'Soluciones legales efectivas para la vida personal.', 
                         items: [
-                            { title: "Representación ante tribunales", desc: "Patrocinio experto y representación estratégica en todas las instancias y tribunales del país." },
-                            { title: "Juicios civiles y ejecutivos", desc: "Defensa patrimonial de alta intensidad en juicios de lato conocimiento y procedimientos de apremio." },
-                            { title: "Recursos de protección", desc: "Acciones constitucionales urgentes para restablecer el imperio del derecho ante actos arbitrarios." },
-                            { title: "Gerencia legal y Compliance", desc: "Dirección jurídica externalizada y modelos de prevención de delitos corporativos." },
-                            { title: "Modelos de prevención", desc: "Diseño e implementación de matrices de riesgo penal exclusivas para personas jurídicas." },
-                            { title: "Auditorías y Gestión", desc: "Evaluación exhaustiva de procesos internos para mitigar riesgos legales de la empresa." },
-                            { title: "Negociación extrajudicial", desc: "Acercamiento estratégico para la resolución de conflictos complejos sin escalamiento judicial." },
-                            { title: "Reestructuración de deudas", desc: "Asesoría integral en reorganización financiera y liquidación conforme a la Ley de Insolvencia." }
+                            { title: "Divorcios", desc: "Tramitación de divorcios mutuo acuerdo o unilaterales y juicios complejos." },
+                            { title: "Alimentos", desc: "Fijación, aumento, rebaja y cese de pensiones alimenticias." },
+                            { title: "Cuidado personal", desc: "Juicios de tuición enfocados en resguardar el interés superior del menor." },
+                            { title: "Relación directa y regular", desc: "Establecimiento de regímenes de visitas justos y equitativos." },
+                            { title: "Compensación económica", desc: "Blindaje patrimonial o solicitud estratégica ante menoscabo por divorcio." },
+                            { title: "Violencia intrafamiliar", desc: "Gestión de medidas cautelares y representación en tribunales con confidencialidad." },
+                            { title: "Posesiones efectivas", desc: "Tramitación notarial y judicial para la transmisión del patrimonio del causante." },
+                            { title: "Herencias y Particiones", desc: "Liquidación de comunidades hereditarias y distribución de bienes." },
+                            { title: "Testamentos y Litigios", desc: "Redacción de voluntades, acciones de petición de herencia y reforma de testamento." }
+                        ] 
+                    },
+                    { 
+                        id: 'litigacion', title: 'Litigación y Mediación', icon: 'fa-gavel', desc: 'Defensa estratégica ante tribunales y resolución pacífica de conflictos.', 
+                        items: [
+                            { title: "Representación ante tribunales", desc: "Patrocinio experto en todas las instancias y tribunales del país." },
+                            { title: "Juicios civiles y laborales", desc: "Litigación de alta intensidad en procedimientos ordinarios y ejecutivos." },
+                            { title: "Recursos de protección", desc: "Acciones constitucionales para restablecer el derecho ante actos arbitrarios." },
+                            { title: "Recursos de amparo y apelación", desc: "Defensa en alzada y tribunales superiores de justicia." },
+                            { title: "Negociación extrajudicial", desc: "Acercamiento estratégico para la resolución sin escalamiento judicial." },
+                            { title: "Mediación privada", desc: "Procesos guiados para alcanzar acuerdos transaccionales sólidos." },
+                            { title: "Reestructuración de deudas", desc: "Asesoría en insolvencia, liquidación y negociación con acreedores." }
+                        ] 
+                    },
+                    { 
+                        id: 'compliance', title: 'Compliance y Riesgos', icon: 'fa-chart-pie', desc: 'Prevención de contingencias legales y penales para empresas.', 
+                        items: [
+                            { title: "Gerencia legal externa", desc: "Dirección jurídica externalizada para el día a día operativo empresarial." },
+                            { title: "Compliance corporativo", desc: "Implementación de buenas prácticas y normativas de transparencia." },
+                            { title: "Modelos de prevención de delitos", desc: "Diseño de matrices de riesgo penal para personas jurídicas (Ley 20.393)." },
+                            { title: "Auditorías y Gestión de riesgos", desc: "Evaluación de procesos internos para mitigar contingencias legales." },
+                            { title: "Protección de datos personales", desc: "Adecuación corporativa a las normativas de privacidad vigentes." },
+                            { title: "Investigación interna", desc: "Desarrollo de sumarios e indagatorias corporativas bajo secreto." }
                         ] 
                     }
                 ],
                 tech: [
                     { 
-                        id: 'drones', title: 'Inspección Aérea _4k', icon: 'fa-drone', desc: 'Operaciones de alta precisión en colaboración con AustralDrone.', 
+                        id: 'drones', title: 'Inspección Aérea y Evidencia _4k', icon: 'fa-drone', desc: 'Operaciones de alta precisión y levantamiento probatorio para litigios.', 
                         items: [
-                            { title: "Fijación de deslindes _4k", desc: "Levantamiento aéreo milimétrico para constatar linderos, cercos y resolver conflictos de superposición." },
-                            { title: "Inspección FPV industrial", desc: "Vuelos técnicos de precisión para revisar techumbres, infraestructura mayor y zonas de alto riesgo." },
-                            { title: "Prueba visual judicial", desc: "Captura de evidencia material certificada y georreferenciada para nutrir litigios de usurpación." },
-                            { title: "Monitoreo de proyectos", desc: "Seguimiento periódico de obras civiles con material visual inobjetable para el control de avance." },
-                            { title: "Videos Corporativos _4k", desc: "Producción audiovisual inmersiva de alta gama para proyectos inmobiliarios y comerciales." }
+                            { title: "Inspección de predios y obras", desc: "Vuelos técnicos sobre terrenos e infraestructura compleja." },
+                            { title: "Inspección industrial y techumbres", desc: "Evaluación visual de instalaciones de difícil acceso mediante drones FPV." },
+                            { title: "Monitoreo de proyectos", desc: "Seguimiento y registro de caminos y grandes obras de ingeniería." },
+                            { title: "Registro audiovisual _4k", desc: "Grabación georreferenciada utilizable como evidencia judicial." },
+                            { title: "Verificación de deslindes", desc: "Constatación física de límites prediales y conflictos de propiedad." },
+                            { title: "Peritajes de apoyo judicial", desc: "Documentación visual ante ocupaciones irregulares o daños ambientales." }
                         ] 
                     },
                     { 
-                        id: 'fotogrametria', title: 'Fotogrametría', icon: 'fa-layer-group', desc: 'Topografía digital de precisión milimétrica.', 
+                        id: 'fotogrametria', title: 'Fotogrametría', icon: 'fa-layer-group', desc: 'Topografía digital y modelado espacial.', 
                         items: [
-                            { title: "Ortomosaicos de resolución _4k", desc: "Mapeo topográfico avanzado uniendo fotografías aéreas para crear planos ultra detallados." },
-                            { title: "Cálculo exacto de superficies", desc: "Determinación de cabidas reales mediante software de vanguardia, contrastando con el SII." },
-                            { title: "Modelos 3D para peritajes", desc: "Reconstrucción digital topográfica del terreno, fundamental para informes periciales judiciales." },
-                            { title: "Mapeo para servidumbres", desc: "Planificación visual técnica de trazados para servidumbres de tránsito o eléctricas." },
-                            { title: "Informes documentados", desc: "Entregables técnicos firmados que combinan la rigurosidad legal probatoria con la data espacial." }
+                            { title: "Ortomosaicos _4k", desc: "Mapeo topográfico avanzado uniendo fotografías aéreas de alta resolución." },
+                            { title: "Modelos 3D", desc: "Reconstrucción digital topográfica del terreno e infraestructura." },
+                            { title: "Cálculo de superficies", desc: "Determinación de cabidas reales mediante software espacial." },
+                            { title: "Informes técnicos documentados", desc: "Entregables topográficos para sustentar procesos judiciales o administrativos." }
                         ] 
                     },
                     { 
-                        id: 'digital', title: 'Evidencia Digital', icon: 'fa-shield-alt', desc: 'Protección de datos y levantamiento de información corporativa.', 
+                        id: 'digital', title: 'Evidencia Digital', icon: 'fa-shield-alt', desc: 'Levantamiento de información corporativa y tecnológica.', 
                         items: [
-                            { title: "Levantamiento de evidencia", desc: "Recolección forense de datos electrónicos asegurando la impecabilidad de la cadena de custodia." },
-                            { title: "Protección de datos", desc: "Adecuación corporativa integral a las normativas vigentes de privacidad y tratamiento de información." },
-                            { title: "Informes especializados", desc: "Análisis técnico cruzado entre regulaciones complejas, leyes sustantivas y metadatos digitales." },
-                            { title: "Investigación y Análisis", desc: "Búsqueda profunda y estructurada de antecedentes registrales, comerciales y huellas digitales." },
-                            { title: "Custodia en la nube", desc: "Almacenamiento encriptado de expedientes, contratos y pruebas en servidores de máxima seguridad." }
+                            { title: "Levantamiento de evidencia digital", desc: "Recolección forense de datos electrónicos asegurando la cadena de custodia." },
+                            { title: "Informes jurídicos especializados", desc: "Análisis técnico cruzado entre regulaciones complejas y metadatos." },
+                            { title: "Investigación jurídica", desc: "Búsqueda profunda de antecedentes registrales y comerciales." },
+                            { title: "Custodia documental", desc: "Respaldo probatorio seguro para litigios complejos." },
+                            { title: "Análisis documental y regulatorio", desc: "Revisión técnica de expedientes corporativos y normativos." }
                         ] 
                     }
                 ]
             };
 
-            function format4K(text) { return text.replace('_4k', '<span class="badge-4k">4K HDR</span>'); }
+            function format4K(text) { return text.replace(/_4k/g, '<span class="badge-4k">4K HDR</span>'); }
 
             function renderContent(dataObj, btnElement) {
-                selectedCategoryKey = dataObj.id; // Guarda la categoría para el chatbot
+                selectedCategoryKey = dataObj.id;
                 
                 if (currentActiveBtn) {
                     currentActiveBtn.classList.remove('active', 'text-white', 'bg-mac-accent');
@@ -559,7 +577,8 @@
                     contentIcon.className = `fas ${dataObj.icon} text-xl md:text-2xl transition-all duration-300`;
                     
                     servicesGrid.innerHTML = '';
-                    // RENDERIZADO CORREGIDO: Usando item.title e item.desc
+                    
+                    // RENDERIZANDO LAS TARJETAS (WIDGETS PREMIUM)
                     dataObj.items.forEach((item, index) => {
                         const card = document.createElement('div');
                         card.className = 'service-widget fade-in';
