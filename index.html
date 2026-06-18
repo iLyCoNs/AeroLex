@@ -22,14 +22,18 @@
                         'mac-dark': '#1D1D1F',
                         'mac-accent': '#788C9F',
                         'success': '#25D366',
-                        'whatsapp': '#25D366',
-                        'whatsapp-dark': '#128C7E',
+                        /* Colores nativos de WhatsApp */
+                        'wa-brand': '#00A884',
+                        'wa-bg': '#EFEAE2',
+                        'wa-bubble-bot': '#FFFFFF',
+                        'wa-bubble-user': '#D9FDD3',
                     },
                     fontFamily: { sans: ['-apple-system', 'BlinkMacSystemFont', '"Inter"', 'sans-serif'], },
                     boxShadow: {
                         'mac-window': '0 25px 50px -12px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(0,0,0,0.03)',
                         'mac-card': '0 4px 15px rgba(0, 0, 0, 0.03)',
                         'mac-dock': '0 10px 30px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255,255,255,0.9)',
+                        'wa-chat': '0 15px 40px rgba(0,0,0,0.15), 0 5px 10px rgba(0,0,0,0.05)',
                     }
                 }
             }
@@ -37,7 +41,7 @@
     </script>
 
     <style>
-        body { background-color: #F9FAFB; color: #1D1D1F; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        body { background-color: #F9FAFB; color: #1D1D1F; -webkit-font-smoothing: antialiased; }
 
         /* SVG DRONE PARCHE */
         .fa-drone::before { content: "" !important; }
@@ -51,37 +55,64 @@
         .mac-header { background: transparent; }
         .dock-nav { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.8); border-top: 1px solid rgba(255, 255, 255, 1); }
         
-        .badge-4k { display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #788C9F 0%, #5A6B7C 100%); color: #fff; font-size: 0.45rem; font-weight: 700; padding: 0.1rem 0.25rem; border-radius: 3px; margin-left: 0.3rem; letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 1px 3px rgba(0,0,0,0.15); vertical-align: middle; line-height: 1; white-space: nowrap; }
+        .badge-4k { display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #788C9F 0%, #5A6B7C 100%); color: #fff; font-size: 0.45rem; font-weight: 700; padding: 0.1rem 0.25rem; border-radius: 3px; margin-left: 0.3rem; letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 1px 3px rgba(0,0,0,0.15); vertical-align: middle; line-height: 1; white-space: nowrap;}
         
         .sidebar-item { transition: all 0.2s ease; }
         .sidebar-item.active { background: #788C9F; color: #ffffff; font-weight: 500; box-shadow: 0 2px 10px rgba(120, 140, 159, 0.3); }
 
-        /* WIDGETS SERVICIOS */
-        .service-widget { background: rgba(235, 248, 255, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 2px solid transparent; border-top: 1px solid rgba(255, 255, 255, 0.8); border-radius: 16px; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 4px 15px rgba(0, 100, 150, 0.05), inset 0 1px 2px rgba(255,255,255,0.8); display: flex; flex-direction: column; padding: 1.25rem; cursor: pointer; }
+        .service-widget { background: rgba(235, 248, 255, 0.65); backdrop-filter: blur(12px); border: 2px solid transparent; border-top: 1px solid rgba(255, 255, 255, 0.8); border-radius: 16px; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 4px 15px rgba(0, 100, 150, 0.05), inset 0 1px 2px rgba(255,255,255,0.8); display: flex; flex-direction: column; padding: 1.25rem; cursor: pointer; }
         .service-widget:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 12px 24px rgba(0, 100, 150, 0.1); background: rgba(240, 250, 255, 0.8); }
         .service-widget.widget-selected { background: #ffffff; border-color: #788C9F; box-shadow: 0 10px 25px rgba(120, 140, 159, 0.25), inset 0 1px 2px rgba(255,255,255,1); transform: scale(1.02); }
         .service-widget.widget-selected i { color: #788C9F; }
 
-        /* FAB WHATSAPP & WIDGET CHAT */
+        /* FAB WHATSAPP ESTILO PNG */
         .whatsapp-fab { position: fixed; bottom: 30px; right: 30px; background: transparent; color: #25D366; font-size: 65px; display: flex; align-items: center; justify-content: center; z-index: 90; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease; cursor: pointer; filter: drop-shadow(0 6px 8px rgba(37, 211, 102, 0.3)); }
         .whatsapp-fab:hover { transform: scale(1.1) translateY(-5px); filter: drop-shadow(0 10px 15px rgba(37, 211, 102, 0.45)); color: #128C7E; }
-        
-        .wa-quick-popup {
-            position: fixed; bottom: 100px; right: 30px; z-index: 89;
-            width: 300px; opacity: 0; transform: translateY(20px) scale(0.95);
-            pointer-events: none; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        .wa-quick-popup.active { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
 
+        /* --- ESTILOS DEL CHATBOT WHATSAPP --- */
+        .wa-chat-window {
+            position: fixed; bottom: 100px; right: 30px; z-index: 95;
+            width: 350px; max-width: calc(100vw - 40px); height: 500px; max-height: calc(100vh - 120px);
+            background: #EFEAE2; border-radius: 16px; overflow: hidden;
+            display: flex; flex-direction: column;
+            transform-origin: bottom right; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0; transform: scale(0.9) translateY(20px); pointer-events: none;
+        }
+        .wa-chat-window.active { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
+        
+        /* Patrón sutil de WhatsApp para el fondo del chat */
+        .wa-chat-body {
+            flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .wa-msg { max-width: 85%; padding: 8px 12px; font-size: 13px; line-height: 1.4; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,0.05); }
+        .wa-msg-bot { background: #FFFFFF; color: #111B21; align-self: flex-start; border-radius: 0px 8px 8px 8px; border-top-left-radius: 0; margin-bottom: 4px;}
+        .wa-msg-bot::before { content: ''; position: absolute; top: 0; left: -8px; width: 0; height: 0; border-top: 8px solid #FFFFFF; border-left: 8px solid transparent; }
+        
+        .wa-msg-user { background: #D9FDD3; color: #111B21; align-self: flex-end; border-radius: 8px 0px 8px 8px; margin-bottom: 4px; }
+        .wa-msg-user::before { content: ''; position: absolute; top: 0; right: -8px; width: 0; height: 0; border-top: 8px solid #D9FDD3; border-right: 8px solid transparent; }
+
+        .wa-time { font-size: 10px; color: rgba(0,0,0,0.45); float: right; margin-left: 8px; margin-top: 4px; }
+
+        .wa-option-btn { background: #F0F2F5; border: 1px solid #E9EDEF; color: #00A884; font-weight: 600; font-size: 13px; padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; transition: background 0.2s; margin-top: 4px; }
+        .wa-option-btn:hover { background: #D9FDD3; border-color: #D9FDD3; }
+
+        .wa-input-area { background: #F0F2F5; padding: 10px; display: flex; gap: 10px; align-items: center; }
+        .wa-input { flex: 1; border: none; padding: 10px 15px; border-radius: 20px; font-size: 14px; outline: none; }
+        .wa-send-btn { width: 40px; height: 40px; border-radius: 50%; background: #00A884; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; transition: background 0.2s; }
+        .wa-send-btn:hover { background: #018f70; }
+        .wa-send-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        .typing-indicator span { display: inline-block; width: 5px; height: 5px; background-color: #888; border-radius: 50%; margin-right: 2px; animation: typing 1s infinite; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; margin-right: 0; }
+        @keyframes typing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+
+        /* Panel Desactivado */
         .btn-panel-disabled { background: rgba(0,0,0,0.05); color: rgba(0,0,0,0.4); pointer-events: none; border: 1px dashed rgba(0,0,0,0.1); }
         .btn-pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-
-        /* INPUTS FORMULARIO */
-        .mac-input { width: 100%; background: rgba(255,255,255,0.8); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; padding: 14px 16px; font-size: 14px; color: #1D1D1F; outline: none; transition: all 0.2s; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02); }
-        .mac-input:focus { border-color: #788C9F; background: #fff; box-shadow: 0 0 0 3px rgba(120, 140, 159, 0.2); }
-        .form-radio:checked + div { background: #788C9F; color: white; border-color: #788C9F; }
-        .form-radio:checked + div i, .form-radio:checked + div p, .form-radio:checked + div span { color: white; opacity: 1; }
 
         .fade-in { opacity: 0; animation: fadeInApple 0.5s ease-out forwards; }
         @keyframes fadeInApple { from { opacity: 0; transform: translateY(10px) scale(0.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
@@ -90,11 +121,6 @@
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
-
-        .loader { border: 2px solid rgba(0,0,0,0.1); border-left-color: #788C9F; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
-        .loader-white { border: 2px solid rgba(255,255,255,0.3); border-left-color: #ffffff; border-radius: 50%; width: 18px; height: 18px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="relative">
@@ -117,8 +143,8 @@
                 </nav>
                 
                 <div class="hidden md:flex">
-                    <button id="btn-header-intake" class="bg-mac-dark hover:bg-black text-white px-5 py-2 rounded-full text-xs font-semibold transition-all shadow-md flex items-center gap-2">
-                        <i class="fas fa-concierge-bell text-sm"></i> Mesa de Entrada
+                    <button class="open-intake bg-mac-dark hover:bg-black text-white px-5 py-2 rounded-full text-xs font-semibold transition-all shadow-md flex items-center gap-2">
+                        <i class="fas fa-concierge-bell text-sm"></i> Admisión de Casos
                     </button>
                 </div>
                 <button id="mobile-menu-btn" class="md:hidden text-mac-dark p-2 focus:outline-none bg-white/70 rounded-full backdrop-blur-md border border-white/80">
@@ -132,34 +158,40 @@
                 <a href="#inicio" class="mobile-link text-base font-medium text-mac-dark/80 hover:text-mac-dark flex items-center gap-3"><i class="fas fa-home opacity-50 w-5"></i> Inicio</a>
                 <a href="#servicios" class="mobile-link text-base font-medium text-mac-dark/80 hover:text-mac-dark flex items-center gap-3"><i class="fas fa-balance-scale opacity-50 w-5"></i> Portafolio Legal</a>
                 <a href="#servicios" class="mobile-link text-base font-medium text-mac-dark/80 hover:text-mac-dark flex items-center gap-3"><i class="fas fa-drone opacity-50 w-5"></i> Evidencia & Drones</a>
-                <button id="btn-mobile-intake" class="mobile-link mt-4 text-center bg-mac-dark text-white py-3.5 rounded-2xl text-sm font-semibold shadow-lg flex items-center justify-center gap-2 w-full">
-                    <i class="fas fa-concierge-bell text-lg"></i> Mesa de Entrada
+                <button class="open-intake mobile-link mt-4 text-center bg-mac-dark text-white py-3.5 rounded-2xl text-sm font-semibold shadow-lg flex items-center justify-center gap-2 w-full">
+                    <i class="fas fa-concierge-bell text-lg"></i> Admisión de Casos
                 </button>
             </div>
         </div>
     </header>
 
-    <div id="wa-quick-popup" class="wa-quick-popup">
-        <div class="glass-effect p-5 rounded-3xl shadow-2xl border border-white/80 w-full flex flex-col gap-3">
-            <div class="flex items-center gap-3 border-b border-black/5 pb-3">
-                <div class="w-10 h-10 bg-whatsapp text-white rounded-full flex items-center justify-center text-xl shadow-md"><i class="fab fa-whatsapp"></i></div>
-                <div>
-                    <h4 class="text-sm font-bold text-mac-dark leading-tight">Chat Directo</h4>
-                    <p class="text-[11px] font-medium text-success">En línea</p>
-                </div>
-                <button id="close-wa-popup" class="ml-auto text-mac-dark/40 hover:text-mac-dark transition-colors"><i class="fas fa-times"></i></button>
+    <button id="wa-fab" class="whatsapp-fab" aria-label="Abrir Chat"><i class="fab fa-whatsapp"></i></button>
+
+    <div id="wa-chat-widget" class="wa-chat-window shadow-wa-chat">
+        <div class="bg-wa-brand text-white px-4 py-3 flex items-center gap-3 shadow-md z-10">
+            <div class="relative">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-wa-brand"><i class="fas fa-robot text-xl"></i></div>
+                <div class="absolute bottom-0 right-0 w-3 h-3 bg-[#25D366] border-2 border-wa-brand rounded-full"></div>
             </div>
-            <p class="text-xs text-mac-dark/70 font-light leading-relaxed">¿Necesita asistencia inmediata o agendar una consulta rápida? Hable directo con un asesor.</p>
-            <a href="https://wa.me/56987491964?text=Hola%20AeroLex,%20necesito%20realizar%20una%20consulta%20rápida." target="_blank" class="bg-whatsapp hover:bg-whatsapp-dark text-white px-4 py-3 rounded-xl text-sm font-semibold shadow-md transition-all text-center flex items-center justify-center gap-2 mt-1 btn-pop">
-                <i class="fas fa-paper-plane"></i> Iniciar Chat
-            </a>
+            <div class="flex-1">
+                <h4 class="font-bold text-sm leading-tight">Asistente AeroLex</h4>
+                <p class="text-[11px] text-white/90">En línea</p>
+            </div>
+            <button id="close-wa-chat" class="text-white hover:text-white/70 transition-colors px-2"><i class="fas fa-times text-lg"></i></button>
+        </div>
+        
+        <div id="chat-body" class="wa-chat-body hide-scrollbar">
+            <div class="text-center my-2"><span class="bg-[#E1F3FB] text-[#4A5D6A] text-[10px] py-1 px-3 rounded-lg font-medium shadow-sm">Hoy</span></div>
+            </div>
+
+        <div class="wa-input-area" id="chat-input-area">
+            <input type="text" id="chat-input" class="wa-input hidden" placeholder="Escribe un mensaje..." autocomplete="off">
+            <button id="chat-send-btn" class="wa-send-btn hidden" disabled><i class="fas fa-paper-plane text-sm"></i></button>
         </div>
     </div>
-    <button id="btn-fab-wa" class="whatsapp-fab" aria-label="Abrir WhatsApp"><i class="fab fa-whatsapp"></i></button>
 
     <div id="intake-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-mac-dark/60 backdrop-blur-sm opacity-0 transition-opacity duration-300">
         <div class="glass-effect p-6 md:p-8 rounded-3xl max-w-lg w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh] overflow-y-auto hide-scrollbar" id="intake-modal-content">
-            
             <div class="flex justify-between items-start mb-6 sticky top-0 bg-transparent">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-mac-dark text-white rounded-xl flex items-center justify-center shadow-md"><i class="fas fa-briefcase"></i></div>
@@ -189,7 +221,7 @@
                 </div>
                 <div class="intake-step hidden" id="step-3">
                     <p class="text-sm text-mac-dark/80 mb-2 font-semibold">Detalles de su caso o proyecto:</p>
-                    <p class="text-[11px] text-mac-dark/50 mb-4 font-light">Describa brevemente la situación, ubicación (si aplica) y su objetivo principal.</p>
+                    <p class="text-[11px] text-mac-dark/50 mb-4 font-light">Describa brevemente la situación, ubicación y su objetivo.</p>
                     <textarea name="detalle_caso" rows="5" class="mac-input resize-none" placeholder="Ej: Necesito regularizar un predio en Puerto Varas..." required></textarea>
                 </div>
                 <div class="intake-step hidden" id="step-4">
@@ -200,13 +232,10 @@
                         <input type="email" name="email" class="mac-input" placeholder="Correo electrónico" required>
                     </div>
                 </div>
-                
                 <div class="mt-8 flex justify-between items-center" id="form-controls">
                     <button type="button" id="btn-prev" class="text-sm font-medium text-mac-dark/50 hover:text-mac-dark hidden transition-colors px-4 py-2">Volver</button>
                     <div class="flex-1"></div>
-                    <button type="submit" id="btn-next" class="bg-mac-dark text-white px-6 py-2.5 rounded-xl text-sm font-medium shadow-md transition-all hover:bg-black flex items-center justify-center gap-2">
-                        <span>Siguiente</span>
-                    </button>
+                    <button type="submit" id="btn-next" class="bg-mac-dark text-white px-6 py-2.5 rounded-xl text-sm font-medium shadow-md transition-all hover:bg-black">Siguiente</button>
                 </div>
             </form>
         </div>
@@ -214,7 +243,6 @@
 
     <div id="service-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-mac-dark/60 backdrop-blur-sm opacity-0 transition-opacity duration-300">
         <div class="glass-effect p-6 md:p-8 rounded-3xl max-w-md w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col" id="service-modal-content">
-            
             <div class="flex justify-between items-start mb-6">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-mac-accent text-white rounded-xl flex items-center justify-center shadow-md"><i class="fas fa-file-signature"></i></div>
@@ -222,15 +250,13 @@
                 </div>
                 <button id="close-service-modal" class="text-mac-dark/40 hover:text-mac-dark text-xl transition-colors"><i class="fas fa-times"></i></button>
             </div>
-
             <form id="service-form" class="flex flex-col gap-4">
-                <p class="text-sm text-mac-dark/80 font-light mb-2">Por favor, brinde contexto adicional para derivar su requerimiento al especialista adecuado.</p>
+                <p class="text-sm text-mac-dark/80 font-light mb-2">Por favor, brinde contexto adicional para derivar su requerimiento.</p>
                 <input type="text" id="svc-nombre" class="mac-input" placeholder="Nombre completo" required>
                 <input type="tel" id="svc-telefono" class="mac-input" placeholder="Teléfono de contacto" required>
                 <textarea id="svc-detalle" rows="4" class="mac-input resize-none" placeholder="Describa su caso o consulta aquí..." required></textarea>
-                
-                <button type="submit" id="btn-submit-service" class="mt-4 bg-mac-dark hover:bg-black text-white px-6 py-3.5 rounded-xl text-sm font-medium shadow-md transition-all flex items-center justify-center gap-2 w-full btn-pop">
-                    <span class="flex items-center gap-2"><i class="fas fa-paper-plane"></i> Solicitar Evaluación</span>
+                <button type="submit" id="btn-submit-service" class="mt-4 bg-mac-dark hover:bg-black text-white px-6 py-3.5 rounded-xl text-sm font-medium shadow-md transition-all flex items-center justify-center gap-2 btn-pop">
+                    <span class="flex items-center gap-2"><i class="fas fa-paper-plane"></i> Iniciar Evaluación</span>
                 </button>
             </form>
         </div>
@@ -266,7 +292,6 @@
 
     <section id="servicios" class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pb-20 relative z-10">
         <div class="glass-effect rounded-3xl shadow-mac-window overflow-hidden border border-white flex flex-col h-[750px] md:h-[800px] fade-in" style="animation-delay: 0.3s;">
-            
             <div class="h-12 md:h-14 bg-white/60 border-b border-black/5 flex items-center justify-between px-4 md:px-6 backdrop-blur-md shrink-0">
                 <div class="flex items-center gap-2 md:gap-3"><i class="fas fa-shield-alt text-mac-accent opacity-80 text-sm md:text-base"></i><span class="text-[10px] md:text-xs font-semibold text-mac-dark/70 uppercase tracking-widest truncate">AeroLex Core System</span></div>
                 <div class="flex space-x-4 text-[10px] md:text-xs font-medium text-mac-dark/40"><span class="hidden sm:inline">V. 2.0</span><span class="flex items-center gap-1.5"><i class="fas fa-lock"></i> <span class="hidden sm:inline">Conexión Segura</span></span></div>
@@ -290,13 +315,10 @@
                 <div class="flex-1 bg-white/60 p-5 md:p-8 overflow-y-auto relative flex flex-col">
                     <div id="content-header" class="mb-6 md:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center shrink-0">
                         <div>
-                            <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-4 text-mac-accent shadow-sm border border-white">
-                                <i id="content-icon" class="fas fa-balance-scale text-xl md:text-2xl transition-all duration-300"></i>
-                            </div>
+                            <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-4 text-mac-accent shadow-sm border border-white"><i id="content-icon" class="fas fa-balance-scale text-xl md:text-2xl transition-all duration-300"></i></div>
                             <h2 id="content-title" class="text-2xl md:text-3xl font-semibold text-mac-dark tracking-tight transition-all duration-300 flex items-center flex-wrap">Cargando...</h2>
                             <p id="content-desc" class="text-sm md:text-base text-mac-dark/70 mt-1 md:mt-2 font-light transition-all duration-300">Seleccione una categoría para ver los servicios.</p>
                         </div>
-                        
                         <div class="mt-4 md:mt-0 hidden md:block">
                             <button id="service-panel-btn" class="btn-panel-disabled px-5 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center gap-2">
                                 <i class="fas fa-hand-pointer text-lg"></i> Seleccione un ítem abajo
@@ -328,144 +350,216 @@
 
             const WHATSAPP_NUMBER = "56987491964"; 
 
-            // 1. MODAL ADMISIÓN (MESA DE ENTRADA) - Botón Header
+            /* --- 1. LÓGICA DEL CHATBOT WHATSAPP (BOTÓN INFERIOR DERECHO) --- */
+            const waFab = document.getElementById('wa-fab');
+            const waWidget = document.getElementById('wa-chat-widget');
+            const closeWaBtn = document.getElementById('close-wa-chat');
+            const chatBody = document.getElementById('chat-body');
+            const chatInputArea = document.getElementById('chat-input-area');
+            const chatInput = document.getElementById('chat-input');
+            const chatSendBtn = document.getElementById('chat-send-btn');
+            
+            let chatState = 0;
+            let chatData = { area: '', detalle: '', nombre: '' };
+
+            function getTime() {
+                const now = new Date();
+                return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            }
+
+            function addBotMessage(text, delay = 600) {
+                return new Promise(resolve => {
+                    // Indicador escribiendo
+                    const typingId = 'typing-' + Date.now();
+                    const typingHtml = `<div id="${typingId}" class="wa-msg wa-msg-bot typing-indicator"><span></span><span></span><span></span></div>`;
+                    chatBody.insertAdjacentHTML('beforeend', typingHtml);
+                    chatBody.scrollTop = chatBody.scrollHeight;
+
+                    setTimeout(() => {
+                        document.getElementById(typingId).remove();
+                        const msgHtml = `
+                            <div class="wa-msg wa-msg-bot fade-in">
+                                ${text}
+                                <span class="wa-time">${getTime()}</span>
+                            </div>`;
+                        chatBody.insertAdjacentHTML('beforeend', msgHtml);
+                        chatBody.scrollTop = chatBody.scrollHeight;
+                        resolve();
+                    }, delay);
+                });
+            }
+
+            function addUserMessage(text) {
+                const msgHtml = `
+                    <div class="wa-msg wa-msg-user fade-in">
+                        ${text}
+                        <span class="wa-time">${getTime()} <i class="fas fa-check-double text-[#53bdeb] ml-1"></i></span>
+                    </div>`;
+                chatBody.insertAdjacentHTML('beforeend', msgHtml);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+
+            function showOptions(optionsArray) {
+                chatInputArea.innerHTML = '';
+                optionsArray.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'wa-option-btn';
+                    btn.textContent = opt.label;
+                    btn.onclick = () => {
+                        chatInputArea.innerHTML = '';
+                        addUserMessage(opt.label);
+                        opt.action();
+                    };
+                    chatInputArea.appendChild(btn);
+                });
+            }
+
+            function showInput(placeholder, action) {
+                chatInputArea.innerHTML = `
+                    <input type="text" id="temp-input" class="wa-input" placeholder="${placeholder}" autocomplete="off">
+                    <button id="temp-send" class="wa-send-btn" disabled><i class="fas fa-paper-plane text-sm"></i></button>
+                `;
+                const input = document.getElementById('temp-input');
+                const sendBtn = document.getElementById('temp-send');
+                
+                input.focus();
+                input.addEventListener('input', () => { sendBtn.disabled = input.value.trim() === ''; });
+                
+                const sendFunc = () => {
+                    const val = input.value.trim();
+                    if(!val) return;
+                    chatInputArea.innerHTML = '';
+                    addUserMessage(val);
+                    action(val);
+                };
+                
+                sendBtn.addEventListener('click', sendFunc);
+                input.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendFunc(); });
+            }
+
+            function startChatFlow() {
+                chatBody.innerHTML = `<div class="text-center my-2"><span class="bg-[#E1F3FB] text-[#4A5D6A] text-[10px] py-1 px-3 rounded-lg font-medium shadow-sm">Hoy</span></div>`;
+                chatState = 0; chatData = { area: '', detalle: '', nombre: '' };
+                
+                addBotMessage("¡Hola! Soy el asistente virtual de AeroLex. 👋")
+                .then(() => addBotMessage("Para derivarte con el especialista correcto, ¿en qué área necesitas asesoría?"))
+                .then(() => {
+                    showOptions([
+                        { label: "Derecho Civil o Corporativo", action: () => { chatData.area = "Civil/Corporativo"; nextStep(1); } },
+                        { label: "Evidencia y Drones", action: () => { chatData.area = "Drones/Evidencia"; nextStep(1); } },
+                        { label: "Otra consulta", action: () => { chatData.area = "Consulta General"; nextStep(1); } }
+                    ]);
+                });
+            }
+
+            function nextStep(step) {
+                if (step === 1) {
+                    addBotMessage("Entendido. ¿Podrías describirme brevemente de qué se trata tu caso o proyecto?")
+                    .then(() => showInput("Describe tu caso brevemente...", (val) => { chatData.detalle = val; nextStep(2); }));
+                } 
+                else if (step === 2) {
+                    addBotMessage("Perfecto. Por último, ¿cuál es tu nombre o el de tu empresa?")
+                    .then(() => showInput("Tu nombre...", (val) => { chatData.nombre = val; nextStep(3); }));
+                }
+                else if (step === 3) {
+                    addBotMessage(`Gracias, ${chatData.nombre}. Tengo todo lo necesario.`)
+                    .then(() => addBotMessage("Haz clic abajo para enviarnos tu expediente seguro vía WhatsApp y un abogado te responderá a la brevedad."))
+                    .then(() => {
+                        const autoMsg = `*INGRESO ASISTENTE VIRTUAL*\n\n*Nombre:* ${chatData.nombre}\n*Área:* ${chatData.area}\n*Caso:* ${chatData.detalle}`;
+                        const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMsg)}`;
+                        chatInputArea.innerHTML = `<a href="${waUrl}" target="_blank" class="bg-whatsapp hover:bg-whatsapp-dark text-white px-4 py-3 rounded-xl text-sm font-semibold shadow-md transition-all text-center flex items-center justify-center gap-2 btn-pop w-full"><i class="fab fa-whatsapp text-lg"></i> Enviar a AeroLex</a>`;
+                    });
+                }
+            }
+
+            // Abrir/Cerrar Chatbot
+            waFab.addEventListener('click', () => {
+                waWidget.classList.remove('hidden');
+                setTimeout(() => { waWidget.classList.add('active'); }, 10);
+                if(chatState === 0) { chatState = -1; startChatFlow(); } // Inicia solo la primera vez
+            });
+            closeWaBtn.addEventListener('click', () => {
+                waWidget.classList.remove('active');
+                setTimeout(() => { waWidget.classList.add('hidden'); }, 300);
+            });
+
+            /* 2. MESA DE ENTRADA (MODAL DEL HEADER) */
             const intakeModal = document.getElementById('intake-modal');
             const intakeModalContent = document.getElementById('intake-modal-content');
-            const closeModalBtn = document.getElementById('close-modal');
-            const btnHeaderIntake = document.getElementById('btn-header-intake');
-            const btnMobileIntake = document.getElementById('btn-mobile-intake');
-            
+            const openIntakeBtns = document.querySelectorAll('.open-intake');
             const steps = document.querySelectorAll('.intake-step');
             const btnNext = document.getElementById('btn-next');
             const btnPrev = document.getElementById('btn-prev');
-            const formControls = document.getElementById('form-controls');
-            const progressText = document.getElementById('intake-progress');
             const form = document.getElementById('intake-form');
-            
-            let currentStep = 1; const totalSteps = 4;
+            let currentFormStep = 1; const totalFormSteps = 4;
 
-            function openIntake(e) { 
-                if(e) e.preventDefault(); 
-                intakeModal.classList.remove('hidden'); 
+            openIntakeBtns.forEach(btn => btn.addEventListener('click', (e) => { 
+                e.preventDefault(); intakeModal.classList.remove('hidden'); 
                 setTimeout(() => { intakeModal.classList.remove('opacity-0'); intakeModalContent.classList.remove('scale-95'); }, 10); 
-            }
-            function closeIntake() { 
-                intakeModal.classList.add('opacity-0'); intakeModalContent.classList.add('scale-95'); 
-                setTimeout(() => { intakeModal.classList.add('hidden'); form.reset(); currentStep = 1; updateSteps(); }, 300); 
-            }
+            }));
+            
+            document.getElementById('close-modal').addEventListener('click', closeIntake);
+            function closeIntake() { intakeModal.classList.add('opacity-0'); intakeModalContent.classList.add('scale-95'); setTimeout(() => { intakeModal.classList.add('hidden'); form.reset(); currentFormStep = 1; updateFormSteps(); }, 300); }
 
-            function updateSteps() {
-                if(currentStep > 1 && currentStep <= totalSteps) {
-                    const prevStepDiv = document.getElementById(`step-${currentStep-1}`);
-                    const inputs = prevStepDiv.querySelectorAll('input[required], textarea[required]');
-                    let valid = true;
-                    inputs.forEach(input => {
-                        if (input.type === 'radio') {
-                            const name = input.getAttribute('name');
-                            if(!prevStepDiv.querySelector(`input[name="${name}"]:checked`)) valid = false;
-                        } else {
-                            if(!input.value.trim()) valid = false;
-                        }
-                    });
-                    if(!valid) { currentStep--; alert("Por favor, complete los campos requeridos."); return; }
-                }
-
-                steps.forEach((step, index) => { if (index + 1 === currentStep) step.classList.remove('hidden'); else step.classList.add('hidden'); });
-                progressText.textContent = `Paso ${currentStep} de ${totalSteps}`;
-
-                if (currentStep === 1) { btnPrev.classList.add('hidden'); btnNext.querySelector('span').textContent = 'Siguiente'; }
-                else if (currentStep > 1 && currentStep < totalSteps) { btnPrev.classList.remove('hidden'); btnNext.querySelector('span').textContent = 'Siguiente'; }
-                else if (currentStep === totalSteps) { btnPrev.classList.remove('hidden'); btnNext.querySelector('span').textContent = 'Solicitar Evaluación'; }
+            function updateFormSteps() {
+                steps.forEach((step, index) => { if (index + 1 === currentFormStep) step.classList.remove('hidden'); else step.classList.add('hidden'); });
+                document.getElementById('intake-progress').textContent = `Paso ${currentFormStep} de ${totalFormSteps}`;
+                if (currentFormStep === 1) { btnPrev.classList.add('hidden'); btnNext.querySelector('span').textContent = 'Siguiente'; }
+                else if (currentFormStep > 1 && currentFormStep < totalFormSteps) { btnPrev.classList.remove('hidden'); btnNext.querySelector('span').textContent = 'Siguiente'; }
+                else if (currentFormStep === totalFormSteps) { btnPrev.classList.remove('hidden'); btnNext.querySelector('span').textContent = 'Solicitar Evaluación'; }
             }
 
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                if (currentStep < totalSteps) {
-                    currentStep++; updateSteps();
-                } else {
+                if (currentFormStep < totalFormSteps) { currentFormStep++; updateFormSteps(); } 
+                else {
                     const originalBtnContent = btnNext.innerHTML;
                     btnNext.innerHTML = '<div class="loader-white mr-2"></div><span>Procesando...</span>';
                     btnNext.classList.add('opacity-80', 'pointer-events-none');
-                    btnPrev.classList.add('hidden');
-
                     setTimeout(() => {
                         const formData = new FormData(form);
                         const autoMsg = `*MESA DE ENTRADA AEROLEX*\n\n*Tipo:* ${formData.get('tipo_req')}\n*Área:* ${formData.get('area_req')}\n*Detalle:* ${formData.get('detalle_caso')}\n*Nombre:* ${formData.get('nombre')}\n*RUT:* ${formData.get('rut')}\n*Tel:* ${formData.get('telefono')}\n*Email:* ${formData.get('email')}`;
                         window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMsg)}`, '_blank');
-                        
-                        btnNext.innerHTML = originalBtnContent;
-                        btnNext.classList.remove('opacity-80', 'pointer-events-none');
-                        closeIntake();
+                        btnNext.innerHTML = originalBtnContent; btnNext.classList.remove('opacity-80', 'pointer-events-none'); closeIntake();
                     }, 1200);
                 }
             });
+            btnPrev.addEventListener('click', () => { if (currentFormStep > 1) { currentFormStep--; updateFormSteps(); } });
 
-            btnPrev.addEventListener('click', () => { if (currentStep > 1) { currentStep--; updateSteps(); } });
-            
-            // Asignar eventos solo a los botones correctos de Mesa de Entrada
-            if(btnHeaderIntake) btnHeaderIntake.addEventListener('click', openIntake);
-            if(btnMobileIntake) btnMobileIntake.addEventListener('click', openIntake);
-            closeModalBtn.addEventListener('click', closeIntake);
-            intakeModal.addEventListener('click', (e) => { if(e.target === intakeModal) closeIntake(); });
-
-            // 2. WIDGET CHAT RÁPIDO (FAB WHATSAPP INFERIOR)
-            const waFabBtn = document.getElementById('btn-fab-wa');
-            const waQuickPopup = document.getElementById('wa-quick-popup');
-            const closeWaPopup = document.getElementById('close-wa-popup');
-            
-            waFabBtn.addEventListener('click', () => {
-                waQuickPopup.classList.toggle('hidden');
-                setTimeout(() => { waQuickPopup.classList.toggle('active'); }, 10);
-            });
-            closeWaPopup.addEventListener('click', () => {
-                waQuickPopup.classList.remove('active');
-                setTimeout(() => { waQuickPopup.classList.add('hidden'); }, 300);
-            });
-
-            // 3. MODAL SERVICIO ESPECIFICO (DESDE EL PANEL CORE SYSTEM)
+            /* 3. MODAL SERVICIO ESPECÍFICO (PANEL CENTRAL) */
             const serviceModal = document.getElementById('service-modal');
-            const serviceModalContent = document.getElementById('service-modal-content');
-            const closeServiceModalBtn = document.getElementById('close-service-modal');
             const serviceForm = document.getElementById('service-form');
-            const serviceSubtitle = document.getElementById('service-modal-subtitle');
-            const btnSubmitService = document.getElementById('btn-submit-service');
-            
             let selectedServiceContext = "";
 
             function openServiceModal(serviceName) {
-                serviceSubtitle.textContent = serviceName;
+                document.getElementById('service-modal-subtitle').textContent = serviceName;
                 serviceModal.classList.remove('hidden');
-                setTimeout(() => { serviceModal.classList.remove('opacity-0'); serviceModalContent.classList.remove('scale-95'); }, 10);
+                setTimeout(() => { serviceModal.classList.remove('opacity-0'); document.getElementById('service-modal-content').classList.remove('scale-95'); }, 10);
             }
             function closeServiceModal() {
-                serviceModal.classList.add('opacity-0'); serviceModalContent.classList.add('scale-95');
+                serviceModal.classList.add('opacity-0'); document.getElementById('service-modal-content').classList.add('scale-95');
                 setTimeout(() => { serviceModal.classList.add('hidden'); serviceForm.reset(); }, 300);
             }
-            closeServiceModalBtn.addEventListener('click', closeServiceModal);
-            serviceModal.addEventListener('click', (e) => { if(e.target === serviceModal) closeServiceModal(); });
+            document.getElementById('close-service-modal').addEventListener('click', closeServiceModal);
 
             serviceForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                
-                const originalBtnContent = btnSubmitService.innerHTML;
-                btnSubmitService.innerHTML = '<span class="flex items-center gap-2"><div class="loader-white"></div> Procesando...</span>';
-                btnSubmitService.classList.add('opacity-80', 'pointer-events-none');
+                const btnSubmit = document.getElementById('btn-submit-service');
+                const originalBtnContent = btnSubmit.innerHTML;
+                btnSubmit.innerHTML = '<span class="flex items-center gap-2"><div class="loader-white"></div> Procesando...</span>';
+                btnSubmit.classList.add('opacity-80', 'pointer-events-none');
 
                 setTimeout(() => {
                     const nombre = document.getElementById('svc-nombre').value;
                     const telefono = document.getElementById('svc-telefono').value;
                     const detalle = document.getElementById('svc-detalle').value;
                     const autoMessage = `Hola AeroLex, solicito evaluación técnica.\n\n*${selectedServiceContext}*\n\n*Nombre:* ${nombre}\n*Teléfono:* ${telefono}\n*Detalles del caso:* ${detalle}`;
-                    
                     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(autoMessage)}`, '_blank');
-                    
-                    btnSubmitService.innerHTML = originalBtnContent;
-                    btnSubmitService.classList.remove('opacity-80', 'pointer-events-none');
-                    closeServiceModal();
+                    btnSubmit.innerHTML = originalBtnContent; btnSubmit.classList.remove('opacity-80', 'pointer-events-none'); closeServiceModal();
                 }, 1200);
             });
 
-            // 4. BASE DE DATOS Y PANEL INTERACTIVO
+            /* 4. BASE DE DATOS Y PANEL INTERACTIVO */
             const db = {
                 legal: [
                     { id: 'civil', title: 'Derecho Civil', icon: 'fa-file-signature', desc: 'Gestión y estructuración del patrimonio privado con rigor técnico.', items: [{ title: "Redacción y revisión de contratos", desc: "Aplicación rigurosa de la teoría del acto jurídico para resguardar el equilibrio contractual." }, { title: "Cobranza judicial y extrajudicial", desc: "Estrategias de recuperación de activos mediante acciones ejecutivas con alta eficacia." }, { title: "Juicios ordinarios y ejecutivos", desc: "Litigación especializada, asegurando el debido proceso y ejecución de sentencias." }, { title: "Responsabilidad contractual", desc: "Análisis dogmático de incumplimientos y resguardo ante lesión enorme." }, { title: "Indemnización de perjuicios", desc: "Persecución de responsabilidad civil para la reparación integral del daño." }, { title: "Prescripción adquisitiva", desc: "Consolidación del dominio mediante la comprobación judicial de posesión." }, { title: "Servidumbres", desc: "Constitución, defensa y extinción de gravámenes reales estratégicamente." }, { title: "Acciones posesorias", desc: "Protección cautelar rápida y efectiva frente a turbaciones de inmuebles." }] },
@@ -482,90 +576,52 @@
                 ]
             };
 
-            const navLegal = document.getElementById('sidebar-nav');
-            const navTech = document.getElementById('sidebar-nav-tech');
-            const contentTitle = document.getElementById('content-title');
-            const contentDesc = document.getElementById('content-desc');
-            const contentIcon = document.getElementById('content-icon');
-            const servicesGrid = document.getElementById('services-grid');
-            
-            const servicePanelBtn = document.getElementById('service-panel-btn');
-            const servicePanelBtnMobile = document.getElementById('service-panel-btn-mobile');
-            
             let currentActiveCategoryBtn = null;
-
             function format4K(text) { return text.replace('_4k', '<span class="badge-4k">4K HDR</span>'); }
             function cleanTextForURL(text) { return text.replace('_4k', '').trim(); }
 
-            function disableServiceButtons() {
-                [servicePanelBtn, servicePanelBtnMobile].forEach(btn => {
+            function renderContent(dataObj, btnElement) {
+                if (currentActiveCategoryBtn) { currentActiveCategoryBtn.classList.remove('active', 'text-white', 'bg-mac-accent'); currentActiveCategoryBtn.classList.add('text-mac-dark/70', 'hover:bg-black/5'); }
+                btnElement.classList.remove('text-mac-dark/70', 'hover:bg-black/5'); btnElement.classList.add('active', 'text-white', 'bg-mac-accent'); currentActiveCategoryBtn = btnElement;
+
+                // Deshabilitar botones
+                ['service-panel-btn', 'service-panel-btn-mobile'].forEach(id => {
+                    const btn = document.getElementById(id);
                     btn.className = "btn-panel-disabled w-full md:w-auto px-5 py-2.5 md:py-3.5 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2";
-                    btn.innerHTML = `<i class="fas fa-hand-pointer text-lg"></i> Seleccione un ítem abajo`;
-                    btn.classList.remove('btn-pop');
+                    btn.innerHTML = `<i class="fas fa-hand-pointer text-lg"></i> Seleccione un ítem`;
                     btn.onclick = (e) => e.preventDefault();
                 });
-                servicePanelBtnMobile.innerHTML = `<i class="fas fa-hand-pointer text-lg"></i> Seleccione un ítem arriba`;
-            }
 
-            function enableServiceButtons(categoryTitle, serviceTitle) {
-                const cleanCat = cleanTextForURL(categoryTitle);
-                const cleanServ = cleanTextForURL(serviceTitle);
-                selectedServiceContext = `Área: ${cleanCat} | Servicio: ${cleanServ}`;
-
-                [servicePanelBtn, servicePanelBtnMobile].forEach(btn => {
-                    btn.className = "bg-mac-dark hover:bg-black text-white shadow-lg w-full md:w-auto px-5 py-2.5 md:py-3.5 rounded-xl text-sm font-medium transition-transform hover:scale-105 flex items-center justify-center gap-2 btn-pop";
-                    btn.innerHTML = `<i class="fas fa-file-signature text-lg"></i> Iniciar Evaluación`;
-                    btn.onclick = (e) => { e.preventDefault(); openServiceModal(cleanServ); };
-                });
-            }
-
-            function renderContent(dataObj, btnElement) {
-                if (currentActiveCategoryBtn) {
-                    currentActiveCategoryBtn.classList.remove('active', 'text-white', 'bg-mac-accent');
-                    currentActiveCategoryBtn.classList.add('text-mac-dark/70', 'hover:bg-black/5');
-                }
-                btnElement.classList.remove('text-mac-dark/70', 'hover:bg-black/5');
-                btnElement.classList.add('active', 'text-white', 'bg-mac-accent');
-                currentActiveCategoryBtn = btnElement;
-
-                disableServiceButtons();
-
-                contentTitle.style.opacity = '0'; contentDesc.style.opacity = '0'; contentIcon.style.opacity = '0';
-                servicesGrid.style.opacity = '0';
+                document.getElementById('content-title').style.opacity = '0'; document.getElementById('content-desc').style.opacity = '0'; document.getElementById('content-icon').style.opacity = '0';
+                document.getElementById('services-grid').style.opacity = '0';
                 
                 setTimeout(() => {
-                    contentTitle.innerHTML = format4K(dataObj.title);
-                    contentDesc.textContent = dataObj.desc;
-                    contentIcon.className = `fas ${dataObj.icon} text-xl md:text-2xl transition-all duration-300`;
+                    document.getElementById('content-title').innerHTML = format4K(dataObj.title);
+                    document.getElementById('content-desc').textContent = dataObj.desc;
+                    document.getElementById('content-icon').className = `fas ${dataObj.icon} text-xl md:text-2xl transition-all duration-300`;
                     
-                    servicesGrid.innerHTML = '';
+                    const grid = document.getElementById('services-grid');
+                    grid.innerHTML = '';
                     dataObj.items.forEach((item, index) => {
                         const card = document.createElement('div');
-                        card.className = 'service-widget fade-in';
-                        card.style.animationDelay = `${index * 0.04}s`;
-                        card.innerHTML = `
-                            <div class="flex items-center gap-2 mb-2">
-                                <i class="fas fa-check-circle widget-icon text-mac-accent/80 text-sm transition-colors"></i>
-                                <h4 class="text-sm font-semibold text-mac-dark leading-tight">${format4K(item.title)}</h4>
-                            </div>
-                            <p class="text-[13px] text-mac-dark/70 leading-relaxed font-light pl-6">${format4K(item.desc)}</p>
-                        `;
-
+                        card.className = 'service-widget fade-in'; card.style.animationDelay = `${index * 0.04}s`;
+                        card.innerHTML = `<div class="flex items-center gap-2 mb-2"><i class="fas fa-check-circle widget-icon text-mac-accent/80 text-sm transition-colors"></i><h4 class="text-sm font-semibold text-mac-dark leading-tight">${format4K(item.title)}</h4></div><p class="text-[13px] text-mac-dark/70 leading-relaxed font-light pl-6">${format4K(item.desc)}</p>`;
                         card.addEventListener('click', () => {
-                            document.querySelectorAll('.service-widget').forEach(w => {
-                                w.classList.remove('widget-selected');
-                                w.querySelector('.widget-icon').classList.replace('text-mac-accent', 'text-mac-accent/80');
+                            document.querySelectorAll('.service-widget').forEach(w => { w.classList.remove('widget-selected'); w.querySelector('.widget-icon').classList.replace('text-mac-accent', 'text-mac-accent/80'); });
+                            card.classList.add('widget-selected'); card.querySelector('.widget-icon').classList.replace('text-mac-accent/80', 'text-mac-accent');
+                            
+                            // Activar botones
+                            selectedServiceContext = `Área: ${cleanTextForURL(dataObj.title)} | Servicio: ${cleanTextForURL(item.title)}`;
+                            ['service-panel-btn', 'service-panel-btn-mobile'].forEach(id => {
+                                const btn = document.getElementById(id);
+                                btn.className = "bg-mac-dark hover:bg-black text-white shadow-lg w-full md:w-auto px-5 py-2.5 md:py-3.5 rounded-xl text-sm font-medium transition-transform hover:scale-105 flex items-center justify-center gap-2 btn-pop";
+                                btn.innerHTML = `<i class="fas fa-file-signature text-lg"></i> Iniciar Evaluación`;
+                                btn.onclick = (e) => { e.preventDefault(); openServiceModal(cleanTextForURL(item.title)); };
                             });
-                            card.classList.add('widget-selected');
-                            card.querySelector('.widget-icon').classList.replace('text-mac-accent/80', 'text-mac-accent');
-                            enableServiceButtons(dataObj.title, item.title);
                         });
-
-                        servicesGrid.appendChild(card);
+                        grid.appendChild(card);
                     });
-
-                    contentTitle.style.opacity = '1'; contentDesc.style.opacity = '1'; contentIcon.style.opacity = '1';
-                    servicesGrid.style.opacity = '1';
+                    document.getElementById('content-title').style.opacity = '1'; document.getElementById('content-desc').style.opacity = '1'; document.getElementById('content-icon').style.opacity = '1'; grid.style.opacity = '1';
                 }, 150);
             }
 
@@ -576,12 +632,16 @@
                     btn.innerHTML = `<i class="fas ${cat.icon} w-3 md:w-4 text-center opacity-70"></i> ${format4K(cat.title)}`;
                     btn.addEventListener('click', () => { renderContent(cat, btn); if(window.innerWidth < 768) btn.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" }); });
                     container.appendChild(btn);
-                    if (index === 0 && container === navLegal) setTimeout(() => btn.click(), 50);
+                    if (index === 0 && container === document.getElementById('sidebar-nav')) setTimeout(() => btn.click(), 50);
                 });
             }
 
-            createSidebarButtons(db.legal, navLegal);
-            createSidebarButtons(db.tech, navTech);
+            createSidebarButtons(db.legal, document.getElementById('sidebar-nav'));
+            createSidebarButtons(db.tech, document.getElementById('sidebar-nav-tech'));
+            
+            // Menú Móvil
+            document.getElementById('mobile-menu-btn').addEventListener('click', () => { document.getElementById('mobile-menu').classList.toggle('hidden'); });
+            document.querySelectorAll('.mobile-link').forEach(link => { link.addEventListener('click', () => document.getElementById('mobile-menu').classList.add('hidden')); });
         });
     </script>
 </body>
