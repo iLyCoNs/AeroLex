@@ -3,153 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AeroLex | Bóveda de Administración</title>
+    <title>AeroLex | Bóveda Interactiva macOS</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 'mac-bg': '#1e1e1e', 'mac-panel': '#252526', 'mac-border': '#3e3e42', 'mac-accent': '#0A84FF' },
+                    fontFamily: { sans: ['-apple-system', 'BlinkMacSystemFont', '"Inter"', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
     <style>
-        body {
-            background-color: #0b0f14;
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-image: radial-gradient(circle at 50% -20%, #1a2a3a 0%, #0b0f14 60%);
-        }
+        body { background-color: #1e1e1e; color: #e5e5e5; overflow: hidden; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .boveda-container {
-            background: #11161d;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 24px;
-            padding: 40px;
-            width: 100%;
-            max-width: 450px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
+        /* Inputs macOS Dark */
+        .mac-input { background: #1e1e1e; border: 1px solid #3e3e42; color: #fff; border-radius: 8px; padding: 10px 14px; font-size: 13px; width: 100%; transition: all 0.2s; outline: none; }
+        .mac-input:focus { border-color: #0A84FF; box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.3); }
+        .mac-select { appearance: none; background: #1e1e1e url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23788C9F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") no-repeat right 10px center/12px; }
 
-        .input-dark {
-            background: #0d1117;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border-radius: 8px;
-            padding: 12px 16px;
-            font-size: 14px;
-            width: 100%;
-            transition: all 0.2s ease;
-        }
-        .input-dark:focus {
-            outline: none;
-            border-color: #00a8e8;
-            box-shadow: 0 0 0 1px #00a8e8;
-        }
+        /* Toggle Switch iOS/macOS */
+        .toggle-checkbox:checked { right: 0; border-color: #34C759; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #34C759; }
+        .toggle-checkbox:checked + .toggle-label:after { transform: translateX(100%); border-color: white; }
+        .toggle-label { width: 44px; height: 24px; background-color: #3e3e42; border-radius: 9999px; position: relative; cursor: pointer; transition: background-color .3s; }
+        .toggle-label:after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background-color: white; border-radius: 50%; transition: transform .3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
-        .btn-cyan {
-            background: #00a8e8;
-            color: #fff;
-            font-weight: 700;
-            font-size: 13px;
-            letter-spacing: 0.5px;
-            border-radius: 8px;
-            padding: 14px;
-            width: 100%;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(0, 168, 232, 0.4);
-            transition: all 0.2s ease;
-        }
-        .btn-cyan:hover {
-            background: #0096d1;
-            box-shadow: 0 0 25px rgba(0, 168, 232, 0.6);
-            transform: translateY(-1px);
-        }
+        .sidebar-item { transition: all 0.2s; cursor: pointer; border-left: 3px solid transparent; }
+        .sidebar-item.active { background: #2d2d2d; border-left-color: #0A84FF; }
+        .sidebar-item:hover:not(.active) { background: #2a2a2b; }
 
-        .label-text {
-            font-size: 10px;
-            font-weight: 700;
-            color: #788C9F;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        /* Editor JSON Nativo Minimalista */
-        #editor-container { display: none; width: 100%; max-width: 800px; }
-        .json-editor {
-            width: 100%;
-            height: 400px;
-            background: #0d1117;
-            color: #56b6c2;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            padding: 15px;
-            font-family: monospace;
-            font-size: 13px;
-            resize: vertical;
-        }
+        #app-container { display: none; }
+        
+        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body>
+<body class="h-screen flex flex-col">
 
-    <!-- PANTALLA 1: LOGIN (Conexión a GitHub) -->
-    <div id="login-screen" class="w-full flex flex-col items-center px-4">
-        <h1 class="text-3xl font-light tracking-[0.2em] mb-2 text-center text-gray-200">BÓVEDA DE ADMINISTRACIÓN</h1>
-        <p class="text-[10px] font-bold text-[#00a8e8] tracking-[0.3em] uppercase mb-10 text-center">Panel Comercial • Conexión Segura</p>
-
-        <div class="boveda-container">
-            <form id="login-form">
-                <div class="mb-6">
-                    <label class="label-text">Usuario de GitHub</label>
-                    <input type="text" id="gh-user" class="input-dark" value="ilycons" required>
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="flex-1 flex items-center justify-center bg-[#111111] p-4">
+        <div class="bg-[#1e1e1e] border border-[#3e3e42] rounded-2xl p-10 w-full max-w-md shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-[#0A84FF]"></div>
+            <div class="text-center mb-8">
+                <i class="fas fa-fingerprint text-4xl text-[#0A84FF] mb-4"></i>
+                <h1 class="text-2xl font-bold text-white tracking-tight">Acceso Confidencial</h1>
+                <p class="text-xs text-gray-400 mt-1 uppercase tracking-widest">Bóveda AeroLex</p>
+            </div>
+            <form id="login-form" class="space-y-5">
+                <div>
+                    <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wide block mb-1.5">Usuario GitHub</label>
+                    <input type="text" id="gh-user" class="mac-input bg-[#111111]" value="ilycons" required>
                 </div>
-                <div class="mb-6">
-                    <label class="label-text">Nombre del Repositorio</label>
-                    <input type="text" id="gh-repo" class="input-dark" value="AeroLex" required>
+                <div>
+                    <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wide block mb-1.5">Repositorio</label>
+                    <input type="text" id="gh-repo" class="mac-input bg-[#111111]" value="AeroLex" required>
                 </div>
-                <div class="mb-8">
-                    <label class="label-text">Llave Maestra (Token de Acceso)</label>
-                    <input type="password" id="gh-token" class="input-dark" placeholder="••••••••••••••••••••••••••••••••••••••••" required>
+                <div>
+                    <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wide block mb-1.5">Personal Access Token (Grano Fino)</label>
+                    <input type="password" id="gh-token" class="mac-input bg-[#111111]" placeholder="github_pat_..." required>
                 </div>
-                <button type="submit" class="btn-cyan" id="btn-connect">CONECTAR A LA BÓVEDA</button>
+                <button type="submit" id="btn-connect" class="w-full bg-[#0A84FF] hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg text-sm transition-colors mt-2 shadow-[0_4px_14px_rgba(10,132,255,0.3)]">
+                    Desbloquear Bóveda
+                </button>
             </form>
             <p id="error-msg" class="text-red-400 text-xs text-center mt-4 hidden"></p>
         </div>
     </div>
 
-    <!-- PANTALLA 2: EDITOR DE CAUSAS VIVAS -->
-    <div id="editor-container" class="flex flex-col px-4">
-        <div class="flex justify-between items-end mb-6">
-            <div>
-                <h2 class="text-2xl font-bold tracking-wide">Matriz de Causas (cases.json)</h2>
-                <p class="text-xs text-gray-400 mt-1">Modifique el JSON para actualizar la base de datos de los clientes en tiempo real.</p>
+    <!-- MAIN DASHBOARD -->
+    <div id="app-container" class="flex-1 flex overflow-hidden">
+        
+        <!-- SIDEBAR: LISTA DE CAUSAS -->
+        <div class="w-72 bg-[#1e1e1e] border-r border-[#3e3e42] flex flex-col z-10 shadow-lg shrink-0">
+            <div class="h-16 flex items-center justify-between px-5 border-b border-[#3e3e42] shrink-0 bg-[#252526]">
+                <span class="font-bold text-white tracking-wide"><i class="fas fa-layer-group text-[#0A84FF] mr-2"></i> Expedientes</span>
+                <button onclick="createNewCase()" class="w-8 h-8 rounded-full bg-[#3e3e42] hover:bg-[#0A84FF] text-white flex items-center justify-center transition" title="Nuevo Expediente">
+                    <i class="fas fa-plus text-xs"></i>
+                </button>
             </div>
-            <button onclick="logout()" class="text-xs text-gray-500 hover:text-white transition">Cerrar Sesión</button>
+            <div class="p-3 border-b border-[#3e3e42] shrink-0">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-2.5 text-gray-500 text-xs"></i>
+                    <input type="text" id="search-case" onkeyup="filterCases()" class="mac-input pl-8 py-2 bg-[#111111] text-xs border-none" placeholder="Buscar RIT o ALX...">
+                </div>
+            </div>
+            <div id="cases-list" class="flex-1 overflow-y-auto hide-scrollbar py-2">
+                <!-- Causas inyectadas aquí -->
+            </div>
+            <div class="p-3 border-t border-[#3e3e42] text-center shrink-0">
+                <button onclick="logout()" class="text-xs text-gray-500 hover:text-white transition w-full py-2"><i class="fas fa-sign-out-alt mr-1"></i> Cerrar Sesión</button>
+            </div>
         </div>
-        
-        <textarea id="json-input" class="json-editor focus:outline-none focus:border-[#00a8e8]" spellcheck="false"></textarea>
-        
-        <div class="mt-4 flex gap-4">
-            <button onclick="saveToGithub()" id="btn-save" class="btn-cyan w-auto px-8">Guardar Cambios y Publicar</button>
-            <button onclick="formatJson()" class="bg-transparent border border-gray-600 text-gray-300 rounded-lg px-6 py-3 text-sm hover:bg-gray-800 transition">Formatear Código</button>
+
+        <!-- AREA DE EDICIÓN CENTRAL -->
+        <div class="flex-1 flex flex-col bg-[#111111] relative">
+            
+            <!-- Header Editor -->
+            <div class="h-16 border-b border-[#3e3e42] flex items-center justify-between px-8 bg-[#1e1e1e] shrink-0">
+                <div id="editor-header" class="font-bold text-lg text-white">Seleccione un expediente</div>
+                <div class="flex gap-3">
+                    <span id="sync-status" class="text-xs font-semibold flex items-center text-gray-500 mr-2"></span>
+                    <button onclick="deleteCurrentCase()" id="btn-delete" class="hidden px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-lg text-xs font-bold transition">Eliminar</button>
+                    <button onclick="syncToGithub()" id="btn-sync" class="hidden px-6 py-2 bg-[#34C759] hover:bg-green-500 text-white rounded-lg text-xs font-bold transition shadow-[0_4px_10px_rgba(52,199,89,0.2)] flex items-center gap-2">
+                        <i class="fas fa-cloud-upload-alt"></i> Publicar Cambios
+                    </button>
+                </div>
+            </div>
+
+            <!-- Formulario Editor -->
+            <div id="editor-body" class="flex-1 overflow-y-auto hide-scrollbar p-8 hidden">
+                <div class="max-w-4xl mx-auto space-y-6 pb-20">
+                    
+                    <!-- Ficha General -->
+                    <div class="bg-[#1e1e1e] border border-[#3e3e42] rounded-xl p-6 shadow-md fade-in">
+                        <h3 class="text-sm font-bold text-white uppercase tracking-widest mb-5 border-b border-[#3e3e42] pb-2 text-[#0A84FF]"><i class="fas fa-folder-open mr-2"></i> Información Estructural</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Código AeroLex (ID)</label>
+                                <input type="text" id="case-id" class="mac-input font-mono text-[#0A84FF] font-bold" disabled>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">RIT / Identificador Interno</label>
+                                <input type="text" id="case-rit" class="mac-input" placeholder="Ej: C-1450-2026" oninput="markUnsaved()">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Categoría Legal/Técnica</label>
+                                <select id="case-category" class="mac-input mac-select" onchange="updateServicesDropdown(); markUnsaved()"></select>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Materia Específica</label>
+                                <select id="case-service" class="mac-input mac-select" onchange="markUnsaved()"></select>
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Tribunal u Oficina</label>
+                            <input type="text" id="case-tribunal" class="mac-input" placeholder="Ej: 1° Juzgado Civil / CBR Puerto Montt" oninput="markUnsaved()">
+                        </div>
+
+                        <div>
+                            <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Apunte Interno del Abogado (Visible para el cliente en caja azul)</label>
+                            <textarea id="case-detail" class="mac-input resize-none h-20" placeholder="Escriba aquí observaciones, instrucciones para el cliente o estado actual." oninput="markUnsaved()"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Línea de Tiempo (Hitos) -->
+                    <div class="bg-[#1e1e1e] border border-[#3e3e42] rounded-xl p-6 shadow-md fade-in" style="animation-delay: 0.1s;">
+                        <div class="flex items-center justify-between border-b border-[#3e3e42] pb-2 mb-5">
+                            <h3 class="text-sm font-bold text-white uppercase tracking-widest text-[#0A84FF]"><i class="fas fa-stream mr-2"></i> Construcción de Hitos (Timeline)</h3>
+                            <button onclick="addStep()" class="bg-[#3e3e42] hover:bg-[#4a4a4e] text-white px-3 py-1.5 rounded-md text-[11px] font-bold transition flex items-center gap-1">
+                                <i class="fas fa-plus"></i> Añadir Hito
+                            </button>
+                        </div>
+                        
+                        <p class="text-xs text-gray-500 mb-4">Añada los pasos del procedimiento judicial o técnico. Marque el interruptor verde para avanzar el progreso del cliente en la plataforma.</p>
+                        
+                        <div id="steps-container" class="space-y-3">
+                            <!-- Los pasos se renderizan dinámicamente aquí -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="editor-empty" class="flex-1 flex flex-col items-center justify-center text-gray-500">
+                <i class="fas fa-fingerprint text-6xl mb-4 opacity-20"></i>
+                <p class="text-sm">Seleccione o cree un expediente en el panel lateral.</p>
+            </div>
         </div>
-        <p id="status-msg" class="text-xs mt-4"></p>
     </div>
 
     <script>
-        let ghData = { user: '', repo: '', token: '', sha: '' };
+        // =========================================================================
+        // 1. BASE DE DATOS DE SERVICIOS (Para los Dropdowns)
+        // =========================================================================
+        const MATERIAS = {
+            "Derecho Civil": ["Redacción y revisión de contratos", "Cobranza judicial y extrajudicial", "Juicios ordinarios y ejecutivos", "Indemnización de perjuicios", "Responsabilidad contractual y extracontractual", "Prescripción adquisitiva", "Servidumbres", "Acciones posesorias"],
+            "Derecho Inmobiliario": ["Estudios de títulos", "Compraventa de inmuebles", "Regularización de propiedades", "Saneamiento de títulos", "Subdivisiones prediales", "Constitución de servidumbres", "Asesoría inmobiliaria"],
+            "Derecho Comercial y Corporativo": ["Constitución de sociedades", "Modificaciones societarias", "Fusiones y adquisiciones", "Pactos de accionistas", "Contratos comerciales", "Cobranza empresarial", "Due diligence", "Gobierno corporativo"],
+            "Derecho Laboral": ["Asesoría a empleadores", "Defensa laboral", "Despidos", "Tutela laboral", "Accidentes del trabajo", "Auditorías laborales", "Negociación laboral"],
+            "Derecho Administrativo": ["Recursos administrativos", "Procedimientos sancionatorios", "Licitaciones públicas", "Compras públicas", "Reclamos ante organismos públicos", "Solicitudes de transparencia"],
+            "Derecho Ambiental": ["Asesoría ambiental", "Cumplimiento normativo", "Procedimientos ante organismos fiscalizadores", "Denuncias ambientales", "Daño ambiental"],
+            "Derecho de Familia": ["Divorcios", "Alimentos", "Cuidado personal", "Relación directa y regular", "Compensación económica", "Violencia intrafamiliar"],
+            "Derecho Sucesorio": ["Posesiones efectivas", "Herencias", "Particiones", "Testamentos", "Litigios hereditarios"],
+            "Litigación y Defensa Judicial": ["Representación ante tribunales", "Patrocinio y poder", "Juicios civiles", "Juicios laborales", "Juicios ejecutivos", "Recursos de protección", "Recursos de amparo", "Recursos de apelación", "Defensa en procedimientos administrativos"],
+            "Asesoría Empresarial y Compliance": ["Gerencia legal externa", "Compliance corporativo", "Modelos de prevención de delitos", "Auditorías legales", "Gestión de riesgos legales", "Protección de datos personales", "Cumplimiento normativo", "Investigación interna", "Due diligence empresarial"],
+            "Mediación y Negociación": ["Negociación extrajudicial", "Resolución de conflictos", "Mediación privada", "Acuerdos transaccionales", "Reestructuración de deudas"],
+            "Evidencia Digital y Tecnología": ["Levantamiento de evidencia digital", "Informes jurídicos especializados", "Investigación jurídica", "Custodia documental", "Respaldo probatorio para litigios", "Análisis documental y regulatorio"],
+            "Drones: Inspección y Registro Aéreo": ["Inspección de predios", "Inspección de obras", "Inspección industrial", "Inspección de techumbres", "Inspección de caminos", "Monitoreo de proyectos"],
+            "Drones: Evidencia para Litigios": ["Registro audiovisual georreferenciado", "Verificación de deslindes", "Conflictos de propiedad", "Ocupaciones irregulares", "Daños ambientales", "Peritajes de apoyo judicial"],
+            "Fotogrametría y Topografía": ["Ortomosaicos", "Modelos 3D", "Cálculo de superficies", "Seguimiento de obras", "Informes técnicos", "Documentación para procesos judiciales"],
+            "Servicios Especializados B2B": ["Asesoría permanente a empresas", "Gestión de contratos", "Cobranza corporativa", "Auditoría legal preventiva", "Evaluación de riesgos", "Regularización de activos", "Asesoría para licitaciones", "Recuperación de activos", "Estudios de títulos corporativos", "Informes legales estratégicos"]
+        };
 
-        // Codificación segura Base64 para caracteres especiales y tildes en Español
+        // =========================================================================
+        // 2. LÓGICA CORE (GITHUB & DATA)
+        // =========================================================================
+        let ghData = { user: '', repo: '', token: '', sha: '' };
+        let casesDB = {}; // Aquí vivirá el JSON parseado
+        let currentEditingId = null;
+        let hasUnsavedChanges = false;
+
         function utf8_to_b64(str) { return window.btoa(unescape(encodeURIComponent(str))); }
         function b64_to_utf8(str) { return decodeURIComponent(escape(window.atob(str))); }
 
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-connect');
-            btn.innerText = "AUTENTICANDO...";
+            btn.innerText = "Verificando Credenciales...";
             btn.disabled = true;
 
             ghData.user = document.getElementById('gh-user').value.trim();
@@ -162,107 +236,288 @@
         async function fetchDatabase() {
             const url = `https://api.github.com/repos/${ghData.user}/${ghData.repo}/contents/cases.json`;
             try {
-                const response = await fetch(url, {
-                    headers: { 'Authorization': `token ${ghData.token}` }
-                });
+                const response = await fetch(url, { headers: { 'Authorization': `token ${ghData.token}` } });
 
                 if (response.ok) {
                     const data = await response.json();
                     ghData.sha = data.sha;
                     const jsonContent = b64_to_utf8(data.content);
-                    document.getElementById('json-input').value = jsonContent;
-                    showEditor();
+                    casesDB = jsonContent.trim() ? JSON.parse(jsonContent) : {};
+                    initDashboard();
                 } else if (response.status === 404) {
-                    // Si el archivo no existe, inyectar el código por defecto del caso de Los Notros
-                    const defaultDB = {
-                        "ALX-2026-01": {
-                            "materia": "Compraventa Inmobiliaria",
-                            "tribunal": "Conservador de Bienes Raíces - Puerto Montt",
-                            "rit": "Carpeta Interna N° 4592-2026",
-                            "detalle": "Inmueble: Los Notros 455, Puerto Montt. Documentos base validados.",
-                            "estadoActual": 2,
-                            "steps": [
-                                { "title": "Recopilación de Antecedentes", "date": "01 Jun 2026", "done": true },
-                                { "title": "Estudio de Títulos Aprobado", "date": "10 Jun 2026", "done": true },
-                                { "title": "Inscripción en Conservador (CBR)", "date": "En trámite actual", "done": false },
-                                { "title": "Entrega Copias Autorizadas a Cliente", "date": "Pendiente", "done": false }
-                            ]
-                        }
-                    };
-                    document.getElementById('json-input').value = JSON.stringify(defaultDB, null, 4);
-                    ghData.sha = ''; // No existe sha previo
-                    showEditor();
+                    // Si el archivo no existe, arrancar vacío
+                    casesDB = {};
+                    ghData.sha = '';
+                    initDashboard();
                 } else {
-                    throw new Error("Credenciales inválidas o repositorio no encontrado.");
+                    throw new Error("Token denegado o Repositorio no encontrado.");
                 }
             } catch (error) {
                 const btn = document.getElementById('btn-connect');
-                btn.innerText = "CONECTAR A LA BÓVEDA";
+                btn.innerText = "Desbloquear Bóveda";
                 btn.disabled = false;
-                document.getElementById('error-msg').innerText = "❌ " + error.message;
+                document.getElementById('error-msg').innerText = "❌ Error: " + error.message;
                 document.getElementById('error-msg').classList.remove('hidden');
             }
         }
 
-        async function saveToGithub() {
-            const btn = document.getElementById('btn-save');
-            const statusMsg = document.getElementById('status-msg');
-            btn.innerText = "Empujando a Servidor...";
+        async function syncToGithub() {
+            saveCurrentFormToDB(); // Guarda lo que haya en la pantalla antes de subir
+
+            const btn = document.getElementById('btn-sync');
+            const status = document.getElementById('sync-status');
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Subiendo...`;
             btn.disabled = true;
 
-            const newContent = document.getElementById('json-input').value;
-            
             try {
-                // Validar que el JSON está bien escrito antes de empujar
-                JSON.parse(newContent); 
-
+                const newContent = JSON.stringify(casesDB, null, 4);
                 const url = `https://api.github.com/repos/${ghData.user}/${ghData.repo}/contents/cases.json`;
-                const body = {
-                    message: "Bóveda AeroLex: Actualización de Matriz de Causas",
-                    content: utf8_to_b64(newContent)
-                };
-                if (ghData.sha) body.sha = ghData.sha; // Si el archivo ya existía
+                
+                const body = { message: "Bóveda AeroLex: Actualización de Causas", content: utf8_to_b64(newContent) };
+                if (ghData.sha) body.sha = ghData.sha;
 
                 const response = await fetch(url, {
                     method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${ghData.token}`,
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Authorization': `token ${ghData.token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
                 });
 
                 if (response.ok) {
                     const data = await response.json();
-                    ghData.sha = data.content.sha; // Actualizar el SHA con el nuevo archivo
-                    statusMsg.className = "text-xs mt-4 text-[#00a8e8] font-bold";
-                    statusMsg.innerText = "✅ Sincronización exitosa. El sistema cliente se actualizará en unos segundos.";
-                } else {
-                    throw new Error("Fallo al guardar en el servidor de Github.");
-                }
+                    ghData.sha = data.content.sha;
+                    status.innerHTML = `<span class="text-[#34C759]"><i class="fas fa-check-circle"></i> Nube Sincronizada</span>`;
+                    hasUnsavedChanges = false;
+                } else { throw new Error("Fallo al escribir en GitHub"); }
             } catch (error) {
-                statusMsg.className = "text-xs mt-4 text-red-400";
-                statusMsg.innerText = "❌ Error: Compruebe que el código JSON esté bien estructurado.";
+                status.innerHTML = `<span class="text-red-500"><i class="fas fa-times-circle"></i> Error de Red</span>`;
             } finally {
-                btn.innerText = "Guardar Cambios y Publicar";
+                btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Publicar Cambios`;
                 btn.disabled = false;
-                setTimeout(() => { statusMsg.innerText = ""; }, 5000);
+                setTimeout(() => { status.innerHTML = ""; }, 4000);
             }
         }
 
-        function showEditor() {
+        // =========================================================================
+        // 3. UI DASHBOARD & FORMULARIO
+        // =========================================================================
+        
+        function initDashboard() {
             document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('editor-container').style.display = 'block';
-            formatJson();
+            document.getElementById('app-container').style.display = 'flex';
+            
+            // Llenar dropdown de categorías
+            const catSelect = document.getElementById('case-category');
+            catSelect.innerHTML = '';
+            Object.keys(MATERIAS).forEach(cat => {
+                catSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
+            });
+            updateServicesDropdown();
+
+            renderSidebar();
         }
 
-        function formatJson() {
-            try {
-                const val = JSON.parse(document.getElementById('json-input').value);
-                document.getElementById('json-input').value = JSON.stringify(val, null, 4);
-            } catch(e) {
-                alert("El JSON actual tiene errores de sintaxis y no se puede formatear.");
+        function updateServicesDropdown() {
+            const cat = document.getElementById('case-category').value;
+            const servSelect = document.getElementById('case-service');
+            servSelect.innerHTML = '';
+            if(MATERIAS[cat]) {
+                MATERIAS[cat].forEach(serv => {
+                    servSelect.innerHTML += `<option value="${serv}">${serv}</option>`;
+                });
             }
+        }
+
+        function renderSidebar(filterText = "") {
+            const list = document.getElementById('cases-list');
+            list.innerHTML = '';
+            
+            let caseIds = Object.keys(casesDB).reverse(); // Más nuevos arriba
+            
+            if (filterText) {
+                caseIds = caseIds.filter(id => id.toLowerCase().includes(filterText) || 
+                                              (casesDB[id].rit && casesDB[id].rit.toLowerCase().includes(filterText)));
+            }
+
+            if(caseIds.length === 0) {
+                list.innerHTML = `<div class="p-4 text-center text-xs text-gray-500">No hay expedientes.</div>`;
+                return;
+            }
+
+            caseIds.forEach(id => {
+                const c = casesDB[id];
+                const isActive = id === currentEditingId ? 'active' : '';
+                
+                // Calcular progreso
+                let total = c.steps ? c.steps.length : 0;
+                let done = c.steps ? c.steps.filter(s => s.done).length : 0;
+                let progColor = done === total && total > 0 ? 'text-[#34C759]' : 'text-[#0A84FF]';
+
+                const html = `
+                    <div class="sidebar-item ${isActive} px-5 py-3 border-b border-[#3e3e42]/50" onclick="loadCase('${id}')">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="font-bold text-[13px] ${isActive ? 'text-white' : 'text-gray-300'}">${id}</span>
+                            <span class="text-[10px] font-bold ${progColor} bg-[#111111] px-2 py-0.5 rounded-md">${done}/${total}</span>
+                        </div>
+                        <div class="text-[11px] text-gray-500 truncate mb-1">${c.materia || 'Sin materia'}</div>
+                        <div class="text-[10px] text-gray-600 truncate">${c.rit || 'Sin RIT asignado'}</div>
+                    </div>`;
+                list.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function filterCases() {
+            const txt = document.getElementById('search-case').value.toLowerCase();
+            renderSidebar(txt);
+        }
+
+        function createNewCase() {
+            if (hasUnsavedChanges) saveCurrentFormToDB();
+            
+            const year = new Date().getFullYear();
+            let num = 1;
+            while(casesDB[`ALX-${year}-${String(num).padStart(2, '0')}`]) { num++; }
+            const newId = `ALX-${year}-${String(num).padStart(2, '0')}`;
+
+            casesDB[newId] = {
+                materia: MATERIAS["Derecho Civil"][0],
+                tribunal: "",
+                rit: "",
+                detalle: "",
+                estadoActual: -1,
+                steps: []
+            };
+
+            currentEditingId = newId;
+            renderSidebar();
+            loadCase(newId);
+            markUnsaved();
+        }
+
+        function loadCase(id) {
+            if (hasUnsavedChanges && currentEditingId && currentEditingId !== id) {
+                saveCurrentFormToDB();
+            }
+
+            currentEditingId = id;
+            const c = casesDB[id];
+
+            document.getElementById('editor-empty').classList.add('hidden');
+            document.getElementById('editor-body').classList.remove('hidden');
+            document.getElementById('btn-sync').classList.remove('hidden');
+            document.getElementById('btn-delete').classList.remove('hidden');
+            
+            document.getElementById('editor-header').innerText = "Editando: " + id;
+            
+            document.getElementById('case-id').value = id;
+            document.getElementById('case-rit').value = c.rit || '';
+            document.getElementById('case-tribunal').value = c.tribunal || '';
+            document.getElementById('case-detail').value = c.detalle || '';
+
+            // Auto-seleccionar categoría basada en el servicio
+            let foundCat = "Derecho Civil";
+            for (let cat in MATERIAS) { if (MATERIAS[cat].includes(c.materia)) { foundCat = cat; break; } }
+            document.getElementById('case-category').value = foundCat;
+            updateServicesDropdown();
+            
+            // Seleccionar servicio (o dejar por defecto si no existe)
+            const servSelect = document.getElementById('case-service');
+            if (Array.from(servSelect.options).some(o => o.value === c.materia)) {
+                servSelect.value = c.materia;
+            }
+
+            renderStepsUI(c.steps || []);
+            renderSidebar(); // Refrescar clase active
+            hasUnsavedChanges = false;
+        }
+
+        function saveCurrentFormToDB() {
+            if(!currentEditingId) return;
+
+            const stepsDivs = document.querySelectorAll('.step-item');
+            const newSteps = [];
+            let lastDoneIndex = -1;
+
+            stepsDivs.forEach((div, index) => {
+                const isDone = div.querySelector('.step-done').checked;
+                newSteps.push({
+                    title: div.querySelector('.step-title').value,
+                    date: div.querySelector('.step-date').value,
+                    done: isDone
+                });
+                if (isDone) lastDoneIndex = index;
+            });
+
+            casesDB[currentEditingId] = {
+                materia: document.getElementById('case-service').value,
+                tribunal: document.getElementById('case-tribunal').value.trim(),
+                rit: document.getElementById('case-rit').value.trim(),
+                detalle: document.getElementById('case-detail').value.trim(),
+                estadoActual: lastDoneIndex,
+                steps: newSteps
+            };
+
+            renderSidebar();
+        }
+
+        function deleteCurrentCase() {
+            if(confirm(`¿Estás seguro de ELIMINAR el expediente ${currentEditingId}?\nEsta acción es irreversible si sincronizas con la Nube.`)) {
+                delete casesDB[currentEditingId];
+                currentEditingId = null;
+                document.getElementById('editor-body').classList.add('hidden');
+                document.getElementById('editor-empty').classList.remove('hidden');
+                document.getElementById('btn-sync').classList.remove('hidden');
+                document.getElementById('btn-delete').classList.add('hidden');
+                document.getElementById('editor-header').innerText = "Expediente Eliminado";
+                renderSidebar();
+                markUnsaved();
+            }
+        }
+
+        // =========================================================================
+        // 4. LÓGICA DE LA LÍNEA DE TIEMPO (HITOS)
+        // =========================================================================
+        function renderStepsUI(steps) {
+            const container = document.getElementById('steps-container');
+            container.innerHTML = '';
+            steps.forEach((step, index) => { appendStepHTML(step.title, step.date, step.done, index); });
+        }
+
+        function addStep() {
+            // Fecha formato corto: Ej: "15 Jun 2026"
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '');
+            appendStepHTML("Nueva etapa", dateStr, false, document.querySelectorAll('.step-item').length);
+            markUnsaved();
+        }
+
+        function appendStepHTML(title, date, done, index) {
+            const container = document.getElementById('steps-container');
+            const checkedAttr = done ? 'checked' : '';
+            
+            const html = `
+                <div class="step-item flex items-center gap-3 bg-[#111111] border border-[#3e3e42] p-3 rounded-lg fade-in">
+                    <!-- Toggle Button -->
+                    <div class="relative inline-block w-[44px] shrink-0 align-middle select-none transition duration-200 ease-in mt-1">
+                        <input type="checkbox" class="step-done toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-[#3e3e42] appearance-none cursor-pointer z-10" ${checkedAttr} onchange="markUnsaved()">
+                        <label class="toggle-label block overflow-hidden h-6 rounded-full bg-[#3e3e42] cursor-pointer"></label>
+                    </div>
+                    
+                    <div class="flex-1 grid grid-cols-3 gap-2">
+                        <input type="text" class="step-title mac-input col-span-2" value="${title}" placeholder="Título del hito (Ej: Ingreso Demanda)" oninput="markUnsaved()">
+                        <input type="text" class="step-date mac-input col-span-1 text-center" value="${date}" placeholder="15 Jun 2026" oninput="markUnsaved()">
+                    </div>
+                    
+                    <button onclick="this.closest('.step-item').remove(); markUnsaved();" class="shrink-0 w-8 h-8 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition flex items-center justify-center">
+                        <i class="fas fa-trash-alt text-xs"></i>
+                    </button>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        function markUnsaved() {
+            hasUnsavedChanges = true;
+            document.getElementById('sync-status').innerHTML = `<span class="text-yellow-500"><i class="fas fa-exclamation-circle"></i> Hay cambios sin guardar</span>`;
         }
 
         function logout() { location.reload(); }
