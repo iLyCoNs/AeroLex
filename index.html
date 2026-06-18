@@ -116,14 +116,13 @@
         </div>
     </header>
 
-    <!-- Botón WhatsApp Tradicional (Número Irreal) -->
+    <!-- Botón WhatsApp Tradicional -->
     <a href="https://wa.me/56900000000?text=Hola%20AeroLex,%20necesito%20asistencia%20legal." target="_blank" class="whatsapp-fab" aria-label="WhatsApp humano"><i class="fab fa-whatsapp"></i></a>
 
     <!-- VENTANA DEL ASISTENTE VIRTUAL IA -->
     <div id="ai-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-mac-dark/50 backdrop-blur-md opacity-0 transition-opacity duration-300">
         <div class="glass-effect rounded-3xl w-full max-w-lg mx-4 shadow-2xl border border-white overflow-hidden flex flex-col h-[600px] transform scale-95 transition-transform duration-300" id="ai-modal-content">
             
-            <!-- Cabecera IA -->
             <div class="h-16 bg-white/60 border-b border-black/5 flex items-center justify-between px-6 backdrop-blur-xl shrink-0">
                 <div class="flex items-center gap-3">
                     <div class="relative flex items-center justify-center w-10 h-10 bg-mac-dark rounded-full text-white shadow-md border border-white/50">
@@ -138,13 +137,10 @@
                 <button id="close-ai-modal" class="text-mac-dark/40 hover:text-mac-dark transition-colors w-8 h-8 flex items-center justify-center bg-white/50 rounded-full hover:bg-white"><i class="fas fa-times"></i></button>
             </div>
 
-            <!-- Área de Mensajes -->
             <div id="ai-chat-log" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4 bg-black/[0.02] hide-scrollbar scroll-smooth">
                 <div class="text-center my-2"><span class="bg-black/5 text-mac-dark/60 text-[10px] py-1 px-3 rounded-full font-medium shadow-sm uppercase tracking-wider">Hoy</span></div>
-                <!-- Los mensajes irán aquí -->
             </div>
 
-            <!-- Input Formulario -->
             <form id="ai-input-form" class="p-4 bg-white/80 border-t border-black/5 shrink-0 backdrop-blur-xl flex gap-3">
                 <input type="text" id="ai-input" class="flex-1 bg-white border border-black/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-mac-accent focus:ring-1 focus:ring-mac-accent shadow-sm" placeholder="Consulte sus dudas legales aquí..." autocomplete="off">
                 <button type="submit" id="ai-send-btn" class="w-12 h-12 bg-mac-dark text-white rounded-xl flex items-center justify-center shadow-md hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
@@ -154,7 +150,7 @@
         </div>
     </div>
 
-    <!-- SECCIÓN HERO (Con Eslogan de Neuromarketing) -->
+    <!-- SECCIÓN HERO -->
     <section id="inicio" class="pt-40 pb-12 md:pb-24 flex flex-col items-center justify-center text-center px-4 relative z-10">
         <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-mac-dark mb-4 md:mb-6 max-w-4xl leading-tight fade-in">
             Soluciones Jurídicas Estratégicas.<br>
@@ -228,7 +224,8 @@
         document.addEventListener('DOMContentLoaded', () => {
 
             // --- 1. CONFIGURACIÓN IA (Gemini) ---
-            const GEMINI_API_KEY = "AQ.Ab8RN6LdOQNHCopZV-h7MkWgyIp04dRPPFuFe-Yl0Ln0D3yqFw"; 
+            // AQUÍ HE INYECTADO LA API KEY DE TU CAPTURA DE PANTALLA
+            const GEMINI_API_KEY = "AQ.Ab8RN6LOQQNStgZljN7CSA19oI-3HtuNv8Qx-thJJQxBFyNCMw"; 
             
             const aiModal = document.getElementById('ai-modal');
             const aiModalContent = document.getElementById('ai-modal-content');
@@ -241,11 +238,9 @@
             let chatHistory = [];
             let isChatInitialized = false;
 
-            // Prompt de personalidad para la IA
             const systemInstruction = `Eres el Consultor Virtual de Inteligencia Artificial de AeroLex. Tu objetivo es explicar de forma elegante, profesional y persuasiva nuestros servicios legales (civiles, corporativos, familia) o tecnológicos (drones, fotogrametría). 
 Actúas como un experto asesor. Brindas respuestas directas, útiles y que generen confianza. NO das asesoría legal definitiva, pero sí muestras profundo conocimiento. Tu objetivo final es invitar amablemente al usuario a que deje su número o email para que un abogado o ingeniero humano evalúe su caso sin costo inicial. Formatea tus respuestas de manera limpia (usa negritas si es necesario). Máximo 50 a 70 palabras por respuesta.`;
 
-            // Utilidad: Formateo de Markdown simple a HTML
             function parseMarkdown(text) {
                 return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
             }
@@ -260,11 +255,11 @@ Actúas como un experto asesor. Brindas respuestas directas, útiles y que gener
 
                 if (!isChatInitialized && !initialPrompt) {
                     isChatInitialized = true;
-                    addBotMessage("Bienvenido al sistema de inteligencia corporativa de AeroLex. Soy su consultor virtual. ¿Desea explorar un servicio en particular o requiere orientación sobre su caso legal?");
+                    // El saludo visual (false significa que NO se sube al historial de Google)
+                    addBotMessage("Bienvenido al sistema de inteligencia corporativa de AeroLex. Soy su consultor virtual. ¿Desea explorar un servicio en particular o requiere orientación sobre su caso legal?", false);
                 }
 
                 if (initialPrompt) {
-                    // Si se abrió haciendo clic en una tarjeta de servicio
                     isChatInitialized = true;
                     addUserMessage(initialPrompt);
                     fetchAIResponse(initialPrompt);
@@ -277,7 +272,7 @@ Actúas como un experto asesor. Brindas respuestas directas, útiles y que gener
                 setTimeout(() => { aiModal.classList.add('hidden'); }, 300);
             }
 
-            function addBotMessage(text) {
+            function addBotMessage(text, addToHistory = true) {
                 const typingId = 'typing-' + Date.now();
                 const typingHtml = `<div id="${typingId}" class="ai-chat-bubble-bot typing-indicator"><span></span><span></span><span></span></div>`;
                 aiChatLog.insertAdjacentHTML('beforeend', typingHtml);
@@ -290,10 +285,13 @@ Actúas como un experto asesor. Brindas respuestas directas, útiles y que gener
                         const msgHtml = `<div class="ai-chat-bubble-bot fade-in">${parseMarkdown(text)}</div>`;
                         aiChatLog.insertAdjacentHTML('beforeend', msgHtml);
                         aiChatLog.scrollTop = aiChatLog.scrollHeight;
-                        // Guardamos en la memoria interna de la IA para contexto
-                        chatHistory.push({ role: "model", parts: [{ text: text }] });
+                        
+                        // Solo se guarda en memoria si es respuesta a una consulta
+                        if (addToHistory) {
+                            chatHistory.push({ role: "model", parts: [{ text: text }] });
+                        }
                         resolve();
-                    }, 1200); // Simulamos que la IA "piensa/escribe"
+                    }, 1200);
                 });
             }
 
@@ -301,7 +299,6 @@ Actúas como un experto asesor. Brindas respuestas directas, útiles y que gener
                 const msgHtml = `<div class="ai-chat-bubble-user fade-in">${text}</div>`;
                 aiChatLog.insertAdjacentHTML('beforeend', msgHtml);
                 aiChatLog.scrollTop = aiChatLog.scrollHeight;
-                // Guardar en la memoria
                 chatHistory.push({ role: "user", parts: [{ text: text }] });
             }
 
@@ -324,9 +321,14 @@ Actúas como un experto asesor. Brindas respuestas directas, útiles y que gener
                     const tEl = document.getElementById(typingId);
                     if(tEl) tEl.remove();
 
-                    if (!response.ok) throw new Error("API Error");
-                    const data = await response.json();
+                    // SI GOOGLE DEVUELVE ERROR, LO CAPTURAMOS AQUÍ
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error("Detalle Error Gemini:", errorData);
+                        throw new Error(errorData.error.message || "Error desconocido en los servidores de Google.");
+                    }
                     
+                    const data = await response.json();
                     const botResponseText = data.candidates[0].content.parts[0].text;
                     
                     chatHistory.push({ role: "model", parts: [{ text: botResponseText }] });
@@ -338,8 +340,17 @@ Actúas como un experto asesor. Brindas respuestas directas, útiles y que gener
                 } catch (error) {
                     const tEl = document.getElementById(typingId);
                     if(tEl) tEl.remove();
-                    aiChatLog.insertAdjacentHTML('beforeend', `<div class="ai-chat-bubble-bot fade-in text-red-500">Error de conexión con el servidor IA. Por favor, intente de nuevo.</div>`);
-                    chatHistory.pop(); 
+                    
+                    // IMPRIME EL ERROR REAL EN PANTALLA
+                    const errorMsgHtml = `
+                        <div class="ai-chat-bubble-bot fade-in border border-red-200 bg-red-50 text-red-700 text-xs">
+                            <i class="fas fa-exclamation-triangle mb-1"></i> <b>Fallo en conexión:</b><br>
+                            ${error.message}
+                        </div>`;
+                    aiChatLog.insertAdjacentHTML('beforeend', errorMsgHtml);
+                    aiChatLog.scrollTop = aiChatLog.scrollHeight;
+                    
+                    chatHistory.pop(); // Limpiamos el mensaje fallido para no romper el historial futuro
                 }
             }
 
@@ -586,8 +597,6 @@ Actúas como un experto asesor. Brindas respuestas directas, útiles y que gener
                         card.className = 'service-widget fade-in';
                         card.style.animationDelay = `${index * 0.04}s`;
                         
-                        // AL HACER CLIC EN LA TARJETA:
-                        // Se abre el Consultor IA y se le envía automáticamente un mensaje pidiendo información
                         card.onclick = () => {
                             const cleanTitle = item.title.replace('_4k','').trim();
                             const cleanArea = dataObj.title.replace('_4k','').trim();
