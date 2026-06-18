@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="AeroLex | Soluciones Jurídicas Estratégicas y Tecnológicas">
-    <title>AeroLex | Soluciones Corporativas y Tecnológicas</title>
+    <title>AeroLex | LegalTech & Corporativo</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,16 +17,11 @@
             theme: {
                 extend: {
                     colors: {
-                        'mac-bg': '#F9FAFB', 
-                        'mac-glass': 'rgba(255, 255, 255, 0.85)', 
-                        'mac-dark': '#1D1D1F',
-                        'mac-accent': '#788C9F',
-                        'whatsapp': '#25D366',
-                        'whatsapp-dark': '#128C7E',
+                        'mac-bg': '#F9FAFB', 'mac-glass': 'rgba(255, 255, 255, 0.85)', 'mac-dark': '#1D1D1F',
+                        'mac-accent': '#788C9F', 'whatsapp': '#25D366', 'whatsapp-dark': '#128C7E',
+                        'legal-blue': '#0A2540',
                     },
-                    fontFamily: {
-                        sans: ['-apple-system', 'BlinkMacSystemFont', '"Inter"', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['-apple-system', 'BlinkMacSystemFont', '"Inter"', 'sans-serif'], },
                     boxShadow: {
                         'mac-window': '0 25px 50px -12px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(0,0,0,0.03)',
                         'mac-dock': '0 10px 30px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255,255,255,0.9)',
@@ -40,7 +35,6 @@
     <style>
         body { background-color: #F9FAFB; color: #1D1D1F; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
-        /* SVG DRONE PARCHE */
         .fa-drone::before { content: "" !important; }
         .fa-drone { display: inline-block; width: 1em; height: 1em; background-color: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z'/%3E%3Cpath d='m13.41 10.59 5.3-5.3'/%3E%3Cpath d='m10.59 13.41-5.3 5.3'/%3E%3Cpath d='m13.41 13.41 5.3 5.3'/%3E%3Cpath d='m10.59 10.59-5.3-5.3'/%3E%3Ccircle cx='19' cy='5' r='2'/%3E%3Ccircle cx='5' cy='19' r='2'/%3E%3Ccircle cx='19' cy='19' r='2'/%3E%3Ccircle cx='5' cy='5' r='2'/%3E%3C/svg%3E") no-repeat center / contain; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z'/%3E%3Cpath d='m13.41 10.59 5.3-5.3'/%3E%3Cpath d='m10.59 13.41-5.3 5.3'/%3E%3Cpath d='m13.41 13.41 5.3 5.3'/%3E%3Cpath d='m10.59 10.59-5.3-5.3'/%3E%3Ccircle cx='19' cy='5' r='2'/%3E%3Ccircle cx='5' cy='19' r='2'/%3E%3Ccircle cx='19' cy='19' r='2'/%3E%3Ccircle cx='5' cy='5' r='2'/%3E%3C/svg%3E") no-repeat center / contain; vertical-align: middle; }
 
@@ -49,8 +43,6 @@
 
         .glass-effect { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 1); }
         .dock-nav { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.8); border-top: 1px solid rgba(255, 255, 255, 1); }
-
-        .badge-4k { display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1D1D1F 0%, #434345 100%); color: #fff; font-size: 0.55rem; font-weight: 700; padding: 0.15rem 0.4rem; border-radius: 4px; margin-left: 0.4rem; letter-spacing: 0.5px; vertical-align: middle; }
 
         .sidebar-item { transition: all 0.3s ease; border-left: 3px solid transparent; }
         .sidebar-item:hover { background: rgba(255,255,255,0.8); }
@@ -61,14 +53,32 @@
         .service-widget::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, #788C9F, #cbd5e1); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
         .service-widget:hover { transform: translateY(-4px); box-shadow: var(--tw-shadow-premium-hover); background: #ffffff; border-color: rgba(120, 140, 159, 0.2); }
         .service-widget:hover::before { transform: scaleX(1); }
-        .service-widget:hover .widget-icon { transform: scale(1.1) rotate(5deg); color: #1D1D1F; }
 
-        .whatsapp-fab { position: fixed; bottom: 30px; right: 30px; background: rgba(255, 255, 255, 0.8); color: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.08), inset 0 1px 2px rgba(255,255,255,1); z-index: 90; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(255,255,255,1); backdrop-filter: blur(20px); cursor: pointer; }
-        .whatsapp-fab:hover { transform: scale(1.1) translateY(-5px); color: #128C7E; }
-
-        /* Estilos IA Chat */
-        .ai-chat-bubble-bot { background: #FFFFFF; color: #1D1D1F; border-radius: 12px 12px 12px 2px; align-self: flex-start; border: 1px solid rgba(0,0,0,0.05); font-size: 13.5px; padding: 14px 18px; max-width: 85%; box-shadow: 0 2px 5px rgba(0,0,0,0.02); line-height: 1.5; }
+        /* Estilos Chat y Cajas de Información */
+        .ai-chat-bubble-bot { background: #FFFFFF; color: #1D1D1F; border-radius: 12px 12px 12px 2px; align-self: flex-start; border: 1px solid rgba(0,0,0,0.05); font-size: 13.5px; padding: 16px; max-width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.03); line-height: 1.5; }
         .ai-chat-bubble-user { background: #1D1D1F; color: #FFFFFF; border-radius: 12px 12px 2px 12px; align-self: flex-end; font-size: 13.5px; padding: 12px 16px; max-width: 85%; box-shadow: 0 4px 10px rgba(29, 29, 31, 0.2); }
+        
+        .info-box { background: #f8fafc; border-left: 3px solid #788C9F; padding: 12px; margin-top: 10px; border-radius: 0 8px 8px 0; font-size: 12.5px; }
+        .info-box h4 { font-weight: 700; color: #334155; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        .info-box ul { list-style: none; padding: 0; margin: 0; }
+        .info-box ul li { position: relative; padding-left: 16px; margin-bottom: 4px; color: #475569; }
+        .info-box ul li::before { content: '•'; position: absolute; left: 0; color: #788C9F; font-weight: bold; }
+        .info-link { color: #0284c7; text-decoration: none; font-weight: 500; border-bottom: 1px solid transparent; transition: all 0.2s; }
+        .info-link:hover { border-bottom-color: #0284c7; }
+
+        .chat-wa-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #25D366; color: white !important; padding: 12px 20px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 13px; margin-top: 16px; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3); transition: all 0.3s; width: 100%; border: 1px solid rgba(255,255,255,0.2); }
+        .chat-wa-btn:hover { background: #128C7E; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4); }
+
+        /* Estilos Línea de Tiempo (Estado de Causa) */
+        .timeline { position: relative; padding-left: 20px; margin-top: 15px; }
+        .timeline::before { content: ''; position: absolute; left: 6px; top: 0; bottom: 0; width: 2px; background: #e2e8f0; }
+        .timeline-item { position: relative; margin-bottom: 15px; }
+        .timeline-item::before { content: ''; position: absolute; left: -19.5px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: #e2e8f0; border: 2px solid #fff; box-shadow: 0 0 0 1px #cbd5e1; }
+        .timeline-item.active::before { background: #25D366; box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.3); border-color: #fff; }
+        .timeline-item.past::before { background: #788C9F; box-shadow: 0 0 0 1px #788C9F; }
+        .timeline-content h5 { font-size: 13px; font-weight: 600; color: #1e293b; margin: 0 0 2px 0; }
+        .timeline-content p { font-size: 11.5px; color: #64748b; margin: 0; }
+
         .typing-indicator span { display: inline-block; width: 6px; height: 6px; background-color: #788C9F; border-radius: 50%; margin-right: 3px; animation: typing 1.2s infinite; opacity: 0.7;}
         .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
         .typing-indicator span:nth-child(3) { animation-delay: 0.4s; margin-right: 0; }
@@ -76,13 +86,8 @@
 
         .fade-in { opacity: 0; animation: fadeInApple 0.5s ease-out forwards; }
         @keyframes fadeInApple { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Botón WhatsApp dentro del Chat */
-        .chat-wa-btn { display: inline-flex; align-items: center; gap: 8px; background: #25D366; color: white; padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px; margin-top: 12px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.2); transition: all 0.2s; }
-        .chat-wa-btn:hover { background: #128C7E; transform: translateY(-2px); color: white;}
     </style>
 </head>
 <body class="relative flex flex-col min-h-screen">
@@ -94,56 +99,53 @@
         <div class="max-w-7xl mx-auto px-4 md:px-6">
             <div class="flex justify-between items-center">
                 <div class="flex-shrink-0 flex items-center gap-2.5">
-                    <div class="w-9 h-9 bg-mac-dark/90 backdrop-blur-md rounded-xl flex items-center justify-center text-white shadow-sm border border-white/20">
-                        <i class="fas fa-gavel text-sm"></i>
+                    <div class="w-9 h-9 bg-legal-blue backdrop-blur-md rounded-xl flex items-center justify-center text-white shadow-sm">
+                        <i class="fas fa-balance-scale-right text-sm"></i>
                     </div>
                     <a href="#" class="font-semibold text-xl tracking-tight text-mac-dark">AeroLex</a>
                 </div>
                 
                 <nav class="hidden md:flex space-x-1 dock-nav shadow-mac-dock rounded-full px-4 py-2 mx-auto">
-                    <a href="#inicio" class="px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-mac-dark/80 hover:bg-white/50 hover:text-mac-dark transition-all">Inicio</a>
-                    <a href="#servicios" class="px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-mac-dark/80 hover:bg-white/50 hover:text-mac-dark transition-all">Core System</a>
+                    <a href="#inicio" class="px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-mac-dark/80 hover:bg-white/50 transition-all">Inicio</a>
+                    <a href="#servicios" class="px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-mac-dark/80 hover:bg-white/50 transition-all">Plataforma Legal</a>
+                    <a href="#" onclick="openCaseStatusModal()" class="px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide text-legal-blue bg-blue-50/50 hover:bg-blue-100/50 transition-all flex items-center gap-1.5"><i class="fas fa-search"></i> Estado de Causa</a>
                 </nav>
                 
                 <div class="hidden md:flex">
-                    <button id="open-ai-header-btn" class="bg-mac-dark text-white hover:bg-black px-5 py-2 rounded-full text-xs font-semibold transition-all shadow-md flex items-center gap-2 border border-white/20">
-                        <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                        Consultor Virtual IA
+                    <button id="open-ai-header-btn" class="bg-mac-dark text-white hover:bg-black px-5 py-2.5 rounded-full text-xs font-semibold transition-all shadow-md flex items-center gap-2">
+                        <i class="fas fa-user-tie text-mac-accent"></i> Paralegal Virtual
                     </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Botón WhatsApp Tradicional Flotante -->
-    <a href="https://wa.me/56900000000?text=Hola%20AeroLex,%20necesito%20asistencia%20legal%20y%20técnica." target="_blank" class="whatsapp-fab" aria-label="WhatsApp humano"><i class="fab fa-whatsapp"></i></a>
-
-    <!-- VENTANA DEL ASISTENTE VIRTUAL IA (LOCAL Y SEGURA) -->
-    <div id="ai-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-mac-dark/50 backdrop-blur-md opacity-0 transition-opacity duration-300">
-        <div class="glass-effect rounded-3xl w-full max-w-lg mx-4 shadow-2xl border border-white overflow-hidden flex flex-col h-[600px] transform scale-95 transition-transform duration-300" id="ai-modal-content">
+    <!-- VENTANA DEL PARALEGAL VIRTUAL (SMART FILTER) -->
+    <div id="ai-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-mac-dark/60 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+        <div class="glass-effect rounded-3xl w-full max-w-lg mx-4 shadow-2xl border border-white overflow-hidden flex flex-col h-[650px] transform scale-95 transition-transform duration-300" id="ai-modal-content">
             
-            <div class="h-16 bg-white/60 border-b border-black/5 flex items-center justify-between px-6 backdrop-blur-xl shrink-0">
+            <div class="h-16 bg-white/80 border-b border-black/5 flex items-center justify-between px-6 backdrop-blur-xl shrink-0">
                 <div class="flex items-center gap-3">
-                    <div class="relative flex items-center justify-center w-10 h-10 bg-mac-dark rounded-full text-white shadow-md border border-white/50">
-                        <i class="fas fa-robot"></i>
+                    <div class="relative flex items-center justify-center w-10 h-10 bg-legal-blue rounded-full text-white shadow-md">
+                        <i class="fas fa-user-tie"></i>
                         <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></div>
                     </div>
                     <div>
-                        <h3 class="text-sm font-bold text-mac-dark leading-tight">AeroLex AI</h3>
-                        <p class="text-[10px] font-medium text-mac-dark/50 uppercase tracking-widest">Sistema Encriptado Local</p>
+                        <h3 class="text-sm font-bold text-mac-dark leading-tight">Secretaría Técnica AeroLex</h3>
+                        <p class="text-[10px] font-medium text-mac-dark/50 uppercase tracking-widest">Filtro Legal Inteligente</p>
                     </div>
                 </div>
-                <button id="close-ai-modal" class="text-mac-dark/40 hover:text-mac-dark transition-colors w-8 h-8 flex items-center justify-center bg-white/50 rounded-full hover:bg-white"><i class="fas fa-times"></i></button>
+                <button id="close-ai-modal" class="text-mac-dark/40 hover:text-mac-dark transition-colors w-8 h-8 flex items-center justify-center bg-black/5 rounded-full hover:bg-black/10"><i class="fas fa-times"></i></button>
             </div>
 
-            <div id="ai-chat-log" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4 bg-black/[0.02] hide-scrollbar scroll-smooth">
-                <div class="text-center my-2"><span class="bg-black/5 text-mac-dark/60 text-[10px] py-1 px-3 rounded-full font-medium shadow-sm uppercase tracking-wider">Hoy</span></div>
+            <div id="ai-chat-log" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4 bg-gradient-to-b from-transparent to-black/[0.02] hide-scrollbar scroll-smooth">
+                <div class="text-center my-2"><span class="bg-white/80 border border-black/5 text-mac-dark/60 text-[10px] py-1 px-4 rounded-full font-medium shadow-sm uppercase tracking-wider">Mesa de Entrada Segura</span></div>
             </div>
 
-            <form id="ai-input-form" class="p-4 bg-white/80 border-t border-black/5 shrink-0 backdrop-blur-xl flex gap-3">
-                <input type="text" id="ai-input" class="flex-1 bg-white border border-black/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-mac-accent focus:ring-1 focus:ring-mac-accent shadow-sm" placeholder="Consulte sus dudas legales aquí..." autocomplete="off">
-                <button type="submit" id="ai-send-btn" class="w-12 h-12 bg-mac-dark text-white rounded-xl flex items-center justify-center shadow-md hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                    <i class="fas fa-paper-plane text-sm"></i>
+            <form id="ai-input-form" class="p-4 bg-white/90 border-t border-black/5 shrink-0 backdrop-blur-xl flex gap-3">
+                <input type="text" id="ai-input" class="flex-1 bg-white border border-black/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-legal-blue focus:ring-1 focus:ring-legal-blue shadow-sm" placeholder="Responda aquí o ingrese su ROL de causa..." autocomplete="off">
+                <button type="submit" id="ai-send-btn" class="w-12 h-12 bg-legal-blue text-white rounded-xl flex items-center justify-center shadow-md hover:bg-legal-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-arrow-up text-sm"></i>
                 </button>
             </form>
         </div>
@@ -153,16 +155,20 @@
     <section id="inicio" class="pt-40 pb-12 md:pb-24 flex flex-col items-center justify-center text-center px-4 relative z-10">
         <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-mac-dark mb-4 md:mb-6 max-w-4xl leading-tight fade-in">
             Soluciones Jurídicas Estratégicas.<br>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-mac-accent to-gray-500">Decisiones Seguras.</span>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-legal-blue to-mac-accent">Decisiones Seguras.</span>
         </h1>
-        <p class="text-base md:text-lg text-mac-dark/70 max-w-3xl font-light mb-12 leading-relaxed fade-in" style="animation-delay: 0.1s;">
-            Brindamos asesoría a empresas y particulares en materias corporativas, civiles y de familia. Integramos <strong>análisis territorial avanzado y drones</strong> para construir antecedentes técnicos inobjetables que respaldan su negocio.
+        <p class="text-base md:text-lg text-mac-dark/70 max-w-3xl font-light mb-10 leading-relaxed fade-in" style="animation-delay: 0.1s;">
+            Brindamos asesoría a empresas y particulares en materias corporativas, civiles y de familia. Integramos <strong>análisis territorial avanzado y drones</strong> para construir antecedentes probatorios inobjetables.
         </p>
+        <div class="flex gap-4 fade-in" style="animation-delay: 0.2s;">
+            <button onclick="document.getElementById('servicios').scrollIntoView({behavior: 'smooth'})" class="bg-legal-blue text-white px-6 py-3 rounded-full text-sm font-semibold shadow-lg hover:bg-legal-blue/90 transition-all">Explorar Servicios</button>
+            <button onclick="openCaseStatusModal()" class="bg-white text-legal-blue border border-legal-blue/20 px-6 py-3 rounded-full text-sm font-semibold shadow-sm hover:shadow-md transition-all flex items-center gap-2"><i class="fas fa-search"></i> Estado de Mi Causa</button>
+        </div>
     </section>
 
-    <!-- VENTANA CORE SYSTEM -->
+    <!-- VENTANA CORE SYSTEM LEGALTECH -->
     <section id="servicios" class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pb-20 relative z-10 w-full">
-        <div class="glass-effect rounded-[2.5rem] shadow-mac-window overflow-hidden border border-white flex flex-col h-[750px] md:h-[800px] fade-in" style="animation-delay: 0.2s;">
+        <div class="glass-effect rounded-[2.5rem] shadow-mac-window overflow-hidden border border-white flex flex-col h-[750px] md:h-[800px] fade-in" style="animation-delay: 0.3s;">
             
             <div class="h-14 bg-white/50 border-b border-black/5 flex items-center justify-between px-6 backdrop-blur-md shrink-0">
                 <div class="flex items-center gap-3">
@@ -171,15 +177,14 @@
                         <div class="w-3 h-3 rounded-full bg-[#FFBD2E] border border-black/10"></div>
                         <div class="w-3 h-3 rounded-full bg-[#27C93F] border border-black/10"></div>
                     </div>
-                    <span class="text-[11px] font-semibold text-mac-dark/60 uppercase tracking-widest ml-4 hidden sm:block">AeroLex Core System</span>
+                    <span class="text-[11px] font-bold text-legal-blue/70 uppercase tracking-widest ml-4 hidden sm:block">AeroLex LegalTech Platform</span>
                 </div>
                 <div class="flex space-x-4 text-[11px] font-medium text-mac-dark/40">
-                    <span class="flex items-center gap-1.5"><i class="fas fa-microchip text-mac-accent"></i> Local Neural Engine</span>
+                    <span class="flex items-center gap-1.5"><i class="fas fa-check-circle text-green-500"></i> Sistema Operativo</span>
                 </div>
             </div>
 
             <div class="flex flex-col md:flex-row flex-1 overflow-hidden h-full bg-white/30">
-                
                 <div class="w-full md:w-72 bg-white/60 border-b md:border-b-0 md:border-r border-black/5 p-4 shrink-0 backdrop-blur-xl z-10 overflow-y-auto hide-scrollbar">
                     <div class="mb-6">
                         <p class="text-[10px] font-bold text-mac-dark/40 uppercase tracking-widest mb-3 px-3">Ecosistema Jurídico</p>
@@ -193,439 +198,342 @@
                 </div>
 
                 <div class="flex-1 p-6 md:p-10 overflow-y-auto relative h-full bg-transparent scroll-smooth hide-scrollbar">
-                    
                     <div id="content-header" class="mb-8 flex flex-col justify-start items-start">
-                        <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-5 text-mac-accent shadow-sm border border-black/5">
+                        <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-5 text-legal-blue shadow-sm border border-black/5">
                             <i id="content-icon" class="fas fa-balance-scale text-2xl transition-all duration-500"></i>
                         </div>
                         <h2 id="content-title" class="text-3xl md:text-4xl font-bold text-mac-dark tracking-tight transition-all duration-300 flex items-center flex-wrap gap-3">
                             Cargando Plataforma...
                         </h2>
                         <p id="content-desc" class="text-base md:text-lg text-mac-dark/60 mt-3 font-light leading-relaxed max-w-2xl transition-all duration-300">
-                            Iniciando base de datos...
+                            Sincronizando base de conocimientos...
                         </p>
                     </div>
-
                     <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5 pb-20"></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="border-t border-black/5 bg-white/50 backdrop-blur-md py-8 relative z-10 w-full mt-auto">
-        <div class="max-w-7xl mx-auto px-6 text-center text-xs text-mac-dark/50">
-            <p>&copy; 2026 AeroLex Corp. Arquitectura Legal & Tecnológica.</p>
-        </div>
-    </footer>
-
     <!-- ============================================== -->
-    <!-- MOTOR DE IA LOCAL SIMULADA (SIN API EXTERNAS)  -->
+    <!-- MOTOR LEGALTECH (PARALEGAL VIRTUAL + ESTADO CAUSA) -->
     <!-- ============================================== -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        // CONFIGURACIÓN DE CONTACTO
+        const WHATSAPP_NUMBER = "56900000000"; // Reemplaza con tu número real (Ej: 56912345678)
 
-            // NOTA: Se eliminó el Token de Google por seguridad y estabilidad. Todo ocurre aquí.
-            const WHATSAPP_NUMBER = "56900000000"; // Agrega aquí tu número real para la derivación final.
-            
-            const aiModal = document.getElementById('ai-modal');
-            const aiModalContent = document.getElementById('ai-modal-content');
-            const closeAiBtn = document.getElementById('close-ai-modal');
-            const aiChatLog = document.getElementById('ai-chat-log');
-            const aiInputForm = document.getElementById('ai-input-form');
-            const aiInput = document.getElementById('ai-input');
-            const aiSendBtn = document.getElementById('ai-send-btn');
-            
-            let isChatInitialized = false;
-            let currentConversationState = 0; // Controla la etapa del cuestionario
-            let currentServiceContext = ""; // Guarda el servicio seleccionado
+        // REFERENCIAS DOM CHAT
+        const aiModal = document.getElementById('ai-modal');
+        const aiChatLog = document.getElementById('ai-chat-log');
+        const aiInput = document.getElementById('ai-input');
+        const aiInputForm = document.getElementById('ai-input-form');
+        
+        // ESTADOS DE CONVERSACIÓN
+        let isChatOpen = false;
+        let flowState = { step: 0, categoryId: null, serviceName: null, userInputs: [] };
 
-            function openAIChat(initialPrompt = null) {
-                aiModal.classList.remove('hidden');
-                setTimeout(() => { 
-                    aiModal.classList.remove('opacity-0'); 
-                    aiModalContent.classList.remove('scale-95');
-                }, 10);
-
-                if (!isChatInitialized && !initialPrompt) {
-                    isChatInitialized = true;
-                    simulateAIResponse("GREETING_ONLY");
-                }
-
-                if (initialPrompt) {
-                    isChatInitialized = true;
-                    addUserMessage(initialPrompt);
-                    simulateAIResponse(initialPrompt);
-                }
+        // ==========================================
+        // BASE DE CONOCIMIENTO LEGAL (EL CEREBRO)
+        // ==========================================
+        const legalKnowledge = {
+            'civil': {
+                docs: [
+                    "Copia de contratos firmados o escrituras públicas (Notaría).",
+                    "Correos electrónicos o WhatsApps que demuestren acuerdos.",
+                    "En caso de deudas: Pagarés, cheques o facturas emitidas (SII)."
+                ],
+                source: "Puede obtener copias de escrituras en la Notaría de origen o en el Archivo Judicial si tienen más de un año.",
+                urgency: "¿Existe alguna fecha de vencimiento próxima estipulada en su contrato o ha recibido alguna notificación judicial recientemente?"
+            },
+            'inmobiliario': {
+                docs: [
+                    "Certificado de Dominio Vigente (CBR).",
+                    "Certificado de Hipotecas, Gravámenes y Prohibiciones (CBR).",
+                    "Certificado de Avalúo Fiscal detallado (<a href='https://homer.sii.cl/' target='_blank' class='info-link'>SII.cl</a>)."
+                ],
+                source: "Los certificados del CBR (Conservador de Bienes Raíces) son obligatorios para evaluar cualquier propiedad. Pueden solicitarse online en la web del conservador respectivo.",
+                urgency: "¿Se encuentra ad portas de firmar una Promesa de Compraventa o existe riesgo de remate del inmueble?"
+            },
+            'comercial': {
+                docs: [
+                    "Certificado de Vigencia de la Sociedad y Estatutos actualizados.",
+                    "Carpeta Tributaria para solicitar créditos (SII).",
+                    "Pactos de accionistas previos (si existen)."
+                ],
+                source: "Si su empresa se creó por 'Tu Empresa en Un Día', puede descargar todo gratuitamente desde el <a href='https://www.registrodeempresasysociedades.cl/' target='_blank' class='info-link'>Registro de Empresas</a>.",
+                urgency: "¿Existe algún bloqueo societario actual, auditoría del SII en curso o fecha límite para una licitación/fusión?"
+            },
+            'laboral': {
+                docs: [
+                    "Contrato de trabajo y anexos.",
+                    "Cartola de Cotizaciones Previsionales (AFP/Previred).",
+                    "Cartas de amonestación, despido o constancias de la Inspección del Trabajo."
+                ],
+                source: "Las constancias y reclamos puede realizarlos directamente con su Clave Única en el portal <a href='https://midt.dirtrab.cl/' target='_blank' class='info-link'>Mi DT</a>.",
+                urgency: "<strong>Atención:</strong> En materia laboral los plazos son brevísimos. Para demandas por despido injustificado o tutela laboral, el plazo general es de 60 días hábiles desde la separación. ¿Cuándo ocurrió el hecho?"
+            },
+            'familia': {
+                docs: [
+                    "Certificado de Matrimonio o Nacimiento de los hijos (<a href='https://www.registrocivil.cl/' target='_blank' class='info-link'>Registro Civil</a>).",
+                    "Certificado de Cese de Convivencia (si aplica).",
+                    "<strong>Certificado de Mediación Frustrada</strong> (Obligatorio por ley para Alimentos y Cuidado Personal)."
+                ],
+                source: "Los certificados de filiación son gratuitos obteniéndolos con Clave Única en la web del Registro Civil. La mediación previa debe solicitarse en un centro licitado o privado.",
+                urgency: "¿Existe alguna situación de Violencia Intrafamiliar (VIF) inminente o vulneración de derechos de menores que requiera una medida cautelar urgente?"
+            },
+            'default': {
+                docs: ["Cualquier antecedente, resolución o correo electrónico relacionado al caso."],
+                source: "Reúna la información en formato digital (PDF) para agilizar la revisión del abogado.",
+                urgency: "¿Ha sido notificado formalmente por algún tribunal o entidad del Estado? De ser así, ¿en qué fecha?"
             }
+        };
 
-            function closeAIChat() {
-                aiModal.classList.add('opacity-0');
-                aiModalContent.classList.add('scale-95');
-                setTimeout(() => { aiModal.classList.add('hidden'); }, 300);
-            }
+        // ==========================================
+        // FUNCIONES UI DEL PARALEGAL VIRTUAL
+        // ==========================================
+        function injectBotMessage(htmlContent) {
+            const typingId = 'typing-' + Date.now();
+            aiChatLog.insertAdjacentHTML('beforeend', `<div id="${typingId}" class="ai-chat-bubble-bot typing-indicator"><span></span><span></span><span></span></div>`);
+            aiChatLog.scrollTop = aiChatLog.scrollHeight;
 
-            function addUserMessage(text) {
-                const msgHtml = `<div class="ai-chat-bubble-user fade-in">${text}</div>`;
-                aiChatLog.insertAdjacentHTML('beforeend', msgHtml);
+            setTimeout(() => {
+                const el = document.getElementById(typingId);
+                if(el) el.remove();
+                aiChatLog.insertAdjacentHTML('beforeend', `<div class="ai-chat-bubble-bot fade-in">${htmlContent}</div>`);
                 aiChatLog.scrollTop = aiChatLog.scrollHeight;
+            }, 1000);
+        }
+
+        function addUserMessage(text) {
+            aiChatLog.insertAdjacentHTML('beforeend', `<div class="ai-chat-bubble-user fade-in">${text}</div>`);
+            aiChatLog.scrollTop = aiChatLog.scrollHeight;
+            flowState.userInputs.push(text);
+        }
+
+        // ==========================================
+        // MOTOR LÓGICO DEL FILTRO (El Cuestionario)
+        // ==========================================
+        function processUserMessage(text) {
+            // DETECCIÓN ESTADO DE CAUSA (RUT o ROL)
+            if (text.match(/^[0-9]{1,2}\.?[0-9]{3}\.?[0-9]{3}[-][0-9kK]{1}$/) || text.match(/^[A-Za-z]-[0-9]+-[0-9]{4}$/)) {
+                simulateCaseTracking(text);
+                return;
             }
 
-            function injectBotMessageHTML(htmlContent) {
-                const typingId = 'typing-' + Date.now();
-                const typingHtml = `<div id="${typingId}" class="ai-chat-bubble-bot typing-indicator"><span></span><span></span><span></span></div>`;
-                aiChatLog.insertAdjacentHTML('beforeend', typingHtml);
-                aiChatLog.scrollTop = aiChatLog.scrollHeight;
+            // FLUJO NORMAL DE SECRETARÍA TÉCNICA
+            let kn = legalKnowledge[flowState.categoryId] || legalKnowledge['default'];
 
-                setTimeout(() => {
-                    const tEl = document.getElementById(typingId);
-                    if(tEl) tEl.remove();
-                    const msgHtml = `<div class="ai-chat-bubble-bot fade-in">${htmlContent}</div>`;
-                    aiChatLog.insertAdjacentHTML('beforeend', msgHtml);
-                    aiChatLog.scrollTop = aiChatLog.scrollHeight;
-                }, 1200); // Simulamos "pensando..." por 1.2 segundos
-            }
-
-            // MOTOR LÓGICO DE LA IA LOCAL (El "Cuestionario Perfecto")
-            function simulateAIResponse(userText) {
-                let botHTML = "";
+            if (flowState.step === 1) {
+                // El usuario respondió a la Urgencia. Ahora pedimos Documentos.
+                flowState.step = 2;
                 
-                // CASO 0: Saludo Inicial (Sin apretar tarjeta)
-                if (userText === "GREETING_ONLY") {
-                    currentConversationState = 0;
-                    botHTML = "Bienvenido a la matriz de atención de <strong>AeroLex</strong>. Para brindarle una asesoría técnica y quirúrgica, por favor indíquenos en qué área legal o tecnológica requiere nuestra intervención hoy.";
-                    injectBotMessageHTML(botHTML);
-                    return;
-                }
-
-                // CASO 1: Viene desde una tarjeta (Inicio del cuestionario)
-                if (userText.includes("Me interesa el servicio de") && userText.includes("¿Qué implica exactamente")) {
-                    currentConversationState = 1;
-                    
-                    // Extraemos los datos de la frase automática
-                    let serviceMatch = userText.match(/servicio de "(.*?)"/);
-                    let areaMatch = userText.match(/área de (.*?)\./);
-                    currentServiceContext = serviceMatch ? serviceMatch[1] : "esta materia";
-                    let area = areaMatch ? areaMatch[1] : "AeroLex";
-
-                    botHTML = `Excelente elección. En AeroLex abordamos el área de <strong>${area}</strong> con estricto rigor profesional y técnico.<br><br>
-                               Para ejecutar correctamente el servicio de <strong>${currentServiceContext}</strong>, nuestro protocolo inicial requiere mapear la complejidad del escenario.<br><br>
-                               Para brindarle una precisión absoluta: <strong>¿Podría indicarnos brevemente hace cuánto tiempo se originó este requerimiento o si existe alguna urgencia/plazo legal inminente?</strong>`;
-                }
+                let docList = kn.docs.map(d => `<li>${d}</li>`).join('');
                 
-                // CASO 2: Responde al tiempo/urgencia
-                else if (currentConversationState === 1) {
-                    currentConversationState = 2;
-                    botHTML = `Comprendo la situación perfectamente. La viabilidad y el éxito en procedimientos de <strong>${currentServiceContext || 'esta naturaleza'}</strong> radica en la calidad de la evidencia y los antecedentes técnicos.<br><br>
-                               <strong>¿Cuenta actualmente con documentación de respaldo</strong> (contratos, escrituras, correos, resoluciones o registros gráficos) que podamos someter a nuestra auditoría preliminar?`;
-                }
+                let response = `Entendido. Tomo nota de los plazos.<br><br>
+                                Como filtro técnico preliminar, para que el abogado especialista pueda analizar su caso con precisión y emitir un diagnóstico real, necesitaremos que reúna la siguiente documentación:<br>
+                                <div class="info-box">
+                                    <h4><i class="fas fa-folder-open"></i> Documentación Sugerida</h4>
+                                    <ul>${docList}</ul>
+                                    <p class="mt-2 pt-2 border-t border-black/10">💡 <em>${kn.source}</em></p>
+                                </div><br>
+                                ¿Cuenta actualmente con alguno de estos antecedentes o requiere apoyo para conseguirlos?`;
+                injectBotMessage(response);
+            } 
+            else if (flowState.step === 2) {
+                // El usuario respondió a los Documentos. Fin del filtro -> Derivación.
+                flowState.step = 3;
+                
+                // Construir mensaje resumen para WhatsApp
+                let summary = `Hola AeroLex.%0A%0A*Mesa de Entrada Web*%0AÁrea: ${flowState.categoryId.toUpperCase()}%0AServicio: ${flowState.serviceName}%0A%0A*Antecedentes (Plazos/Hechos):*%0A"${flowState.userInputs[0]}"%0A%0A*Estado Documental:*%0A"${flowState.userInputs[1]}"%0A%0ASolicito evaluación de mi caso.`;
 
-                // CASO 3: Responde a los antecedentes (Derivación a Humano)
-                else if (currentConversationState === 2) {
-                    currentConversationState = 3; // Fin del flujo
-                    let waMessage = encodeURIComponent(`Hola AeroLex. Vengo del Asistente Virtual. Solicito evaluación formal para el servicio de: ${currentServiceContext}`);
-                    
-                    botHTML = `Perfecto. Con esta información preliminar, el siguiente paso quirúrgico es que uno de nuestros especialistas y abogados analice su requerimiento bajo estricta confidencialidad legal.<br><br>
-                               <strong>¿Me permite derivarlo en este instante a nuestro canal directo y seguro de WhatsApp para que un especialista humano atienda su caso de forma prioritaria?</strong><br>
-                               <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}" target="_blank" class="chat-wa-btn"><i class="fab fa-whatsapp text-lg"></i> Hablar con un Especialista</a>`;
-                }
-
-                // CASO 4: Escribe algo suelto (Fallback General Inteligente)
-                else {
-                    let waMessage = encodeURIComponent(`Hola AeroLex, necesito asistencia sobre: ${userText.substring(0, 30)}...`);
-                    botHTML = `Entendido. En AeroLex fusionamos estrategia legal de élite con inteligencia territorial y corporativa.<br><br>
-                               Dado lo específico de su consulta, para garantizar que reciba una solución integral sin pérdida de tiempo, le sugiero derivar esta conversación directamente a nuestra mesa central de especialistas.<br>
-                               <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}" target="_blank" class="chat-wa-btn"><i class="fab fa-whatsapp text-lg"></i> Contactar a Mesa Central</a>`;
-                }
-
-                injectBotMessageHTML(botHTML);
+                let response = `Perfecto. He registrado sus respuestas en su ficha preliminar. <br><br>
+                                Ya tenemos el contexto necesario. Ahora, el siguiente paso quirúrgico es transferir su ficha directamente al escritorio de nuestro abogado especialista en <strong>${flowState.serviceName}</strong>.<br><br>
+                                <strong>Haga clic en el botón inferior para abrir un canal seguro de WhatsApp. El sistema enviará automáticamente su resumen al abogado para iniciar la evaluación formal.</strong><br>
+                                <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${summary}" target="_blank" class="chat-wa-btn"><i class="fab fa-whatsapp text-lg"></i> Enviar Ficha al Especialista</a>`;
+                injectBotMessage(response);
             }
+            else {
+                // Flujo genérico o fuera de contexto
+                let waGen = encodeURIComponent(`Hola AeroLex, necesito agendar una asesoría respecto a: ${text.substring(0, 50)}...`);
+                injectBotMessage(`Comprendo. En AeroLex somos especialistas en estructuración y resolución de conflictos de alta complejidad.<br><br>
+                                  Dado su requerimiento, lo más eficiente es que un miembro de nuestro equipo jurídico lo evalúe directamente.<br>
+                                  <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waGen}" target="_blank" class="chat-wa-btn"><i class="fab fa-whatsapp text-lg"></i> Hablar con un Abogado</a>`);
+            }
+        }
 
-            // Eventos Formulario Chat
-            aiInput.addEventListener('input', () => { aiSendBtn.disabled = aiInput.value.trim() === ''; });
-            aiInputForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const text = aiInput.value.trim();
-                if (!text) return;
-                aiInput.value = '';
-                aiSendBtn.disabled = true;
-                addUserMessage(text);
-                simulateAIResponse(text);
-            });
+        // ==========================================
+        // INICIO DEL FLUJO DESDE UNA TARJETA
+        // ==========================================
+        function triggerLegalFilter(categoryId, serviceName) {
+            aiModal.classList.remove('hidden');
+            setTimeout(() => { aiModal.classList.remove('opacity-0'); aiModalContent.classList.remove('scale-95'); }, 10);
+            
+            // Reiniciar Estado
+            aiChatLog.innerHTML = `<div class="text-center my-2"><span class="bg-white/80 border border-black/5 text-mac-dark/60 text-[10px] py-1 px-4 rounded-full font-medium shadow-sm uppercase tracking-wider">Mesa de Entrada Segura</span></div>`;
+            flowState = { step: 1, categoryId: categoryId, serviceName: serviceName, userInputs: [] };
 
-            document.getElementById('open-ai-header-btn').addEventListener('click', () => openAIChat());
-            closeAiBtn.addEventListener('click', closeAIChat);
-            aiModal.addEventListener('click', (e) => { if (e.target === aiModal) closeAIChat(); });
+            let kn = legalKnowledge[categoryId] || legalKnowledge['default'];
 
-            // --- 3. BASE DE DATOS Y RENDERIZADO DEL CORE SYSTEM ---
-            const navLegal = document.getElementById('sidebar-nav');
-            const navTech = document.getElementById('sidebar-nav-tech');
+            let startHTML = `Ha seleccionado <strong>${serviceName}</strong>.<br>Soy el filtro técnico automatizado de AeroLex. Antes de derivarlo con el abogado encargado de esta materia, evaluaremos la urgencia probatoria de su caso.<br><br>
+                             ${kn.urgency}`;
+            
+            injectBotMessage(startHTML);
+        }
+
+        // ==========================================
+        // SIMULACIÓN "ESTADO DE CAUSA" (PORTAL CLIENTE)
+        // ==========================================
+        window.openCaseStatusModal = function() {
+            aiModal.classList.remove('hidden');
+            setTimeout(() => { aiModal.classList.remove('opacity-0'); aiModalContent.classList.remove('scale-95'); }, 10);
+            
+            aiChatLog.innerHTML = `<div class="text-center my-2"><span class="bg-white/80 border border-black/5 text-legal-blue text-[10px] py-1 px-4 rounded-full font-bold shadow-sm uppercase tracking-wider">Portal Cliente Privado</span></div>`;
+            flowState.step = 99; // Estado especial
+            
+            injectBotMessage(`Bienvenido al sistema de Seguimiento de Causas y Trámites de AeroLex.<br><br>
+                              Por favor, <strong>ingrese el ROL de su causa (Ej: C-1234-2026) o su RUT</strong> para verificar el estado de tramitación en nuestra base de datos interna.`);
+        };
+
+        function simulateCaseTracking(code) {
+            // Se genera una tarjeta visual hermosa simulando datos de backend
+            let cardHTML = `
+                Buscando expediente asociado a: <strong>${code}</strong>...<br><br>
+                <div class="bg-white border border-black/10 rounded-xl p-4 shadow-sm">
+                    <div class="flex justify-between items-center mb-3 border-b border-black/5 pb-2">
+                        <span class="text-xs font-bold text-mac-dark/60 uppercase">Expediente Corporativo</span>
+                        <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-1 rounded font-bold">ACTIVA</span>
+                    </div>
+                    <h4 class="font-bold text-mac-dark text-sm mb-1">Reestructuración Societaria Inmobiliaria</h4>
+                    <p class="text-xs text-mac-dark/60 mb-4">Abogado a cargo: Departamento Corporativo AeroLex</p>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item past">
+                            <div class="timeline-content">
+                                <h5>Fase 1: Auditoría (Due Diligence)</h5>
+                                <p>Estudio de títulos finalizado. (Completado)</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item active">
+                            <div class="timeline-content">
+                                <h5 class="text-green-600">Fase 2: Redacción y Firmas</h5>
+                                <p>El borrador de la escritura se encuentra en revisión para envío a Notaría. (En Curso)</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h5 class="text-mac-dark/40">Fase 3: Inscripción CBR</h5>
+                                <p>Pendiente de ingreso al Conservador de Bienes Raíces.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>Si tiene dudas sobre esta etapa, escriba su consulta y la derivaremos con el equipo a cargo.
+            `;
+            injectBotMessage(cardHTML);
+        }
+
+        // ==========================================
+        // CONTROLADORES DE EVENTOS
+        // ==========================================
+        aiInputForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = aiInput.value.trim();
+            if (!text) return;
+            aiInput.value = '';
+            addUserMessage(text);
+            processUserMessage(text);
+        });
+
+        document.getElementById('close-ai-modal').addEventListener('click', () => {
+            aiModal.classList.add('opacity-0'); aiModalContent.classList.add('scale-95');
+            setTimeout(() => { aiModal.classList.add('hidden'); }, 300);
+        });
+
+        // ==========================================
+        // RENDERIZADO DEL CORE SYSTEM (Tarjetas)
+        // ==========================================
+        const db = {
+            legal: [
+                { id: 'civil', title: 'Derecho Civil', icon: 'fa-file-signature', desc: 'Gestión y blindaje estructural del patrimonio privado.', items: [ { title: "Redacción y revisión de contratos", desc: "Auditoría técnica de instrumentos para resguardar equilibrios." }, { title: "Juicios ordinarios y ejecutivos", desc: "Litigación estratégica y cobro de títulos." }, { title: "Prescripción adquisitiva", desc: "Consolidación judicial del dominio mediante prueba material." } ] },
+                { id: 'inmobiliario', title: 'Derecho Inmobiliario', icon: 'fa-city', desc: 'Seguridad jurídica para el desarrollo de bienes raíces.', items: [ { title: "Estudios de títulos", desc: "Auditoría registral en el Conservador de Bienes Raíces." }, { title: "Subdivisiones prediales", desc: "Gestión legal fusionada con topografía territorial." }, { title: "Regularización de propiedades", desc: "Saneamiento técnico-legal de inscripciones irregulares." } ] },
+                { id: 'laboral', title: 'Derecho Laboral', icon: 'fa-user-tie', desc: 'Compliance laboral y defensa especializada.', items: [ { title: "Defensa por Despidos", desc: "Litigación por despido injustificado y cobro de prestaciones." }, { title: "Tutela laboral", desc: "Defensa ante vulneración de derechos fundamentales." }, { title: "Auditorías a Empleadores", desc: "Revisión preventiva de contratos y reglamentos internos." } ] },
+                { id: 'familia', title: 'Derecho de Familia', icon: 'fa-users', desc: 'Soluciones efectivas para la protección del patrimonio personal.', items: [ { title: "Divorcios y Compensación", desc: "Tramitación estratégica protegiendo el patrimonio." }, { title: "Alimentos y Cuidado Personal", desc: "Gestión judicial garantizando el interés superior." } ] }
+            ],
+            tech: [
+                { id: 'drones', title: 'Evidencia Drones _4k', icon: 'fa-drone', desc: 'Captura audiovisual para sustentar demandas en tribunales.', items: [ { title: "Verificación de deslindes", desc: "Constatación aérea del límite físico predial." }, { title: "Peritajes judiciales", desc: "Informes visuales técnicos validados para tribunales." } ] },
+                { id: 'digital', title: 'Evidencia Digital', icon: 'fa-microchip', desc: 'Extracción y análisis de datos electrónicos.', items: [ { title: "Levantamiento de correos/chats", desc: "Recolección asegurando validez probatoria judicial." } ] }
+            ]
+        };
+
+        function format4K(text) { return text.replace(/_4k/g, '<span class="badge-4k">4K HDR</span>'); }
+
+        function renderContent(dataObj) {
             const contentTitle = document.getElementById('content-title');
             const contentDesc = document.getElementById('content-desc');
             const contentIcon = document.getElementById('content-icon');
             const servicesGrid = document.getElementById('services-grid');
 
-            let currentActiveBtn = null;
-
-            const db = {
-                legal: [
-                    { 
-                        id: 'civil', title: 'Derecho Civil', icon: 'fa-file-signature', desc: 'Gestión y blindaje estructural del patrimonio privado, garantizando seguridad jurídica en cada transacción.', 
-                        items: [
-                            { title: "Redacción y revisión de contratos", desc: "Auditoría exhaustiva y elaboración técnica de instrumentos para resguardar el equilibrio contractual." },
-                            { title: "Cobranza judicial y extrajudicial", desc: "Estrategias de recuperación de activos mediante acciones ejecutivas de alta eficacia." },
-                            { title: "Juicios ordinarios y ejecutivos", desc: "Litigación patrimonial estratégica, asegurando el debido proceso y la ejecución real de sentencias." },
-                            { title: "Indemnización de perjuicios", desc: "Persecución civil implacable para la reparación integral del daño sufrido." },
-                            { title: "Responsabilidad contractual", desc: "Análisis profundo de incumplimientos, cláusulas penales y responsabilidad civil." },
-                            { title: "Prescripción adquisitiva", desc: "Consolidación judicial del dominio mediante la prueba irrefutable de posesión material." },
-                            { title: "Servidumbres", desc: "Constitución, defensa y regulación de gravámenes reales sobre predios." },
-                            { title: "Acciones posesorias", desc: "Protección cautelar inmediata y eficaz frente a turbaciones de la propiedad." }
-                        ] 
-                    },
-                    { 
-                        id: 'inmobiliario', title: 'Derecho Inmobiliario', icon: 'fa-city', desc: 'Seguridad jurídica integral para el desarrollo seguro de proyectos y bienes raíces de alto valor.', 
-                        items: [
-                            { title: "Estudios de títulos", desc: "Auditoría registral minuciosa para detectar contingencias ocultas previas a la inversión." },
-                            { title: "Compraventa de inmuebles", desc: "Acompañamiento corporativo desde la promesa hasta la inscripción conservatoria final." },
-                            { title: "Regularización de propiedades", desc: "Saneamiento técnico-legal de la pequeña propiedad raíz e inscripciones irregulares." },
-                            { title: "Saneamiento de títulos", desc: "Corrección estratégica de vicios formales que impiden la libre circulación del bien." },
-                            { title: "Subdivisiones prediales", desc: "Gestión legal fusionada con topografía para la división precisa de terrenos." },
-                            { title: "Constitución de servidumbres", desc: "Formalización técnica de tránsitos, acueductos y tendidos eléctricos." },
-                            { title: "Asesoría inmobiliaria", desc: "Consultoría de élite para la estructuración y financiamiento de desarrollos urbanos." }
-                        ] 
-                    },
-                    { 
-                        id: 'comercial', title: 'Derecho Comercial', icon: 'fa-briefcase', desc: 'Estructuración societaria avanzada y protección legal para el crecimiento corporativo escalable.', 
-                        items: [
-                            { title: "Constitución de sociedades", desc: "Diseño de vehículos societarios a medida, adaptados al riesgo y necesidad de capital." },
-                            { title: "Modificaciones societarias", desc: "Transformaciones, divisiones y aumentos de capital ejecutados con precisión registral." },
-                            { title: "Fusiones y adquisiciones", desc: "Acompañamiento corporativo integral en procesos complejos de M&A (Mergers and Acquisitions)." },
-                            { title: "Pactos de accionistas", desc: "Regulación de gobiernos corporativos y cláusulas de salida para prevenir bloqueos." },
-                            { title: "Contratos comerciales", desc: "Ingeniería legal en acuerdos de distribución, franquicias y joint ventures." },
-                            { title: "Cobranza empresarial", desc: "Gestión corporativa y recuperación agresiva de flujos comerciales impagos." },
-                            { title: "Due diligence", desc: "Auditoría legal preventiva 360º para mapear contingencias antes de una inversión." },
-                            { title: "Gobierno corporativo", desc: "Implementación de normativas directivas transparentes para la toma de decisiones." }
-                        ] 
-                    },
-                    { 
-                        id: 'laboral', title: 'Derecho Laboral', icon: 'fa-user-tie', desc: 'Asesoría estratégica en relaciones del trabajo, compliance laboral y defensa ante tribunales.', 
-                        items: [
-                            { title: "Asesoría a empleadores", desc: "Consultoría preventiva en contratación, reglamentos internos y cumplimiento normativo." },
-                            { title: "Defensa laboral", desc: "Representación corporativa en juicios complejos de despido injustificado." },
-                            { title: "Despidos", desc: "Planificación estratégica y ejecución legal impecable de desvinculaciones." },
-                            { title: "Tutela laboral", desc: "Defensa técnica ante acusaciones de vulneración de derechos fundamentales." },
-                            { title: "Accidentes del trabajo", desc: "Blindaje corporativo y defensa ante siniestralidad laboral grave o fatal." },
-                            { title: "Auditorías laborales", desc: "Revisión exhaustiva de planillas, contratos y cumplimiento de la Dirección del Trabajo." },
-                            { title: "Negociación laboral", desc: "Manejo experto y estratégico en procesos de negociación colectiva y sindical." }
-                        ] 
-                    },
-                    { 
-                        id: 'administrativo', title: 'Derecho Administrativo', icon: 'fa-university', desc: 'Intermediación técnica y representación frente a los actos de los organismos del Estado.', 
-                        items: [
-                            { title: "Recursos administrativos", desc: "Impugnación técnica de actos de la administración que vulneren sus intereses." },
-                            { title: "Procedimientos sancionatorios", desc: "Defensa férrea ante multas, clausuras o sumarios de entidades públicas." },
-                            { title: "Licitaciones públicas", desc: "Asesoría experta en la postulación, revisión de bases y adjudicación en Mercado Público." },
-                            { title: "Compras públicas", desc: "Gestión de contratos y cumplimiento normativo como proveedor del Estado." },
-                            { title: "Reclamos ante organismos", desc: "Representación formal ante la Contraloría General, Superintendencias y Municipalidades." },
-                            { title: "Solicitudes de transparencia", desc: "Exigencia de información pública mediante la Ley de Transparencia." }
-                        ] 
-                    },
-                    { 
-                        id: 'ambiental', title: 'Derecho Ambiental', icon: 'fa-leaf', desc: 'Viabilidad técnica de proyectos y defensa especializada frente a contingencias ecológicas.', 
-                        items: [
-                            { title: "Asesoría ambiental", desc: "Acompañamiento estratégico en el Sistema de Evaluación de Impacto Ambiental (SEIA)." },
-                            { title: "Cumplimiento normativo", desc: "Adaptación proactiva a las exigencias medioambientales vigentes para evitar paralizaciones." },
-                            { title: "Procedimientos sancionatorios", desc: "Representación ante la Superintendencia del Medio Ambiente (SMA)." },
-                            { title: "Denuncias ambientales", desc: "Gestión y defensa ante acusaciones de impacto o daño al entorno." },
-                            { title: "Daño ambiental", desc: "Litigación de alta complejidad en tribunales ambientales por reparación." }
-                        ] 
-                    },
-                    { 
-                        id: 'familia', title: 'Derecho de Familia', icon: 'fa-users', desc: 'Soluciones legales de máxima discreción y efectividad para la protección del patrimonio personal.', 
-                        items: [
-                            { title: "Divorcios", desc: "Tramitación estratégica de divorcios de mutuo acuerdo y litigios unilaterales complejos." },
-                            { title: "Alimentos", desc: "Acciones de fijación, aumento, rebaja y medidas de apremio patrimonial." },
-                            { title: "Cuidado personal", desc: "Juicios de tuición orientados a resguardar el interés superior con rigor probatorio." },
-                            { title: "Relación directa y regular", desc: "Establecimiento judicial de regímenes de visitas justos y garantizados." },
-                            { title: "Compensación económica", desc: "Blindaje del patrimonio o cálculo preciso para la exigencia de compensaciones." },
-                            { title: "Violencia intrafamiliar", desc: "Tramitación de medidas cautelares urgentes bajo estricta confidencialidad." }
-                        ] 
-                    },
-                    { 
-                        id: 'sucesorio', title: 'Derecho Sucesorio', icon: 'fa-scroll', desc: 'Planificación hereditaria y resolución de conflictos para la transmisión segura del patrimonio.', 
-                        items: [
-                            { title: "Posesiones efectivas", desc: "Gestión ágil ante el Registro Civil o Tribunales para la apertura de la sucesión." },
-                            { title: "Herencias", desc: "Asesoría integral en la aceptación, inventario y carga tributaria hereditaria." },
-                            { title: "Particiones", desc: "Liquidación y distribución de bienes, ya sea de mutuo acuerdo o mediante juicio arbitral." },
-                            { title: "Testamentos", desc: "Redacción solemne de últimas voluntades para la distribution legal del patrimonio." },
-                            { title: "Litigios hereditarios", desc: "Acciones de petición de herencia y nulidad testamentaria." }
-                        ] 
-                    },
-                    { 
-                        id: 'litigacion', title: 'Litigación y Defensa', icon: 'fa-gavel', desc: 'Defensa implacable y representación en tribunales, fusionando la ley con evidencia técnica.', 
-                        items: [
-                            { title: "Representación ante tribunales", desc: "Patrocinio experto en tribunales ordinarios, especiales y Cortes de Apelaciones." },
-                            { title: "Patrocinio y poder", desc: "Asunción de la representación jurídica formal con absoluta lealtad al cliente." },
-                            { title: "Juicios civiles", desc: "Defensa en procedimientos ordinarios, sumarios y arbitrales de alta cuantía." },
-                            { title: "Juicios laborales", desc: "Litigación en sede laboral protegiendo los intereses corporativos de la empresa." },
-                            { title: "Juicios ejecutivos", desc: "Defensa activa contra embargos y remates, o persecución para cobro de títulos." },
-                            { title: "Recursos de protección", desc: "Acciones constitucionales de emergencia para frenar actos arbitrarios o ilegales." },
-                            { title: "Recursos de amparo", desc: "Acción inmediata ante vulneraciones a la libertad personal o seguridad." },
-                            { title: "Recursos de apelación", desc: "Elevación técnica de defensas ante Cortes de Apelaciones y Corte Suprema." },
-                            { title: "Defensa administrativa", desc: "Representación en procedimientos disciplinarios y sancionatorios estatales." }
-                        ] 
-                    },
-                    { 
-                        id: 'compliance', title: 'Compliance y Asesoría', icon: 'fa-shield-check', desc: 'Gerencia legal y prevención de riesgos corporativos para operar con absoluta seguridad normativa.', 
-                        items: [
-                            { title: "Gerencia legal externa", desc: "Dirección jurídica externalizada (General Counsel) para la operatividad diaria." },
-                            { title: "Compliance corporativo", desc: "Implementación de políticas de cumplimiento, ética y transparencia interna." },
-                            { title: "Modelos de prevención", desc: "Diseño de matrices Ley 20.393 para eximir a la empresa de responsabilidad penal." },
-                            { title: "Auditorías legales", desc: "Revisión profunda del estado jurídico de la compañía para detectar vulnerabilidades." },
-                            { title: "Gestión de riesgos", desc: "Identificación, mapeo y mitigación de contingencias legales operacionales." },
-                            { title: "Protección de datos", desc: "Adecuación corporativa a las normativas de privacidad y manejo de información." },
-                            { title: "Cumplimiento normativo", desc: "Alineación de procesos con exigencias regulatorias sectoriales." },
-                            { title: "Investigación interna", desc: "Conducción de sumarios corporativos por fraude, acoso o infracciones." },
-                            { title: "Due diligence empresarial", desc: "Radiografía jurídica total para procesos de compra, venta o fusión de compañías." }
-                        ] 
-                    },
-                    { 
-                        id: 'mediacion', title: 'Mediación y Negociación', icon: 'fa-handshake', desc: 'Resolución inteligente de conflictos mediante estrategias de acercamiento extrajudicial.', 
-                        items: [
-                            { title: "Negociación extrajudicial", desc: "Intervención estratégica para evitar el desgaste y costo del litigio." },
-                            { title: "Resolución de conflictos", desc: "Diseño de vías alternativas (ADR) para alcanzar acuerdos eficientes." },
-                            { title: "Mediación privada", desc: "Facilitación profesional imparcial para destrabar disputas comerciales o civiles." },
-                            { title: "Acuerdos transaccionales", desc: "Redacción de contratos de transacción para extinguir litigios presentes o futuros." },
-                            { title: "Reestructuración de deudas", desc: "Negociación de pasivos con acreedores bancarios y comerciales." }
-                        ] 
-                    }
-                ],
-                tech: [
-                    { 
-                        id: 'evidencia_digital', title: 'Evidencia Digital', icon: 'fa-microchip', desc: 'Extracción, resguardo y análisis de datos electrónicos con cadena de custodia judicial.', 
-                        items: [
-                            { title: "Levantamiento de evidencia", desc: "Recolección forense de correos, chats y datos asegurando su validez probatoria." },
-                            { title: "Informes jurídicos", desc: "Análisis especializado cruzando regulaciones complejas con metadatos electrónicos." },
-                            { title: "Investigación jurídica", desc: "Búsqueda profunda (OSINT) de antecedentes comerciales y societarios." },
-                            { title: "Custodia documental", desc: "Almacenamiento y resguardo probatorio encriptado para litigios inminentes." },
-                            { title: "Análisis documental", desc: "Revisión técnica de expedientes corporativos y trazabilidad de información." }
-                        ] 
-                    },
-                    { 
-                        id: 'drones_registro', title: 'Registro Aéreo _4k', icon: 'fa-drone', desc: 'Inspección visual de alta precisión mediante sistemas aéreos no tripulados.', 
-                        items: [
-                            { title: "Inspección de predios", desc: "Vuelos de reconocimiento para evaluar el estado real de grandes extensiones de tierra." },
-                            { title: "Inspección de obras", desc: "Revisión en altura de avances constructivos y calidad de ejecución." },
-                            { title: "Inspección industrial", desc: "Evaluación visual de infraestructuras críticas minimizando riesgos." },
-                            { title: "Inspección de techumbres", desc: "Detección de fallas estructurales o filtraciones mediante cámaras de alta resolución." },
-                            { title: "Inspección de caminos", desc: "Levantamiento visual de rutas y servidumbres de tránsito terrestre." },
-                            { title: "Monitoreo de proyectos", desc: "Registro periódico del estado de grandes proyectos mineros o de ingeniería." }
-                        ] 
-                    },
-                    { 
-                        id: 'drones_litigios', title: 'Evidencia Litigios _4k', icon: 'fa-camera', desc: 'Captura audiovisual georreferenciada para sustentar o desestimar demandas en tribunales.', 
-                        items: [
-                            { title: "Registro audiovisual", desc: "Generación de prueba material en video 4K, geolocalizada e inobjetable." },
-                            { title: "Verificación de deslindes", desc: "Constatación aérea del límite físico en contraste con la inscripción registral." },
-                            { title: "Conflictos de propiedad", desc: "Aportación visual contundente en juicios de demarcación y cerramiento." },
-                            { title: "Ocupaciones irregulares", desc: "Evidencia temporal y espacial de tomas de terreno para acciones reivindicatorias." },
-                            { title: "Daños ambientales", desc: "Captura de la magnitud de derrames, talas o alteraciones al ecosistema." },
-                            { title: "Peritajes judiciales", desc: "Elaboración de informes técnicos visuales validados para presentarse en sala." }
-                        ] 
-                    },
-                    { 
-                        id: 'fotogrametria', title: 'Fotogrametría', icon: 'fa-layer-group', desc: 'Mapeo espacial y modelado 3D para cálculo de superficies y validación topográfica.', 
-                        items: [
-                            { title: "Ortomosaicos", desc: "Creación de mapas 2D de ultra alta resolución a partir de miles de fotografías aéreas." },
-                            { title: "Modelos 3D", desc: "Reconstrucción digital volumétrica de terrenos y edificaciones complejas." },
-                            { title: "Cálculo de superficies", desc: "Determinación matemática exacta de cabidas (metros cuadrados/hectáreas)." },
-                            { title: "Seguimiento de obras", desc: "Contraste técnico entre el modelo digital planificado y lo ejecutado en terreno." },
-                            { title: "Informes técnicos", desc: "Documentación topográfica elaborada por especialistas para sustento probatorio." },
-                            { title: "Documentación procesal", desc: "Traducción de la data técnica a lenguaje jurídico para expedientes judiciales." }
-                        ] 
-                    },
-                    { 
-                        id: 'empresas', title: 'Servicios Corporativos', icon: 'fa-building', desc: 'Externalización de la inteligencia legal y técnica para el blindaje de la empresa moderna.', 
-                        items: [
-                            { title: "Asesoría permanente", desc: "Acompañamiento legal constante (Retainer) para la toma de decisiones gerenciales." },
-                            { title: "Gestión de contratos", desc: "Administración, renovación y auditoría del ciclo de vida de los contratos corporativos." },
-                            { title: "Cobranza corporativa", desc: "Sistemas estandarizados de recuperación de cartera vencida B2B." },
-                            { title: "Auditoría preventiva", desc: "Diagnóstico legal continuo para anticiparse a fiscalizaciones estatales." },
-                            { title: "Evaluación de riesgos", desc: "Mapeo jurídico de nuevas líneas de negocio o expansiones territoriales." },
-                            { title: "Regularización de activos", desc: "Saneamiento de propiedades industriales y maquinarias de la compañía." },
-                            { title: "Asesoría para licitaciones", desc: "Estrategia técnica para la adjudicación de contratos públicos o privados." },
-                            { title: "Recuperación de activos", desc: "Persecución civil y penal para el reintegro de bienes corporativos sustraídos." },
-                            { title: "Estudios corporativos", desc: "Análisis de títulos de sociedades objetivo para futuras inversiones." },
-                            { title: "Informes estratégicos", desc: "Redacción de opiniones legales (Legal Opinions) de alta complejidad." }
-                        ] 
-                    }
-                ]
-            };
-
-            function format4K(text) { return text.replace(/_4k/g, '<span class="badge-4k">4K HDR</span>'); }
-
-            function renderContent(dataObj, btnElement) {
-                if (currentActiveBtn) currentActiveBtn.classList.remove('active');
-                btnElement.classList.add('active');
-                currentActiveBtn = btnElement;
-
-                contentTitle.style.opacity = '0'; contentDesc.style.opacity = '0'; contentIcon.style.opacity = '0'; servicesGrid.style.opacity = '0';
+            contentTitle.style.opacity = '0'; contentDesc.style.opacity = '0'; contentIcon.style.opacity = '0'; servicesGrid.style.opacity = '0';
+            
+            setTimeout(() => {
+                contentTitle.innerHTML = format4K(dataObj.title);
+                contentDesc.textContent = dataObj.desc;
+                contentIcon.className = `fas ${dataObj.icon} text-3xl md:text-4xl text-legal-blue transition-all duration-300`;
+                servicesGrid.innerHTML = '';
                 
-                setTimeout(() => {
-                    contentTitle.innerHTML = format4K(dataObj.title);
-                    contentDesc.textContent = dataObj.desc;
-                    contentIcon.className = `fas ${dataObj.icon} text-3xl md:text-4xl text-[#788C9F] transition-all duration-300`;
+                dataObj.items.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'service-widget fade-in';
+                    card.style.animationDelay = `${index * 0.04}s`;
                     
-                    servicesGrid.innerHTML = '';
-                    
-                    dataObj.items.forEach((item, index) => {
-                        const card = document.createElement('div');
-                        card.className = 'service-widget fade-in';
-                        card.style.animationDelay = `${index * 0.04}s`;
-                        
-                        card.onclick = () => {
-                            const cleanTitle = item.title.replace('_4k','').trim();
-                            const cleanArea = dataObj.title.replace('_4k','').trim();
-                            const contextPrompt = `Me interesa el servicio de "${cleanTitle}" en el área de ${cleanArea}. ¿Qué implica exactamente y cómo podemos iniciar este proceso en AeroLex?`;
-                            openAIChat(contextPrompt);
-                        };
+                    // AL HACER CLIC: Llama a la Secretaría Técnica (IA Filtro)
+                    card.onclick = () => { triggerLegalFilter(dataObj.id, item.title.replace('_4k','')); };
 
-                        card.innerHTML = `
-                            <div class="flex items-start gap-3 mb-2">
-                                <div class="mt-1 w-6 h-6 rounded-full bg-mac-accent/10 flex items-center justify-center shrink-0 widget-icon transition-transform">
-                                    <i class="fas fa-robot text-mac-accent text-[10px]"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-[14px] md:text-[15px] font-bold text-mac-dark leading-snug">${format4K(item.title)}</h4>
-                                    <p class="text-[12px] md:text-[13px] text-mac-dark/70 leading-relaxed font-normal mt-1">${format4K(item.desc)}</p>
-                                </div>
+                    card.innerHTML = `
+                        <div class="flex items-start gap-3 mb-2">
+                            <div class="mt-1 w-6 h-6 rounded-full bg-legal-blue/10 flex items-center justify-center shrink-0 widget-icon transition-transform">
+                                <i class="fas fa-chevron-right text-legal-blue text-[10px]"></i>
                             </div>
-                        `;
-                        servicesGrid.appendChild(card);
-                    });
-
-                    contentTitle.style.opacity = '1'; contentDesc.style.opacity = '1'; contentIcon.style.opacity = '1'; servicesGrid.style.opacity = '1';
-                }, 200);
-            }
-
-            function createSidebarButtons(categoryArray, container) {
-                categoryArray.forEach((cat, index) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'sidebar-item w-full text-left px-4 py-2.5 rounded-lg text-[13px] font-medium text-mac-dark/70 flex items-center gap-3';
-                    btn.innerHTML = `<i class="fas ${cat.icon} w-4 text-center opacity-70 text-[14px]"></i> <span>${format4K(cat.title)}</span>`;
-                    
-                    btn.addEventListener('click', () => {
-                        renderContent(cat, btn);
-                        if(window.innerWidth < 768) document.getElementById('content-header').scrollIntoView({ behavior: "smooth", block: "start" });
-                    });
-                    
-                    container.appendChild(btn);
-                    if (index === 0 && container === navLegal) setTimeout(() => btn.click(), 100);
+                            <div>
+                                <h4 class="text-[14px] md:text-[15px] font-bold text-mac-dark leading-snug">${format4K(item.title)}</h4>
+                                <p class="text-[12px] md:text-[13px] text-mac-dark/70 leading-relaxed font-normal mt-1">${format4K(item.desc)}</p>
+                            </div>
+                        </div>
+                    `;
+                    servicesGrid.appendChild(card);
                 });
-            }
 
-            createSidebarButtons(db.legal, navLegal);
-            createSidebarButtons(db.tech, navTech);
+                contentTitle.style.opacity = '1'; contentDesc.style.opacity = '1'; contentIcon.style.opacity = '1'; servicesGrid.style.opacity = '1';
+            }, 200);
+        }
+
+        function createSidebarButtons(categoryArray, containerId) {
+            const container = document.getElementById(containerId);
+            categoryArray.forEach((cat, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'sidebar-item w-full text-left px-4 py-2.5 rounded-lg text-[13px] font-medium text-mac-dark/70 flex items-center gap-3';
+                btn.innerHTML = `<i class="fas ${cat.icon} w-4 text-center opacity-70 text-[14px]"></i> <span>${format4K(cat.title)}</span>`;
+                
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderContent(cat);
+                    if(window.innerWidth < 768) document.getElementById('content-header').scrollIntoView({ behavior: "smooth", block: "start" });
+                });
+                
+                container.appendChild(btn);
+                if (index === 0 && containerId === 'sidebar-nav') setTimeout(() => btn.click(), 100);
+            });
+        }
+
+        createSidebarButtons(db.legal, 'sidebar-nav');
+        createSidebarButtons(db.tech, 'sidebar-nav-tech');
+
+        // Botón Header IA
+        document.getElementById('open-ai-header-btn').addEventListener('click', () => {
+            triggerLegalFilter('default', 'Asesoría General');
         });
+    });
     </script>
 </body>
 </html>
