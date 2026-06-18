@@ -135,8 +135,8 @@
     </section>
 
     <!-- CORE SYSTEM UI (Ventana macOS) -->
-    <section id="servicios" class="max-w-7xl mx-auto px-4 pb-20 w-full relative z-10">
-        <div class="glass-effect rounded-[1.5rem] shadow-mac-window overflow-hidden flex flex-col h-[750px] border border-white/60">
+    <section id="servicios" class="max-w-7xl mx-auto px-4 pb-12 w-full relative z-10">
+        <div class="glass-effect rounded-[1.5rem] shadow-2xl shadow-black/5 overflow-hidden flex flex-col h-[750px] border border-white/60">
             
             <!-- Barra Superior Estilo macOS -->
             <div class="h-12 bg-white/40 border-b border-black/5 flex items-center px-4 shrink-0 backdrop-blur-md relative">
@@ -176,11 +176,61 @@
         </div>
     </section>
 
+    <!-- FOOTER ESTILO DOCK -->
+    <footer class="max-w-7xl mx-auto px-4 pb-8 w-full relative z-10 mt-6">
+        <div class="glass-effect rounded-[2rem] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/80 flex flex-col lg:flex-row items-center justify-between gap-8 backdrop-blur-2xl">
+            
+            <!-- Izquierda: Info de Oficina y Mapa -->
+            <div class="flex flex-col sm:flex-row items-center gap-6 w-full lg:w-auto">
+                <!-- Mini Mapa -->
+                <div class="w-full sm:w-64 h-28 rounded-2xl overflow-hidden shadow-inner border border-black/5 relative group shrink-0 bg-gray-100">
+                    <iframe src="https://maps.google.com/maps?q=Benavente%20405,%20Puerto%20Montt,%20Chile&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" class="grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 pointer-events-auto object-cover w-full h-full"></iframe>
+                    <div class="absolute inset-0 border border-white/20 rounded-2xl pointer-events-none"></div>
+                </div>
+                
+                <!-- Texto Dirección -->
+                <div class="text-center sm:text-left">
+                    <div class="flex items-center justify-center sm:justify-start gap-2 text-mac-dark font-bold text-[16px] mb-1.5">
+                        <div class="w-8 h-8 rounded-full bg-mac-accent/10 flex items-center justify-center text-mac-accent"><i class="fas fa-building text-sm"></i></div>
+                        Oficinas Centrales
+                    </div>
+                    <p class="text-mac-dark/70 text-[14px] font-medium leading-relaxed">
+                        Benavente 405, Of. 305<br>
+                        <span class="text-mac-dark/50 text-[13px]">Puerto Montt, Región de Los Lagos</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Derecha: Redes y Firma -->
+            <div class="flex flex-col items-center lg:items-end gap-5 w-full lg:w-auto">
+                <!-- Redes Sociales -->
+                <div class="flex gap-3">
+                    <a href="#" class="w-12 h-12 rounded-2xl bg-white/80 border border-white flex items-center justify-center text-mac-dark/60 hover:text-white hover:bg-[#1877F2] hover:border-[#1877F2] shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                        <i class="fab fa-facebook-f text-lg"></i>
+                    </a>
+                    <a href="#" class="w-12 h-12 rounded-2xl bg-white/80 border border-white flex items-center justify-center text-mac-dark/60 hover:text-white hover:bg-gradient-to-tr hover:from-[#F58529] hover:via-[#DD2A7B] hover:to-[#8134AF] hover:border-transparent shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                    <a href="#" class="w-12 h-12 rounded-2xl bg-white/80 border border-white flex items-center justify-center text-mac-dark/60 hover:text-white hover:bg-black hover:border-black shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                        <i class="fab fa-tiktok text-lg"></i>
+                    </a>
+                </div>
+                <!-- Crédito -->
+                <div class="bg-mac-dark/5 px-4 py-2 rounded-full border border-mac-dark/5 shadow-sm">
+                    <span class="text-[10px] font-bold text-mac-dark/50 uppercase tracking-[0.2em] flex items-center gap-2">
+                        Design by <span class="text-mac-dark/90 tracking-[0.25em]">Deus Vult</span>
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
     <script>
         const WHATSAPP_NUMBER = "56900000000"; // Reemplaza con el número real de AeroLex
 
         // =========================================================================================
-        // 1. BASE DE DATOS ESTRUCTURAL (Sin Evidencia Digital, Compliance con ícono nuevo, Inspección movida)
+        // 1. BASE DE DATOS ESTRUCTURAL (Sin Inspección, Drone movido a Litigios)
         // =========================================================================================
         const db = {
             legal: [
@@ -287,14 +337,7 @@
                     { id: 'emp_cobro', title: "Cobranza corporativa", desc: "Recuperación cartera B2B." },
                     { id: 'emp_activo', title: "Regularización activos", desc: "Saneamiento industrial." }
                 ]},
-                { id: 'cat_dro_insp', title: 'Drones: Inspección', icon: 'fa-drone', desc: 'Inspección visual aérea precisión 4K.', items: [
-                    { id: 'dro_obra', title: "Inspección de obras", desc: "Revisión avances constructivos." },
-                    { id: 'dro_indus', title: "Inspección industrial", desc: "Evaluación infraestructuras críticas." },
-                    { id: 'dro_techo', title: "Inspección de techumbres", desc: "Fallas estructurales térmicas/visuales." },
-                    { id: 'dro_camino', title: "Inspección de caminos", desc: "Levantamiento rutas y canales." },
-                    { id: 'dro_monitoreo', title: "Monitoreo de proyectos", desc: "Registro periódico avances." }
-                ]},
-                { id: 'cat_dro_liti', title: 'Drones: Litigios', icon: 'fa-camera', desc: 'Captura audiovisual para tribunales.', items: [
+                { id: 'cat_dro_liti', title: 'Drones: Litigios', icon: 'fa-drone', desc: 'Captura audiovisual para tribunales.', items: [
                     { id: 'dro_predio', title: "Inspección de predios", desc: "Evaluación para conflictos territoriales." },
                     { id: 'dro_audio', title: "Registro audiovisual", desc: "Video 4K georreferenciado." },
                     { id: 'dro_deslinde', title: "Verificación deslindes", desc: "Constatación aérea límites." },
@@ -346,7 +389,7 @@
         };
 
         // =========================================================================================
-        // 3. MOTOR DE TRIAGE JEDI (Actualizado con Inspección de Predios)
+        // 3. MOTOR DE TRIAGE JEDI (Actualizado)
         // =========================================================================================
         const flows = {
             // CIVIL
@@ -450,14 +493,7 @@
             emp_cobro: { q: "¿El portafolio de cobranza B2B que desea traspasarnos está respaldado por facturas con acuse de recibo del SII?", o: [{l:"Sí, facturas con mérito ejecutivo", n:"_urg"}, {l:"No, son cheques u otros documentos", n:"_docs"}] },
             emp_activo: { q: "¿La regularización de activos comprende propiedades industriales, flotas de vehículos o maquinaria pesada?", o: [{l:"Propiedades o Naves Industriales", n:"_docs"}, {l:"Vehículos, Flotas o Maquinaria", n:"_docs"}] },
 
-            // DRONES: INSPECCIÓN
-            dro_obra: { q: "¿La inspección aérea busca verificar el avance físico visual de la obra o realizar un modelado para control de cubicaciones?", o: [{l:"Verificación visual y registro fotográfico", n:"_docs"}, {l:"Cálculo de cubicaciones y modelado 3D", n:"_docs"}] },
-            dro_indus: { q: "¿A qué sector productivo pertenece la infraestructura industrial crítica a inspeccionar?", o: [{l:"Minería, Fundición o Celulosa", n:"_docs"}, {l:"Energía (Parques Solares, Eólicos, Alta Tensión)", n:"_docs"}, {l:"Galpones, Centros Logísticos u otro", n:"_docs"}] },
-            dro_techo: { q: "¿El objetivo técnico es detectar fallas térmicas invisibles (cámara termográfica) o daños estructurales visuales (cámara RGB 4K)?", o: [{l:"Inspección Termográfica (Humedad/Calor)", n:"_docs"}, {l:"Inspección Visual 4K de alta resolución", n:"_docs"}] },
-            dro_camino: { q: "¿Cuántos kilómetros lineales de extensión aproximada tiene la ruta, canal o servidumbre a relevar con el dron?", o: [{l:"Menos de 5 km lineales", n:"_docs"}, {l:"Más de 5 km (Exige vuelo fuera línea de vista BVLOS)", n:"_docs"}] },
-            dro_monitoreo: { q: "¿Con qué frecuencia temporal requiere programar los vuelos de barrido aéreo del proyecto?", o: [{l:"Alta frecuencia (Semanal)", n:"_docs"}, {l:"Frecuencia media (Quincenal / Mensual)", n:"_docs"}, {l:"Vuelo único por hito específico", n:"_docs"}] },
-
-            // DRONES: LITIGIOS (INCLUYE INSPECCIÓN DE PREDIOS ACTUALIZADA)
+            // DRONES: LITIGIOS (INCLUYE INSPECCIÓN DE PREDIOS)
             dro_predio: { q: "¿Esta inspección de predios se enmarca en un litigio por herencias o se trata de otras acciones posesorias (ej. usurpación)?", o: [{l:"Litigio por Herencias / Partición", n:"dro_predio_ext"}, {l:"Acciones Posesorias / Usurpación", n:"dro_predio_ext"}, {l:"Otro motivo / Preventivo", n:"dro_predio_ext"}] },
             dro_predio_ext: { q: "Para organizar la logística del vuelo: ¿Cuántas hectáreas aproximadas posee el predio a inspeccionar y cómo es su topografía?", o: [{l:"Menos de 10 ha (Relieve plano/urbano)", n:"_docs"}, {l:"Más de 10 ha (Rural, Boscoso o Quebradas)", n:"_docs"}] },
             dro_audio: { q: "¿La prueba audiovisual capturada por el dron será presentada en un juicio civil, ambiental o penal?", o: [{l:"Civil (Dominio, daños, servidumbres)", n:"_urg"}, {l:"Ambiental, Penal o Municipal", n:"_urg"}] },
