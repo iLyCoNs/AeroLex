@@ -23,7 +23,7 @@
         body { background-color: #1e1e1e; color: #e5e5e5; overflow: hidden; -webkit-font-smoothing: antialiased; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
+
         /* Inputs macOS Dark */
         .mac-input { background: #1e1e1e; border: 1px solid #3e3e42; color: #fff; border-radius: 8px; padding: 10px 14px; font-size: 13px; width: 100%; transition: all 0.2s; outline: none; }
         .mac-input:focus { border-color: #0A84FF; box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.3); }
@@ -41,7 +41,7 @@
         .sidebar-item:hover:not(.active) { background: #2a2a2b; }
 
         #app-container { display: none; }
-        
+
         .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -49,7 +49,6 @@
 <body class="h-screen flex flex-col">
 
     <!-- LOGIN SCREEN -->
-    <!-- Seguridad: autocomplete="off" global forzado -->
     <div id="login-screen" class="flex-1 flex items-center justify-center bg-[#111111] p-4">
         <div class="bg-[#1e1e1e] border border-[#3e3e42] rounded-2xl p-8 md:p-10 w-full max-w-md shadow-2xl relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-[#0A84FF]"></div>
@@ -58,20 +57,11 @@
                 <h1 class="text-xl md:text-2xl font-bold text-white tracking-tight">Acceso Confidencial</h1>
                 <p class="text-[10px] md:text-xs text-gray-400 mt-1 uppercase tracking-widest">Bóveda AeroLex</p>
             </div>
-            
-            <!-- Formulario blindado sin rastros -->
+
             <form id="login-form" class="space-y-5" autocomplete="off">
                 <div>
-                    <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wide block mb-1.5">Usuario GitHub</label>
-                    <input type="text" id="gh-user" class="mac-input bg-[#111111]" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Usuario" required>
-                </div>
-                <div>
-                    <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wide block mb-1.5">Repositorio</label>
-                    <input type="text" id="gh-repo" class="mac-input bg-[#111111]" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Repositorio" required>
-                </div>
-                <div>
-                    <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wide block mb-1.5">Personal Access Token</label>
-                    <input type="password" id="gh-token" class="mac-input bg-[#111111]" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="github_pat_..." required>
+                    <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wide block mb-1.5">Clave de Acceso del Estudio</label>
+                    <input type="password" id="admin-key" class="mac-input bg-[#111111]" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="••••••••••••" required>
                 </div>
                 <button type="submit" id="btn-connect" class="w-full bg-[#0A84FF] hover:bg-blue-600 text-white font-bold py-3.5 px-4 rounded-lg text-sm transition-colors mt-2 shadow-[0_4px_14px_rgba(10,132,255,0.3)]">
                     Desbloquear Bóveda
@@ -83,12 +73,12 @@
 
     <!-- MAIN DASHBOARD -->
     <div id="app-container" class="flex-1 flex overflow-hidden relative w-full h-full">
-        
-        <!-- SIDEBAR: LISTA DE CAUSAS (Ancho completo en móvil, fijo en PC) -->
+
+        <!-- SIDEBAR: LISTA DE CAUSAS -->
         <div id="sidebar" class="w-full md:w-72 bg-[#1e1e1e] border-r border-[#3e3e42] flex flex-col shadow-lg shrink-0 absolute md:relative h-full z-10 transition-transform duration-300 transform translate-x-0">
             <div class="h-16 flex items-center justify-between px-5 border-b border-[#3e3e42] shrink-0 bg-[#252526]">
                 <span class="font-bold text-white tracking-wide"><i class="fas fa-layer-group text-[#0A84FF] mr-2"></i> Expedientes</span>
-                <button onclick="createNewCase()" class="w-8 h-8 rounded-full bg-[#3e3e42] hover:bg-[#0A84FF] text-white flex items-center justify-center transition" title="Nuevo Expediente">
+                <button onclick="createNewCase()" id="btn-new" class="w-8 h-8 rounded-full bg-[#3e3e42] hover:bg-[#0A84FF] text-white flex items-center justify-center transition" title="Nuevo Expediente">
                     <i class="fas fa-plus text-xs"></i>
                 </button>
             </div>
@@ -106,9 +96,9 @@
             </div>
         </div>
 
-        <!-- AREA DE EDICIÓN CENTRAL (Deslizable en móvil) -->
+        <!-- AREA DE EDICIÓN CENTRAL -->
         <div id="editor-view" class="w-full md:flex-1 flex flex-col bg-[#111111] absolute md:relative h-full z-20 transition-transform duration-300 transform translate-x-full md:translate-x-0">
-            
+
             <!-- Header Editor -->
             <div class="h-16 border-b border-[#3e3e42] flex items-center justify-between px-4 md:px-8 bg-[#1e1e1e] shrink-0">
                 <div class="flex items-center gap-3 overflow-hidden">
@@ -122,8 +112,8 @@
                     <button onclick="deleteCurrentCase()" id="btn-delete" class="hidden w-9 h-9 md:w-auto md:px-4 md:py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-lg text-xs font-bold transition flex items-center justify-center">
                         <i class="fas fa-trash-alt md:hidden"></i><span class="hidden md:inline">Eliminar</span>
                     </button>
-                    <button onclick="syncToGithub()" id="btn-sync" class="hidden w-9 h-9 md:w-auto md:px-6 md:py-2 bg-[#34C759] hover:bg-green-500 text-white rounded-lg text-xs font-bold transition shadow-[0_4px_10px_rgba(52,199,89,0.2)] flex items-center justify-center gap-2">
-                        <i class="fas fa-cloud-upload-alt"></i><span class="hidden md:inline">Publicar</span>
+                    <button onclick="saveCase()" id="btn-sync" class="hidden w-9 h-9 md:w-auto md:px-6 md:py-2 bg-[#34C759] hover:bg-green-500 text-white rounded-lg text-xs font-bold transition shadow-[0_4px_10px_rgba(52,199,89,0.2)] flex items-center justify-center gap-2">
+                        <i class="fas fa-cloud-upload-alt"></i><span class="hidden md:inline">Guardar</span>
                     </button>
                 </div>
             </div>
@@ -131,16 +121,23 @@
             <!-- Formulario Editor -->
             <div id="editor-body" class="flex-1 overflow-y-auto hide-scrollbar p-4 md:p-8 hidden">
                 <div class="max-w-4xl mx-auto space-y-6 pb-24">
-                    
+
                     <!-- Ficha General -->
                     <div class="bg-[#1e1e1e] border border-[#3e3e42] rounded-xl p-5 md:p-6 shadow-md fade-in">
                         <h3 class="text-sm font-bold text-white uppercase tracking-widest mb-5 border-b border-[#3e3e42] pb-2 text-[#0A84FF]"><i class="fas fa-folder-open mr-2"></i> Información Estructural</h3>
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-5">
                             <div>
                                 <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Código AeroLex (ID)</label>
                                 <input type="text" id="case-id" class="mac-input font-mono text-[#0A84FF] font-bold" disabled>
                             </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">PIN del Cliente (para "Estado de mi Caso")</label>
+                                <input type="text" id="case-pin" class="mac-input font-mono text-[#34C759] font-bold" disabled>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-5">
                             <div>
                                 <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">RIT / Identificador Interno</label>
                                 <input type="text" id="case-rit" class="mac-input" placeholder="Ej: C-1450-2026" autocomplete="off" oninput="markUnsaved()">
@@ -164,7 +161,7 @@
                         </div>
 
                         <div>
-                            <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Apunte Interno del Abogado (Visible para el cliente)</label>
+                            <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Apunte para el Cliente (Visible en su rastreo)</label>
                             <textarea id="case-detail" class="mac-input resize-none h-24" placeholder="Escriba aquí observaciones, instrucciones para el cliente o estado actual." autocomplete="off" oninput="markUnsaved()"></textarea>
                         </div>
                     </div>
@@ -177,9 +174,9 @@
                                 <i class="fas fa-plus"></i> <span class="hidden sm:inline">Añadir Hito</span>
                             </button>
                         </div>
-                        
-                        <p class="text-xs text-gray-500 mb-4">Añada los pasos del procedimiento judicial o técnico. Marque el interruptor verde para avanzar el progreso del cliente.</p>
-                        
+
+                        <p class="text-xs text-gray-500 mb-4">Añada los pasos del procedimiento judicial o técnico. Marque el interruptor verde para avanzar el progreso del cliente en su rastreo en vivo.</p>
+
                         <div id="steps-container" class="space-y-3">
                             <!-- Los pasos se renderizan dinámicamente aquí -->
                         </div>
@@ -207,7 +204,7 @@
             "Derecho Laboral": ["Asesoría a empleadores", "Defensa laboral", "Despidos", "Tutela laboral", "Accidentes del trabajo", "Auditorías laborales", "Negociación laboral"],
             "Derecho Administrativo": ["Recursos administrativos", "Procedimientos sancionatorios", "Licitaciones públicas", "Compras públicas", "Reclamos ante organismos públicos", "Solicitudes de transparencia"],
             "Derecho Ambiental": ["Asesoría ambiental", "Cumplimiento normativo", "Procedimientos ante organismos fiscalizadores", "Denuncias ambientales", "Daño ambiental"],
-            "Derecho de Familia": ["Divorcios", "Alimentos", "Cuidado personal", "Relación directa y regular", "Compensación económica", "Violencia intrafamiliar"],
+            "Derecho de Familia": ["Divorcios", "Alimentos", "Cuidado personal", "Relación directa regular", "Compensación económica", "Violencia intrafamiliar"],
             "Derecho Sucesorio": ["Posesiones efectivas", "Herencias", "Particiones", "Testamentos", "Litigios hereditarios"],
             "Litigación y Defensa Judicial": ["Representación ante tribunales", "Patrocinio y poder", "Juicios civiles", "Juicios laborales", "Juicios ejecutivos", "Recursos de protección", "Recursos de amparo", "Recursos de apelación", "Defensa en procedimientos administrativos"],
             "Asesoría Empresarial y Compliance": ["Gerencia legal externa", "Compliance corporativo", "Modelos de prevención de delitos", "Auditorías legales", "Gestión de riesgos legales", "Protección de datos personales", "Cumplimiento normativo", "Investigación interna", "Due diligence empresarial"],
@@ -220,15 +217,16 @@
         };
 
         // =========================================================================
-        // 2. LÓGICA CORE (GITHUB & DATA)
+        // 2. LÓGICA CORE (API EN VIVO)
         // =========================================================================
-        let ghData = { user: '', repo: '', token: '', sha: '' };
-        let casesDB = {}; 
+        let ADMIN_KEY = '';
+        let casesDB = {};
         let currentEditingId = null;
         let hasUnsavedChanges = false;
 
-        function utf8_to_b64(str) { return window.btoa(unescape(encodeURIComponent(str))); }
-        function b64_to_utf8(str) { return decodeURIComponent(escape(window.atob(str))); }
+        function authHeaders(extra = {}) {
+            return { 'x-admin-key': ADMIN_KEY, ...extra };
+        }
 
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -236,70 +234,72 @@
             btn.innerText = "Verificando Credenciales...";
             btn.disabled = true;
 
-            ghData.user = document.getElementById('gh-user').value.trim();
-            ghData.repo = document.getElementById('gh-repo').value.trim();
-            ghData.token = document.getElementById('gh-token').value.trim();
-
-            await fetchDatabase();
-        });
-
-        async function fetchDatabase() {
-            const url = `https://api.github.com/repos/${ghData.user}/${ghData.repo}/contents/cases.json`;
+            ADMIN_KEY = document.getElementById('admin-key').value.trim();
             try {
-                const response = await fetch(url, { headers: { 'Authorization': `token ${ghData.token}` } });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    ghData.sha = data.sha;
-                    const jsonContent = b64_to_utf8(data.content);
-                    casesDB = jsonContent.trim() ? JSON.parse(jsonContent) : {};
-                    initDashboard();
-                } else if (response.status === 404) {
-                    casesDB = {};
-                    ghData.sha = '';
-                    initDashboard();
-                } else {
-                    throw new Error("Token denegado o Repositorio no encontrado.");
-                }
+                const resp = await fetch('/api/admin', { headers: authHeaders() });
+                if (resp.status === 401) throw new Error("Clave de acceso incorrecta.");
+                if (!resp.ok) throw new Error("Servidor no disponible. Intente más tarde.");
+                const data = await resp.json();
+                casesDB = {};
+                (data.cases || []).forEach(c => { casesDB[c.code] = c; });
+                sessionStorage.setItem('aerolex_admin_key', ADMIN_KEY);
+                initDashboard();
             } catch (error) {
-                const btn = document.getElementById('btn-connect');
                 btn.innerText = "Desbloquear Bóveda";
                 btn.disabled = false;
-                document.getElementById('error-msg').innerText = "❌ Error: " + error.message;
-                document.getElementById('error-msg').classList.remove('hidden');
+                const em = document.getElementById('error-msg');
+                em.innerText = "❌ " + error.message;
+                em.classList.remove('hidden');
             }
-        }
+        });
 
-        async function syncToGithub() {
-            saveCurrentFormToDB(); 
+        (async () => {
+            const saved = sessionStorage.getItem('aerolex_admin_key');
+            if (!saved) return;
+            ADMIN_KEY = saved;
+            try {
+                const resp = await fetch('/api/admin', { headers: authHeaders() });
+                if (!resp.ok) { sessionStorage.removeItem('aerolex_admin_key'); return; }
+                const data = await resp.json();
+                casesDB = {};
+                (data.cases || []).forEach(c => { casesDB[c.code] = c; });
+                initDashboard();
+            } catch (e) { /* sin conexión: se queda en login */ }
+        })();
+
+        async function saveCase() {
+            if (!currentEditingId) return;
+            saveCurrentFormToDB();
+            const c = casesDB[currentEditingId];
+            if (!c) return;
 
             const btn = document.getElementById('btn-sync');
             const status = document.getElementById('sync-status');
-            const btnContent = btn.innerHTML; // Guarda el html original
+            const btnContent = btn.innerHTML;
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
             btn.disabled = true;
 
             try {
-                const newContent = JSON.stringify(casesDB, null, 4);
-                const url = `https://api.github.com/repos/${ghData.user}/${ghData.repo}/contents/cases.json`;
-                
-                const body = { message: "Bóveda AeroLex: Actualización de Causas", content: utf8_to_b64(newContent) };
-                if (ghData.sha) body.sha = ghData.sha;
-
-                const response = await fetch(url, {
+                const resp = await fetch('/api/admin', {
                     method: 'PUT',
-                    headers: { 'Authorization': `token ${ghData.token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
+                    headers: authHeaders({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify({
+                        code: currentEditingId,
+                        materia: c.materia,
+                        tribunal: c.tribunal,
+                        rit: c.rit,
+                        detalle: c.detalle,
+                        estado_actual: c.estadoActual,
+                        steps: c.steps
+                    })
                 });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    ghData.sha = data.content.sha;
-                    status.innerHTML = `<span class="text-[#34C759]"><i class="fas fa-check-circle"></i> Sincronizado</span>`;
-                    hasUnsavedChanges = false;
-                } else { throw new Error("Fallo al escribir"); }
+                const data = await resp.json();
+                if (!data.ok) throw new Error('fallo');
+                if (data.case) casesDB[currentEditingId] = data.case;
+                status.innerHTML = `<span class="text-[#34C759]"><i class="fas fa-check-circle"></i> Guardado</span>`;
+                hasUnsavedChanges = false;
             } catch (error) {
-                status.innerHTML = `<span class="text-red-500"><i class="fas fa-times-circle"></i> Error</span>`;
+                status.innerHTML = `<span class="text-red-500"><i class="fas fa-times-circle"></i> Error al guardar</span>`;
             } finally {
                 btn.innerHTML = btnContent;
                 btn.disabled = false;
@@ -310,11 +310,11 @@
         // =========================================================================
         // 3. UI DASHBOARD & FORMULARIO & RESPONSIVE MÓVIL
         // =========================================================================
-        
+
         function initDashboard() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app-container').style.display = 'flex';
-            
+
             const catSelect = document.getElementById('case-category');
             catSelect.innerHTML = '';
             Object.keys(MATERIAS).forEach(cat => { catSelect.innerHTML += `<option value="${cat}">${cat}</option>`; });
@@ -327,35 +327,33 @@
             const cat = document.getElementById('case-category').value;
             const servSelect = document.getElementById('case-service');
             servSelect.innerHTML = '';
-            if(MATERIAS[cat]) {
+            if (MATERIAS[cat]) {
                 MATERIAS[cat].forEach(serv => { servSelect.innerHTML += `<option value="${serv}">${serv}</option>`; });
             }
         }
 
-        // Control del Drawer Móvil
         function openMobileEditor() {
             document.getElementById('editor-view').classList.remove('translate-x-full');
-            // En móvil, el editor se superpone (z-20) sobre el sidebar. No necesitamos mover el sidebar.
         }
 
         function closeMobileEditor() {
             if (hasUnsavedChanges) saveCurrentFormToDB();
             document.getElementById('editor-view').classList.add('translate-x-full');
-            renderSidebar(); // Actualiza la lista
+            renderSidebar();
         }
 
         function renderSidebar(filterText = "") {
             const list = document.getElementById('cases-list');
             list.innerHTML = '';
-            
-            let caseIds = Object.keys(casesDB).reverse(); 
-            
+
+            let caseIds = Object.keys(casesDB).reverse();
+
             if (filterText) {
-                caseIds = caseIds.filter(id => id.toLowerCase().includes(filterText) || 
+                caseIds = caseIds.filter(id => id.toLowerCase().includes(filterText) ||
                                               (casesDB[id].rit && casesDB[id].rit.toLowerCase().includes(filterText)));
             }
 
-            if(caseIds.length === 0) {
+            if (caseIds.length === 0) {
                 list.innerHTML = `<div class="p-4 text-center text-xs text-gray-500">No hay expedientes.</div>`;
                 return;
             }
@@ -363,7 +361,7 @@
             caseIds.forEach(id => {
                 const c = casesDB[id];
                 const isActive = id === currentEditingId ? 'active' : '';
-                
+
                 let total = c.steps ? c.steps.length : 0;
                 let done = c.steps ? c.steps.filter(s => s.done).length : 0;
                 let progColor = done === total && total > 0 ? 'text-[#34C759]' : 'text-[#0A84FF]';
@@ -386,45 +384,47 @@
             renderSidebar(txt);
         }
 
-        function createNewCase() {
-            if (hasUnsavedChanges) saveCurrentFormToDB();
-            
-            const year = new Date().getFullYear();
-            let num = 1;
-            while(casesDB[`ALX-${year}-${String(num).padStart(2, '0')}`]) { num++; }
-            const newId = `ALX-${year}-${String(num).padStart(2, '0')}`;
-
-            casesDB[newId] = {
-                materia: MATERIAS["Derecho Civil"][0],
-                tribunal: "",
-                rit: "",
-                detalle: "",
-                estadoActual: -1,
-                steps: []
-            };
-
-            currentEditingId = newId;
-            renderSidebar();
-            loadCase(newId);
-            markUnsaved();
+        async function createNewCase() {
+            const btn = document.getElementById('btn-new');
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin text-xs"></i>`;
+            try {
+                const resp = await fetch('/api/admin', {
+                    method: 'POST',
+                    headers: authHeaders({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify({ materia: MATERIAS["Derecho Civil"][0] })
+                });
+                const data = await resp.json();
+                if (!data.ok) throw new Error('fallo');
+                casesDB[data.case.code] = data.case;
+                currentEditingId = data.case.code;
+                renderSidebar();
+                loadCase(data.case.code);
+            } catch (e) {
+                alert('No se pudo crear el expediente. Verifique su conexión.');
+            } finally {
+                btn.innerHTML = `<i class="fas fa-plus text-xs"></i>`;
+            }
         }
 
         function loadCase(id) {
+            const c = casesDB[id];
+            if (!c) return;
+
             if (hasUnsavedChanges && currentEditingId && currentEditingId !== id) {
                 saveCurrentFormToDB();
             }
 
             currentEditingId = id;
-            const c = casesDB[id];
 
             document.getElementById('editor-empty').classList.add('hidden');
             document.getElementById('editor-body').classList.remove('hidden');
             document.getElementById('btn-sync').classList.remove('hidden');
             document.getElementById('btn-delete').classList.remove('hidden');
-            
+
             document.getElementById('editor-header').innerText = "Editando: " + id;
-            
+
             document.getElementById('case-id').value = id;
+            document.getElementById('case-pin').value = c.pin || '';
             document.getElementById('case-rit').value = c.rit || '';
             document.getElementById('case-tribunal').value = c.tribunal || '';
             document.getElementById('case-detail').value = c.detalle || '';
@@ -433,22 +433,21 @@
             for (let cat in MATERIAS) { if (MATERIAS[cat].includes(c.materia)) { foundCat = cat; break; } }
             document.getElementById('case-category').value = foundCat;
             updateServicesDropdown();
-            
+
             const servSelect = document.getElementById('case-service');
             if (Array.from(servSelect.options).some(o => o.value === c.materia)) {
                 servSelect.value = c.materia;
             }
 
             renderStepsUI(c.steps || []);
-            renderSidebar(); 
+            renderSidebar();
             hasUnsavedChanges = false;
-            
-            // Si está en móvil, deslizar el panel
+
             if (window.innerWidth < 768) openMobileEditor();
         }
 
         function saveCurrentFormToDB() {
-            if(!currentEditingId) return;
+            if (!currentEditingId) return;
 
             const stepsDivs = document.querySelectorAll('.step-item');
             const newSteps = [];
@@ -465,6 +464,7 @@
             });
 
             casesDB[currentEditingId] = {
+                ...casesDB[currentEditingId],
                 materia: document.getElementById('case-service').value,
                 tribunal: document.getElementById('case-tribunal').value.trim(),
                 rit: document.getElementById('case-rit').value.trim(),
@@ -475,18 +475,24 @@
             renderSidebar();
         }
 
-        function deleteCurrentCase() {
-            if(confirm(`¿Estás seguro de ELIMINAR el expediente ${currentEditingId}?\nEsta acción es irreversible si sincronizas con la Nube.`)) {
+        async function deleteCurrentCase() {
+            if (!currentEditingId) return;
+            if (!confirm(`¿Estás seguro de ELIMINAR el expediente ${currentEditingId}?\nEsta acción es irreversible y el cliente perderá su acceso al rastreo.`)) return;
+
+            try {
+                const resp = await fetch(`/api/admin?code=${encodeURIComponent(currentEditingId)}`, { method: 'DELETE', headers: authHeaders() });
+                if (!resp.ok) throw new Error('fallo');
                 delete casesDB[currentEditingId];
                 currentEditingId = null;
                 document.getElementById('editor-body').classList.add('hidden');
                 document.getElementById('editor-empty').classList.remove('hidden');
-                document.getElementById('btn-sync').classList.remove('hidden');
+                document.getElementById('btn-sync').classList.add('hidden');
                 document.getElementById('btn-delete').classList.add('hidden');
                 document.getElementById('editor-header').innerText = "Expediente Eliminado";
                 renderSidebar();
-                markUnsaved();
-                if (window.innerWidth < 768) closeMobileEditor(); // Vuelve a la lista en móvil
+                if (window.innerWidth < 768) closeMobileEditor();
+            } catch (e) {
+                alert('No se pudo eliminar el expediente. Verifique su conexión.');
             }
         }
 
@@ -496,43 +502,41 @@
         function renderStepsUI(steps) {
             const container = document.getElementById('steps-container');
             container.innerHTML = '';
-            steps.forEach((step, index) => { appendStepHTML(step.title, step.date, step.done, index); });
+            steps.forEach((step) => { appendStepHTML(step.title, step.date, step.done); });
         }
 
         function addStep() {
             const today = new Date();
             const dateStr = today.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '');
-            appendStepHTML("Nueva etapa", dateStr, false, document.querySelectorAll('.step-item').length);
+            appendStepHTML("Nueva etapa", dateStr, false);
             markUnsaved();
         }
 
-        function appendStepHTML(title, date, done, index) {
+        function appendStepHTML(title, date, done) {
             const container = document.getElementById('steps-container');
             const checkedAttr = done ? 'checked' : '';
-            
+            const safeTitle = String(title || '').replace(/"/g, '&quot;');
+            const safeDate = String(date || '').replace(/"/g, '&quot;');
+
             const html = `
                 <div class="step-item flex flex-col sm:flex-row sm:items-center gap-3 bg-[#111111] border border-[#3e3e42] p-3 rounded-lg fade-in">
-                    
+
                     <div class="flex items-center justify-between sm:justify-start w-full sm:w-auto">
-                        <!-- Toggle Button -->
                         <div class="relative inline-block w-[44px] shrink-0 align-middle select-none transition duration-200 ease-in">
                             <input type="checkbox" class="step-done toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-[#3e3e42] appearance-none cursor-pointer z-10" ${checkedAttr} onchange="markUnsaved()">
                             <label class="toggle-label block overflow-hidden h-6 rounded-full bg-[#3e3e42] cursor-pointer"></label>
                         </div>
-                        
-                        <!-- Botón Borrar en Móvil (Visible solo en móvil) -->
+
                         <button onclick="this.closest('.step-item').remove(); markUnsaved();" class="sm:hidden shrink-0 w-8 h-8 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition flex items-center justify-center">
                             <i class="fas fa-trash-alt text-xs"></i>
                         </button>
                     </div>
-                    
-                    <!-- Inputs Responsivos -->
+
                     <div class="flex-1 flex flex-col sm:flex-row gap-2 w-full">
-                        <input type="text" class="step-title mac-input flex-1" value="${title}" placeholder="Título del hito" autocomplete="off" oninput="markUnsaved()">
-                        <input type="text" class="step-date mac-input w-full sm:w-32 text-center" value="${date}" placeholder="Fecha" autocomplete="off" oninput="markUnsaved()">
+                        <input type="text" class="step-title mac-input flex-1" value="${safeTitle}" placeholder="Título del hito" autocomplete="off" oninput="markUnsaved()">
+                        <input type="text" class="step-date mac-input w-full sm:w-32 text-center" value="${safeDate}" placeholder="Fecha" autocomplete="off" oninput="markUnsaved()">
                     </div>
-                    
-                    <!-- Botón Borrar en PC (Visible solo en PC) -->
+
                     <button onclick="this.closest('.step-item').remove(); markUnsaved();" class="hidden sm:flex shrink-0 w-8 h-8 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition items-center justify-center">
                         <i class="fas fa-trash-alt text-xs"></i>
                     </button>
@@ -546,10 +550,9 @@
             document.getElementById('sync-status').innerHTML = `<span class="text-yellow-500"><i class="fas fa-exclamation-circle"></i> Cambios pendientes</span>`;
         }
 
-        // Destruir sesión y limpiar la URL si hace falta
-        function logout() { 
-            // Forzar recarga desde el servidor ignorando la caché para limpiar todo
-            window.location.href = window.location.href.split('?')[0] + '?t=' + new Date().getTime(); 
+        function logout() {
+            sessionStorage.removeItem('aerolex_admin_key');
+            window.location.href = window.location.href.split('?')[0] + '?t=' + new Date().getTime();
         }
     </script>
 </body>

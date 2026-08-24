@@ -611,6 +611,7 @@
         let currentServiceTitle = "";
         let currentFlowId = "";
         let answersTracker = [];
+        let pendingCaseCode = null;
 
         function openAIChat(serviceId, serviceTitle) {
             aiModal.showModal();
@@ -618,7 +619,7 @@
             
             if (serviceId === 'ESTADO_CAUSA') {
                 document.getElementById('ai-subtitle').innerText = "Rastreo Judicial (Conexión Segura)";
-                injectBotMessage("Módulo de Rastreo Judicial en vivo activado. Por favor, <strong>escriba en la barra inferior su código único asignado por AeroLex</strong> (Ej: ALX-2026-01).");
+                injectBotMessage("Módulo de Rastreo Judicial en vivo activado. <strong>Escriba en la barra inferior su código único asignado por AeroLex</strong> (Ej: ALX-2026-01) y a continuación su PIN de 4 dígitos.");
                 return;
             }
 
@@ -679,11 +680,23 @@
             }, 800);
         }
 
-        function finalizeTriage() {
+        async function finalizeTriage() {
+            let newCase = null;
+            try {
+                const regResp = await fetch('/api/cases', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ materia: currentServiceTitle, triage: answersTracker })
+                });
+                const regData = await regResp.json();
+                if (regData.ok) newCase = regData;
+            } catch (err) { console.warn('Registro en línea no disponible.', err); }
+
             let waReport = `*EXPEDIENTE TÉCNICO AEROLEX*\n`;
             waReport += `*Materia:* ${currentServiceTitle}\n\n`;
             waReport += `*Respuestas del Cliente:*\n`;
             answersTracker.forEach(ans => { waReport += `> ${ans}\n`; });
+            if (newCase) { waReport += `\n*Código de seguimiento:* ${newCase.code}\n*PIN de consulta:* ${newCase.pin}\n`; }
 
             let waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waReport)}`;
             
@@ -695,6 +708,13 @@
                 let finalMsg = `<div class="ai-chat-bubble-bot fade-in border-l-4 border-green-500">
                     ✅ <strong>Reporte Estructural Completado.</strong><br><br>
                     He consolidado sus requerimientos. El departamento jurídico o de ingeniería evaluará su situación con los parámetros exactos que nos proporcionó.<br>
+                    ${newCase ? `
+                    <div class="mt-4 p-4 bg-mac-dark text-white rounded-xl text-center shadow-lg">
+                        <div class="text-[10px] uppercase tracking-widest text-gray-400 mb-1">Su código de seguimiento AeroLex</div>
+                        <div class="font-mono font-extrabold text-xl tracking-wider">${newCase.code}</div>
+                        <div class="text-[10px] text-gray-400 mt-2">PIN de seguridad: <span class="font-mono font-bold text-green-400 text-xs">${newCase.pin}</span></div>
+                    </div>
+                    <p class="text-[11px] text-gray-500 mt-3 leading-relaxed">Guarde este código y PIN: con ellos podrá <strong>rastrear el avance de su caso en tiempo real</strong> usando el botón "Estado de mi Caso" de nuestro sitio.</p>` : ''}
                     <a href="${waUrl}" target="_blank" class="btn-wa-final"><i class="fab fa-whatsapp text-lg"></i> Enviar Expediente a Especialista</a>
                 </div>`;
                 aiChatLog.insertAdjacentHTML('beforeend', finalMsg);
@@ -712,37 +732,18 @@
             aiSendBtn.disabled = true;
             addUserMessage(text);
 
+            if (pendingCaseCode) {
+                const pinIntent = text.trim();
+                const codeToCheck = pendingCaseCode;
+                pendingCaseCode = null;
+                injectBotMessage(`Verificando credenciales del expediente <strong>${codeToCheck}</strong>...`);
+                fetchCaseFromAPI(codeToCheck, pinIntent);
+                return;
+            }
+
             if (text.toUpperCase().startsWith("ALX-")) {
-                const caseData = casesDB[text.toUpperCase()];
-                if (caseData) {
-                    let html = `<strong>Expediente: ${text.toUpperCase()}</strong><br>
-                        <span class="text-[11px] text-mac-dark/60 uppercase tracking-wide">Materia: ${caseData.materia}</span><br>
-                        <span class="text-[11px] text-mac-dark/60">Tribunal/Oficina: ${caseData.tribunal} | RIT: ${caseData.rit}</span>`;
-                        
-                    if(caseData.detalle) {
-                        html += `<div class="mt-2 text-[12px] p-2 bg-blue-50 border border-blue-100 rounded-lg text-blue-800">
-                            <i class="fas fa-info-circle"></i> <strong>Apunte Interno:</strong> ${caseData.detalle}
-                        </div>`;
-                    }
-                        
-                    html += `<div class="timeline-container mt-4">`;
-                    if (caseData.steps && caseData.steps.length > 0) {
-                        caseData.steps.forEach((step, index) => {
-                            const isActive = index <= caseData.estadoActual;
-                            html += `
-                                <div class="timeline-step ${isActive ? 'active' : ''}">
-                                    <div class="step-title text-[13px] ${isActive ? 'text-mac-dark' : 'text-mac-dark/40'}">${step.title}</div>
-                                    <div class="text-[10px] ${isActive ? 'text-green-600 font-medium' : 'text-mac-dark/40'}">${step.date}</div>
-                                </div>`;
-                        });
-                    } else {
-                        html += `<div class="text-[12px] text-mac-dark/50 mt-2 italic">Aún no hay hitos registrados en la línea de tiempo.</div>`;
-                    }
-                    html += `</div>`;
-                    injectBotMessage(html);
-                } else {
-                    injectBotMessage("❌ No he encontrado registros en la base de datos para el código proporcionado. Compruebe si está bien escrito.");
-                }
+                pendingCaseCode = text.toUpperCase().trim();
+                injectBotMessage("Código recibido. Por seguridad, escriba ahora su <strong>PIN de 4 dígitos</strong> para consultar el estado de su causa.");
                 return;
             }
 
@@ -756,6 +757,64 @@
         });
 
         function scrollToBottom() { setTimeout(() => { aiChatLog.scrollTop = aiChatLog.scrollHeight; }, 50); }
+
+        function renderCaseCard(caseData, code) {
+            let html = `<strong>Expediente: ${code}</strong><br>
+                <span class="text-[11px] text-mac-dark/60 uppercase tracking-wide">Materia: ${caseData.materia || 'Sin materia'}</span><br>
+                <span class="text-[11px] text-mac-dark/60">Tribunal/Oficina: ${caseData.tribunal || '-'} | RIT: ${caseData.rit || '-'}</span>`;
+
+            if (caseData.detalle) {
+                html += `<div class="mt-2 text-[12px] p-2 bg-blue-50 border border-blue-100 rounded-lg text-blue-800">
+                    <i class="fas fa-info-circle"></i> <strong>Apunte:</strong> ${caseData.detalle}
+                </div>`;
+            }
+
+            const estadoActual = (typeof caseData.estado_actual === 'number') ? caseData.estado_actual : caseData.estadoActual;
+            const steps = caseData.steps || [];
+            const nextStep = steps.find(s => !s.done);
+
+            html += `<div class="timeline-container mt-4">`;
+            if (steps.length > 0) {
+                steps.forEach((step, index) => {
+                    const isActive = step.done || index <= estadoActual;
+                    html += `
+                        <div class="timeline-step ${isActive ? 'active' : ''}">
+                            <div class="step-title text-[13px] ${isActive ? 'text-mac-dark' : 'text-mac-dark/40'}">${step.title}</div>
+                            <div class="text-[10px] ${isActive ? 'text-green-600 font-medium' : 'text-mac-dark/40'}">${step.date}</div>
+                        </div>`;
+                });
+            } else {
+                html += `<div class="text-[12px] text-mac-dark/50 mt-2 italic">Aún no hay hitos registrados en la línea de tiempo.</div>`;
+            }
+            html += `</div>`;
+
+            if (nextStep) {
+                html += `<div class="mt-3 p-2.5 bg-green-50 border border-green-100 rounded-lg text-green-800 text-[12px] flex items-start gap-2">
+                    <i class="fas fa-arrow-circle-right mt-0.5"></i><span><strong>Próximo hito de su causa:</strong> ${nextStep.title}</span>
+                </div>`;
+            }
+            return html;
+        }
+
+        async function fetchCaseFromAPI(code, pin) {
+            try {
+                const resp = await fetch(`/api/cases?code=${encodeURIComponent(code)}&pin=${encodeURIComponent(pin)}`);
+                const data = await resp.json();
+                if (data.ok) {
+                    injectBotMessage(renderCaseCard(data.case, code));
+                } else if (data.error === 'bad_pin') {
+                    pendingCaseCode = code;
+                    injectBotMessage("🔒 PIN incorrecto. Escriba nuevamente su <strong>PIN de 4 dígitos</strong>.");
+                } else {
+                    injectBotMessage("❌ No he encontrado registros en la base de datos para el código proporcionado. Compruebe si está bien escrito.");
+                }
+            } catch (err) {
+                const localCase = casesDB[code];
+                injectBotMessage(localCase
+                    ? renderCaseCard(localCase, code) + `<div class="text-[10px] text-gray-400 mt-2 italic">Conexión perdida: mostrando datos de respaldo.</div>`
+                    : "❌ No he encontrado registros para el código proporcionado. Compruebe si está bien escrito.");
+            }
+        }
 
         // =========================================================================================
         // 5. GENERADOR DINÁMICO DE LA INTERFAZ DE USUARIO (DOM) Y CONTROL MÓVIL
