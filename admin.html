@@ -3,557 +3,867 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AeroLex | Bóveda Interactiva [PORTAL ABOGADOS]</title>
+    <title>AeroLex | Bóveda [Portal Abogados]</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { 'mac-bg': '#1e1e1e', 'mac-panel': '#252526', 'mac-border': '#3e3e42', 'mac-accent': '#0A84FF' },
-                    fontFamily: { sans: ['-apple-system', 'BlinkMacSystemFont', '"Inter"', 'sans-serif'] }
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
+                    }
                 }
             }
         }
     </script>
     <style>
-        body { background-color: #1e1e1e; color: #e5e5e5; overflow: hidden; -webkit-font-smoothing: antialiased; }
+        :root {
+            --bg: #0A0C10;
+            --panel: #10131A;
+            --panel-2: #151923;
+            --panel-3: #1A1F2B;
+            --border: #232936;
+            --border-2: #2D3546;
+            --text: #E8ECF4;
+            --text-dim: #8A94A8;
+            --text-faint: #5A6478;
+            --accent: #4F8CFF;
+            --accent-2: #7DB1FF;
+        }
+        * { scrollbar-width: thin; scrollbar-color: #2D3546 transparent; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #2D3546; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3D4761; }
+
+        body { background: var(--bg); color: var(--text); overflow: hidden; -webkit-font-smoothing: antialiased; font-family: 'Inter', sans-serif; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Inputs macOS Dark */
-        .mac-input { background: #1e1e1e; border: 1px solid #3e3e42; color: #fff; border-radius: 8px; padding: 10px 14px; font-size: 13px; width: 100%; transition: all 0.2s; outline: none; }
-        .mac-input:focus { border-color: #0A84FF; box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.3); }
-        .mac-select { appearance: none; background: #1e1e1e url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23788C9F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") no-repeat right 10px center/12px; }
+        /* ---- Fondo ambiental ---- */
+        .env-bg {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background:
+                radial-gradient(900px 500px at 15% -10%, rgba(79, 140, 255, 0.09), transparent 60%),
+                radial-gradient(700px 400px at 95% 110%, rgba(79, 140, 255, 0.05), transparent 60%);
+        }
 
-        /* Toggle Switch iOS/macOS */
+        /* ---- Componentes ---- */
+        .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; }
+        .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+        .panel-title { font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-2); display: flex; align-items: center; gap: 8px; }
+
+        .field-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 6px; }
+        .input {
+            width: 100%; background: #0D1017; border: 1px solid var(--border); color: var(--text);
+            border-radius: 10px; padding: 10px 14px; font-size: 13px; transition: all 0.2s; outline: none;
+        }
+        .input::placeholder { color: #4A5468; }
+        .input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15); background: #0F131B; }
+        .input:disabled { opacity: 0.7; cursor: not-allowed; }
+        select.input {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238A94A8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 12px center; background-size: 13px;
+            padding-right: 36px;
+        }
+        textarea.input { resize: none; }
+
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 10px; font-weight: 700; font-size: 12px; padding: 9px 16px; transition: all 0.2s; cursor: pointer; border: 1px solid transparent; white-space: nowrap; }
+        .btn-primary { background: linear-gradient(180deg, #5B95FF 0%, #3E7BEE 100%); color: white; box-shadow: 0 4px 14px rgba(79, 140, 255, 0.25), inset 0 1px 0 rgba(255,255,255,0.15); }
+        .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-primary:disabled { opacity: 0.6; transform: none; filter: none; cursor: not-allowed; }
+        .btn-ghost { background: var(--panel-2); border-color: var(--border); color: var(--text-dim); }
+        .btn-ghost:hover { color: var(--text); border-color: var(--border-2); background: var(--panel-3); }
+        .btn-danger { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.25); color: #F87171; }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
+        .btn-icon { width: 34px; height: 34px; padding: 0; }
+
+        /* ---- Chips de estado ---- */
+        .chip { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; border: 1px solid; }
+        .chip-nuevo { color: #67E8F9; border-color: rgba(103, 232, 249, 0.25); background: rgba(103, 232, 249, 0.08); }
+        .chip-activo { color: #93C5FD; border-color: rgba(147, 197, 253, 0.25); background: rgba(147, 197, 253, 0.08); }
+        .chip-urgente { color: #FCA5A5; border-color: rgba(252, 165, 165, 0.3); background: rgba(252, 165, 165, 0.1); animation: pulseUrg 2s infinite; }
+        .chip-finalizado { color: #86EFAC; border-color: rgba(134, 239, 172, 0.25); background: rgba(134, 239, 172, 0.08); }
+        .chip-suspendido { color: #9CA3AF; border-color: rgba(156, 163, 175, 0.25); background: rgba(156, 163, 175, 0.08); }
+        @keyframes pulseUrg { 0%, 100% { box-shadow: 0 0 0 0 rgba(252, 165, 165, 0.2); } 50% { box-shadow: 0 0 0 4px rgba(252, 165, 165, 0.06); } }
+
+        /* ---- Toggle ---- */
         .toggle-checkbox:checked { right: 0; border-color: #34C759; }
         .toggle-checkbox:checked + .toggle-label { background-color: #34C759; }
         .toggle-checkbox:checked + .toggle-label:after { transform: translateX(100%); border-color: white; }
-        .toggle-label { width: 44px; height: 24px; background-color: #3e3e42; border-radius: 9999px; position: relative; cursor: pointer; transition: background-color .3s; }
-        .toggle-label:after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background-color: white; border-radius: 50%; transition: transform .3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .toggle-label { width: 42px; height: 23px; background-color: var(--border-2); border-radius: 9999px; position: relative; cursor: pointer; transition: background-color .25s; }
+        .toggle-label:after { content: ''; position: absolute; top: 2px; left: 2px; width: 19px; height: 19px; background-color: white; border-radius: 50%; transition: transform .25s; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
 
-        .sidebar-item { transition: all 0.2s; cursor: pointer; border-left: 3px solid transparent; }
-        .sidebar-item.active { background: #2d2d2d; border-left-color: #0A84FF; }
-        .sidebar-item:hover:not(.active) { background: #2a2a2b; }
+        /* ---- Lista de casos ---- */
+        .case-card { padding: 13px 16px; border-left: 3px solid transparent; cursor: pointer; transition: all 0.15s; border-bottom: 1px solid rgba(35, 41, 54, 0.5); }
+        .case-card:hover { background: #131722; }
+        .case-card.active { background: #18202F; border-left-color: var(--accent); }
+        .case-card.urgente { border-left-color: #EF4444; }
+        .case-card.urgente.active { border-left-color: #EF4444; }
+
+        .progress-track { height: 4px; border-radius: 999px; background: #1E2432; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #3E7BEE, #67E8F9); transition: width 0.4s ease; }
+        .progress-fill.complete { background: linear-gradient(90deg, #22C55E, #4ADE80); }
+
+        /* ---- Animaciones ---- */
+        .fade-in { animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ---- Toasts ---- */
+        #toast-zone { position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 8px; }
+        .toast { display: flex; align-items: center; gap: 10px; background: #161B26; border: 1px solid var(--border-2); border-radius: 12px; padding: 12px 18px; font-size: 13px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .toast.ok { border-color: rgba(52, 199, 89, 0.4); } .toast.ok i { color: #34C759; }
+        .toast.err { border-color: rgba(239, 68, 68, 0.4); } .toast.err i { color: #EF4444; }
+        .toast.info i { color: var(--accent); }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        .toast.out { animation: toastOut 0.3s forwards; }
+        @keyframes toastOut { to { opacity: 0; transform: translateX(30px); } }
+
+        /* ---- Modal ---- */
+        .modal-backdrop { position: fixed; inset: 0; background: rgba(5, 7, 10, 0.75); backdrop-filter: blur(6px); z-index: 90; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal-box { background: var(--panel-2); border: 1px solid var(--border-2); border-radius: 18px; max-width: 420px; width: 100%; padding: 26px; box-shadow: 0 30px 80px rgba(0,0,0,0.6); animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        /* ---- Triage viewer ---- */
+        .triage-item { display: flex; gap: 10px; align-items: flex-start; padding: 9px 12px; background: #0D1017; border: 1px solid var(--border); border-radius: 10px; font-size: 12.5px; color: var(--text-dim); line-height: 1.5; }
+        .triage-item i { color: var(--accent); margin-top: 2px; font-size: 10px; }
+        .triage-item.urg { border-color: rgba(252, 165, 165, 0.3); color: #FCA5A5; }
+        .triage-item.urg i { color: #FCA5A5; }
+
+        .cred-code { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; letter-spacing: 0.08em; color: white; }
+        .cred-pin { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; letter-spacing: 0.3em; color: #4ADE80; }
+
+        .step-item { background: #0D1017; border: 1px solid var(--border); border-radius: 12px; transition: border-color 0.2s; }
+        .step-item:has(.step-done:checked) { border-color: rgba(52, 199, 89, 0.35); }
 
         #app-container { display: none; }
 
-        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .stat-chip { display: flex; align-items: center; gap: 8px; padding: 6px 14px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 999px; font-size: 12px; }
+        .stat-chip b { font-weight: 800; }
+        .stat-dot { width: 7px; height: 7px; border-radius: 50%; }
     </style>
 </head>
 <body class="h-screen flex flex-col">
+<div class="env-bg"></div>
 
-    <!-- LOGIN SCREEN -->
-    <div id="login-screen" class="flex-1 flex items-center justify-center bg-[#111111] p-4">
-        <div class="bg-[#1e1e1e] border border-[#3e3e42] rounded-2xl p-8 md:p-10 w-full max-w-md shadow-2xl relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-[#0A84FF]"></div>
-            <div class="text-center mb-8">
-                <i class="fas fa-fingerprint text-4xl text-[#0A84FF] mb-4"></i>
-                <h1 class="text-xl md:text-2xl font-bold text-white tracking-tight">Acceso Confidencial</h1>
-                <p class="text-[10px] md:text-xs text-gray-400 mt-1 uppercase tracking-widest">Bóveda AeroLex</p>
+<!-- ==================== LOGIN ==================== -->
+<div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background: radial-gradient(1000px 600px at 50% -20%, #131A2A 0%, #0A0C10 60%);">
+    <div class="w-full max-w-sm relative">
+        <div class="absolute -top-16 left-1/2 -translate-x-1/2 w-24 h-24 rounded-3xl flex items-center justify-center shadow-2xl" style="background: linear-gradient(145deg, #5B95FF, #2E5FCC); box-shadow: 0 20px 50px rgba(79,140,255,0.35);">
+            <i class="fas fa-fingerprint text-3xl text-white"></i>
+        </div>
+        <div class="panel mt-10 p-8 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-[3px]" style="background: linear-gradient(90deg, transparent, #4F8CFF, transparent);"></div>
+            <div class="text-center mb-7">
+                <h1 class="text-xl font-extrabold text-white tracking-tight">Bóveda AeroLex</h1>
+                <p class="text-[10px] text-[--text-faint] mt-1.5 uppercase tracking-[0.25em] font-bold">Acceso confidencial · Estudio Jurídico</p>
             </div>
-
-            <form id="login-form" class="space-y-5" autocomplete="off">
+            <form id="login-form" class="space-y-4" autocomplete="off">
                 <div>
-                    <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wide block mb-1.5">Clave de Acceso del Estudio</label>
-                    <input type="password" id="admin-key" class="mac-input bg-[#111111]" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="••••••••••••" required>
+                    <label class="field-label">Clave de Acceso del Estudio</label>
+                    <input type="password" id="admin-key" class="input" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="••••••••••••" required>
                 </div>
-                <button type="submit" id="btn-connect" class="w-full bg-[#0A84FF] hover:bg-blue-600 text-white font-bold py-3.5 px-4 rounded-lg text-sm transition-colors mt-2 shadow-[0_4px_14px_rgba(10,132,255,0.3)]">
+                <button type="submit" id="btn-connect" class="btn btn-primary w-full !py-3.5 !text-sm mt-2">
                     Desbloquear Bóveda
                 </button>
             </form>
             <p id="error-msg" class="text-red-400 text-xs text-center mt-4 hidden"></p>
         </div>
+        <p class="text-center text-[10px] text-[--text-faint] mt-6 tracking-widest uppercase font-semibold">Conexión cifrada · Puerto Montt</p>
+    </div>
+</div>
+
+<!-- ==================== APP ==================== -->
+<div id="app-container" class="flex-1 flex flex-col overflow-hidden relative w-full h-full">
+
+    <!-- TOPBAR -->
+    <div class="h-14 border-b border-[--border] flex items-center justify-between px-4 md:px-6 shrink-0 relative z-20" style="background: rgba(16, 19, 26, 0.85); backdrop-filter: blur(12px);">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background: linear-gradient(145deg, #5B95FF, #2E5FCC); box-shadow: 0 4px 14px rgba(79,140,255,0.3);">
+                <i class="fas fa-scale-balanced text-white text-sm"></i>
+            </div>
+            <div class="hidden sm:block">
+                <div class="font-extrabold text-white text-sm leading-tight tracking-tight">Bóveda AeroLex</div>
+                <div class="text-[9px] text-[--text-faint] uppercase tracking-[0.2em] font-bold">Gestión de Expedientes</div>
+            </div>
+        </div>
+
+        <div class="hidden lg:flex items-center gap-2" id="stats-bar">
+            <!-- Stats inyectados -->
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button onclick="openSettings()" class="btn btn-ghost btn-icon" title="Configurar WhatsApp del estudio"><i class="fas fa-gear"></i></button>
+            <button onclick="logout()" class="btn btn-ghost btn-icon !text-red-400 hover:!bg-red-500/10" title="Cerrar sesión"><i class="fas fa-power-off"></i></button>
+        </div>
     </div>
 
-    <!-- MAIN DASHBOARD -->
-    <div id="app-container" class="flex-1 flex overflow-hidden relative w-full h-full">
+    <div class="flex flex-1 overflow-hidden relative">
 
-        <!-- SIDEBAR: LISTA DE CAUSAS -->
-        <div id="sidebar" class="w-full md:w-72 bg-[#1e1e1e] border-r border-[#3e3e42] flex flex-col shadow-lg shrink-0 absolute md:relative h-full z-10 transition-transform duration-300 transform translate-x-0">
-            <div class="h-16 flex items-center justify-between px-5 border-b border-[#3e3e42] shrink-0 bg-[#252526]">
-                <span class="font-bold text-white tracking-wide"><i class="fas fa-layer-group text-[#0A84FF] mr-2"></i> Expedientes</span>
-                <button onclick="createNewCase()" id="btn-new" class="w-8 h-8 rounded-full bg-[#3e3e42] hover:bg-[#0A84FF] text-white flex items-center justify-center transition" title="Nuevo Expediente">
-                    <i class="fas fa-plus text-xs"></i>
-                </button>
-            </div>
-            <div class="p-3 border-b border-[#3e3e42] shrink-0">
+        <!-- SIDEBAR -->
+        <div id="sidebar" class="w-full md:w-[330px] bg-[--panel] border-r border-[--border] flex flex-col shrink-0 absolute md:relative h-full z-10 transition-transform duration-300">
+            <div class="p-3 border-b border-[--border] shrink-0 space-y-2.5">
                 <div class="relative">
-                    <i class="fas fa-search absolute left-3 top-2.5 text-gray-500 text-xs"></i>
-                    <input type="text" id="search-case" onkeyup="filterCases()" class="mac-input pl-8 py-2 bg-[#111111] text-xs border-none" placeholder="Buscar RIT o ALX..." autocomplete="off">
+                    <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-[--text-faint] text-xs"></i>
+                    <input type="text" id="search-case" onkeyup="filterCases()" class="input !pl-10 !py-2.5 !text-xs" placeholder="Buscar código, RIT o materia..." autocomplete="off">
+                </div>
+                <div class="flex gap-1.5 overflow-x-auto hide-scrollbar" id="filter-bar">
+                    <button onclick="setStatusFilter('all')" data-f="all" class="filter-btn active">Todos</button>
+                    <button onclick="setStatusFilter('nuevo')" data-f="nuevo" class="filter-btn">Nuevos</button>
+                    <button onclick="setStatusFilter('urgente')" data-f="urgente" class="filter-btn">Urgentes</button>
+                    <button onclick="setStatusFilter('activo')" data-f="activo" class="filter-btn">Activos</button>
+                    <button onclick="setStatusFilter('finalizado')" data-f="finalizado" class="filter-btn">Cerrados</button>
                 </div>
             </div>
-            <div id="cases-list" class="flex-1 overflow-y-auto hide-scrollbar py-2 pb-20 md:pb-2">
-                <!-- Causas inyectadas aquí -->
-            </div>
-            <div class="p-3 border-t border-[#3e3e42] text-center shrink-0 bg-[#1e1e1e]">
-                <button onclick="logout()" class="text-xs font-bold text-red-400 hover:text-red-300 transition w-full py-2"><i class="fas fa-sign-out-alt mr-1"></i> Destruir Sesión Segura</button>
+            <div id="cases-list" class="flex-1 overflow-y-auto pb-20 md:pb-2"></div>
+            <div class="p-3 border-t border-[--border] shrink-0">
+                <button onclick="createNewCase()" id="btn-new" class="btn btn-primary w-full"><i class="fas fa-plus"></i> Nuevo Expediente</button>
             </div>
         </div>
 
-        <!-- AREA DE EDICIÓN CENTRAL -->
-        <div id="editor-view" class="w-full md:flex-1 flex flex-col bg-[#111111] absolute md:relative h-full z-20 transition-transform duration-300 transform translate-x-full md:translate-x-0">
+        <!-- EDITOR -->
+        <div id="editor-view" class="w-full md:flex-1 flex flex-col absolute md:relative h-full z-20 transition-transform duration-300 transform translate-x-full md:translate-x-0" style="background: var(--bg);">
 
-            <!-- Header Editor -->
-            <div class="h-16 border-b border-[#3e3e42] flex items-center justify-between px-4 md:px-8 bg-[#1e1e1e] shrink-0">
-                <div class="flex items-center gap-3 overflow-hidden">
-                    <button onclick="closeMobileEditor()" class="md:hidden w-8 h-8 flex items-center justify-center text-[#0A84FF] hover:bg-[#3e3e42] rounded-full transition shrink-0">
-                        <i class="fas fa-chevron-left text-lg"></i>
-                    </button>
-                    <div id="editor-header" class="font-bold text-sm md:text-lg text-white truncate">Seleccione un expediente</div>
+            <div class="h-16 border-b border-[--border] flex items-center justify-between px-4 md:px-8 shrink-0 gap-3" style="background: var(--panel);">
+                <div class="flex items-center gap-3 min-w-0">
+                    <button onclick="closeMobileEditor()" class="md:hidden btn btn-ghost btn-icon shrink-0"><i class="fas fa-chevron-left"></i></button>
+                    <div class="min-w-0">
+                        <div id="editor-header" class="font-extrabold text-base md:text-lg text-white truncate font-mono tracking-tight">Seleccione un expediente</div>
+                        <div id="editor-subheader" class="text-[10px] text-[--text-faint] uppercase tracking-widest font-bold truncate"></div>
+                    </div>
                 </div>
-                <div class="flex items-center gap-2 md:gap-3 shrink-0">
-                    <span id="sync-status" class="text-[10px] md:text-xs font-semibold flex items-center text-gray-500"></span>
-                    <button onclick="deleteCurrentCase()" id="btn-delete" class="hidden w-9 h-9 md:w-auto md:px-4 md:py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-lg text-xs font-bold transition flex items-center justify-center">
-                        <i class="fas fa-trash-alt md:hidden"></i><span class="hidden md:inline">Eliminar</span>
-                    </button>
-                    <button onclick="saveCase()" id="btn-sync" class="hidden w-9 h-9 md:w-auto md:px-6 md:py-2 bg-[#34C759] hover:bg-green-500 text-white rounded-lg text-xs font-bold transition shadow-[0_4px_10px_rgba(52,199,89,0.2)] flex items-center justify-center gap-2">
-                        <i class="fas fa-cloud-upload-alt"></i><span class="hidden md:inline">Guardar</span>
-                    </button>
+                <div class="flex items-center gap-2 shrink-0">
+                    <span id="sync-status" class="text-[11px] font-semibold text-[--text-faint] flex items-center"></span>
+                    <button onclick="confirmDelete()" id="btn-delete" class="hidden btn btn-danger btn-icon md:!w-auto md:!px-4"><i class="fas fa-trash-alt md:hidden"></i><span class="hidden md:inline">Eliminar</span></button>
+                    <button onclick="saveCase()" id="btn-sync" class="hidden btn btn-primary btn-icon md:!w-auto md:!px-7"><i class="fas fa-cloud-arrow-up"></i><span class="hidden md:inline">Guardar</span></button>
                 </div>
             </div>
 
-            <!-- Formulario Editor -->
-            <div id="editor-body" class="flex-1 overflow-y-auto hide-scrollbar p-4 md:p-8 hidden">
-                <div class="max-w-4xl mx-auto space-y-6 pb-24">
+            <div id="editor-body" class="flex-1 overflow-y-auto p-4 md:p-8 hidden">
+                <div class="max-w-4xl mx-auto space-y-5 pb-24">
 
-                    <!-- Ficha General -->
-                    <div class="bg-[#1e1e1e] border border-[#3e3e42] rounded-xl p-5 md:p-6 shadow-md fade-in">
-                        <h3 class="text-sm font-bold text-white uppercase tracking-widest mb-5 border-b border-[#3e3e42] pb-2 text-[#0A84FF]"><i class="fas fa-folder-open mr-2"></i> Información Estructural</h3>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-5">
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Código AeroLex (ID)</label>
-                                <input type="text" id="case-id" class="mac-input font-mono text-[#0A84FF] font-bold" disabled>
-                            </div>
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">PIN del Cliente (para "Estado de mi Caso")</label>
-                                <input type="text" id="case-pin" class="mac-input font-mono text-[#34C759] font-bold" disabled>
-                            </div>
+                    <!-- CREDENCIALES DEL CLIENTE -->
+                    <div class="panel overflow-hidden fade-in">
+                        <div class="panel-header">
+                            <span class="panel-title"><i class="fas fa-key"></i> Credenciales del Cliente</span>
+                            <button onclick="sendCredentialsWA()" class="btn btn-ghost !text-[11px]"><i class="fab fa-whatsapp" style="color:#25D366"></i> Enviar por WhatsApp</button>
                         </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-5">
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">RIT / Identificador Interno</label>
-                                <input type="text" id="case-rit" class="mac-input" placeholder="Ej: C-1450-2026" autocomplete="off" oninput="markUnsaved()">
+                        <div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="p-4 rounded-xl border border-[--border]" style="background: linear-gradient(145deg, #131826, #0E1220);">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <span class="field-label !mb-0">Código de Seguimiento</span>
+                                    <button onclick="copyText(document.getElementById('case-id').value, 'Código copiado')" class="text-[--text-faint] hover:text-white transition" title="Copiar"><i class="fas fa-copy text-xs"></i></button>
+                                </div>
+                                <div id="case-id" class="cred-code">—</div>
+                                <p class="text-[10px] text-[--text-faint] mt-2">El cliente lo usa en "Estado de mi Caso"</p>
                             </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-5">
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Categoría Legal/Técnica</label>
-                                <select id="case-category" class="mac-input mac-select" onchange="updateServicesDropdown(); markUnsaved()"></select>
+                            <div class="p-4 rounded-xl border border-[--border]" style="background: linear-gradient(145deg, #122016, #0E1712);">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <span class="field-label !mb-0">PIN de Consulta</span>
+                                    <button onclick="copyText(document.getElementById('case-pin').value, 'PIN copiado')" class="text-[--text-faint] hover:text-white transition" title="Copiar"><i class="fas fa-copy text-xs"></i></button>
+                                </div>
+                                <div id="case-pin" class="cred-pin">—</div>
+                                <p class="text-[10px] text-[--text-faint] mt-2">Requerido junto al código para ver el estado</p>
                             </div>
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Materia Específica</label>
-                                <select id="case-service" class="mac-input mac-select" onchange="markUnsaved()"></select>
-                            </div>
-                        </div>
-
-                        <div class="mb-5">
-                            <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Tribunal u Oficina</label>
-                            <input type="text" id="case-tribunal" class="mac-input" placeholder="Ej: 1° Juzgado Civil / CBR Puerto Montt" autocomplete="off" oninput="markUnsaved()">
-                        </div>
-
-                        <div>
-                            <label class="text-[11px] font-bold text-gray-400 uppercase block mb-1.5">Apunte para el Cliente (Visible en su rastreo)</label>
-                            <textarea id="case-detail" class="mac-input resize-none h-24" placeholder="Escriba aquí observaciones, instrucciones para el cliente o estado actual." autocomplete="off" oninput="markUnsaved()"></textarea>
                         </div>
                     </div>
 
-                    <!-- Línea de Tiempo (Hitos) -->
-                    <div class="bg-[#1e1e1e] border border-[#3e3e42] rounded-xl p-5 md:p-6 shadow-md fade-in" style="animation-delay: 0.1s;">
-                        <div class="flex items-center justify-between border-b border-[#3e3e42] pb-2 mb-5">
-                            <h3 class="text-sm font-bold text-white uppercase tracking-widest text-[#0A84FF]"><i class="fas fa-stream mr-2"></i> Construcción de Hitos</h3>
-                            <button onclick="addStep()" class="bg-[#3e3e42] hover:bg-[#4a4a4e] text-white px-3 py-1.5 rounded-md text-[11px] font-bold transition flex items-center gap-1">
-                                <i class="fas fa-plus"></i> <span class="hidden sm:inline">Añadir Hito</span>
-                            </button>
+                    <!-- ESTADO Y ESTRUCTURA -->
+                    <div class="panel overflow-hidden fade-in" style="animation-delay: 0.05s;">
+                        <div class="panel-header">
+                            <span class="panel-title"><i class="fas fa-folder-open"></i> Estado del Expediente</span>
+                            <select id="case-status" class="input !w-auto !py-1.5 !text-xs font-bold" onchange="markUnsaved()">
+                                <option value="nuevo">🔵 NUEVO (lead sin revisar)</option>
+                                <option value="activo">▶️ ACTIVO (en tramitación)</option>
+                                <option value="urgente">🔴 URGENTE (plazo crítico)</option>
+                                <option value="suspendido">⏸️ SUSPENDIDO</option>
+                                <option value="finalizado">✅ FINALIZADO</option>
+                            </select>
                         </div>
+                        <div class="p-5 space-y-5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="field-label">RIT / Identificador Interno</label>
+                                    <input type="text" id="case-rit" class="input font-mono" placeholder="Ej: C-1450-2026" autocomplete="off" oninput="markUnsaved()">
+                                </div>
+                                <div>
+                                    <label class="field-label">Tribunal u Oficina</label>
+                                    <input type="text" id="case-tribunal" class="input" placeholder="Ej: 1° Juzgado Civil / CBR Puerto Montt" autocomplete="off" oninput="markUnsaved()">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="field-label">Categoría Legal/Técnica</label>
+                                    <select id="case-category" class="input" onchange="updateServicesDropdown(); markUnsaved()"></select>
+                                </div>
+                                <div>
+                                    <label class="field-label">Materia Específica</label>
+                                    <select id="case-service" class="input" onchange="markUnsaved()"></select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="field-label">Apunte para el Cliente (visible en su rastreo en vivo)</label>
+                                <textarea id="case-detail" class="input !h-24" placeholder="Escriba aquí observaciones, instrucciones para el cliente o estado actual." autocomplete="off" oninput="markUnsaved()"></textarea>
+                            </div>
+                        </div>
+                    </div>
 
-                        <p class="text-xs text-gray-500 mb-4">Añada los pasos del procedimiento judicial o técnico. Marque el interruptor verde para avanzar el progreso del cliente en su rastreo en vivo.</p>
+                    <!-- TRIAJE DE ENTRADA -->
+                    <div id="triage-panel" class="panel overflow-hidden fade-in hidden" style="animation-delay: 0.1s;">
+                        <div class="panel-header">
+                            <span class="panel-title"><i class="fas fa-clipboard-list"></i> Triaje de Entrada del Lead</span>
+                        </div>
+                        <div class="p-5">
+                            <div id="triage-list" class="space-y-2"></div>
+                            <div id="triage-phone" class="mt-4 hidden text-xs text-[--text-dim] flex items-center gap-2">
+                                <i class="fas fa-phone text-[--accent] text-[10px]"></i>
+                                <span>Teléfono declarado: <b class="text-white font-mono" id="triage-phone-val"></b></span>
+                            </div>
+                        </div>
+                    </div>
 
-                        <div id="steps-container" class="space-y-3">
-                            <!-- Los pasos se renderizan dinámicamente aquí -->
+                    <!-- HITOS -->
+                    <div class="panel overflow-hidden fade-in" style="animation-delay: 0.15s;">
+                        <div class="panel-header">
+                            <span class="panel-title"><i class="fas fa-timeline"></i> Línea de Tiempo del Cliente</span>
+                            <button onclick="addStep()" class="btn btn-ghost !text-[11px]"><i class="fas fa-plus"></i> Añadir Hito</button>
+                        </div>
+                        <div class="p-5">
+                            <p class="text-xs text-[--text-faint] mb-4 leading-relaxed">El cliente ve esta línea en tiempo real en su rastreo. Active el interruptor para marcar etapas completadas y reordene con las flechas.</p>
+                            <div id="steps-container" class="space-y-2.5"></div>
                         </div>
                     </div>
 
                 </div>
             </div>
 
-            <!-- Empty State (Solo visible en PC) -->
-            <div id="editor-empty" class="hidden md:flex flex-1 flex-col items-center justify-center text-gray-500">
-                <i class="fas fa-fingerprint text-6xl mb-4 opacity-20"></i>
-                <p class="text-sm">Seleccione o cree un expediente en el panel lateral.</p>
+            <div id="editor-empty" class="hidden md:flex flex-1 flex-col items-center justify-center text-[--text-faint]">
+                <div class="w-20 h-20 rounded-3xl flex items-center justify-center mb-5" style="background: var(--panel-2); border: 1px solid var(--border);">
+                    <i class="fas fa-folder-open text-3xl opacity-30"></i>
+                </div>
+                <p class="text-sm font-semibold">Seleccione un expediente del panel lateral</p>
+                <p class="text-xs mt-1 opacity-60">o cree uno nuevo con el botón inferior</p>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        // =========================================================================
-        // 1. BASE DE DATOS DE SERVICIOS (Para los Dropdowns)
-        // =========================================================================
-        const MATERIAS = {
-            "Derecho Civil": ["Redacción y revisión de contratos", "Cobranza judicial y extrajudicial", "Juicios ordinarios y ejecutivos", "Indemnización de perjuicios", "Responsabilidad contractual y extracontractual", "Prescripción adquisitiva", "Servidumbres", "Acciones posesorias"],
-            "Derecho Inmobiliario": ["Estudios de títulos", "Compraventa de inmuebles", "Regularización de propiedades", "Saneamiento de títulos", "Subdivisiones prediales", "Constitución de servidumbres", "Asesoría inmobiliaria"],
-            "Derecho Comercial y Corporativo": ["Constitución de sociedades", "Modificaciones societarias", "Fusiones y adquisiciones", "Pactos de accionistas", "Contratos comerciales", "Cobranza empresarial", "Due diligence", "Gobierno corporativo"],
-            "Derecho Laboral": ["Asesoría a empleadores", "Defensa laboral", "Despidos", "Tutela laboral", "Accidentes del trabajo", "Auditorías laborales", "Negociación laboral"],
-            "Derecho Administrativo": ["Recursos administrativos", "Procedimientos sancionatorios", "Licitaciones públicas", "Compras públicas", "Reclamos ante organismos públicos", "Solicitudes de transparencia"],
-            "Derecho Ambiental": ["Asesoría ambiental", "Cumplimiento normativo", "Procedimientos ante organismos fiscalizadores", "Denuncias ambientales", "Daño ambiental"],
-            "Derecho de Familia": ["Divorcios", "Alimentos", "Cuidado personal", "Relación directa regular", "Compensación económica", "Violencia intrafamiliar"],
-            "Derecho Sucesorio": ["Posesiones efectivas", "Herencias", "Particiones", "Testamentos", "Litigios hereditarios"],
-            "Litigación y Defensa Judicial": ["Representación ante tribunales", "Patrocinio y poder", "Juicios civiles", "Juicios laborales", "Juicios ejecutivos", "Recursos de protección", "Recursos de amparo", "Recursos de apelación", "Defensa en procedimientos administrativos"],
-            "Asesoría Empresarial y Compliance": ["Gerencia legal externa", "Compliance corporativo", "Modelos de prevención de delitos", "Auditorías legales", "Gestión de riesgos legales", "Protección de datos personales", "Cumplimiento normativo", "Investigación interna", "Due diligence empresarial"],
-            "Mediación y Negociación": ["Negociación extrajudicial", "Resolución de conflictos", "Mediación privada", "Acuerdos transaccionales", "Reestructuración de deudas"],
-            "Evidencia Digital y Tecnología": ["Levantamiento de evidencia digital", "Informes jurídicos especializados", "Investigación jurídica", "Custodia documental", "Respaldo probatorio para litigios", "Análisis documental y regulatorio"],
-            "Drones: Inspección y Registro Aéreo": ["Inspección de predios", "Inspección de obras", "Inspección industrial", "Inspección de techumbres", "Inspección de caminos", "Monitoreo de proyectos"],
-            "Drones: Evidencia para Litigios": ["Registro audiovisual georreferenciado", "Verificación de deslindes", "Conflictos de propiedad", "Ocupaciones irregulares", "Daños ambientales", "Peritajes de apoyo judicial"],
-            "Fotogrametría y Topografía": ["Ortomosaicos", "Modelos 3D", "Cálculo de superficies", "Seguimiento de obras", "Informes técnicos", "Documentación para procesos judiciales"],
-            "Servicios Especializados B2B": ["Asesoría permanente a empresas", "Gestión de contratos", "Cobranza corporativa", "Auditoría legal preventiva", "Evaluación de riesgos", "Regularización de activos", "Asesoría para licitaciones", "Recuperación de activos", "Estudios de títulos corporativos", "Informes legales estratégicos"]
-        };
+<!-- Toasts + Modales -->
+<div id="toast-zone"></div>
+<div id="modal-zone"></div>
 
-        // =========================================================================
-        // 2. LÓGICA CORE (API EN VIVO)
-        // =========================================================================
-        let ADMIN_KEY = '';
-        let casesDB = {};
-        let currentEditingId = null;
-        let hasUnsavedChanges = false;
+<style>
+    .filter-btn { flex-shrink: 0; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; padding: 5px 12px; border-radius: 999px; background: transparent; border: 1px solid var(--border); color: var(--text-faint); cursor: pointer; transition: all 0.2s; }
+    .filter-btn:hover { color: var(--text-dim); border-color: var(--border-2); }
+    .filter-btn.active { background: rgba(79, 140, 255, 0.12); border-color: rgba(79, 140, 255, 0.4); color: var(--accent-2); }
+</style>
 
-        function authHeaders(extra = {}) {
-            return { 'x-admin-key': ADMIN_KEY, ...extra };
+<script>
+    // =========================================================================
+    // 1. CATÁLOGO DE MATERIAS
+    // =========================================================================
+    const MATERIAS = {
+        "Derecho Civil": ["Redacción y revisión de contratos", "Cobranza judicial y extrajudicial", "Juicios ordinarios y ejecutivos", "Indemnización de perjuicios", "Responsabilidad contractual y extracontractual", "Prescripción adquisitiva", "Servidumbres", "Acciones posesorias"],
+        "Derecho Inmobiliario": ["Estudios de títulos", "Compraventa de inmuebles", "Regularización de propiedades", "Saneamiento de títulos", "Subdivisiones prediales", "Constitución de servidumbres", "Asesoría inmobiliaria"],
+        "Derecho Comercial y Corporativo": ["Constitución de sociedades", "Modificaciones societarias", "Fusiones y adquisiciones", "Pactos de accionistas", "Contratos comerciales", "Cobranza empresarial", "Due diligence", "Gobierno corporativo"],
+        "Derecho Laboral": ["Asesoría a empleadores", "Defensa laboral", "Despidos", "Tutela laboral", "Accidentes del trabajo", "Auditorías laborales", "Negociación laboral"],
+        "Derecho Administrativo": ["Recursos administrativos", "Procedimientos sancionatorios", "Licitaciones públicas", "Compras públicas", "Reclamos ante organismos públicos", "Solicitudes de transparencia"],
+        "Derecho Ambiental": ["Asesoría ambiental", "Cumplimiento normativo", "Procedimientos ante organismos fiscalizadores", "Denuncias ambientales", "Daño ambiental"],
+        "Derecho de Familia": ["Divorcios", "Alimentos", "Cuidado personal", "Relación directa regular", "Compensación económica", "Violencia intrafamiliar"],
+        "Derecho Sucesorio": ["Posesiones efectivas", "Herencias", "Particiones", "Testamentos", "Litigios hereditarios"],
+        "Litigación y Defensa Judicial": ["Representación ante tribunales", "Patrocinio y poder", "Juicios civiles", "Juicios laborales", "Juicios ejecutivos", "Recursos de protección", "Recursos de amparo", "Recursos de apelación", "Defensa en procedimientos administrativos"],
+        "Asesoría Empresarial y Compliance": ["Gerencia legal externa", "Compliance corporativo", "Modelos de prevención de delitos", "Auditorías legales", "Gestión de riesgos legales", "Protección de datos personales", "Cumplimiento normativo", "Investigación interna", "Due diligence empresarial"],
+        "Mediación y Negociación": ["Negociación extrajudicial", "Resolución de conflictos", "Mediación privada", "Acuerdos transaccionales", "Reestructuración de deudas"],
+        "Evidencia Digital y Tecnología": ["Levantamiento de evidencia digital", "Informes jurídicos especializados", "Investigación jurídica", "Custodia documental", "Respaldo probatorio para litigios", "Análisis documental y regulatorio"],
+        "Drones: Inspección y Registro Aéreo": ["Inspección de predios", "Inspección de obras", "Inspección industrial", "Inspección de techumbres", "Inspección de caminos", "Monitoreo de proyectos"],
+        "Drones: Evidencia para Litigios": ["Registro audiovisual georreferenciado", "Verificación de deslindes", "Conflictos de propiedad", "Ocupaciones irregulares", "Daños ambientales", "Peritajes de apoyo judicial"],
+        "Fotogrametría y Topografía": ["Ortomosaicos", "Modelos 3D", "Cálculo de superficies", "Seguimiento de obras", "Informes técnicos", "Documentación para procesos judiciales"],
+        "Servicios Especializados B2B": ["Asesoría permanente a empresas", "Gestión de contratos", "Cobranza corporativa", "Auditoría legal preventiva", "Evaluación de riesgos", "Regularización de activos", "Asesoría para licitaciones", "Recuperación de activos", "Estudios de títulos corporativos", "Informes legales estratégicos"]
+    };
+
+    const STATUS_META = {
+        nuevo:     { label: 'Nuevo',      cls: 'chip-nuevo' },
+        activo:    { label: 'Activo',     cls: 'chip-activo' },
+        urgente:   { label: 'Urgente',    cls: 'chip-urgente' },
+        finalizado:{ label: 'Finalizado', cls: 'chip-finalizado' },
+        suspendido:{ label: 'Suspendido', cls: 'chip-suspendido' }
+    };
+
+    // =========================================================================
+    // 2. ESTADO GLOBAL Y API
+    // =========================================================================
+    let ADMIN_KEY = '';
+    let casesDB = {};
+    let currentEditingId = null;
+    let hasUnsavedChanges = false;
+    let statusFilter = 'all';
+
+    const getWaNumber = () => localStorage.getItem('aerolex_wa') || '56900000000';
+
+    function authHeaders(extra = {}) { return { 'x-admin-key': ADMIN_KEY, ...extra }; }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btn-connect');
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Verificando...`;
+        btn.disabled = true;
+        ADMIN_KEY = document.getElementById('admin-key').value.trim();
+        try {
+            const resp = await fetch('/api/admin', { headers: authHeaders() });
+            if (resp.status === 401) throw new Error("Clave de acceso incorrecta.");
+            if (!resp.ok) throw new Error("Servidor no disponible.");
+            const data = await resp.json();
+            casesDB = {};
+            (data.cases || []).forEach(c => { casesDB[c.code] = c; });
+            sessionStorage.setItem('aerolex_admin_key', ADMIN_KEY);
+            initDashboard();
+            toast('Bóveda desbloqueada. Sesión iniciada.', 'ok');
+        } catch (error) {
+            btn.innerHTML = `Desbloquear Bóveda`;
+            btn.disabled = false;
+            const em = document.getElementById('error-msg');
+            em.innerText = error.message;
+            em.classList.remove('hidden');
         }
+    });
 
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn-connect');
-            btn.innerText = "Verificando Credenciales...";
-            btn.disabled = true;
+    (async () => {
+        const saved = sessionStorage.getItem('aerolex_admin_key');
+        if (!saved) return;
+        ADMIN_KEY = saved;
+        try {
+            const resp = await fetch('/api/admin', { headers: authHeaders() });
+            if (!resp.ok) { sessionStorage.removeItem('aerolex_admin_key'); return; }
+            const data = await resp.json();
+            casesDB = {};
+            (data.cases || []).forEach(c => { casesDB[c.code] = c; });
+            initDashboard();
+        } catch (e) { /* sin conexión */ }
+    })();
 
-            ADMIN_KEY = document.getElementById('admin-key').value.trim();
-            try {
-                const resp = await fetch('/api/admin', { headers: authHeaders() });
-                if (resp.status === 401) throw new Error("Clave de acceso incorrecta.");
-                if (!resp.ok) throw new Error("Servidor no disponible. Intente más tarde.");
-                const data = await resp.json();
-                casesDB = {};
-                (data.cases || []).forEach(c => { casesDB[c.code] = c; });
-                sessionStorage.setItem('aerolex_admin_key', ADMIN_KEY);
-                initDashboard();
-            } catch (error) {
-                btn.innerText = "Desbloquear Bóveda";
-                btn.disabled = false;
-                const em = document.getElementById('error-msg');
-                em.innerText = "❌ " + error.message;
-                em.classList.remove('hidden');
-            }
-        });
+    async function saveCase() {
+        if (!currentEditingId) return;
+        saveCurrentFormToDB();
+        const c = casesDB[currentEditingId];
+        if (!c) return;
 
-        (async () => {
-            const saved = sessionStorage.getItem('aerolex_admin_key');
-            if (!saved) return;
-            ADMIN_KEY = saved;
-            try {
-                const resp = await fetch('/api/admin', { headers: authHeaders() });
-                if (!resp.ok) { sessionStorage.removeItem('aerolex_admin_key'); return; }
-                const data = await resp.json();
-                casesDB = {};
-                (data.cases || []).forEach(c => { casesDB[c.code] = c; });
-                initDashboard();
-            } catch (e) { /* sin conexión: se queda en login */ }
-        })();
+        const btn = document.getElementById('btn-sync');
+        const btnContent = btn.innerHTML;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
+        btn.disabled = true;
 
-        async function saveCase() {
-            if (!currentEditingId) return;
-            saveCurrentFormToDB();
-            const c = casesDB[currentEditingId];
-            if (!c) return;
-
-            const btn = document.getElementById('btn-sync');
-            const status = document.getElementById('sync-status');
-            const btnContent = btn.innerHTML;
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
-            btn.disabled = true;
-
-            try {
-                const resp = await fetch('/api/admin', {
-                    method: 'PUT',
-                    headers: authHeaders({ 'Content-Type': 'application/json' }),
-                    body: JSON.stringify({
-                        code: currentEditingId,
-                        materia: c.materia,
-                        tribunal: c.tribunal,
-                        rit: c.rit,
-                        detalle: c.detalle,
-                        estado_actual: c.estadoActual,
-                        steps: c.steps
-                    })
-                });
-                const data = await resp.json();
-                if (!data.ok) throw new Error('fallo');
-                if (data.case) casesDB[currentEditingId] = data.case;
-                status.innerHTML = `<span class="text-[#34C759]"><i class="fas fa-check-circle"></i> Guardado</span>`;
-                hasUnsavedChanges = false;
-            } catch (error) {
-                status.innerHTML = `<span class="text-red-500"><i class="fas fa-times-circle"></i> Error al guardar</span>`;
-            } finally {
-                btn.innerHTML = btnContent;
-                btn.disabled = false;
-                setTimeout(() => { status.innerHTML = ""; }, 4000);
-            }
-        }
-
-        // =========================================================================
-        // 3. UI DASHBOARD & FORMULARIO & RESPONSIVE MÓVIL
-        // =========================================================================
-
-        function initDashboard() {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('app-container').style.display = 'flex';
-
-            const catSelect = document.getElementById('case-category');
-            catSelect.innerHTML = '';
-            Object.keys(MATERIAS).forEach(cat => { catSelect.innerHTML += `<option value="${cat}">${cat}</option>`; });
-            updateServicesDropdown();
-
-            renderSidebar();
-        }
-
-        function updateServicesDropdown() {
-            const cat = document.getElementById('case-category').value;
-            const servSelect = document.getElementById('case-service');
-            servSelect.innerHTML = '';
-            if (MATERIAS[cat]) {
-                MATERIAS[cat].forEach(serv => { servSelect.innerHTML += `<option value="${serv}">${serv}</option>`; });
-            }
-        }
-
-        function openMobileEditor() {
-            document.getElementById('editor-view').classList.remove('translate-x-full');
-        }
-
-        function closeMobileEditor() {
-            if (hasUnsavedChanges) saveCurrentFormToDB();
-            document.getElementById('editor-view').classList.add('translate-x-full');
-            renderSidebar();
-        }
-
-        function renderSidebar(filterText = "") {
-            const list = document.getElementById('cases-list');
-            list.innerHTML = '';
-
-            let caseIds = Object.keys(casesDB).reverse();
-
-            if (filterText) {
-                caseIds = caseIds.filter(id => id.toLowerCase().includes(filterText) ||
-                                              (casesDB[id].rit && casesDB[id].rit.toLowerCase().includes(filterText)));
-            }
-
-            if (caseIds.length === 0) {
-                list.innerHTML = `<div class="p-4 text-center text-xs text-gray-500">No hay expedientes.</div>`;
-                return;
-            }
-
-            caseIds.forEach(id => {
-                const c = casesDB[id];
-                const isActive = id === currentEditingId ? 'active' : '';
-
-                let total = c.steps ? c.steps.length : 0;
-                let done = c.steps ? c.steps.filter(s => s.done).length : 0;
-                let progColor = done === total && total > 0 ? 'text-[#34C759]' : 'text-[#0A84FF]';
-
-                const html = `
-                    <div class="sidebar-item ${isActive} px-5 py-3 border-b border-[#3e3e42]/50" onclick="loadCase('${id}')">
-                        <div class="flex justify-between items-start mb-1">
-                            <span class="font-bold text-[13px] ${isActive ? 'text-white' : 'text-gray-300'}">${id}</span>
-                            <span class="text-[10px] font-bold ${progColor} bg-[#111111] px-2 py-0.5 rounded-md">${done}/${total}</span>
-                        </div>
-                        <div class="text-[11px] text-gray-500 truncate mb-1">${c.materia || 'Sin materia'}</div>
-                        <div class="text-[10px] text-gray-600 truncate">${c.rit || 'Sin RIT asignado'}</div>
-                    </div>`;
-                list.insertAdjacentHTML('beforeend', html);
+        try {
+            const resp = await fetch('/api/admin', {
+                method: 'PUT',
+                headers: authHeaders({ 'Content-Type': 'application/json' }),
+                body: JSON.stringify({
+                    code: currentEditingId,
+                    materia: c.materia,
+                    tribunal: c.tribunal,
+                    rit: c.rit,
+                    detalle: c.detalle,
+                    estado_actual: c.estadoActual,
+                    steps: c.steps,
+                    status: c.status
+                })
             });
-        }
-
-        function filterCases() {
-            const txt = document.getElementById('search-case').value.toLowerCase();
-            renderSidebar(txt);
-        }
-
-        async function createNewCase() {
-            const btn = document.getElementById('btn-new');
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin text-xs"></i>`;
-            try {
-                const resp = await fetch('/api/admin', {
-                    method: 'POST',
-                    headers: authHeaders({ 'Content-Type': 'application/json' }),
-                    body: JSON.stringify({ materia: MATERIAS["Derecho Civil"][0] })
-                });
-                const data = await resp.json();
-                if (!data.ok) throw new Error('fallo');
-                casesDB[data.case.code] = data.case;
-                currentEditingId = data.case.code;
-                renderSidebar();
-                loadCase(data.case.code);
-            } catch (e) {
-                alert('No se pudo crear el expediente. Verifique su conexión.');
-            } finally {
-                btn.innerHTML = `<i class="fas fa-plus text-xs"></i>`;
-            }
-        }
-
-        function loadCase(id) {
-            const c = casesDB[id];
-            if (!c) return;
-
-            if (hasUnsavedChanges && currentEditingId && currentEditingId !== id) {
-                saveCurrentFormToDB();
-            }
-
-            currentEditingId = id;
-
-            document.getElementById('editor-empty').classList.add('hidden');
-            document.getElementById('editor-body').classList.remove('hidden');
-            document.getElementById('btn-sync').classList.remove('hidden');
-            document.getElementById('btn-delete').classList.remove('hidden');
-
-            document.getElementById('editor-header').innerText = "Editando: " + id;
-
-            document.getElementById('case-id').value = id;
-            document.getElementById('case-pin').value = c.pin || '';
-            document.getElementById('case-rit').value = c.rit || '';
-            document.getElementById('case-tribunal').value = c.tribunal || '';
-            document.getElementById('case-detail').value = c.detalle || '';
-
-            let foundCat = "Derecho Civil";
-            for (let cat in MATERIAS) { if (MATERIAS[cat].includes(c.materia)) { foundCat = cat; break; } }
-            document.getElementById('case-category').value = foundCat;
-            updateServicesDropdown();
-
-            const servSelect = document.getElementById('case-service');
-            if (Array.from(servSelect.options).some(o => o.value === c.materia)) {
-                servSelect.value = c.materia;
-            }
-
-            renderStepsUI(c.steps || []);
-            renderSidebar();
+            const data = await resp.json();
+            if (!data.ok) throw new Error('fallo');
+            if (data.case) casesDB[currentEditingId] = data.case;
             hasUnsavedChanges = false;
+            renderSidebar(); renderStats();
+            document.getElementById('sync-status').innerHTML = '';
+            toast('Expediente guardado. El cliente ya ve los cambios.', 'ok');
+        } catch (error) {
+            toast('No se pudo guardar. Verifica tu conexión.', 'err');
+        } finally {
+            btn.innerHTML = btnContent;
+            btn.disabled = false;
+        }
+    }
 
-            if (window.innerWidth < 768) openMobileEditor();
+    // =========================================================================
+    // 3. UI
+    // =========================================================================
+    function initDashboard() {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app-container').style.display = 'flex';
+        const catSelect = document.getElementById('case-category');
+        catSelect.innerHTML = '';
+        Object.keys(MATERIAS).forEach(cat => { catSelect.innerHTML += `<option value="${cat}">${cat}</option>`; });
+        updateServicesDropdown();
+        renderSidebar(); renderStats();
+    }
+
+    function updateServicesDropdown() {
+        const cat = document.getElementById('case-category').value;
+        const servSelect = document.getElementById('case-service');
+        servSelect.innerHTML = '';
+        if (MATERIAS[cat]) MATERIAS[cat].forEach(serv => { servSelect.innerHTML += `<option value="${serv}">${serv}</option>`; });
+    }
+
+    function openMobileEditor() { document.getElementById('editor-view').classList.remove('translate-x-full'); }
+    function closeMobileEditor() {
+        if (hasUnsavedChanges) saveCurrentFormToDB();
+        document.getElementById('editor-view').classList.add('translate-x-full');
+        renderSidebar();
+    }
+
+    function timeAgo(iso) {
+        if (!iso) return '';
+        const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+        if (diff < 60) return 'hace instantes';
+        if (diff < 3600) return `hace ${Math.floor(diff / 60)} min`;
+        if (diff < 86400) return `hace ${Math.floor(diff / 3600)} hrs`;
+        const d = Math.floor(diff / 86400);
+        return d === 1 ? 'ayer' : `hace ${d} días`;
+    }
+
+    function renderStats() {
+        const all = Object.values(casesDB);
+        const n = s => all.filter(c => (c.status || 'activo') === s).length;
+        const bar = document.getElementById('stats-bar');
+        bar.innerHTML = `
+            <div class="stat-chip"><div class="stat-dot" style="background:#8A94A8"></div><span class="text-[--text-faint]">Total</span><b class="text-white">${all.length}</b></div>
+            <div class="stat-chip"><div class="stat-dot" style="background:#67E8F9"></div><span class="text-[--text-faint]">Nuevos</span><b style="color:#67E8F9">${n('nuevo')}</b></div>
+            <div class="stat-chip"><div class="stat-dot" style="background:#F87171"></div><span class="text-[--text-faint]">Urgentes</span><b style="color:#F87171">${n('urgente')}</b></div>
+            <div class="stat-chip"><div class="stat-dot" style="background:#86EFAC"></div><span class="text-[--text-faint]">Cerrados</span><b style="color:#86EFAC">${n('finalizado')}</b></div>`;
+    }
+
+    function setStatusFilter(f) {
+        statusFilter = f;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.f === f));
+        filterCases();
+    }
+
+    function renderSidebar(filterText = "") {
+        const list = document.getElementById('cases-list');
+        list.innerHTML = '';
+        let caseIds = Object.keys(casesDB).sort().reverse();
+
+        if (statusFilter !== 'all') caseIds = caseIds.filter(id => (casesDB[id].status || 'activo') === statusFilter);
+        if (filterText) {
+            const t = filterText.toLowerCase();
+            caseIds = caseIds.filter(id => id.toLowerCase().includes(t) ||
+                (casesDB[id].rit || '').toLowerCase().includes(t) ||
+                (casesDB[id].materia || '').toLowerCase().includes(t));
         }
 
-        function saveCurrentFormToDB() {
-            if (!currentEditingId) return;
-
-            const stepsDivs = document.querySelectorAll('.step-item');
-            const newSteps = [];
-            let lastDoneIndex = -1;
-
-            stepsDivs.forEach((div, index) => {
-                const isDone = div.querySelector('.step-done').checked;
-                newSteps.push({
-                    title: div.querySelector('.step-title').value,
-                    date: div.querySelector('.step-date').value,
-                    done: isDone
-                });
-                if (isDone) lastDoneIndex = index;
-            });
-
-            casesDB[currentEditingId] = {
-                ...casesDB[currentEditingId],
-                materia: document.getElementById('case-service').value,
-                tribunal: document.getElementById('case-tribunal').value.trim(),
-                rit: document.getElementById('case-rit').value.trim(),
-                detalle: document.getElementById('case-detail').value.trim(),
-                estadoActual: lastDoneIndex,
-                steps: newSteps
-            };
-            renderSidebar();
+        if (caseIds.length === 0) {
+            list.innerHTML = `<div class="p-8 text-center text-xs text-[--text-faint]"><i class="fas fa-inbox text-2xl mb-3 block opacity-30"></i>No hay expedientes con este filtro.</div>`;
+            return;
         }
 
-        async function deleteCurrentCase() {
-            if (!currentEditingId) return;
-            if (!confirm(`¿Estás seguro de ELIMINAR el expediente ${currentEditingId}?\nEsta acción es irreversible y el cliente perderá su acceso al rastreo.`)) return;
-
-            try {
-                const resp = await fetch(`/api/admin?code=${encodeURIComponent(currentEditingId)}`, { method: 'DELETE', headers: authHeaders() });
-                if (!resp.ok) throw new Error('fallo');
-                delete casesDB[currentEditingId];
-                currentEditingId = null;
-                document.getElementById('editor-body').classList.add('hidden');
-                document.getElementById('editor-empty').classList.remove('hidden');
-                document.getElementById('btn-sync').classList.add('hidden');
-                document.getElementById('btn-delete').classList.add('hidden');
-                document.getElementById('editor-header').innerText = "Expediente Eliminado";
-                renderSidebar();
-                if (window.innerWidth < 768) closeMobileEditor();
-            } catch (e) {
-                alert('No se pudo eliminar el expediente. Verifique su conexión.');
-            }
-        }
-
-        // =========================================================================
-        // 4. LÓGICA DE LA LÍNEA DE TIEMPO (HITOS)
-        // =========================================================================
-        function renderStepsUI(steps) {
-            const container = document.getElementById('steps-container');
-            container.innerHTML = '';
-            steps.forEach((step) => { appendStepHTML(step.title, step.date, step.done); });
-        }
-
-        function addStep() {
-            const today = new Date();
-            const dateStr = today.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '');
-            appendStepHTML("Nueva etapa", dateStr, false);
-            markUnsaved();
-        }
-
-        function appendStepHTML(title, date, done) {
-            const container = document.getElementById('steps-container');
-            const checkedAttr = done ? 'checked' : '';
-            const safeTitle = String(title || '').replace(/"/g, '&quot;');
-            const safeDate = String(date || '').replace(/"/g, '&quot;');
+        caseIds.forEach(id => {
+            const c = casesDB[id];
+            const status = c.status || 'activo';
+            const isActive = id === currentEditingId;
+            const total = c.steps ? c.steps.length : 0;
+            const done = c.steps ? c.steps.filter(s => s.done).length : 0;
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+            const complete = total > 0 && done === total;
+            const meta = STATUS_META[status] || STATUS_META.activo;
 
             const html = `
-                <div class="step-item flex flex-col sm:flex-row sm:items-center gap-3 bg-[#111111] border border-[#3e3e42] p-3 rounded-lg fade-in">
-
-                    <div class="flex items-center justify-between sm:justify-start w-full sm:w-auto">
-                        <div class="relative inline-block w-[44px] shrink-0 align-middle select-none transition duration-200 ease-in">
-                            <input type="checkbox" class="step-done toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-[#3e3e42] appearance-none cursor-pointer z-10" ${checkedAttr} onchange="markUnsaved()">
-                            <label class="toggle-label block overflow-hidden h-6 rounded-full bg-[#3e3e42] cursor-pointer"></label>
-                        </div>
-
-                        <button onclick="this.closest('.step-item').remove(); markUnsaved();" class="sm:hidden shrink-0 w-8 h-8 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition flex items-center justify-center">
-                            <i class="fas fa-trash-alt text-xs"></i>
-                        </button>
+                <div class="case-card ${isActive ? 'active' : ''} ${status === 'urgente' ? 'urgente' : ''}" onclick="loadCase('${id}')">
+                    <div class="flex justify-between items-center mb-1 gap-2">
+                        <span class="font-mono font-bold text-[12.5px] ${isActive ? 'text-white' : 'text-[--text]'}">${id}</span>
+                        <span class="chip ${meta.cls}">${meta.label}</span>
                     </div>
+                    <div class="text-[11px] text-[--text-dim] truncate mb-0.5">${c.materia || 'Sin materia'}</div>
+                    <div class="text-[10px] text-[--text-faint] truncate mb-2">${c.rit ? 'RIT ' + c.rit : 'Sin RIT'} · ${timeAgo(c.created_at)}</div>
+                    <div class="progress-track"><div class="progress-fill ${complete ? 'complete' : ''}" style="width:${pct}%"></div></div>
+                </div>`;
+            list.insertAdjacentHTML('beforeend', html);
+        });
+    }
 
-                    <div class="flex-1 flex flex-col sm:flex-row gap-2 w-full">
-                        <input type="text" class="step-title mac-input flex-1" value="${safeTitle}" placeholder="Título del hito" autocomplete="off" oninput="markUnsaved()">
-                        <input type="text" class="step-date mac-input w-full sm:w-32 text-center" value="${safeDate}" placeholder="Fecha" autocomplete="off" oninput="markUnsaved()">
+    function filterCases() {
+        const txt = document.getElementById('search-case').value.toLowerCase();
+        renderSidebar(txt);
+    }
+
+    async function createNewCase() {
+        const btn = document.getElementById('btn-new');
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Creando...`;
+        btn.disabled = true;
+        try {
+            const resp = await fetch('/api/admin', {
+                method: 'POST',
+                headers: authHeaders({ 'Content-Type': 'application/json' }),
+                body: JSON.stringify({ materia: MATERIAS["Derecho Civil"][0] })
+            });
+            const data = await resp.json();
+            if (!data.ok) throw new Error();
+            casesDB[data.case.code] = data.case;
+            currentEditingId = data.case.code;
+            renderSidebar(); renderStats();
+            loadCase(data.case.code);
+            toast(`Expediente ${data.case.code} creado`, 'ok');
+        } catch (e) {
+            toast('No se pudo crear el expediente.', 'err');
+        } finally {
+            btn.innerHTML = `<i class="fas fa-plus"></i> Nuevo Expediente`;
+            btn.disabled = false;
+        }
+    }
+
+    function loadCase(id) {
+        const c = casesDB[id];
+        if (!c) return;
+        if (hasUnsavedChanges && currentEditingId && currentEditingId !== id) saveCurrentFormToDB();
+        currentEditingId = id;
+
+        document.getElementById('editor-empty').classList.add('hidden');
+        document.getElementById('editor-body').classList.remove('hidden');
+        document.getElementById('btn-sync').classList.remove('hidden');
+        document.getElementById('btn-delete').classList.remove('hidden');
+
+        document.getElementById('editor-header').innerText = id;
+        document.getElementById('editor-subheader').innerText = c.materia || '';
+
+        document.getElementById('case-id').innerText = id;
+        document.getElementById('case-pin').innerText = c.pin || '—';
+        document.getElementById('case-rit').value = c.rit || '';
+        document.getElementById('case-tribunal').value = c.tribunal || '';
+        document.getElementById('case-detail').value = c.detalle || '';
+        document.getElementById('case-status').value = c.status || 'activo';
+
+        let foundCat = "Derecho Civil";
+        for (let cat in MATERIAS) { if (MATERIAS[cat].includes(c.materia)) { foundCat = cat; break; } }
+        document.getElementById('case-category').value = foundCat;
+        updateServicesDropdown();
+        const servSelect = document.getElementById('case-service');
+        if (Array.from(servSelect.options).some(o => o.value === c.materia)) servSelect.value = c.materia;
+
+        renderTriagePanel(c);
+        renderStepsUI(c.steps || []);
+        renderSidebar(); renderStats();
+        hasUnsavedChanges = false;
+        document.getElementById('sync-status').innerHTML = '';
+
+        if (window.innerWidth < 768) openMobileEditor();
+    }
+
+    function renderTriagePanel(c) {
+        const panel = document.getElementById('triage-panel');
+        const triage = Array.isArray(c.triage) ? c.triage : [];
+        const phone = c.client_phone;
+        if (triage.length === 0 && !phone) { panel.classList.add('hidden'); return; }
+        panel.classList.remove('hidden');
+        const list = document.getElementById('triage-list');
+        list.innerHTML = '';
+        triage.forEach(a => {
+            const isUrg = String(a).toUpperCase().includes('URGENCIA');
+            list.insertAdjacentHTML('beforeend',
+                `<div class="triage-item ${isUrg ? 'urg' : ''}"><i class="fas ${isUrg ? 'fa-triangle-exclamation' : 'fa-circle'}"></i><span>${a}</span></div>`);
+        });
+        const phoneDiv = document.getElementById('triage-phone');
+        if (phone) {
+            phoneDiv.classList.remove('hidden');
+            document.getElementById('triage-phone-val').innerText = phone;
+        } else phoneDiv.classList.add('hidden');
+    }
+
+    function saveCurrentFormToDB() {
+        if (!currentEditingId) return;
+        const stepsDivs = document.querySelectorAll('.step-item');
+        const newSteps = [];
+        let lastDoneIndex = -1;
+        stepsDivs.forEach((div, index) => {
+            const isDone = div.querySelector('.step-done').checked;
+            newSteps.push({
+                title: div.querySelector('.step-title').value,
+                date: div.querySelector('.step-date').value,
+                done: isDone
+            });
+            if (isDone) lastDoneIndex = index;
+        });
+        casesDB[currentEditingId] = {
+            ...casesDB[currentEditingId],
+            materia: document.getElementById('case-service').value,
+            tribunal: document.getElementById('case-tribunal').value.trim(),
+            rit: document.getElementById('case-rit').value.trim(),
+            detalle: document.getElementById('case-detail').value.trim(),
+            estadoActual: lastDoneIndex,
+            status: document.getElementById('case-status').value,
+            steps: newSteps
+        };
+        renderSidebar(); renderStats();
+    }
+
+    function confirmDelete() {
+        if (!currentEditingId) return;
+        showConfirm('Eliminar expediente',
+            `¿Eliminar <b class="font-mono">${currentEditingId}</b>? El cliente perderá su acceso al rastreo de inmediato. Esta acción es irreversible.`,
+            deleteCurrentCase);
+    }
+
+    async function deleteCurrentCase() {
+        try {
+            const resp = await fetch(`/api/admin?code=${encodeURIComponent(currentEditingId)}`, { method: 'DELETE', headers: authHeaders() });
+            if (!resp.ok) throw new Error();
+            const gone = currentEditingId;
+            delete casesDB[currentEditingId];
+            currentEditingId = null;
+            document.getElementById('editor-body').classList.add('hidden');
+            document.getElementById('editor-empty').classList.remove('hidden');
+            document.getElementById('btn-sync').classList.add('hidden');
+            document.getElementById('btn-delete').classList.add('hidden');
+            document.getElementById('editor-header').innerText = 'Seleccione un expediente';
+            document.getElementById('editor-subheader').innerText = '';
+            renderSidebar(); renderStats();
+            toast(`Expediente ${gone} eliminado`, 'ok');
+            if (window.innerWidth < 768) closeMobileEditor();
+        } catch (e) {
+            toast('No se pudo eliminar. Verifica tu conexión.', 'err');
+        }
+    }
+
+    // =========================================================================
+    // 4. HITOS
+    // =========================================================================
+    function renderStepsUI(steps) {
+        const container = document.getElementById('steps-container');
+        container.innerHTML = '';
+        steps.forEach(s => appendStepHTML(s.title, s.date, s.done));
+    }
+
+    function addStep() {
+        const dateStr = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/\./g, '');
+        appendStepHTML("Nueva etapa", dateStr, false);
+        markUnsaved();
+    }
+
+    function moveStep(btn, dir) {
+        const item = btn.closest('.step-item');
+        const cont = document.getElementById('steps-container');
+        if (dir === -1 && item.previousElementSibling) cont.insertBefore(item, item.previousElementSibling);
+        if (dir === 1 && item.nextElementSibling) cont.insertBefore(item.nextElementSibling, item);
+        markUnsaved();
+    }
+
+    function appendStepHTML(title, date, done) {
+        const container = document.getElementById('steps-container');
+        const checkedAttr = done ? 'checked' : '';
+        const safeTitle = String(title || '').replace(/"/g, '&quot;');
+        const safeDate = String(date || '').replace(/"/g, '&quot;');
+        const html = `
+            <div class="step-item flex flex-col sm:flex-row sm:items-center gap-3 p-3">
+                <div class="flex items-center justify-between sm:justify-start w-full sm:w-auto gap-3">
+                    <div class="flex flex-col gap-1">
+                        <button onclick="moveStep(this,-1)" class="text-[9px] text-[--text-faint] hover:text-white transition leading-none" title="Subir"><i class="fas fa-chevron-up"></i></button>
+                        <button onclick="moveStep(this,1)" class="text-[9px] text-[--text-faint] hover:text-white transition leading-none" title="Bajar"><i class="fas fa-chevron-down"></i></button>
                     </div>
-
-                    <button onclick="this.closest('.step-item').remove(); markUnsaved();" class="hidden sm:flex shrink-0 w-8 h-8 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition items-center justify-center">
-                        <i class="fas fa-trash-alt text-xs"></i>
-                    </button>
+                    <div class="relative inline-block w-[42px] shrink-0 align-middle select-none">
+                        <input type="checkbox" class="step-done toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-[#2D3546] appearance-none cursor-pointer z-10" ${checkedAttr} onchange="markUnsaved()">
+                        <label class="toggle-label block overflow-hidden h-[23px] rounded-full bg-[#2D3546] cursor-pointer"></label>
+                    </div>
                 </div>
-            `;
-            container.insertAdjacentHTML('beforeend', html);
-        }
+                <div class="flex-1 flex flex-col sm:flex-row gap-2 w-full">
+                    <input type="text" class="step-title input flex-1" value="${safeTitle}" placeholder="Título del hito" autocomplete="off" oninput="markUnsaved()">
+                    <input type="text" class="step-date input w-full sm:w-32 !text-center !text-[11px]" value="${safeDate}" placeholder="Fecha" autocomplete="off" oninput="markUnsaved()">
+                </div>
+                <button onclick="this.closest('.step-item').remove(); markUnsaved();" class="absolute sm:relative sm:flex shrink-0 w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition items-center justify-center right-3 top-3 sm:right-auto sm:top-auto">
+                    <i class="fas fa-trash-alt text-xs"></i>
+                </button>
+            </div>`;
+        container.insertAdjacentHTML('beforeend', html);
+    }
 
-        function markUnsaved() {
-            hasUnsavedChanges = true;
-            document.getElementById('sync-status').innerHTML = `<span class="text-yellow-500"><i class="fas fa-exclamation-circle"></i> Cambios pendientes</span>`;
-        }
+    function markUnsaved() {
+        hasUnsavedChanges = true;
+        document.getElementById('sync-status').innerHTML = `<span class="text-yellow-400"><i class="fas fa-circle-exclamation"></i> Cambios sin guardar</span>`;
+    }
 
-        function logout() {
-            sessionStorage.removeItem('aerolex_admin_key');
-            window.location.href = window.location.href.split('?')[0] + '?t=' + new Date().getTime();
-        }
-    </script>
+    // =========================================================================
+    // 5. UTILIDADES (toast, modal, copiar, whatsapp, settings)
+    // =========================================================================
+    function toast(msg, type = 'info') {
+        const zone = document.getElementById('toast-zone');
+        const icon = type === 'ok' ? 'fa-circle-check' : type === 'err' ? 'fa-circle-xmark' : 'fa-circle-info';
+        const el = document.createElement('div');
+        el.className = `toast ${type}`;
+        el.innerHTML = `<i class="fas ${icon}"></i><span>${msg}</span>`;
+        zone.appendChild(el);
+        setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 300); }, 3500);
+    }
+
+    function showConfirm(title, htmlMsg, onOk) {
+        const zone = document.getElementById('modal-zone');
+        zone.innerHTML = `
+            <div class="modal-backdrop" onclick="if(event.target===this) closeModal()">
+                <div class="modal-box">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-11 h-11 rounded-xl bg-red-500/10 border border-red-500/25 flex items-center justify-center"><i class="fas fa-triangle-exclamation text-red-400 text-lg"></i></div>
+                        <h3 class="font-extrabold text-white">${title}</h3>
+                    </div>
+                    <p class="text-[13px] text-[--text-dim] leading-relaxed mb-6">${htmlMsg}</p>
+                    <div class="flex gap-2.5 justify-end">
+                        <button onclick="closeModal()" class="btn btn-ghost">Cancelar</button>
+                        <button onclick="closeModal(); (${onOk.name})()" class="btn btn-danger">Sí, eliminar</button>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    function closeModal() { document.getElementById('modal-zone').innerHTML = ''; }
+
+    function copyText(text, msg) {
+        if (!text || text === '—') return;
+        navigator.clipboard.writeText(text).then(() => toast(msg, 'ok')).catch(() => toast('No se pudo copiar', 'err'));
+    }
+
+    function sendCredentialsWA() {
+        const c = casesDB[currentEditingId];
+        if (!c) return;
+        const txt = `*AeroLex — Sus credenciales de seguimiento*\n\nExpediente: *${c.code}*\nPIN de consulta: *${c.pin}*\n\nRastre el avance de su caso en tiempo real en nuestro sitio web, sección "Estado de mi Caso".\n\n— Estudio AeroLex, Puerto Montt`;
+        window.open(`https://wa.me/${getWaNumber()}?text=${encodeURIComponent(txt)}`, '_blank');
+    }
+
+    function openSettings() {
+        const zone = document.getElementById('modal-zone');
+        zone.innerHTML = `
+            <div class="modal-backdrop" onclick="if(event.target===this) closeModal()">
+                <div class="modal-box">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/25 flex items-center justify-center"><i class="fas fa-gear text-[--accent] text-lg"></i></div>
+                        <h3 class="font-extrabold text-white">Configuración</h3>
+                    </div>
+                    <label class="field-label">Número de WhatsApp del estudio (con código país, sin +)</label>
+                    <input type="text" id="wa-number" class="input font-mono" value="${getWaNumber()}" placeholder="56912345678">
+                    <p class="text-[11px] text-[--text-faint] mt-3 leading-relaxed">Se usa para enviar credenciales al cliente. Se guarda solo en este navegador.</p>
+                    <div class="flex gap-2.5 justify-end mt-5">
+                        <button onclick="closeModal()" class="btn btn-ghost">Cancelar</button>
+                        <button onclick="saveSettings()" class="btn btn-primary">Guardar</button>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    function saveSettings() {
+        const val = document.getElementById('wa-number').value.replace(/\D/g, '');
+        if (val) { localStorage.setItem('aerolex_wa', val); toast('Número guardado', 'ok'); }
+        closeModal();
+    }
+
+    function logout() {
+        sessionStorage.removeItem('aerolex_admin_key');
+        window.location.href = window.location.href.split('?')[0] + '?t=' + new Date().getTime();
+    }
+
+    // Guardado rápido Ctrl+S + advertencia al salir con cambios
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveCase(); }
+    });
+    window.addEventListener('beforeunload', (e) => {
+        if (hasUnsavedChanges) { e.preventDefault(); e.returnValue = ''; }
+    });
+</script>
 </body>
 </html>

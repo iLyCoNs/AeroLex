@@ -118,6 +118,7 @@ module.exports = async (req, res) => {
       for (let attempt = 1; attempt <= 3; attempt++) {
         const code = `${prefix}${String(max + attempt).padStart(2, '0')}`;
         const pin = String(Math.floor(1000 + Math.random() * 9000));
+        const isUrgent = triage.some(a => String(a).toUpperCase().includes('URGENCIA'));
         const row = {
           code,
           pin,
@@ -128,6 +129,7 @@ module.exports = async (req, res) => {
           rit: '',
           detalle: '',
           estado_actual: 0,
+          status: isUrgent ? 'urgente' : 'nuevo',
           steps: stepsTemplate(materia)
         };
         const resp = await fetch(`${SUPA_URL}/rest/v1/cases`, {

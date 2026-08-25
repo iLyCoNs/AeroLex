@@ -91,6 +91,9 @@ module.exports = async (req, res) => {
           : [],
         updated_at: new Date().toISOString()
       };
+      if (['nuevo', 'activo', 'urgente', 'finalizado', 'suspendido'].includes(body.status)) {
+        patch.status = body.status;
+      }
 
       const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(code)}`, {
         method: 'PATCH',
