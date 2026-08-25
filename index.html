@@ -138,6 +138,33 @@
 
         .glos-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 14px; padding: 14px 16px; transition: all 0.25s; }
         .glos-card:hover { border-color: #1D1D1F; box-shadow: 0 8px 20px rgba(0,0,0,0.05); transform: translateY(-2px); }
+
+        .deadline-mode { display:flex; gap:4px; padding:4px; background:rgba(255,255,255,.7); border:1px solid #E2E8F0; border-radius:999px; width:max-content; }
+        .deadline-mode button { border:0; border-radius:999px; padding:8px 14px; font-size:12px; font-weight:700; color:#64748B; background:transparent; cursor:pointer; }
+        .deadline-mode button.active { color:#fff; background:#1D1D1F; box-shadow:0 3px 10px rgba(0,0,0,.15); }
+        .deadline-steps { display:flex; align-items:center; gap:8px; margin-bottom:18px; color:#94A3B8; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; }
+        .deadline-step { display:flex; align-items:center; gap:6px; }
+        .deadline-step b { display:flex; align-items:center; justify-content:center; width:23px; height:23px; border-radius:50%; background:#E2E8F0; color:#64748B; }
+        .deadline-step.active { color:#1D1D1F; }
+        .deadline-step.active b { background:#1D1D1F; color:#fff; }
+        .event-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+        @media(min-width:768px){.event-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+        .event-card,.action-card { width:100%; border:1px solid #E2E8F0; background:#fff; border-radius:14px; padding:14px; text-align:left; cursor:pointer; transition:.22s; }
+        .event-card:hover,.action-card:hover { border-color:#1D1D1F; transform:translateY(-3px); box-shadow:0 10px 22px rgba(0,0,0,.07); }
+        .event-icon { width:38px; height:38px; display:flex; align-items:center; justify-content:center; border-radius:12px; background:#F1F5F9; color:#788C9F; margin-bottom:9px; }
+        .event-card:hover .event-icon { background:#1D1D1F; color:#fff; }
+        .action-card { display:flex; gap:12px; align-items:flex-start; }
+        .action-card .action-badge { flex:none; border-radius:999px; padding:4px 8px; font-size:9px; font-weight:800; text-transform:uppercase; background:#ECFDF5; color:#047857; }
+        .action-card .action-badge.urgent { background:#FEF2F2; color:#B91C1C; }
+        .action-card .action-badge.advisory { background:#EFF6FF; color:#1D4ED8; }
+        .deadline-result { background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:18px; }
+        .deadline-result .result-number { font-size:45px; line-height:1; font-weight:800; }
+        .deadline-bar { height:7px; border-radius:999px; background:#E2E8F0; overflow:hidden; }
+        .deadline-bar span { display:block; height:100%; border-radius:inherit; transition:width .5s; }
+        .legal-check { display:flex; gap:8px; color:#475569; font-size:12px; line-height:1.45; margin-top:6px; }
+        .legal-check i { color:#22C55E; margin-top:2px; }
+        .expert-row { border:1px solid #E2E8F0; background:#fff; border-radius:12px; padding:12px 14px; cursor:pointer; transition:.2s; }
+        .expert-row:hover { border-color:#1D1D1F; }
     </style>
 </head>
 <body class="relative flex flex-col min-h-screen">
@@ -344,25 +371,38 @@
 
                 <!-- PANEL PLAZOS -->
                 <div id="tool-plazos">
-                    <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
-                        <div class="md:col-span-2 space-y-4">
-                            <div>
-                                <label class="tool-label">¿Qué situación legal enfrenta?</label>
-                                <select id="plazo-select" class="tool-input" onchange="onPlazoChange()"></select>
-                            </div>
-                            <div>
-                                <label id="plazo-desde-label" class="tool-label">Fecha del acto</label>
-                                <input type="date" id="plazo-fecha" class="tool-input">
-                            </div>
-                            <button type="button" class="track-btn" onclick="calcularPlazo()"><i class="fas fa-hourglass-half"></i> Calcular mi plazo</button>
-                            <p id="plazo-ley" class="text-[11px] text-gray-500 leading-relaxed"></p>
+                    <div class="flex items-center justify-between gap-3 flex-wrap mb-5">
+                        <div class="deadline-mode">
+                            <button id="deadline-client" class="active" onclick="setDeadlineMode('client')"><i class="fas fa-user mr-1"></i> Soy cliente</button>
+                            <button id="deadline-lawyer" onclick="setDeadlineMode('lawyer')"><i class="fas fa-scale-balanced mr-1"></i> Soy abogado/a</button>
                         </div>
-                        <div class="md:col-span-3">
-                            <div id="plazo-resultado" class="h-full flex flex-col items-center justify-center text-center py-10 px-6 rounded-2xl border border-dashed border-gray-300/70">
-                                <i class="fas fa-hourglass-half text-3xl text-gray-300 mb-3"></i>
-                                <p class="text-[13px] text-gray-400 font-medium max-w-xs leading-relaxed">Seleccione su situación, indique la fecha de inicio y calcule si su plazo legal todavía está vivo.</p>
-                            </div>
+                        <span class="text-[10.5px] text-gray-400"><i class="fas fa-circle-check text-green-500 mr-1"></i> Feriados chilenos incluidos</span>
+                    </div>
+
+                    <div id="deadline-client-panel">
+                        <select id="plazo-select" class="hidden"></select>
+                        <input id="plazo-fecha" class="hidden" type="date">
+                        <span id="plazo-desde-label" class="hidden"></span><span id="plazo-ley" class="hidden"></span><div id="plazo-resultado" class="hidden"></div>
+                        <div class="deadline-steps">
+                            <span class="deadline-step active" data-step="1"><b>1</b> Suceso</span><i class="fas fa-chevron-right text-[9px]"></i>
+                            <span class="deadline-step" data-step="2"><b>2</b> Acción</span><i class="fas fa-chevron-right text-[9px]"></i>
+                            <span class="deadline-step" data-step="3"><b>3</b> Resultado</span>
                         </div>
+                        <div id="deadline-events">
+                            <p class="text-[13.5px] text-mac-dark/70 font-semibold mb-4"><i class="fas fa-circle-question text-mac-accent mr-1"></i>¿Qué le ocurrió? Le guiaremos hacia las acciones posibles.</p>
+                            <div id="event-grid" class="event-grid"></div>
+                        </div>
+                        <div id="deadline-actions" class="hidden"></div>
+                        <div id="deadline-result" class="hidden"></div>
+                    </div>
+
+                    <div id="deadline-lawyer-panel" class="hidden">
+                        <div class="relative mb-4">
+                            <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                            <input id="expert-search" class="tool-input !pl-10" placeholder="Buscar acción, norma o materia..." oninput="renderExpertDeadlines()">
+                        </div>
+                        <div id="expert-areas" class="flex gap-1.5 flex-wrap mb-4"></div>
+                        <div id="expert-list" class="space-y-2 max-h-[460px] overflow-y-auto pr-1"></div>
                     </div>
                 </div>
 
@@ -1480,6 +1520,48 @@
                 </div>`).join('');
         }
         renderGlosario();
+    </script>
+
+    <script>
+    (() => {
+        const D = [
+            {id:'despido',area:'Laboral',name:'Demanda por despido injustificado',law:'Art. 168 Código del Trabajo',days:60,kind:'weekdays',from:'Fecha de separación',events:['despido'],plain:'Permite reclamar un despido sin causa legal o con formalidades incumplidas.',do:['Reúna carta de despido y finiquito','Revise cotizaciones y liquidaciones','Consulte antes de que venza el plazo'],docs:['Carta de despido','Contrato y anexos','Liquidaciones y cotizaciones'],note:'El plazo puede ampliarse a 90 días hábiles si reclamó oportunamente ante la Inspección del Trabajo.'},
+            {id:'tutela',area:'Laboral',name:'Tutela de derechos fundamentales',law:'Art. 486 Código del Trabajo',days:60,kind:'weekdays',from:'Fecha de la vulneración',events:['despido'],plain:'Protege frente a discriminación, acoso, represalias o vulneración de derechos en el trabajo.',do:['Conserve mensajes, correos y testigos','Ordene los hechos por fecha','No borre evidencia digital'],docs:['Chats y correos','Testigos','Denuncias internas'],note:'Puede acumularse con la acción por despido.'},
+            {id:'laboral',area:'Laboral',name:'Cobro de prestaciones laborales',law:'Art. 510 Código del Trabajo',months:6,kind:'months',from:'Fecha de término del contrato',events:['nopago','despido'],plain:'Permite reclamar sueldos, horas extras, feriado y otras prestaciones impagas.',do:['Prepare una liquidación de lo adeudado','Reúna comprobantes de pago','Revise cotizaciones previsionales'],docs:['Contrato','Liquidaciones','Registro de asistencia']},
+            {id:'proteccion',area:'Constitucional',name:'Recurso de Protección',law:'Art. 20 Constitución Política',days:30,kind:'calendar',from:'Fecha del acto u omisión',events:['autoridad'],plain:'Acción urgente para proteger garantías constitucionales frente a actos ilegales o arbitrarios.',do:['Identifique el derecho afectado','Reúna la resolución o evidencia','Consulte de inmediato'],docs:['Acto impugnado','Pruebas del daño','Identificación del responsable'],note:'Plazo fatal de 30 días corridos.'},
+            {id:'reposicion',area:'Administrativo',name:'Reposición administrativa',law:'Art. 54 Ley 19.880',days:5,kind:'weekdays',from:'Fecha de notificación',events:['autoridad'],plain:'Solicita al mismo organismo que revise y corrija su decisión.',do:['Descargue el acto administrativo','Anote la fecha exacta de notificación','Fundamente con documentos'],docs:['Resolución','Constancia de notificación','Antecedentes de respaldo']},
+            {id:'jerarquico',area:'Administrativo',name:'Recurso jerárquico',law:'Art. 54 Ley 19.880',days:10,kind:'weekdays',from:'Fecha de notificación',events:['autoridad'],plain:'Pide al superior jerárquico revisar la decisión de un organismo público.',do:['Identifique al superior competente','Acompañe la resolución','Presente reposición simultánea si corresponde'],docs:['Acto administrativo','Pruebas','Recurso previo si existe']},
+            {id:'ejecutivo',area:'Civil',name:'Oposición en juicio ejecutivo',law:'Arts. 494 y siguientes CPC',days:4,kind:'weekdays',from:'Fecha del requerimiento de pago',events:['demandado','deuda'],plain:'Defensa frente a un cobro judicial respaldado por pagaré, factura o sentencia.',do:['No ignore al receptor judicial','Revise el documento cobrado','Evalúe excepciones y prescripción'],docs:['Requerimiento de pago','Pagaré o factura','Comprobantes de pago'],note:'Puede ser de 8 días según la forma y lugar de notificación.'},
+            {id:'civil',area:'Civil',name:'Incumplimiento de contrato',law:'Art. 2515 Código Civil',years:5,kind:'years',from:'Fecha del incumplimiento',events:['deuda'],plain:'Permite exigir cumplimiento, término del contrato e indemnización de perjuicios.',do:['Reúna el contrato firmado','Documente el incumplimiento','Notifique formalmente a la contraparte'],docs:['Contrato','Comprobantes','Correos y cartas']},
+            {id:'dano',area:'Civil',name:'Indemnización por daño',law:'Art. 2332 Código Civil',years:4,kind:'years',from:'Fecha del daño',events:['dano','delito'],plain:'Busca reparar daños causados por accidentes, negligencia o hechos ilícitos.',do:['Fotografíe y documente el daño','Obtenga presupuestos o peritajes','Identifique al responsable'],docs:['Fotos y videos','Parte o denuncia','Boletas y peritajes']},
+            {id:'sernac',area:'Consumidor',name:'Acción por infracción al consumidor',law:'Art. 26 Ley 19.496',years:2,kind:'years',from:'Fecha de la infracción',events:['producto'],plain:'Protege frente a productos defectuosos, cobros indebidos y servicios mal prestados.',do:['Guarde boleta y publicidad','Reclame formalmente a la empresa','Conserve la respuesta'],docs:['Boleta o factura','Contrato o publicidad','Registro del reclamo']},
+            {id:'compensacion',area:'Familia',name:'Compensación económica',law:'Arts. 61 y siguientes Ley 19.947',years:1,kind:'years',from:'Fecha de sentencia de divorcio',events:['divorcio'],plain:'Compensa al cónyuge que sacrificó su desarrollo laboral por cuidar el hogar o los hijos.',do:['Acredite la historia laboral','Reúna antecedentes del matrimonio','Consulte junto con la tramitación del divorcio'],docs:['Sentencia','Liquidaciones','Antecedentes de cuidado']},
+            {id:'apelacion',area:'Procesal',name:'Apelación de sentencia definitiva civil',law:'Art. 189 Código de Procedimiento Civil',days:10,kind:'weekdays',from:'Fecha de notificación de la sentencia',events:['demandado'],plain:'Permite pedir a la Corte de Apelaciones que revise una sentencia.',do:['Obtenga copia íntegra del fallo','Revise el plazo con el expediente','Defina agravios concretos'],docs:['Sentencia','Certificado de notificación','Escritos principales'],note:'Otras resoluciones pueden tener plazos distintos.'},
+            {id:'querella',area:'Penal',name:'Denuncia o querella criminal',law:'Arts. 53 y siguientes Código Procesal Penal',events:['delito'],plain:'No existe un plazo fatal general para toda denuncia o querella, pero la evidencia se pierde y cada delito puede prescribir.',do:['Denuncie cuanto antes','Respalde evidencia digital','Identifique testigos y transferencias'],docs:['Relato cronológico','Mensajes y documentos','Datos de testigos']}
+        ];
+        const E = [
+            ['despido','fa-briefcase','Me despidieron','Despido, finiquito o vulneración laboral'],['nopago','fa-money-bill-wave','No me pagan','Sueldos, horas extras o cotizaciones'],['demandado','fa-envelope-open-text','Me notificaron una demanda','Demanda civil, embargo o requerimiento'],['autoridad','fa-shield-halved','Una autoridad me perjudicó','Multa, resolución o permiso rechazado'],['deuda','fa-file-invoice-dollar','Me deben dinero','Pagaré, contrato o factura impaga'],['dano','fa-car-burst','Sufrí un accidente o daño','Daño personal, material o patrimonial'],['producto','fa-cart-shopping','Tuve problemas con una compra','Producto defectuoso o servicio incumplido'],['divorcio','fa-heart-crack','Me divorcio o separé','Compensación, alimentos o cuidado'],['vecino','fa-house-chimney','Tengo conflicto de terreno','Deslindes, obras, ocupaciones o servidumbres'],['delito','fa-user-shield','Fui víctima de un delito','Estafa, amenazas, violencia o robo']
+        ];
+        const state = {event:null, action:null, last:null, area:'Todas'};
+        const $ = id => document.getElementById(id);
+        const text = d => d.toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+        const dateInput = () => new Date().toISOString().slice(0,10);
+        function setMode(mode){ $('deadline-client-panel').classList.toggle('hidden',mode!=='client'); $('deadline-lawyer-panel').classList.toggle('hidden',mode!=='lawyer'); $('deadline-client').classList.toggle('active',mode==='client'); $('deadline-lawyer').classList.toggle('active',mode==='lawyer'); if(mode==='client') renderEvents(); else renderExpert(); }
+        function step(n){ ['deadline-events','deadline-actions','deadline-result'].forEach((id,i)=>$(id).classList.toggle('hidden',i!==n-1)); document.querySelectorAll('.deadline-step').forEach(x=>x.classList.toggle('active',Number(x.dataset.step)===n)); }
+        function renderEvents(){ $('event-grid').innerHTML=E.map(e=>`<button class="event-card" onclick="chooseEvent('${e[0]}')"><span class="event-icon"><i class="fas ${e[1]}"></i></span><strong class="text-[13px] text-mac-dark">${e[2]}</strong><span class="text-[11px] text-gray-500 leading-relaxed">${e[3]}</span></button>`).join(''); }
+        function chooseEvent(id){ state.event=id; const ev=E.find(x=>x[0]===id); const actions=D.filter(x=>(x.events||[]).includes(id)); $('deadline-actions').innerHTML=`<button class="text-[12px] font-bold text-mac-accent mb-4" onclick="step(1)"><i class="fas fa-arrow-left mr-1"></i>Cambiar suceso</button><p class="font-extrabold text-[14px] text-mac-dark mb-1">${ev[2]}</p><p class="text-[12px] text-gray-500 mb-4">Seleccione qué acción quiere evaluar:</p><div class="space-y-2">${actions.map(a=>{let badge=a.days&&a.days<=10?'urgent':a.days==null?'advisory':'';let p=a.days?`${a.days} ${a.kind==='weekdays'?'días hábiles':a.kind==='calendar'?'días corridos':a.kind==='months'?'meses':'años'}`:'Sin plazo fatal';return `<button class="action-card" onclick="chooseAction('${a.id}')"><span class="action-badge ${badge}">${a.days&&a.days<=10?'Urgente':p}</span><span class="flex-1"><b class="block text-[13px] text-mac-dark">${a.name}</b><span class="block text-[11px] text-gray-500 mt-1">${a.plain}</span><span class="block text-[10px] font-bold text-mac-accent mt-1">${a.law}</span></span><i class="fas fa-chevron-right text-gray-300 mt-1"></i></button>`}).join('')}</div>`; step(2); }
+        function chooseAction(id){ state.action=id; const p=D.find(x=>x.id===id); $('deadline-result').innerHTML=`<button class="text-[12px] font-bold text-mac-accent mb-4" onclick="step(2)"><i class="fas fa-arrow-left mr-1"></i>Ver otras acciones</button>${p.days?`<div class="max-w-md"><label class="tool-label">${p.from}</label><input id="wizard-date" class="tool-input" type="date" value="${dateInput()}"><button class="track-btn mt-4" onclick="calculateWizard()"><i class="fas fa-hourglass-half"></i> Calcular mi plazo</button></div><div id="wizard-output" class="mt-5"></div>`:resultAdvice(p)}`; step(3); }
+        function resultAdvice(p){ return `<div class="deadline-result" style="border-color:#FCD34D;background:#FFFBEB"><span class="plazo-pill" style="background:#FEF3C7;color:#92400E"><i class="fas fa-infinity"></i> Sin plazo fatal general</span><p class="text-[13px] text-mac-dark/80 leading-relaxed mt-3">${p.plain}</p>${guidance(p)}<a class="btn-wa-final" target="_blank" href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hola AeroLex, necesito asesoría sobre '+p.name+'. Llegué desde la herramienta de plazos.')}"><i class="fab fa-whatsapp"></i> Evaluar mi caso con un abogado</a></div>`; }
+        function guidance(p){ return `<div class="grid md:grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-200"><div><b class="tool-label">Qué hacer ahora</b>${(p.do||[]).map(x=>`<div class="legal-check"><i class="fas fa-circle-check"></i>${x}</div>`).join('')}</div><div><b class="tool-label">Documentos útiles</b>${(p.docs||[]).map(x=>`<div class="legal-check"><i class="fas fa-file-lines"></i>${x}</div>`).join('')}</div></div>`; }
+        function addBusinessDays(d,n){let x=new Date(d),count=0;while(count<n){x.setDate(x.getDate()+1);if(x.getDay()>0&&x.getDay()<6)count++;}return x;}
+        function calculate(p,start){let v=new Date(start);if(p.kind==='weekdays')v=addBusinessDays(v,p.days);else if(p.kind==='calendar')v.setDate(v.getDate()+p.days);else if(p.kind==='months')v.setMonth(v.getMonth()+p.months);else if(p.kind==='years')v.setFullYear(v.getFullYear()+p.years);return v;}
+        function calculateWizard(){const p=D.find(x=>x.id===state.action),start=$('wizard-date').value;if(!start)return;renderResult(p,start,'wizard-output');}
+        function renderResult(p,start,target){const v=calculate(p,start),today=new Date();today.setHours(0,0,0,0);const remaining=v<today?0:Math.ceil((v-today)/86400000);const urgent=remaining&&remaining<=5;const status=v<today?'VENCIDO':urgent?'CRÍTICO':remaining<=15?'POR VENCER':'VIGENTE';const color=v<today?'#64748B':urgent?'#DC2626':remaining<=15?'#D97706':'#16A34A';state.last={p,start,v,remaining};const wa=encodeURIComponent(`Hola AeroLex: calculé el plazo de ${p.name}. Vence el ${text(v)} y quedan ${remaining} días. Necesito orientación.`);$(target).innerHTML=`<div class="deadline-result fade-in" style="border-color:${color}"><div class="flex justify-between gap-3 flex-wrap"><span class="plazo-pill" style="background:${color}18;color:${color}"><i class="fas fa-${v<today?'circle-xmark':urgent?'triangle-exclamation':'circle-check'}"></i>${status}</span><b class="text-[11px] text-gray-500">Vence: ${text(v)}</b></div><div class="flex items-end gap-3 mt-4"><strong class="result-number" style="color:${color}">${remaining}</strong><span class="text-[12px] text-gray-500 pb-1">días restantes (referencia)</span></div><div class="deadline-bar mt-4"><span style="width:${Math.min(100,Math.max(0,100-(remaining/(p.days||365*5))*100))}%;background:${color}"></span></div><p class="text-[12px] text-gray-600 leading-relaxed mt-4"><b>Qué significa:</b> ${p.plain}</p>${p.note?`<div class="mt-3 p-3 rounded-lg bg-amber-50 text-amber-800 text-[11.5px]"><i class="fas fa-lightbulb mr-1"></i>${p.note}</div>`:''}${guidance(p)}<div class="res-actions"><button class="res-btn" onclick="copyDeadline()"><i class="fas fa-copy"></i> Copiar informe</button><a class="res-btn res-btn-wa" target="_blank" href="https://wa.me/${WHATSAPP_NUMBER}?text=${wa}"><i class="fab fa-whatsapp"></i> Hablar con abogado</a></div></div>`;}
+        function copyDeadline(){if(!state.last)return;const x=state.last,n=`AEROLEX - CÁLCULO REFERENCIAL\nAcción: ${x.p.name}\nFundamento: ${x.p.law}\nInicio: ${text(new Date(x.start))}\nVencimiento: ${text(x.v)}\nEstado: ${x.remaining?'Vigente':'Vencido'}\nNo sustituye asesoría jurídica.`;navigator.clipboard.writeText(n);}
+        function renderExpert(){const q=($('expert-search')?.value||'').toLowerCase(),items=D.filter(x=>(state.area==='Todas'||x.area===state.area)&&(`${x.name} ${x.law} ${x.area}`).toLowerCase().includes(q));$('expert-areas').innerHTML=['Todas',...new Set(D.map(x=>x.area))].map(a=>`<button class="tool-tab ${state.area===a?'active':''}" onclick="setExpertArea('${a}')">${a}</button>`).join('');$('expert-list').innerHTML=items.map(p=>`<div class="expert-row" onclick="expertOpen('${p.id}')"><div class="flex justify-between gap-3"><div><b class="text-[13px] text-mac-dark">${p.name}</b><div class="text-[11px] text-gray-500 mt-1">${p.law} · ${p.area}</div></div><span class="text-[10px] font-bold text-mac-accent">${p.days?p.days+' días':'Sin plazo fatal'}</span></div><div id="expert-${p.id}" class="hidden mt-3" onclick="event.stopPropagation()"></div></div>`).join('');}
+        function expertOpen(id){const p=D.find(x=>x.id===id),box=$('expert-'+id);box.classList.toggle('hidden');if(!box.classList.contains('hidden'))box.innerHTML=p.days?`<input type="date" class="tool-input" value="${dateInput()}" onchange="renderResult(D.find(x=>x.id==='${id}'),this.value,'expert-output-${id}')"><div id="expert-output-${id}" class="mt-3"></div>`:resultAdvice(p);}
+        window.setDeadlineMode=setMode;window.chooseEvent=chooseEvent;window.chooseAction=chooseAction;window.step=step;window.calculateWizard=calculateWizard;window.copyDeadline=copyDeadline;window.renderExpert=renderExpert;window.renderExpertDeadlines=renderExpert;window.setExpertArea=a=>{state.area=a;renderExpert();};window.expertOpen=expertOpen;renderEvents();setMode('client');
+    })();
     </script>
 
     <script src="https://chatbot-ad-mocha.vercel.app/vibe-copilot.js" data-chatbot-id="aerolex"></script>
