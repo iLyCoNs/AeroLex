@@ -141,6 +141,10 @@
         .step-item { background: #0D1017; border: 1px solid var(--border); border-radius: 12px; transition: border-color 0.2s; }
         .step-item:has(.step-done:checked) { border-color: rgba(52, 199, 89, 0.35); }
 
+        /* Estado vacío: controlado por clase propia para que Tailwind no lo sobreescriba */
+        .empty-panel { display: none !important; }
+        .empty-panel.visible { display: flex !important; }
+
         #app-container { display: none; }
 
         .stat-chip { display: flex; align-items: center; gap: 8px; padding: 6px 14px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 999px; font-size: 12px; }
@@ -342,7 +346,7 @@
                 </div>
             </div>
 
-            <div id="editor-empty" class="hidden md:flex flex-1 flex-col items-center justify-center text-[--text-faint]">
+            <div id="editor-empty" class="empty-panel flex-1 flex-col items-center justify-center text-[--text-faint]">
                 <div class="w-20 h-20 rounded-3xl flex items-center justify-center mb-5" style="background: var(--panel-2); border: 1px solid var(--border);">
                     <i class="fas fa-folder-open text-3xl opacity-30"></i>
                 </div>
@@ -619,7 +623,7 @@
         if (hasUnsavedChanges && currentEditingId && currentEditingId !== id) saveCurrentFormToDB();
         currentEditingId = id;
 
-        document.getElementById('editor-empty').classList.add('hidden');
+        document.getElementById('editor-empty').classList.remove('visible');
         document.getElementById('editor-body').classList.remove('hidden');
         document.getElementById('btn-sync').classList.remove('hidden');
         document.getElementById('btn-delete').classList.remove('hidden');
@@ -712,7 +716,7 @@
             delete casesDB[currentEditingId];
             currentEditingId = null;
             document.getElementById('editor-body').classList.add('hidden');
-            document.getElementById('editor-empty').classList.remove('hidden');
+            document.getElementById('editor-empty').classList.add('visible');
             document.getElementById('btn-sync').classList.add('hidden');
             document.getElementById('btn-delete').classList.add('hidden');
             document.getElementById('editor-header').innerText = 'Seleccione un expediente';
