@@ -168,6 +168,12 @@
         .legal-check i { color:#22C55E; margin-top:2px; }
         .expert-row { border:1px solid #E2E8F0; background:#fff; border-radius:12px; padding:12px 14px; cursor:pointer; transition:.2s; }
         .expert-row:hover { border-color:#1D1D1F; }
+        .date-assist { margin-top:8px; padding:10px 12px; border-radius:11px; background:#F8FAFC; border:1px solid #E2E8F0; }
+        .date-assist p { margin:0 0 8px; font-size:11px; color:#64748B; line-height:1.4; }
+        .date-quick { display:flex; gap:6px; flex-wrap:wrap; }
+        .date-quick button { border:1px solid #CBD5E1; border-radius:999px; background:#fff; color:#1D1D1F; padding:7px 10px; font-size:11px; font-weight:700; cursor:pointer; }
+        .date-quick button:hover { background:#1D1D1F; color:#fff; border-color:#1D1D1F; }
+        .date-readable { display:block; margin-top:8px; font-size:11px; font-weight:700; color:#475569; }
         @media (max-width:520px) {
             .event-grid { grid-template-columns:1fr; gap:9px; }
             .event-card { min-height:0; padding:13px 14px; }
@@ -1626,6 +1632,27 @@
         function renderExpert(){const q=($('expert-search')?.value||'').toLowerCase(),items=D.filter(x=>(state.area==='Todas'||x.area===state.area)&&(`${x.name} ${x.law} ${x.area}`).toLowerCase().includes(q));$('expert-areas').innerHTML=['Todas',...new Set(D.map(x=>x.area))].map(a=>`<button class="tool-tab ${state.area===a?'active':''}" onclick="setExpertArea('${a}')">${a}</button>`).join('');$('expert-list').innerHTML=items.map(p=>`<div class="expert-row" onclick="expertOpen('${p.id}')"><div class="flex justify-between gap-3"><div><b class="text-[13px] text-mac-dark">${p.name}</b><div class="text-[11px] text-gray-500 mt-1">${p.law} · ${p.area}</div></div><span class="text-[10px] font-bold text-mac-accent">${p.days?p.days+' días':'Sin plazo fatal'}</span></div><div id="expert-${p.id}" class="hidden mt-3" onclick="event.stopPropagation()"></div></div>`).join('');}
         function expertOpen(id){const p=D.find(x=>x.id===id),box=$('expert-'+id);box.classList.toggle('hidden');if(!box.classList.contains('hidden'))box.innerHTML=p.days?`<input type="date" class="tool-input" value="${dateInput()}" onchange="renderResult(D.find(x=>x.id==='${id}'),this.value,'expert-output-${id}')"><div id="expert-output-${id}" class="mt-3"></div>`:resultAdvice(p);}
         window.setDeadlineMode=setMode;window.chooseEvent=chooseEvent;window.chooseAction=chooseAction;window.step=step;window.deadlineBack=deadlineBack;window.calculateWizard=calculateWizard;window.copyDeadline=copyDeadline;window.renderExpert=renderExpert;window.renderExpertDeadlines=renderExpert;window.setExpertArea=a=>{state.area=a;renderExpert();};window.expertOpen=expertOpen;renderEvents();setMode('client');
+    })();
+    </script>
+
+    <script>
+    (() => {
+        const readableDate = value => value ? new Date(`${value}T00:00:00`).toLocaleDateString('es-CL', { weekday:'long', day:'numeric', month:'long', year:'numeric' }) : 'Seleccione una fecha';
+        const enhanceDate = input => {
+            if (!input || input.dataset.enhanced) return;
+            input.dataset.enhanced = 'true';
+            const wrap = document.createElement('div');
+            wrap.className = 'date-assist';
+            wrap.innerHTML = `<p><i class="fas fa-calendar-days mr-1 text-mac-accent"></i>Elija el día en que ocurrió o recibió la notificación. Si no está seguro, seleccione una fecha aproximada.</p><div class="date-quick"><button type="button" data-days="0">Hoy</button><button type="button" data-days="-1">Ayer</button><button type="button" data-days="-7">Hace una semana</button></div><span class="date-readable">${readableDate(input.value)}</span>`;
+            input.parentNode.insertBefore(wrap, input.nextSibling);
+            const display = wrap.querySelector('.date-readable');
+            const setDate = days => { const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+days); input.value = d.toISOString().slice(0,10); display.textContent = readableDate(input.value); input.dispatchEvent(new Event('change', { bubbles:true })); };
+            wrap.querySelectorAll('button').forEach(button => button.addEventListener('click', () => setDate(Number(button.dataset.days))));
+            input.addEventListener('change', () => { display.textContent = readableDate(input.value); });
+        };
+        const observer = new MutationObserver(() => enhanceDate(document.getElementById('wizard-date')));
+        observer.observe(document.body, { childList:true, subtree:true });
+        enhanceDate(document.getElementById('wizard-date'));
     })();
     </script>
 
