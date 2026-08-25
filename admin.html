@@ -822,7 +822,7 @@
     function sendCredentialsWA() {
         const c = casesDB[currentEditingId];
         if (!c) return;
-        const txt = `*AeroLex — Sus credenciales de seguimiento*\n\nExpediente: *${c.code}*\nPIN de consulta: *${c.pin}*\n\nRastre el avance de su caso en tiempo real en nuestro sitio web, sección "Estado de mi Caso".\n\n— Estudio AeroLex, Puerto Montt`;
+        const txt = `*AeroLex — Sus credenciales de seguimiento*\n\nExpediente: *${c.code}*\nPIN de consulta: *${c.pin}*\n\nRastree el avance de su caso en tiempo real en nuestro sitio web, botón "Asistente AeroLex" → "Rastrear mi caso".\n\n— Estudio AeroLex, Puerto Montt`;
         window.open(`https://wa.me/${getWaNumber()}?text=${encodeURIComponent(txt)}`, '_blank');
     }
 

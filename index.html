@@ -73,6 +73,51 @@
         .timeline-step::before { content: ''; position: absolute; left: -20px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: #E2E8F0; border: 2px solid #fff; box-shadow: 0 0 0 1px #E2E8F0; }
         .timeline-step.active::before { background: #25D366; box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.3); border: none;}
         .timeline-step.active .step-title { color: #1D1D1F; font-weight: 700; }
+
+        /* ====== ASISTENTE UNIFICADO AEROLEX ====== */
+        @keyframes auraPing { 0% { transform: scale(1); opacity: 0.45; } 75%, 100% { transform: scale(1.75); opacity: 0; } }
+        .assistant-aura { position: absolute; inset: 0; border-radius: 9999px; background: rgba(120, 140, 159, 0.35); animation: auraPing 2.4s cubic-bezier(0, 0, 0.2, 1) infinite; }
+        .assistant-core { position: absolute; inset: 0; border-radius: 9999px; background: linear-gradient(145deg, #3a3a3d, #121214); box-shadow: 0 4px 12px rgba(0,0,0,0.25); }
+
+        .vip-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 8.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #92400E; background: linear-gradient(135deg, #FDE68A, #FCD34D); padding: 2.5px 8px; border-radius: 999px; border: 1px solid #F59E0B; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.25); }
+
+        .quick-action-grid { display: flex; flex-direction: column; gap: 9px; }
+        .quick-action-card { display: flex; align-items: center; gap: 13px; width: 100%; background: #fff; border: 1px solid #E2E8F0; border-radius: 15px; padding: 13px 15px; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+        .quick-action-card:hover { transform: translateX(5px); border-color: #1D1D1F; box-shadow: 0 10px 22px rgba(0,0,0,0.07); }
+        .quick-action-card.qa-vip { border-color: #FCD34D; background: linear-gradient(135deg, #FFFBEB, #FFFFFF); }
+        .qa-icon { width: 42px; height: 42px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+        .qa-track { background: rgba(120, 140, 159, 0.13); color: #788C9F; }
+        .qa-new { background: rgba(29, 29, 31, 0.08); color: #1D1D1F; }
+        .qa-wa { background: rgba(37, 211, 102, 0.13); color: #1FA855; }
+        .qa-body { flex: 1; min-width: 0; }
+        .qa-title { display: block; font-weight: 700; font-size: 13.5px; color: #1D1D1F; line-height: 1.2; }
+        .qa-desc { display: block; font-size: 11.5px; color: #8A94A8; margin-top: 2px; }
+        .qa-arrow { color: #CBD5E1; font-size: 11px; transition: all 0.25s; }
+        .quick-action-card:hover .qa-arrow { color: #1D1D1F; transform: translateX(2px); }
+
+        .chat-chip-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+        .chat-chip { background: #F4F7F9; border: 1px solid #E2E8F0; color: #1D1D1F; font-size: 12px; font-weight: 600; padding: 8px 13px; border-radius: 999px; cursor: pointer; transition: all 0.2s; }
+        .chat-chip:hover { background: #1D1D1F; color: #fff; border-color: #1D1D1F; transform: translateY(-1px); }
+
+        .track-form { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+        .track-form input { width: 100%; background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 11px; padding: 12px 14px; font-size: 13px; font-weight: 600; outline: none; transition: all 0.2s; color: #1D1D1F; }
+        .track-form input:focus { border-color: #1D1D1F; background: #fff; box-shadow: 0 0 0 3px rgba(29,29,31,0.06); }
+        .track-form input::placeholder { font-weight: 500; color: #A5AEBE; }
+        #track-code { font-family: ui-monospace, monospace; letter-spacing: 0.05em; text-transform: uppercase; }
+        #track-pin { font-family: ui-monospace, monospace; letter-spacing: 0.35em; text-align: center; }
+        .track-btn { display: flex; align-items: center; justify-content: center; gap: 8px; background: #1D1D1F; color: #fff; border: none; border-radius: 11px; padding: 13px; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s; width: 100%; }
+        .track-btn:hover { background: #000; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+        .track-btn-light { background: #fff; color: #1D1D1F; border: 1px solid #E2E8F0; }
+        .track-btn-light:hover { background: #F8FAFC; border-color: #1D1D1F; box-shadow: 0 6px 16px rgba(0,0,0,0.07); }
+
+        .priority-bar { margin-top: 14px; padding: 13px; background: linear-gradient(135deg, #FFFBEB, #FEF3C7); border: 1px solid #FDE68A; border-radius: 13px; }
+        .priority-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #92400E; display: flex; align-items: center; gap: 6px; margin-bottom: 9px; }
+        .priority-actions { display: flex; gap: 7px; }
+        .p-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11.5px; font-weight: 700; padding: 10px 6px; border-radius: 10px; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; text-decoration: none; }
+        .p-btn-dark { background: #1D1D1F; color: #fff; border-color: #1D1D1F; }
+        .p-btn-dark:hover { background: #000; transform: translateY(-1px); }
+        .p-btn-wa { background: #25D366; color: #fff; border-color: #25D366; }
+        .p-btn-wa:hover { background: #1FA855; transform: translateY(-1px); }
     </style>
 </head>
 <body class="relative flex flex-col min-h-screen">
@@ -92,19 +137,20 @@
             <nav class="hidden xl:flex space-x-1 bg-white/60 backdrop-blur-md border border-white/80 shadow-[0_10px_30px_rgba(0,0,0,0.05)] rounded-full px-4 py-2 mx-auto">
                 <a href="#inicio" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Inicio</a>
                 <a href="#servicios" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Core System</a>
-                <button onclick="openAIChat('ESTADO_CAUSA', 'Estado de Causa')" class="px-4 py-1.5 rounded-full text-[13px] font-bold text-mac-accent bg-mac-accent/10 hover:bg-mac-accent/20 transition-all flex items-center gap-2">
-                    <i class="fas fa-search"></i> Estado de mi Caso
-                </button>
                 <div class="w-px h-6 bg-gray-300/50 my-auto mx-2"></div> <!-- Separador -->
                 <a href="admin.html" class="px-4 py-1.5 rounded-full text-[13px] font-bold text-gray-500 hover:text-mac-dark hover:bg-white/80 transition-all flex items-center gap-2" title="Panel de Administración">
                     <i class="fas fa-lock text-[11px]"></i> Portal Abogados
                 </a>
             </nav>
 
-            <!-- Botones Derecho (IA + Hamburguesa Móvil) -->
+            <!-- Botones Derecho (Asistente Unificado + Hamburguesa Móvil) -->
             <div class="flex items-center gap-3">
-                <button onclick="openAIChat('default', 'Mesa Central')" class="bg-mac-dark text-white px-4 md:px-5 py-2.5 rounded-full text-[13px] font-bold shadow-md flex items-center gap-2 hover:bg-black transition">
-                    <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div> <span class="hidden sm:inline">Asistente</span> IA
+                <button onclick="openAssistant()" class="bg-mac-dark text-white px-4 md:px-5 py-2.5 rounded-full text-[13px] font-bold shadow-md flex items-center gap-2 hover:bg-black transition group">
+                    <span class="relative flex w-2 h-2">
+                        <span class="absolute inline-flex w-full h-full rounded-full bg-green-400 opacity-75 animate-ping"></span>
+                        <span class="relative inline-flex rounded-full w-2 h-2 bg-green-400"></span>
+                    </span>
+                    <span class="hidden sm:inline">Asistente</span> AeroLex
                 </button>
                 
                 <!-- Botón Hamburguesa Móvil -->
@@ -131,8 +177,8 @@
             <a href="#inicio" onclick="toggleMobileMenu()" class="text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 hover:text-mac-accent transition">Inicio</a>
             <a href="#servicios" onclick="toggleMobileMenu()" class="text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 hover:text-mac-accent transition">Core System</a>
             
-            <button onclick="toggleMobileMenu(); openAIChat('ESTADO_CAUSA', 'Estado de Causa')" class="text-left text-2xl font-bold text-mac-accent border-b border-gray-100 pb-4 flex items-center gap-3 hover:text-mac-dark transition">
-                <i class="fas fa-search"></i> Estado de mi Caso
+            <button onclick="toggleMobileMenu(); openAssistant()" class="text-left text-2xl font-bold text-mac-accent border-b border-gray-100 pb-4 flex items-center gap-3 hover:text-mac-dark transition">
+                <i class="fas fa-wand-magic-sparkles"></i> Asistente AeroLex
             </button>
             
             <!-- Espaciador -->
@@ -152,22 +198,33 @@
         </div>
     </div>
 
-    <!-- MODAL DE LA IA (Ajustado para Móvil) -->
+    <!-- ASISTENTE UNIFICADO AEROLEX (Rastreo + Triaje + Contacto Directo) -->
     <dialog id="ai-modal" class="p-0 bg-transparent w-full max-w-lg m-auto rounded-[2rem] shadow-2xl">
         <div class="bg-white/95 backdrop-blur-3xl border border-white/50 flex flex-col h-[85vh] max-h-[650px] w-full relative overflow-hidden">
-            <div class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 shrink-0 z-10">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-mac-dark rounded-full text-white flex items-center justify-center relative shadow-sm"><i class="fas fa-robot"></i><div class="absolute bottom-0 right-0 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></div></div>
-                    <div><h3 class="text-sm font-bold text-mac-dark leading-tight">Secretario Técnico</h3><p class="text-[10px] text-mac-dark/60 uppercase tracking-widest font-semibold" id="ai-subtitle">Triage IA</p></div>
+            <div class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 md:px-6 shrink-0 z-10">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="relative w-10 h-10 flex items-center justify-center shrink-0">
+                        <div class="assistant-aura"></div>
+                        <div class="assistant-core"></div>
+                        <i class="fas fa-robot relative text-white text-sm"></i>
+                        <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-400 border-2 border-white rounded-full z-10"></div>
+                    </div>
+                    <div class="min-w-0">
+                        <h3 class="text-sm font-bold text-mac-dark leading-tight flex items-center gap-2">Asistente AeroLex <span id="vip-badge" class="vip-badge hidden"><i class="fas fa-bolt text-[7px]"></i>Prioritario</span></h3>
+                        <p class="text-[10px] text-mac-dark/60 uppercase tracking-widest font-semibold truncate" id="ai-subtitle">Mesa Central Inteligente</p>
+                    </div>
                 </div>
-                <button onclick="closeAIChat()" class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-500 rounded-full hover:bg-gray-200 transition"><i class="fas fa-times"></i></button>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <button onclick="goAssistantHome()" class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-500 rounded-full hover:bg-gray-200 hover:text-mac-dark transition" title="Menú principal"><i class="fas fa-house text-xs"></i></button>
+                    <button onclick="closeAIChat()" class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-500 rounded-full hover:bg-gray-200 hover:text-mac-dark transition"><i class="fas fa-times"></i></button>
+                </div>
             </div>
             
             <div id="ai-chat-log" class="flex-1 p-5 overflow-y-auto flex flex-col gap-4 bg-gray-50/50 hide-scrollbar scroll-smooth"></div>
             
             <!-- Barra de Input -->
             <form id="ai-input-form" class="p-3 bg-white border-t border-gray-100 shrink-0 flex gap-2 shadow-[0_-10px_20px_rgba(0,0,0,0.02)] z-10">
-                <input type="text" id="ai-input" class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-[13px] focus:outline-none focus:border-mac-accent focus:ring-1 focus:ring-mac-accent transition" placeholder="O ingrese su código de caso (Ej: ALX-2026-01)..." autocomplete="off">
+                <input type="text" id="ai-input" class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-[13px] focus:outline-none focus:border-mac-accent focus:ring-1 focus:ring-mac-accent transition" placeholder="Escriba su consulta o código ALX-2026-01..." autocomplete="off">
                 <button type="submit" id="ai-send-btn" class="w-12 h-12 bg-mac-dark text-white rounded-xl flex items-center justify-center shadow-md hover:bg-black transition-colors disabled:opacity-50" disabled>
                     <i class="fas fa-paper-plane text-sm"></i>
                 </button>
@@ -612,18 +669,192 @@
         let currentFlowId = "";
         let answersTracker = [];
         let pendingCaseCode = null;
+        let verifiedClient = null;
 
+        function updateAssistantHeader() {
+            const badge = document.getElementById('vip-badge');
+            if (verifiedClient) {
+                badge.classList.remove('hidden');
+                document.getElementById('ai-subtitle').innerText = "Atención Prioritaria Activada";
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        // ====== ENTRADA PRINCIPAL DEL ASISTENTE UNIFICADO ======
+        function openAssistant() {
+            aiModal.showModal();
+            aiChatLog.innerHTML = '';
+            verifiedClient = null;
+            pendingCaseCode = null;
+            updateAssistantHeader();
+            document.getElementById('ai-subtitle').innerText = "Mesa Central Inteligente";
+            renderAssistantHome();
+        }
+
+        function goAssistantHome() {
+            aiChatLog.innerHTML = '';
+            renderAssistantHome();
+        }
+
+        function renderAssistantHome() {
+            updateAssistantHeader();
+            injectBotMessage(`Bienvenido a la <strong>Mesa Central AeroLex</strong>. Soy su asistente jurídico-técnico de Puerto Montt. Desde aquí puede <strong>rastrear su caso en vivo</strong>, iniciar una <strong>consulta nueva</strong> o <strong>hablar directamente con un abogado</strong>.`);
+            setTimeout(() => {
+                let cards = '';
+                if (verifiedClient) {
+                    cards += `
+                        <button class="quick-action-card qa-vip" onclick="refreshVerifiedCase()">
+                            <div class="qa-icon qa-track"><i class="fas fa-satellite-dish"></i></div>
+                            <div class="qa-body">
+                                <span class="qa-title">Mi expediente ${verifiedClient.code}</span>
+                                <span class="qa-desc">Ver estado actualizado en tiempo real</span>
+                            </div>
+                            <i class="fas fa-chevron-right qa-arrow"></i>
+                        </button>`;
+                }
+                cards += `
+                    <button class="quick-action-card" onclick="startTracking()">
+                        <div class="qa-icon qa-track"><i class="fas fa-magnifying-glass-location"></i></div>
+                        <div class="qa-body">
+                            <span class="qa-title">Rastrear mi caso</span>
+                            <span class="qa-desc">Estado en vivo con su código ALX y PIN</span>
+                        </div>
+                        <i class="fas fa-chevron-right qa-arrow"></i>
+                    </button>
+                    <button class="quick-action-card" onclick="startNewConsult()">
+                        <div class="qa-icon qa-new"><i class="fas fa-scale-balanced"></i></div>
+                        <div class="qa-body">
+                            <span class="qa-title">Nueva consulta legal o técnica</span>
+                            <span class="qa-desc">Triaje inteligente en 3 pasos</span>
+                        </div>
+                        <i class="fas fa-chevron-right qa-arrow"></i>
+                    </button>
+                    <button class="quick-action-card" onclick="contactDirect()">
+                        <div class="qa-icon qa-wa"><i class="fab fa-whatsapp"></i></div>
+                        <div class="qa-body">
+                            <span class="qa-title">Contactar a un abogado</span>
+                            <span class="qa-desc">Conexión directa con el estudio</span>
+                        </div>
+                        <i class="fas fa-chevron-right qa-arrow"></i>
+                    </button>`;
+                aiChatLog.insertAdjacentHTML('beforeend', `<div class="quick-action-grid fade-in">${cards}</div>`);
+                scrollToBottom();
+            }, 550);
+        }
+
+        // ====== MÓDULO 1: RASTREO DE CASO ======
+        function startTracking() {
+            document.getElementById('ai-subtitle').innerText = "Rastreo Judicial Seguro";
+            injectBotMessage(`Active el <strong>Rastreo Judicial en Vivo</strong>. Ingrese las credenciales que AeroLex le entregó al abrir su expediente. También puede escribirlas en la barra inferior.`);
+            setTimeout(showTrackForm, 650);
+        }
+
+        function showTrackForm() {
+            aiChatLog.insertAdjacentHTML('beforeend', `
+                <div class="ai-chat-bubble-bot fade-in">
+                    <div class="track-form">
+                        <input type="text" id="track-code" placeholder="Código de expediente (ALX-2026-01)" autocomplete="off" maxlength="12">
+                        <input type="password" id="track-pin" placeholder="PIN de 4 dígitos" inputmode="numeric" maxlength="4" autocomplete="off">
+                        <button type="button" class="track-btn" onclick="submitTrackForm()"><i class="fas fa-satellite-dish"></i> Consultar estado de mi causa</button>
+                    </div>
+                </div>`);
+            scrollToBottom();
+            document.getElementById('track-code')?.focus();
+        }
+
+        function submitTrackForm() {
+            const code = (document.getElementById('track-code')?.value || '').toUpperCase().trim();
+            const pin = (document.getElementById('track-pin')?.value || '').trim();
+            if (!code || !pin) { injectBotMessage("⚠️ Complete ambos campos: su <strong>código ALX</strong> y su <strong>PIN de 4 dígitos</strong>."); return; }
+            document.querySelectorAll('.track-form').forEach(el => { el.innerHTML = `<div class="text-[12px] text-gray-400 italic">Credenciales enviadas · ${code} · ••••</div>`; });
+            addUserMessage(`Rastrear expediente ${code}`);
+            injectBotMessage(`Verificando credenciales del expediente <strong>${code}</strong> contra la base segura de AeroLex...`);
+            fetchCaseFromAPI(code, pin, true);
+        }
+
+        function refreshVerifiedCase() {
+            if (!verifiedClient) return;
+            addUserMessage(`Actualizar estado de ${verifiedClient.code}`);
+            injectBotMessage("Consultando el estado más reciente de su expediente...");
+            fetchCaseFromAPI(verifiedClient.code, verifiedClient.pin, true);
+        }
+
+        function verifyNow(code, pin) {
+            addUserMessage(`Verificar ${code} ahora`);
+            injectBotMessage("Activando modo cliente prioritario...");
+            fetchCaseFromAPI(code, pin, true);
+        }
+
+        function renderPriorityBar() {
+            const waText = encodeURIComponent(`*CONSULTA PRIORITARIA — Expediente ${verifiedClient.code}*\nMateria: ${verifiedClient.materia || '-'}\n\nSolicito contacto con el abogado a cargo de mi causa. (Canal prioritario del Asistente AeroLex)`);
+            return `
+                <div class="priority-bar">
+                    <div class="priority-label"><i class="fas fa-bolt"></i> Atención prioritaria activada</div>
+                    <div class="priority-actions">
+                        <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waText}" target="_blank" class="p-btn p-btn-wa"><i class="fab fa-whatsapp"></i> Mi abogado</a>
+                        <button class="p-btn p-btn-dark" onclick="refreshVerifiedCase()"><i class="fas fa-rotate"></i> Actualizar</button>
+                    </div>
+                </div>`;
+        }
+
+        // ====== MÓDULO 2: NUEVA CONSULTA (SELECTOR EN CHAT) ======
+        function startNewConsult() {
+            document.getElementById('ai-subtitle').innerText = "Nuevo Triaje";
+            addUserMessage("Necesito una consulta nueva");
+            injectBotMessage("Con gusto. Seleccione el <strong>área</strong> de su requerimiento y el sistema asignará el especialista correcto:");
+            setTimeout(() => {
+                const cats = [...db.legal, ...db.tech];
+                let chips = '<div class="chat-chip-grid fade-in">';
+                cats.forEach(cat => { chips += `<button class="chat-chip" onclick="pickCategory('${cat.id}')"><i class="fas ${cat.icon} mr-1.5 text-[10px]"></i>${cat.title}</button>`; });
+                chips += '</div>';
+                aiChatLog.insertAdjacentHTML('beforeend', chips);
+                scrollToBottom();
+            }, 550);
+        }
+
+        function pickCategory(catId) {
+            const cat = [...db.legal, ...db.tech].find(c => c.id === catId);
+            if (!cat) return;
+            document.querySelectorAll('.chat-chip-grid').forEach(el => el.remove());
+            addUserMessage(cat.title);
+            injectBotMessage(`¿Qué situación específica de <strong>${cat.title}</strong> le corresponde?`);
+            setTimeout(() => {
+                let list = '<div class="quick-replies fade-in">';
+                cat.items.forEach(item => { list += `<button class="quick-reply-btn" onclick="pickService('${item.id}')">${item.title}</button>`; });
+                list += '</div>';
+                aiChatLog.insertAdjacentHTML('beforeend', list);
+                scrollToBottom();
+            }, 550);
+        }
+
+        function pickService(serviceId) {
+            const item = [...db.legal, ...db.tech].flatMap(c => c.items).find(i => i.id === serviceId);
+            const title = item ? item.title : 'Consulta General';
+            document.querySelectorAll('.quick-replies, .chat-chip-grid').forEach(el => el.remove());
+            document.getElementById('ai-subtitle').innerText = "Triaje Técnico";
+            currentServiceTitle = title;
+            currentFlowId = flows[serviceId] ? serviceId : 'default';
+            answersTracker = [];
+            addUserMessage(title);
+            setTimeout(() => askNode(currentFlowId), 400);
+        }
+
+        // ====== MÓDULO 3: CONTACTO DIRECTO ======
+        function contactDirect() {
+            addUserMessage("Quiero contactar a un abogado");
+            const waText = encodeURIComponent("Hola AeroLex, deseo hablar directamente con un abogado de mi situación. (Contacto iniciado desde el Asistente Web)");
+            injectBotMessage(`Por supuesto. Nuestro equipo legal está disponible para atenderle de forma <strong>directa e inmediata</strong>.<br><a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waText}" target="_blank" class="btn-wa-final"><i class="fab fa-whatsapp"></i> Hablar ahora con un abogado</a><span class="block text-[11px] text-gray-400 mt-3 leading-relaxed"><i class="fas fa-clock mr-1"></i>Lun a Vie · 9:00 a 18:00 &nbsp;·&nbsp; <i class="fas fa-location-dot mr-1"></i>Benavente 405, Of. 305, Puerto Montt</span>`);
+        }
+
+        // ====== ENTRADA DESDE TARJETAS DE SERVICIOS (TRIAJE DIRECTO) ======
         function openAIChat(serviceId, serviceTitle) {
             aiModal.showModal();
             aiChatLog.innerHTML = '';
-            
-            if (serviceId === 'ESTADO_CAUSA') {
-                document.getElementById('ai-subtitle').innerText = "Rastreo Judicial (Conexión Segura)";
-                injectBotMessage("Módulo de Rastreo Judicial en vivo activado. <strong>Escriba en la barra inferior su código único asignado por AeroLex</strong> (Ej: ALX-2026-01) y a continuación su PIN de 4 dígitos.");
-                return;
-            }
+            pendingCaseCode = null;
+            updateAssistantHeader();
 
-            document.getElementById('ai-subtitle').innerText = "Triage Técnico";
+            document.getElementById('ai-subtitle').innerText = "Triaje Técnico";
             aiChatLog.innerHTML = `<div class="text-center my-3"><span class="bg-gray-100 text-gray-500 text-[10px] py-1.5 px-3 rounded-md font-bold uppercase tracking-wider shadow-sm">Protocolo IA: ${serviceTitle}</span></div>`;
             
             currentServiceTitle = serviceTitle;
@@ -714,7 +945,8 @@
                         <div class="font-mono font-extrabold text-xl tracking-wider">${newCase.code}</div>
                         <div class="text-[10px] text-gray-400 mt-2">PIN de seguridad: <span class="font-mono font-bold text-green-400 text-xs">${newCase.pin}</span></div>
                     </div>
-                    <p class="text-[11px] text-gray-500 mt-3 leading-relaxed">Guarde este código y PIN: con ellos podrá <strong>rastrear el avance de su caso en tiempo real</strong> usando el botón "Estado de mi Caso" de nuestro sitio.</p>` : ''}
+                    <button type="button" class="track-btn track-btn-light mt-2" onclick="verifyNow('${newCase.code}','${newCase.pin}')"><i class="fas fa-satellite-dish"></i> Ver el estado de mi caso ahora</button>
+                    <p class="text-[11px] text-gray-500 mt-3 leading-relaxed">Guarde este código y PIN: con ellos podrá <strong>rastrear el avance de su caso en tiempo real</strong> desde el Asistente AeroLex de nuestro sitio.</p>` : ''}
                     <a href="${waUrl}" target="_blank" class="btn-wa-final"><i class="fab fa-whatsapp text-lg"></i> Enviar Expediente a Especialista</a>
                 </div>`;
                 aiChatLog.insertAdjacentHTML('beforeend', finalMsg);
@@ -737,19 +969,22 @@
                 const codeToCheck = pendingCaseCode;
                 pendingCaseCode = null;
                 injectBotMessage(`Verificando credenciales del expediente <strong>${codeToCheck}</strong>...`);
-                fetchCaseFromAPI(codeToCheck, pinIntent);
+                fetchCaseFromAPI(codeToCheck, pinIntent, true);
                 return;
             }
 
             if (text.toUpperCase().startsWith("ALX-")) {
                 pendingCaseCode = text.toUpperCase().trim();
-                injectBotMessage("Código recibido. Por seguridad, escriba ahora su <strong>PIN de 4 dígitos</strong> para consultar el estado de su causa.");
+                injectBotMessage("Código recibido. Por seguridad, escriba ahora su <strong>PIN de 4 dígitos</strong> para activar el rastreo de su causa.");
                 return;
             }
 
             if(document.querySelector('.quick-replies')) {
                 answersTracker.push("Nota del cliente: " + text);
                 injectBotMessage("He registrado su apunte. Por favor, seleccione una de las opciones de los botones para continuar con el perfilamiento automatizado.");
+            } else if (verifiedClient) {
+                const waText = encodeURIComponent(`*CONSULTA PRIORITARIA — Expediente ${verifiedClient.code}*\n\nPregunta del cliente:\n"${text}"\n\n(Enviada desde el Asistente AeroLex)`);
+                injectBotMessage(`✅ Su consulta quedó registrada con <strong>prioridad alta</strong> en la fila del expediente ${verifiedClient.code}. El abogado a cargo la revisará con preferencia.<br><a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waText}" target="_blank" class="btn-wa-final"><i class="fab fa-whatsapp"></i> Acelerar respuesta por WhatsApp</a>`);
             } else {
                 let waText = encodeURIComponent(`Consulta libre: ${text.substring(0,50)}...`);
                 injectBotMessage(`He registrado su comentario en bitácora. Puede derivar sus inquietudes directamente al especialista:<br><a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waText}" class="btn-wa-final"><i class="fab fa-whatsapp"></i> Hablar con especialista</a>`);
@@ -796,17 +1031,24 @@
             return html;
         }
 
-        async function fetchCaseFromAPI(code, pin) {
+        async function fetchCaseFromAPI(code, pin, setVerified = false) {
             try {
                 const resp = await fetch(`/api/cases?code=${encodeURIComponent(code)}&pin=${encodeURIComponent(pin)}`);
                 const data = await resp.json();
                 if (data.ok) {
-                    injectBotMessage(renderCaseCard(data.case, code));
+                    if (setVerified) {
+                        verifiedClient = { ...data.case, pin: pin };
+                        updateAssistantHeader();
+                        document.getElementById('ai-subtitle').innerText = "Atención Prioritaria Activada";
+                    }
+                    let html = renderCaseCard(data.case, code);
+                    if (setVerified) html += renderPriorityBar();
+                    injectBotMessage(html);
                 } else if (data.error === 'bad_pin') {
-                    pendingCaseCode = code;
-                    injectBotMessage("🔒 PIN incorrecto. Escriba nuevamente su <strong>PIN de 4 dígitos</strong>.");
+                    injectBotMessage("🔒 <strong>PIN incorrecto</strong> para este expediente. Inténtelo nuevamente con sus credenciales:");
+                    setTimeout(showTrackForm, 700);
                 } else {
-                    injectBotMessage("❌ No he encontrado registros en la base de datos para el código proporcionado. Compruebe si está bien escrito.");
+                    injectBotMessage("❌ No he encontrado registros en la base de datos para el código proporcionado. Compruebe si está bien escrito (Ej: ALX-2026-03) o inicie una consulta nueva desde el menú principal.");
                 }
             } catch (err) {
                 const localCase = casesDB[code];
