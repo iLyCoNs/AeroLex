@@ -118,6 +118,26 @@
         .p-btn-dark:hover { background: #000; transform: translateY(-1px); }
         .p-btn-wa { background: #25D366; color: #fff; border-color: #25D366; }
         .p-btn-wa:hover { background: #1FA855; transform: translateY(-1px); }
+
+        /* ====== HERRAMIENTAS LEGALES ====== */
+        .tool-tab { background: rgba(255,255,255,.65); border: 1px solid #E2E8F0; color: #5A6478; border-radius: 999px; padding: 8px 15px; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: inline-flex; gap: 7px; align-items: center; white-space: nowrap; }
+        .tool-tab.active { background: #1D1D1F; color: #fff; border-color: #1D1D1F; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .tool-tab:hover:not(.active) { color: #1D1D1F; border-color: #CBD5E1; }
+
+        .tool-label { display: block; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #8A94A8; margin-bottom: 6px; }
+        .tool-input { width: 100%; background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 11px; padding: 11px 13px; font-size: 13px; font-weight: 600; color: #1D1D1F; outline: none; transition: all 0.2s; }
+        .tool-input:focus { border-color: #1D1D1F; background: #fff; box-shadow: 0 0 0 3px rgba(29,29,31,0.06); }
+
+        .plazo-res { border-radius: 16px; padding: 20px; border: 1px solid #E2E8F0; background: #fff; }
+        .plazo-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 11px; border-radius: 999px; }
+        .plazo-track { height: 6px; border-radius: 999px; background: #EDF1F5; overflow: hidden; }
+        .plazo-fill { height: 100%; border-radius: 999px; transition: width 0.5s ease; }
+
+        .ind-card { background: linear-gradient(145deg, #ffffff, #F8FAFC); border: 1px solid #E2E8F0; border-radius: 16px; padding: 18px; }
+        .ind-val { font-family: ui-monospace, monospace; font-size: 24px; font-weight: 800; color: #1D1D1F; letter-spacing: -0.02em; }
+
+        .glos-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 14px; padding: 14px 16px; transition: all 0.25s; }
+        .glos-card:hover { border-color: #1D1D1F; box-shadow: 0 8px 20px rgba(0,0,0,0.05); transform: translateY(-2px); }
     </style>
 </head>
 <body class="relative flex flex-col min-h-screen">
@@ -137,6 +157,7 @@
             <nav class="hidden xl:flex space-x-1 bg-white/60 backdrop-blur-md border border-white/80 shadow-[0_10px_30px_rgba(0,0,0,0.05)] rounded-full px-4 py-2 mx-auto">
                 <a href="#inicio" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Inicio</a>
                 <a href="#servicios" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Servicios</a>
+                <a href="#herramientas" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Herramientas</a>
                 <div class="w-px h-6 bg-gray-300/50 my-auto mx-2"></div> <!-- Separador -->
                 <a href="admin.html" class="px-4 py-1.5 rounded-full text-[13px] font-bold text-gray-500 hover:text-mac-dark hover:bg-white/80 transition-all flex items-center gap-2" title="Panel de Administración">
                     <i class="fas fa-lock text-[11px]"></i> Portal Abogados
@@ -176,6 +197,7 @@
         <nav class="flex-1 px-8 py-10 flex flex-col gap-6 overflow-y-auto">
             <a href="#inicio" onclick="toggleMobileMenu()" class="text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 hover:text-mac-accent transition">Inicio</a>
             <a href="#servicios" onclick="toggleMobileMenu()" class="text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 hover:text-mac-accent transition">Servicios</a>
+            <a href="#herramientas" onclick="toggleMobileMenu()" class="text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 hover:text-mac-accent transition">Herramientas</a>
             
             <button onclick="toggleMobileMenu(); openAssistant()" class="text-left text-2xl font-bold text-mac-accent border-b border-gray-100 pb-4 flex items-center gap-3 hover:text-mac-dark transition">
                 <i class="fas fa-wand-magic-sparkles"></i> Asistente AeroLex
@@ -290,6 +312,102 @@
                         <!-- Aquí se renderiza la bienvenida por defecto -->
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HERRAMIENTAS LEGALES INTELIGENTES -->
+    <section id="herramientas" class="max-w-7xl mx-auto px-4 pb-12 w-full relative z-10 mt-4">
+        <div class="text-center mb-6 px-4">
+            <span class="inline-flex items-center gap-2 text-[11px] font-bold text-mac-accent uppercase tracking-widest mb-3"><i class="fas fa-microchip"></i> AeroLex · Derecho + Tecnología</span>
+            <h2 class="text-2xl md:text-4xl font-extrabold text-mac-dark tracking-tight">Herramientas Legales Inteligentes</h2>
+            <p class="text-mac-dark/60 text-[14px] md:text-[15px] mt-3 max-w-2xl mx-auto leading-relaxed">Verifique sus plazos fatales, consulte los indicadores del mercado y domine los conceptos del derecho chileno. Gratis, al instante y con el respaldo de nuestros abogados e ingenieros.</p>
+        </div>
+
+        <div class="glass-effect rounded-[1.5rem] shadow-2xl shadow-black/5 overflow-hidden flex flex-col border border-white/60">
+            <div class="h-12 bg-white/40 border-b border-black/5 flex items-center px-4 shrink-0 backdrop-blur-md relative">
+                <div class="flex gap-2 absolute left-4">
+                    <div class="w-3 h-3 rounded-full bg-[#FF5F56] border border-black/10"></div>
+                    <div class="w-3 h-3 rounded-full bg-[#FFBD2E] border border-black/10"></div>
+                    <div class="w-3 h-3 rounded-full bg-[#27C93F] border border-black/10"></div>
+                </div>
+                <div class="w-full text-center text-[11px] font-bold text-mac-dark/40 tracking-widest uppercase">Asistente Legal Express</div>
+            </div>
+
+            <div class="flex gap-2 px-4 md:px-6 pt-4 pb-4 bg-white/30 border-b border-black/5 overflow-x-auto hide-scrollbar">
+                <button onclick="switchTool('plazos', this)" class="tool-tab active"><i class="fas fa-hourglass-half"></i> Plazos Legales</button>
+                <button onclick="switchTool('indicadores', this)" class="tool-tab"><i class="fas fa-coins"></i> UF / UTM</button>
+                <button onclick="switchTool('glosario', this)" class="tool-tab"><i class="fas fa-book-open"></i> Glosario Jurídico</button>
+            </div>
+
+            <div class="p-5 md:p-8 bg-white/40">
+
+                <!-- PANEL PLAZOS -->
+                <div id="tool-plazos">
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+                        <div class="md:col-span-2 space-y-4">
+                            <div>
+                                <label class="tool-label">¿Qué situación legal enfrenta?</label>
+                                <select id="plazo-select" class="tool-input" onchange="onPlazoChange()"></select>
+                            </div>
+                            <div>
+                                <label id="plazo-desde-label" class="tool-label">Fecha del acto</label>
+                                <input type="date" id="plazo-fecha" class="tool-input">
+                            </div>
+                            <button type="button" class="track-btn" onclick="calcularPlazo()"><i class="fas fa-hourglass-half"></i> Calcular mi plazo</button>
+                            <p id="plazo-ley" class="text-[11px] text-gray-500 leading-relaxed"></p>
+                        </div>
+                        <div class="md:col-span-3">
+                            <div id="plazo-resultado" class="h-full flex flex-col items-center justify-center text-center py-10 px-6 rounded-2xl border border-dashed border-gray-300/70">
+                                <i class="fas fa-hourglass-half text-3xl text-gray-300 mb-3"></i>
+                                <p class="text-[13px] text-gray-400 font-medium max-w-xs leading-relaxed">Seleccione su situación, indique la fecha de inicio y calcule si su plazo legal todavía está vivo.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL INDICADORES -->
+                <div id="tool-indicadores" class="hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="ind-card">
+                            <div class="tool-label"><i class="fas fa-house-chimney mr-1.5 text-mac-accent"></i> Unidad de Fomento (UF)</div>
+                            <div class="ind-val" id="ind-uf">$ —</div>
+                            <p class="text-[11px] text-gray-400 mt-1.5">Referencia para contratos, arriendos y compraventas</p>
+                        </div>
+                        <div class="ind-card">
+                            <div class="tool-label"><i class="fas fa-receipt mr-1.5 text-mac-accent"></i> Unidad Tributaria Mensual (UTM)</div>
+                            <div class="ind-val" id="ind-utm">$ —</div>
+                            <p class="text-[11px] text-gray-400 mt-1.5">Base de multas, trámites y contribuciones</p>
+                        </div>
+                        <div class="ind-card">
+                            <div class="tool-label"><i class="fas fa-right-left mr-1.5 text-mac-accent"></i> Conversor Legal</div>
+                            <div class="flex gap-2">
+                                <input type="number" id="conv-monto" class="tool-input !py-2 !text-[13px]" placeholder="Monto" oninput="convertirMonto()">
+                                <select id="conv-tipo" class="tool-input !py-2 !text-[13px] !w-auto" onchange="convertirMonto()">
+                                    <option value="uf-clp">UF a CLP</option>
+                                    <option value="clp-uf">CLP a UF</option>
+                                    <option value="utm-clp">UTM a CLP</option>
+                                    <option value="clp-utm">CLP a UTM</option>
+                                </select>
+                            </div>
+                            <div id="conv-result" class="mt-3 text-[15px] font-extrabold text-mac-dark font-mono">—</div>
+                            <p id="ind-updated" class="text-[10px] text-gray-400 mt-2"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL GLOSARIO -->
+                <div id="tool-glosario" class="hidden">
+                    <div class="relative max-w-md">
+                        <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                        <input type="text" id="glos-search" class="tool-input !pl-10" placeholder="Buscar término: finiquito, RIT, deslinde, CBR..." oninput="renderGlosario()" autocomplete="off">
+                    </div>
+                    <div id="glos-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-5"></div>
+                </div>
+
+                <p class="text-[10.5px] text-gray-400 mt-6 leading-relaxed border-t border-gray-200/60 pt-4">
+                    <i class="fas fa-circle-info mr-1"></i> Herramientas de referencia orientativa. El cálculo de días hábiles no descuenta feriados legales y los plazos pueden variar según el procedimiento aplicable a su caso. No sustituyen la asesoría de un abogado. Valores UF/UTM según mindicador.cl.
+                </p>
             </div>
         </div>
     </section>
@@ -1188,6 +1306,180 @@
             renderWelcomeView();
             syncLiveCases();
         });
+    </script>
+
+    <script>
+        const PLAZOS_LEGALES = [
+            { id:'proteccion', label:'Recurso de Protección', ley:'Art. 20, Constitución Política de la República', dias:30, tipo:'corridos', desde:'Fecha del acto u omisión ilegal o arbitraria' },
+            { id:'despido', label:'Demanda por despido injustificado', ley:'Art. 168, Código del Trabajo', dias:60, tipo:'habiles', desde:'Fecha de separación (último día trabajado)', nota:'Si presentó reclamo ante la Inspección del Trabajo, el plazo se amplía a 90 días hábiles.' },
+            { id:'tutela', label:'Tutela de derechos fundamentales (laboral)', ley:'Art. 486, Código del Trabajo', dias:60, tipo:'habiles', desde:'Fecha de la vulneración o de su conocimiento' },
+            { id:'reposicion', label:'Reposición administrativa', ley:'Art. 54, Ley 19.880', dias:5, tipo:'habiles', desde:'Fecha de notificación del acto administrativo' },
+            { id:'jerarquico', label:'Recurso jerárquico administrativo', ley:'Art. 54, Ley 19.880', dias:10, tipo:'habiles', desde:'Fecha de notificación del acto administrativo' },
+            { id:'prestaciones', label:'Cobro de prestaciones laborales', ley:'Art. 510, Código del Trabajo', dias:6, tipo:'meses', desde:'Fecha de término del contrato' },
+            { id:'ejecutivo', label:'Oposición en juicio ejecutivo', ley:'Arts. 494 y ss., Código de Procedimiento Civil', dias:4, tipo:'habiles', desde:'Fecha del requerimiento de pago', nota:'El plazo es de 8 días hábiles si fue notificado conforme al Art. 48 del CPC.' }
+        ];
+
+        const GLOSARIO = [
+            { t:'RIT', d:'Rol Único Interno del Tribunal: número con que cada tribunal identifica su causa (ej: C-1450-2026).' },
+            { t:'RUC', d:'Rol Único de Causa: folio nacional que permite seguir un caso a lo largo de todo el sistema judicial chileno.' },
+            { t:'Finiquito', d:'Documento que pone término a la relación laboral y liquida las obligaciones pendientes entre trabajador y empleador.' },
+            { t:'Posesión efectiva', d:'Trámite (judicial o en Registro Civil) que acredita la calidad de heredero y habilita a tomar administración de los bienes del fallecido.' },
+            { t:'CBR', d:'Conservador de Bienes Raíces: oficina que inscribe y mantiene el registro de la propiedad inmueble; su inscripción es la clave del dominio.' },
+            { t:'Escritura pública', d:'Instrumento otorgado ante notario que da fe de actos solemnes, como la compraventa de inmuebles.' },
+            { t:'Medida cautelar', d:'Resolución judicial que protege un derecho mientras se tramita el juicio: prohibiciones de celebrar, retención de fondos, etc.' },
+            { t:'Juicio ejecutivo', d:'Procedimiento expedito para cobrar deudas respaldadas por título ejecutivo: pagaré, sentencia firme o factura.' },
+            { t:'Alimentos', d:'Obligación legal de mantener a ciertas personas (hijos, cónyuge), fijada y modificada por los tribunales de familia.' },
+            { t:'Relación directa y regular', d:'Régimen de contacto entre el progenitor no custodio y sus hijos, fijado por el tribunal o por acuerdo aprobado.' },
+            { t:'Beneficio de inventario', d:'Modalidad de aceptar una herencia que limita las deudas heredadas al valor de lo efectivamente recibido.' },
+            { t:'Indemnización por años de servicio', d:'Pago equivalente a 30 días de remuneración por cada año de servicio, en las causales que la ley indica (tope 330 días).' },
+            { t:'Tutela laboral', d:'Acción que protege derechos fundamentales vulnerados en el contexto de la relación laboral (plazo: 60 días hábiles).' },
+            { t:'Recurso de protección', d:'Acción constitucional ante actos u omisiones ilegales o arbitrarios. Plazo fatal: 30 días corridos.' },
+            { t:'Apelación', d:'Recurso para que la Corte de Apelaciones revise y modifique o deje sin efecto una sentencia de primera instancia.' },
+            { t:'Prescripción adquisitiva', d:'Modo de adquirir el dominio por posesión prolongada y en las condiciones que la ley señala (ordinaria o extraordinaria).' },
+            { t:'Servidumbre', d:'Gravamen impuesto sobre un predio en beneficio de otro: tránsito, acueducto, línea eléctrica, vistas, etc.' },
+            { t:'Deslinde', d:'Operación técnico-jurídica que determina los límites exactos de un predio; base de nuestros levantamientos con dron.' },
+            { t:'Ortomosaico', d:'Mapa 2D de ultra alta resolución generado desde imágenes aéreas georreferenciadas, utilizable como apoyo técnico en juicio.' },
+            { t:'Evidencia georreferenciada', d:'Registro audiovisual con coordenadas y sello de tiempo: la prueba aérea que ancla los hechos al territorio real.' }
+        ];
+
+        function switchTool(tool, btn) {
+            ['plazos','indicadores','glosario'].forEach(t => document.getElementById('tool-' + t).classList.toggle('hidden', t !== tool));
+            document.querySelectorAll('.tool-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            if (tool === 'indicadores') loadIndicadores();
+        }
+
+        const plazoSel = document.getElementById('plazo-select');
+        PLAZOS_LEGALES.forEach(p => {
+            const o = document.createElement('option');
+            o.value = p.id; o.textContent = p.label;
+            plazoSel.appendChild(o);
+        });
+        document.getElementById('plazo-fecha').value = new Date().toISOString().slice(0, 10);
+
+        function onPlazoChange() {
+            const p = PLAZOS_LEGALES.find(x => x.id === plazoSel.value);
+            document.getElementById('plazo-desde-label').innerText = p.desde;
+            document.getElementById('plazo-ley').innerHTML = `<i class="fas fa-scale-balanced mr-1"></i> Norma: ${p.ley}`;
+        }
+        onPlazoChange();
+
+        function fechaVencimiento(p, inicio) {
+            const v = new Date(inicio);
+            if (p.tipo === 'meses') { v.setMonth(v.getMonth() + p.dias); return v; }
+            if (p.tipo === 'corridos') { v.setDate(v.getDate() + p.dias); return v; }
+            let added = 0;
+            while (added < p.dias) {
+                v.setDate(v.getDate() + 1);
+                const w = v.getDay();
+                if (w !== 0 && w !== 6) added++;
+            }
+            return v;
+        }
+
+        function diasRestantes(venc, tipo) {
+            const hoy = new Date(); hoy.setHours(0,0,0,0);
+            if (venc < hoy) return 0;
+            if (tipo === 'habiles') {
+                let count = 0; const d = new Date(hoy);
+                while (d < venc) { d.setDate(d.getDate() + 1); const w = d.getDay(); if (w !== 0 && w !== 6) count++; }
+                return count;
+            }
+            return Math.ceil((venc - hoy) / 86400000);
+        }
+
+        function calcularPlazo() {
+            const p = PLAZOS_LEGALES.find(x => x.id === plazoSel.value);
+            const fVal = document.getElementById('plazo-fecha').value;
+            const box = document.getElementById('plazo-resultado');
+            if (!fVal) { box.innerHTML = `<p class="text-[13px] text-red-500 font-semibold">Indique la fecha de inicio del plazo.</p>`; return; }
+
+            const inicio = new Date(fVal + 'T00:00:00');
+            const venc = fechaVencimiento(p, inicio);
+            const rest = diasRestantes(venc, p.tipo);
+            const vencStr = venc.toLocaleDateString('es-CL', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+            const unidad = p.tipo === 'meses' ? 'días corridos (aprox.)' : 'días ' + p.tipo;
+            const total = Math.max(1, Math.round((venc - inicio) / 86400000));
+            const pct = Math.min(100, Math.max(0, Math.round(((Date.now() - inicio) / (venc - inicio)) * 100)));
+
+            let st, pillBg, pillTx, border, fill;
+            if (rest <= 0) { st = 'VENCIDO'; pillBg='#F1F5F9'; pillTx='#475569'; border='#CBD5E1'; fill='#94A3B8'; }
+            else if (rest <= 5) { st = 'CRÍTICO'; pillBg='#FEF2F2'; pillTx='#B91C1C'; border='#FCA5A5'; fill='#EF4444'; }
+            else if (rest <= 15) { st = 'POR VENCER'; pillBg='#FFFBEB'; pillTx='#B45309'; border='#FCD34D'; fill='#F59E0B'; }
+            else { st = 'PLAZO VIGENTE'; pillBg='#ECFDF5'; pillTx='#047857'; border='#86EFAC'; fill='#22C55E'; }
+
+            const waMsg = rest <= 0
+                ? `Hola AeroLex: consulté el plazo de "${p.label}" en su sitio y figura VENCIDO (${vencStr}). ¿Existen vías para mi caso?`
+                : `Hola AeroLex: calculé el plazo de "${p.label}" en su sitio y vence el ${vencStr} (${rest} ${unidad}). Necesito asesoría.`;
+
+            box.innerHTML = `
+                <div class="plazo-res fade-in" style="border-color:${border}">
+                    <div class="flex items-center justify-between gap-3 flex-wrap">
+                        <span class="plazo-pill ${rest > 0 && rest <= 5 ? 'animate-pulse' : ''}" style="background:${pillBg}; color:${pillTx}"><i class="fas ${rest<=0?'fa-circle-xmark':rest<=5?'fa-triangle-exclamation':'fa-circle-check'}"></i> ${st}</span>
+                        <span class="text-[11px] text-gray-400 font-semibold">Vence: ${vencStr}</span>
+                    </div>
+                    <div class="flex items-end gap-3 mt-4">
+                        <span class="text-5xl font-extrabold leading-none" style="color:${fill}">${rest}</span>
+                        <span class="text-[12px] text-gray-500 font-semibold pb-1">${unidad} restantes</span>
+                    </div>
+                    <div class="plazo-track mt-4"><div class="plazo-fill" style="width:${pct}%; background:${fill}"></div></div>
+                    <p class="text-[10px] text-gray-400 mt-1.5">${pct}% del plazo transcurrido</p>
+                    ${p.nota ? `<div class="mt-3 text-[11.5px] p-2.5 bg-amber-50 border border-amber-100 rounded-lg text-amber-800"><i class="fas fa-lightbulb mr-1"></i> ${p.nota}</div>` : ''}
+                    <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMsg)}" target="_blank" class="btn-wa-final"><i class="fab fa-whatsapp"></i> ${rest <= 0 ? '¿Aún hay vías? Consultar a un abogado' : 'Proteger mi plazo con un abogado'}</a>
+                </div>`;
+        }
+
+        let IND = { uf: null, utm: null };
+        async function loadIndicadores() {
+            const today = new Date().toISOString().slice(0, 10);
+            try {
+                const cache = JSON.parse(localStorage.getItem('aerolex_ind') || 'null');
+                if (cache && cache.day === today) { IND = cache; return renderInd(); }
+            } catch (e) {}
+            try {
+                const r = await fetch('https://mindicador.cl/api');
+                const d = await r.json();
+                IND = { day: today, uf: d.uf.valor, utm: d.utm.valor };
+                try { localStorage.setItem('aerolex_ind', JSON.stringify(IND)); } catch (e) {}
+                renderInd();
+            } catch (e) {
+                document.getElementById('ind-updated').innerText = 'Sin conexión: no fue posible obtener los valores.';
+            }
+        }
+        function renderInd() {
+            if (IND.uf) document.getElementById('ind-uf').innerText = '$ ' + IND.uf.toLocaleString('es-CL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            if (IND.utm) document.getElementById('ind-utm').innerText = '$ ' + Math.round(IND.utm).toLocaleString('es-CL');
+            document.getElementById('ind-updated').innerText = 'Valores de referencia actualizados hoy · mindicador.cl';
+            convertirMonto();
+        }
+        function convertirMonto() {
+            const out = document.getElementById('conv-result');
+            const m = parseFloat(document.getElementById('conv-monto').value);
+            const t = document.getElementById('conv-tipo').value;
+            if (!m || !IND.uf || !IND.utm) { out.innerText = '—'; return; }
+            let r;
+            if (t === 'uf-clp') r = m * IND.uf;
+            else if (t === 'clp-uf') r = m / IND.uf;
+            else if (t === 'utm-clp') r = m * IND.utm;
+            else r = m / IND.utm;
+            out.innerText = '$ ' + r.toLocaleString('es-CL', { maximumFractionDigits: t.startsWith('clp') ? 2 : 0 });
+        }
+
+        function renderGlosario() {
+            const q = (document.getElementById('glos-search').value || '').toLowerCase();
+            const grid = document.getElementById('glos-grid');
+            const items = GLOSARIO.filter(g => !q || g.t.toLowerCase().includes(q) || g.d.toLowerCase().includes(q));
+            if (items.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center text-[13px] text-gray-400 py-8"><i class="fas fa-magnifying-glass text-2xl text-gray-300 mb-3 block"></i>Sin resultados para "${q}".</div>`;
+                return;
+            }
+            grid.innerHTML = items.map(g => `
+                <div class="glos-card fade-in">
+                    <div class="text-[13.5px] font-extrabold text-mac-dark mb-1 flex items-center gap-2"><i class="fas fa-landmark text-[10px] text-mac-accent"></i> ${g.t}</div>
+                    <p class="text-[12px] text-gray-500 leading-relaxed">${g.d}</p>
+                </div>`).join('');
+        }
+        renderGlosario();
     </script>
 
     <script src="https://chatbot-ad-mocha.vercel.app/vibe-copilot.js" data-chatbot-id="aerolex"></script>
