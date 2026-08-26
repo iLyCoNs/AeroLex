@@ -168,6 +168,8 @@
         .legal-check i { color:#22C55E; margin-top:2px; }
         .expert-row { border:1px solid #E2E8F0; background:#fff; border-radius:12px; padding:12px 14px; cursor:pointer; transition:.2s; }
         .expert-row:hover { border-color:#1D1D1F; }
+        .welcome-action { display:block; width:100%; text-align:left; cursor:pointer; color:inherit; font:inherit; }
+        .welcome-action:focus-visible { outline:3px solid rgba(120,140,159,.45); outline-offset:3px; }
         .date-assist { margin-top:8px; padding:10px 12px; border-radius:11px; background:#F8FAFC; border:1px solid #E2E8F0; }
         .date-assist p { margin:0 0 8px; font-size:11px; color:#64748B; line-height:1.4; }
         .date-quick { display:flex; gap:6px; flex-wrap:wrap; }
@@ -1314,6 +1316,14 @@
         
         let activeBtn = null;
 
+        function openServiceMenu() {
+            coreSidebar.classList.remove('hidden');
+            coreSidebar.classList.add('block');
+            coreContent.classList.add('hidden');
+            coreContent.classList.remove('block');
+            document.getElementById('servicios').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
         function renderWelcomeView() {
             if(activeBtn) activeBtn.classList.remove('active');
             activeBtn = null;
@@ -1328,24 +1338,24 @@
                     <p class="text-mac-dark/60 text-sm max-w-lg mb-8">Elija un área para conocer nuestros servicios o cuéntenos directamente qué le ocurre.</p>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left max-w-4xl w-full">
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-mac-accent transition">
+                        <button type="button" onclick="openAssistant()" class="welcome-action bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-mac-accent transition">
                             <div class="absolute top-0 right-0 w-16 h-16 bg-gray-50 rounded-bl-full -z-10 group-hover:bg-mac-accent/10 transition"></div>
                             <div class="w-8 h-8 bg-mac-dark text-white rounded-full flex items-center justify-center font-bold mb-4 text-xs">1</div>
                             <h4 class="font-bold text-[14px] text-mac-dark mb-2">Cuéntenos qué necesita</h4>
                             <p class="text-[12px] text-gray-500 leading-relaxed">Puede elegir una situación o hablar directamente con nuestro asistente.</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-mac-accent transition">
+                        </button>
+                        <button type="button" onclick="openServiceMenu()" class="welcome-action bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-mac-accent transition">
                             <div class="absolute top-0 right-0 w-16 h-16 bg-gray-50 rounded-bl-full -z-10 group-hover:bg-mac-accent/10 transition"></div>
                             <div class="w-8 h-8 bg-mac-dark text-white rounded-full flex items-center justify-center font-bold mb-4 text-xs">2</div>
                             <h4 class="font-bold text-[14px] text-mac-dark mb-2">Conozca sus opciones</h4>
                             <p class="text-[12px] text-gray-500 leading-relaxed">Le explicaremos cada servicio en palabras sencillas.</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-mac-accent transition">
+                        </button>
+                        <button type="button" onclick="openAssistant(); setTimeout(startNewConsult, 250)" class="welcome-action bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-mac-accent transition">
                             <div class="absolute top-0 right-0 w-16 h-16 bg-gray-50 rounded-bl-full -z-10 group-hover:bg-mac-accent/10 transition"></div>
                             <div class="w-8 h-8 bg-mac-dark text-white rounded-full flex items-center justify-center font-bold mb-4 text-xs">3</div>
                             <h4 class="font-bold text-[14px] text-mac-dark mb-2">Siguiente paso claro</h4>
                             <p class="text-[12px] text-gray-500 leading-relaxed">Le ayudaremos a ordenar sus antecedentes y contactar al abogado adecuado.</p>
-                        </div>
+                        </button>
                     </div>
                 </div>
             `;
