@@ -469,16 +469,14 @@
                 <img src="https://raw.githubusercontent.com/iLyCoNs/AeroLex/refs/heads/main/logo.png" alt="AeroLex Logo" class="h-12 md:h-14 w-auto object-contain drop-shadow-sm">
             </a>
             
-            <!-- Nav de Escritorio (Visible en tablets, laptops y pantallas grandes) -->
-            <nav class="hidden md:flex items-center space-x-1 bg-white/75 backdrop-blur-md border border-white/90 shadow-[0_10px_30px_rgba(0,0,0,0.05)] rounded-full px-3.5 py-1.5 mx-auto">
-                <a href="#inicio" class="px-3 py-1 rounded-full text-[12.5px] lg:text-[13px] font-semibold text-mac-dark/80 hover:text-mac-dark hover:bg-white transition-all">Inicio</a>
-                <a href="#servicios" class="px-3 py-1 rounded-full text-[12.5px] lg:text-[13px] font-semibold text-mac-dark/80 hover:text-mac-dark hover:bg-white transition-all">Servicios</a>
-                <a href="#cobertura-tribunales" class="px-3 py-1 rounded-full text-[12.5px] lg:text-[13px] font-semibold text-mac-dark/80 hover:text-mac-dark hover:bg-white transition-all">Cobertura & Tribunales</a>
-                <a href="#herramientas" class="px-3 py-1 rounded-full text-[12.5px] lg:text-[13px] font-semibold text-mac-dark/80 hover:text-mac-dark hover:bg-white transition-all">Calculadora & Plazos</a>
-                <a href="#faq" class="px-3 py-1 rounded-full text-[12.5px] lg:text-[13px] font-semibold text-mac-dark/80 hover:text-mac-dark hover:bg-white transition-all">Preguntas Frecuentes</a>
-                <div class="w-px h-5 bg-gray-300/50 my-auto mx-1"></div> <!-- Separador -->
-                <a href="admin.html" class="px-3 py-1 rounded-full text-[12.5px] lg:text-[13px] font-bold text-gray-500 hover:text-mac-dark hover:bg-white transition-all flex items-center gap-1.5" title="Panel de Administración">
-                    <i class="fas fa-lock text-[10px]"></i> Portal Abogados
+            <!-- Nav de Escritorio (Oculto en móviles, visible en pantallas grandes) -->
+            <nav class="hidden md:flex space-x-1 bg-white/60 backdrop-blur-md border border-white/80 shadow-[0_10px_30px_rgba(0,0,0,0.05)] rounded-full px-4 py-2 mx-auto">
+                <a href="#inicio" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Inicio</a>
+                <a href="#servicios" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Servicios</a>
+                <a href="#herramientas" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Ayuda Legal</a>
+                <div class="w-px h-6 bg-gray-300/50 my-auto mx-2"></div> <!-- Separador -->
+                <a href="admin.html" class="px-4 py-1.5 rounded-full text-[13px] font-bold text-gray-500 hover:text-mac-dark hover:bg-white/80 transition-all flex items-center gap-2" title="Panel de Administración">
+                    <i class="fas fa-lock text-[11px]"></i> Portal Abogados
                 </a>
             </nav>
 
@@ -512,28 +510,29 @@
             </button>
         </div>
         
-        <nav class="flex-1 px-8 py-8 flex flex-col gap-4 overflow-y-auto">
-            <a href="#inicio" onclick="toggleMobileMenu()" class="text-xl font-bold text-mac-dark border-b border-gray-100 pb-3 hover:text-mac-accent transition">Inicio</a>
-            <a href="#servicios" onclick="toggleMobileMenu()" class="text-xl font-bold text-mac-dark border-b border-gray-100 pb-3 hover:text-mac-accent transition">Servicios</a>
-            <a href="#cobertura-tribunales" onclick="toggleMobileMenu()" class="text-xl font-bold text-mac-dark border-b border-gray-100 pb-3 hover:text-mac-accent transition">Cobertura & Tribunales</a>
-            <a href="#herramientas" onclick="toggleMobileMenu()" class="text-xl font-bold text-mac-dark border-b border-gray-100 pb-3 hover:text-mac-accent transition">Calculadora & Plazos</a>
-            <a href="#faq" onclick="toggleMobileMenu()" class="text-xl font-bold text-mac-dark border-b border-gray-100 pb-3 hover:text-mac-accent transition">Preguntas Frecuentes</a>
+        <nav class="flex-1 px-8 py-10 flex flex-col gap-6 overflow-y-auto">
+            <a href="#inicio" onclick="toggleMobileMenu()" class="text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 hover:text-mac-accent transition">Inicio</a>
+            <a href="#servicios" onclick="toggleMobileMenu()" class="text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 hover:text-mac-accent transition">Servicios</a>
+            <a href="#herramientas" onclick="toggleMobileMenu()" class="text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 hover:text-mac-accent transition">Ayuda Legal</a>
             
-            <button onclick="toggleMobileMenu(); openAssistant()" class="text-left text-xl font-bold text-mac-accent border-b border-gray-100 pb-3 flex items-center gap-3 hover:text-mac-dark transition">
-                <i class="fas fa-wand-magic-sparkles"></i> Ayuda Legal Inmediata
+            <button onclick="toggleMobileMenu(); openAssistant()" class="text-left text-2xl font-bold text-mac-accent border-b border-gray-100 pb-4 flex items-center gap-3 hover:text-mac-dark transition">
+                <i class="fas fa-wand-magic-sparkles"></i> Ayuda Legal
             </button>
             
+            <!-- Espaciador -->
+            <div class="mt-8"></div>
+            
             <!-- Enlace a la Bóveda en Móvil -->
-            <a href="admin.html" class="text-lg font-bold text-gray-500 hover:text-mac-dark pb-3 flex items-center gap-3 transition">
-                <div class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
-                    <i class="fas fa-lock text-xs"></i>
+            <a href="admin.html" class="text-xl font-bold text-gray-500 hover:text-mac-dark pb-4 flex items-center gap-3 transition">
+                <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+                    <i class="fas fa-lock"></i>
                 </div>
                 Portal Abogados
             </a>
         </nav>
         
-        <div class="p-6 text-center text-xs font-bold text-gray-400 uppercase tracking-widest shrink-0">
-            AeroLex · Abogados Puerto Montt
+        <div class="p-8 text-center text-xs font-bold text-gray-400 uppercase tracking-widest shrink-0">
+            AeroLex · Ayuda legal clara
         </div>
     </div>
 
@@ -1073,9 +1072,9 @@
                 <!-- Crédito y Copyright -->
                 <div class="text-center lg:text-right">
                     <p class="text-[11px] text-gray-400">&copy; 2026 AeroLex. Todos los derechos reservados.</p>
-                    <div class="bg-mac-dark/5 px-3 py-1 rounded-full border border-mac-dark/5 shadow-sm inline-block mt-1">
-                        <span class="text-[9.5px] font-bold text-mac-dark/50 uppercase tracking-[0.2em]">
-                            LegalTech & Geomensura · Puerto Montt
+                    <div class="bg-mac-dark/5 px-4 py-2 rounded-full border border-mac-dark/5 shadow-sm inline-block mt-1">
+                        <span class="text-[10px] font-bold text-mac-dark/50 uppercase tracking-[0.2em] flex items-center gap-2">
+                            Design by <span class="text-mac-dark/90 tracking-[0.25em]">Deus Vult</span>
                         </span>
                     </div>
                 </div>
