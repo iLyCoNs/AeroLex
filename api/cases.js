@@ -1,5 +1,42 @@
+const crypto = require('crypto');
 const SUPA_URL = process.env.SUPABASE_URL;
 const SUPA_KEY = process.env.SUPABASE_SERVICE_KEY;
+
+// Límite de intentos de PIN por IP+código (memoria del proceso serverless:
+// mitiga fuerza bruta sin cambiar esquema; el despliegue puede añadir WAF).
+const PIN_ATTEMPTS = new Map();
+const PIN_WINDOW_MS = 15 * 60 * 1000;
+const PIN_MAX_ATTEMPTS = 10;
+
+function pinAttemptKey(code, ip) {
+  return `${String(ip || 'unknown').slice(0, 80)}|${String(code || '').toUpperCase().slice(0, 30)}`;
+}
+
+function checkPinRateLimit(code, ip) {
+  const now = Date.now();
+  const key = pinAttemptKey(code, ip);
+  const entry = PIN_ATTEMPTS.get(key);
+  if (!entry || now - entry.startedAt > PIN_WINDOW_MS) {
+    PIN_ATTEMPTS.set(key, { count: 1, startedAt: now });
+    return { allowed: true, remaining: PIN_MAX_ATTEMPTS - 1 };
+  }
+  entry.count += 1;
+  if (entry.count > PIN_MAX_ATTEMPTS) return { allowed: false, remaining: 0 };
+  return { allowed: true, remaining: PIN_MAX_ATTEMPTS - entry.count };
+}
+
+function securePin() {
+  return String(crypto.randomInt(1000, 10000));
+}
+
+function pinEqual(stored, supplied) {
+  const a = Buffer.from(String(stored || ''));
+  const b = Buffer.from(String(supplied || ''));
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(a, b);
+}
+
+const CASE_CODE_RE = /^ALX-\d{4}-\d{2,}$/i;
 
 function supaHeaders(extra = {}) {
   return {
@@ -66,42 +103,74 @@ async function listYearCodes(year) {
   return { prefix, max: nums.length ? Math.max(...nums) : 0 };
 }
 
+async function verifyCase(res, code, pin) {
+  const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(code)}&select=code,pin,materia,tribunal,rit,detalle,estado_actual,steps,status`, { headers: supaHeaders() });
+  if (!resp.ok) return fail(res, 500, 'db_error');
+  const rows = await resp.json();
+  if (!Array.isArray(rows) || rows.length === 0) return fail(res, 404, 'not_found');
+
+  const c = rows[0];
+  if (!pinEqual(c.pin, pin)) return fail(res, 401, 'bad_pin');
+
+  return res.status(200).json({
+    ok: true,
+    case: {
+      code: c.code,
+      materia: c.materia,
+      tribunal: c.tribunal,
+      rit: c.rit,
+      detalle: c.detalle,
+      estado_actual: c.estado_actual,
+      steps: c.steps || [],
+      status: c.status
+    }
+  });
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Cache-Control', 'private, no-store, max-age=0');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
     if (!SUPA_URL || !SUPA_KEY) return fail(res, 500, 'not_configured');
+
+    if (req.method === 'GET' || req.method === 'POST') {
+      const url = new URL(req.url, 'http://localhost');
+      const body = req.method === 'POST' && req.body && typeof req.body === 'object' && (req.body.code || req.body.pin)
+        ? req.body
+        : {};
+      const isVerify = req.method === 'POST' && (body.code !== undefined || body.pin !== undefined);
+      if (isVerify) {
+        const code = String(body.code || '').toUpperCase().trim();
+        const pin = String(body.pin || '').trim();
+        if (!code || !pin) return fail(res, 400, 'missing_params');
+        if (!CASE_CODE_RE.test(code)) return fail(res, 400, 'bad_code');
+        const ip = String(req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').split(',')[0].trim();
+        const rl = checkPinRateLimit(code, ip);
+        if (!rl.allowed) {
+          res.setHeader('Retry-After', '900');
+          return fail(res, 429, 'rate_limited');
+        }
+        return verifyCase(res, code, pin);
+      }
+    }
 
     if (req.method === 'GET') {
       const url = new URL(req.url, 'http://localhost');
       const code = (url.searchParams.get('code') || '').toUpperCase().trim();
       const pin = (url.searchParams.get('pin') || '').trim();
       if (!code || !pin) return fail(res, 400, 'missing_params');
-
-      const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(code)}&select=code,pin,materia,tribunal,rit,detalle,estado_actual,steps,status`, { headers: supaHeaders() });
-      if (!resp.ok) return fail(res, 500, 'db_error');
-      const rows = await resp.json();
-      if (!Array.isArray(rows) || rows.length === 0) return fail(res, 404, 'not_found');
-
-      const c = rows[0];
-      if (String(c.pin || '') !== pin) return fail(res, 401, 'bad_pin');
-
-      return res.status(200).json({
-        ok: true,
-        case: {
-          code: c.code,
-          materia: c.materia,
-          tribunal: c.tribunal,
-          rit: c.rit,
-          detalle: c.detalle,
-          estado_actual: c.estado_actual,
-          steps: c.steps || [],
-          status: c.status
-        }
-      });
+      if (!CASE_CODE_RE.test(code)) return fail(res, 400, 'bad_code');
+      const ip = String(req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').split(',')[0].trim();
+      const rl = checkPinRateLimit(code, ip);
+      if (!rl.allowed) {
+        res.setHeader('Retry-After', '900');
+        return fail(res, 429, 'rate_limited');
+      }
+      return verifyCase(res, code, pin);
     }
 
     if (req.method === 'POST') {
@@ -117,7 +186,7 @@ module.exports = async (req, res) => {
 
       for (let attempt = 1; attempt <= 3; attempt++) {
         const code = `${prefix}${String(max + attempt).padStart(2, '0')}`;
-        const pin = String(Math.floor(1000 + Math.random() * 9000));
+        const pin = securePin();
         const isUrgent = triage.some(a => String(a).toUpperCase().includes('URGENCIA'));
         const row = {
           code,

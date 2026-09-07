@@ -1,5 +1,37 @@
+const crypto = require('crypto');
 const SUPA_URL = process.env.SUPABASE_URL;
 const SUPA_KEY = process.env.SUPABASE_SERVICE_KEY;
+
+function securePin() {
+  return String(crypto.randomInt(1000, 10000));
+}
+
+const UPDATABLE_FIELDS = ['materia', 'tribunal', 'rit', 'detalle', 'estado_actual', 'steps', 'status'];
+
+function buildPartialPatch(body) {
+  const patch = {};
+  if (body.materia !== undefined) patch.materia = String(body.materia || '').slice(0, 150);
+  if (body.tribunal !== undefined) patch.tribunal = String(body.tribunal || '').slice(0, 200);
+  if (body.rit !== undefined) patch.rit = String(body.rit || '').slice(0, 120);
+  if (body.detalle !== undefined) patch.detalle = String(body.detalle || '').slice(0, 2000);
+  if (body.estado_actual !== undefined) {
+    if (!Number.isInteger(body.estado_actual)) throw new Error('bad_estado');
+    patch.estado_actual = body.estado_actual;
+  }
+  if (body.steps !== undefined) {
+    if (!Array.isArray(body.steps)) throw new Error('bad_steps');
+    patch.steps = body.steps.slice(0, 60).map(s => ({
+      title: String(s.title || '').slice(0, 200),
+      date: String(s.date || '').slice(0, 60),
+      done: !!s.done
+    }));
+  }
+  if (body.status !== undefined) {
+    if (!['nuevo', 'activo', 'urgente', 'finalizado', 'suspendido'].includes(body.status)) throw new Error('bad_status');
+    patch.status = body.status;
+  }
+  return patch;
+}
 
 function supaHeaders(extra = {}) {
   return {
@@ -17,7 +49,7 @@ function fail(res, status, error) {
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-key');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
@@ -49,7 +81,7 @@ module.exports = async (req, res) => {
       const today = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Santiago' }).replace(/\./g, '');
       const row = {
         code: `${prefix}${String(next).padStart(2, '0')}`,
-        pin: String(Math.floor(1000 + Math.random() * 9000)),
+        pin: securePin(),
         materia,
         tribunal: String(body.tribunal || '').slice(0, 200),
         rit: String(body.rit || '').slice(0, 120),
@@ -72,30 +104,26 @@ module.exports = async (req, res) => {
       return res.status(201).json({ ok: true, case: c });
     }
 
-    if (req.method === 'PUT') {
+    if (req.method === 'PUT' || req.method === 'PATCH') {
       const code = String(body.code || '').toUpperCase().trim();
       if (!code) return fail(res, 400, 'missing_code');
 
-      const patch = {
-        materia: String(body.materia || '').slice(0, 150),
-        tribunal: String(body.tribunal || '').slice(0, 200),
-        rit: String(body.rit || '').slice(0, 120),
-        detalle: String(body.detalle || '').slice(0, 2000),
-        estado_actual: Number.isInteger(body.estado_actual) ? body.estado_actual : -1,
-        steps: Array.isArray(body.steps)
-          ? body.steps.slice(0, 60).map(s => ({
-              title: String(s.title || '').slice(0, 200),
-              date: String(s.date || '').slice(0, 60),
-              done: !!s.done
-            }))
-          : [],
-        updated_at: new Date().toISOString()
-      };
-      if (['nuevo', 'activo', 'urgente', 'finalizado', 'suspendido'].includes(body.status)) {
-        patch.status = body.status;
+      let patch;
+      try {
+        patch = buildPartialPatch(body);
+      } catch (e) {
+        return fail(res, 400, String(e.message || 'bad_request'));
       }
+      if (Object.keys(patch).length === 0) return fail(res, 400, 'empty_patch');
+      patch.updated_at = new Date().toISOString();
 
-      const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(code)}`, {
+      // Concurrencia optimista opcional: si el cliente envía
+      // expected_updated_at, solo se escribe si coincide.
+      const expected = String(body.expected_updated_at || '');
+      let query = `${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(code)}`;
+      if (expected) query += `&updated_at=eq.${encodeURIComponent(expected)}`;
+
+      const resp = await fetch(query, {
         method: 'PATCH',
         headers: supaHeaders({ 'Prefer': 'return=representation' }),
         body: JSON.stringify(patch)
@@ -103,6 +131,7 @@ module.exports = async (req, res) => {
       if (!resp.ok) return fail(res, 500, 'db_error');
       const updated = await resp.json();
       const c = Array.isArray(updated) ? updated[0] : updated;
+      if (!c) return fail(res, 409, 'conflict');
       return res.status(200).json({ ok: true, case: c });
     }
 
