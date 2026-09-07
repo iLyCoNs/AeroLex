@@ -78,16 +78,21 @@ module.exports = async (req, res) => {
       const nums = (Array.isArray(rows) ? rows : []).map(r => parseInt(String(r.code).split('-')[2], 10)).filter(n => !isNaN(n));
       const next = (nums.length ? Math.max(...nums) : 0) + 1;
 
+      const codeCandidate = body.code ? String(body.code).toUpperCase().trim() : '';
+      const pinCandidate = body.pin ? String(body.pin).trim() : '';
+      const finalCode = (codeCandidate && /^ALX-\d{4}-\d{2,}$/i.test(codeCandidate)) ? codeCandidate : `${prefix}${String(next).padStart(2, '0')}`;
+      const finalPin = (/^\d{4}$/.test(pinCandidate)) ? pinCandidate : securePin();
+
       const today = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Santiago' }).replace(/\./g, '');
       const row = {
-        code: `${prefix}${String(next).padStart(2, '0')}`,
-        pin: securePin(),
+        code: finalCode,
+        pin: finalPin,
         materia,
         tribunal: String(body.tribunal || '').slice(0, 200),
         rit: String(body.rit || '').slice(0, 120),
         detalle: String(body.detalle || '').slice(0, 2000),
-        estado_actual: 0,
-        steps: [
+        estado_actual: typeof body.estado_actual === 'number' ? body.estado_actual : 0,
+        steps: Array.isArray(body.steps) && body.steps.length ? body.steps : [
           { title: 'Expediente recibido por AeroLex', date: today, done: true },
           { title: 'Revisión de antecedentes', date: 'En curso', done: false }
         ]
@@ -131,7 +136,36 @@ module.exports = async (req, res) => {
       if (!resp.ok) return fail(res, 500, 'db_error');
       const updated = await resp.json();
       const c = Array.isArray(updated) ? updated[0] : updated;
-      if (!c) return fail(res, 409, 'conflict');
+      if (!c) {
+        if (expected) return fail(res, 409, 'conflict');
+        // Si no existe y no hay expected_updated_at, se crea el expediente (Upsert)
+        const today = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Santiago' }).replace(/\./g, '');
+        const newRow = {
+          code,
+          pin: String(body.pin || securePin()).slice(0, 10),
+          materia: patch.materia || 'Consulta General',
+          tribunal: patch.tribunal || '',
+          rit: patch.rit || '',
+          detalle: patch.detalle || '',
+          estado_actual: patch.estado_actual ?? 0,
+          steps: patch.steps || [
+            { title: 'Expediente recibido por AeroLex', date: today, done: true },
+            { title: 'Revisión de antecedentes', date: 'En curso', done: false }
+          ],
+          status: patch.status || 'nuevo',
+          created_at: patch.updated_at,
+          updated_at: patch.updated_at
+        };
+        const insResp = await fetch(`${SUPA_URL}/rest/v1/cases`, {
+          method: 'POST',
+          headers: supaHeaders({ 'Prefer': 'return=representation' }),
+          body: JSON.stringify(newRow)
+        });
+        if (!insResp.ok) return fail(res, 500, 'db_error');
+        const insRows = await insResp.json();
+        const ins = Array.isArray(insRows) ? insRows[0] : insRows;
+        return res.status(201).json({ ok: true, case: ins });
+      }
       return res.status(200).json({ ok: true, case: c });
     }
 
