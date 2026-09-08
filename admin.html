@@ -359,6 +359,10 @@
         </div>
 
         <div class="flex items-center gap-2">
+            <button onclick="openWaLog()" class="btn btn-secondary !p-2 relative" title="Registro de contactos WhatsApp" id="btn-wa-log">
+                <i class="fab fa-whatsapp text-emerald-400 text-xs"></i>
+                <span id="wa-badge" class="hidden absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center leading-none">0</span>
+            </button>
             <button onclick="openSettings()" class="btn btn-secondary !p-2" title="Configuración WhatsApp"><i class="fas fa-gear text-xs"></i></button>
             <button onclick="logout()" class="btn btn-secondary !p-2 !text-red-400 hover:!bg-red-500/10" title="Cerrar sesión"><i class="fas fa-power-off text-xs"></i></button>
         </div>
@@ -1295,7 +1299,162 @@
         const c = casesDB[currentEditingId];
         if (!c) return;
         const msg = `*AeroLex — Sus credenciales de seguimiento*\n\nExpediente: *${c.code}*\nPIN de consulta: *${c.pin}*\n\nPuede consultar el avance procesal de su caso en tiempo real en nuestro portal web https://aerolex.cl, o directamente con nuestro asistente virtual seleccionando "Rastrear mi caso".\n\n— Estudio Jurídico AeroLex, Puerto Montt`;
+        // Registrar que el abogado envió credenciales por WA
+        logAdminWaContact('envio_credenciales', msg, c.code);
         window.open(`https://wa.me/${getWaNumber()}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    // ── Registro de contacto WA desde Admin (fire-and-forget) ───────────────
+    const _WA_LOG_ADMIN_URL = 'https://chatbot-ad-mocha.vercel.app/api/wa-contact?id=aerolex';
+    function logAdminWaContact(topic, message, caseCode) {
+        const adminKey = sessionStorage.getItem('aerolex_admin_key') || '';
+        try {
+            fetch(_WA_LOG_ADMIN_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    source: 'admin',
+                    origin: window.location.href,
+                    topic: String(topic || 'admin_wa').slice(0, 200),
+                    message: String(message || '').slice(0, 500),
+                    caseCode: caseCode || null,
+                    sessionId: 'admin_' + (adminKey ? adminKey.slice(-6) : Date.now())
+                }),
+                keepalive: true
+            }).catch(() => {});
+        } catch (_) {}
+    }
+
+    // ── Panel de Registro de Contactos WhatsApp ──────────────────────────────
+    let _waContacts = [];
+
+    async function loadWaContacts(caseCodeFilter) {
+        const adminKey = sessionStorage.getItem('aerolex_admin_key') || '';
+        if (!adminKey) return [];
+        const url = new URL('https://chatbot-ad-mocha.vercel.app/api/wa-contacts');
+        url.searchParams.set('id', 'aerolex');
+        url.searchParams.set('limit', '200');
+        if (caseCodeFilter) url.searchParams.set('caseCode', caseCodeFilter);
+        const res = await fetch(url, { headers: { 'x-admin-key': adminKey } });
+        if (!res.ok) throw new Error('Error al cargar registros WA');
+        const data = await res.json();
+        return data.contacts || [];
+    }
+
+    function topicLabel(topic) {
+        const map = {
+            'vip_prioritario': '⭐ VIP Prioritario',
+            'contacto_legal': '⚖️ Contacto Legal',
+            'contacto_asistente': '💬 Asistente Web',
+            'reporte_expediente': '📋 Reporte Expediente',
+            'consulta_expediente': '🔍 Consulta Expediente',
+            'consulta_libre': '💭 Consulta Libre',
+            'cita_agendada': '📅 Cita Agendada',
+            'envio_credenciales': '🔑 Envío Credenciales',
+            'contacto_web': '🌐 Portal Web'
+        };
+        return map[topic] || ('📌 ' + topic);
+    }
+
+    function sourceLabel(src) {
+        return src === 'portal' ? '🌐 Portal' : src === 'admin' ? '🔧 Admin' : '🤖 Chatbot';
+    }
+
+    function renderWaTable(contacts, filterCode) {
+        if (!contacts.length) {
+            return `<div class="text-center text-slate-400 text-sm py-12"><i class="fab fa-whatsapp text-3xl mb-3 block text-slate-600"></i>No hay registros de contactos WhatsApp${filterCode ? ' para ' + filterCode : ''}.</div>`;
+        }
+        const rows = contacts.map(c => {
+            const dt = c.timestamp ? new Date(c.timestamp).toLocaleString('es-CL', {timeZone:'America/Santiago', day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit'}) : '—';
+            const code = c.caseCode ? `<span class="font-mono text-blue-300 font-bold">${c.caseCode}</span>` : '<span class="text-slate-500">—</span>';
+            const msg = (c.message || '').slice(0, 80).replace(/</g,'&lt;');
+            return `<tr class="border-b border-[--border] hover:bg-white/5 transition">
+                <td class="px-3 py-2.5 text-[11px] text-slate-300 whitespace-nowrap">${dt}</td>
+                <td class="px-3 py-2.5 text-[11px]">${sourceLabel(c.source)}</td>
+                <td class="px-3 py-2.5 text-[11px]">${topicLabel(c.topic)}</td>
+                <td class="px-3 py-2.5 text-[11px]">${code}</td>
+                <td class="px-3 py-2.5 text-[11px] text-slate-400 max-w-[220px] truncate" title="${c.message || ''}">${msg || '—'}</td>
+            </tr>`;
+        }).join('');
+        return `<div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead><tr class="border-b border-[--border] text-[10px] uppercase tracking-wider text-slate-500">
+                    <th class="px-3 py-2">Fecha/Hora</th>
+                    <th class="px-3 py-2">Origen</th>
+                    <th class="px-3 py-2">Tipo</th>
+                    <th class="px-3 py-2">Expediente</th>
+                    <th class="px-3 py-2">Mensaje</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+            </table></div>`;
+    }
+
+    function exportWaCsv(contacts) {
+        const header = ['Fecha','Origen','Tipo','Expediente','Mensaje'];
+        const rows = contacts.map(c => [
+            c.timestamp ? new Date(c.timestamp).toLocaleString('es-CL',{timeZone:'America/Santiago'}) : '',
+            c.source || '', c.topic || '', c.caseCode || '', (c.message || '').replace(/"/g,"'")
+        ].map(v => `"${v}"`).join(','));
+        const csv = [header.join(','), ...rows].join('\n');
+        const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `aerolex-wa-contactos-${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+    }
+
+    async function openWaLog(preFilterCode) {
+        const zone = document.getElementById('modal-zone');
+        const filter = preFilterCode || '';
+        zone.innerHTML = `
+            <div class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 md:p-6" onclick="if(event.target===this) closeModal()">
+                <div class="panel-card w-full max-w-4xl flex flex-col shadow-2xl" style="max-height:88vh">
+                    <div class="flex items-center justify-between px-5 py-3.5 border-b border-[--border] shrink-0">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                                <i class="fab fa-whatsapp text-emerald-400"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-white">Registro de Contactos WhatsApp</h3>
+                                <p class="text-[11px] text-slate-400">Cada clic de cliente en botón WA queda registrado aquí</p>
+                            </div>
+                        </div>
+                        <button onclick="closeModal()" class="btn btn-secondary !p-2"><i class="fas fa-xmark text-xs"></i></button>
+                    </div>
+                    <div class="px-5 py-3 border-b border-[--border] flex flex-wrap gap-2 items-center shrink-0">
+                        <input type="text" id="wa-filter-code" value="${filter}" placeholder="Filtrar por código ALX..." class="input-base !py-1.5 !text-xs !w-44">
+                        <button onclick="refreshWaLog()" class="btn btn-secondary !py-1.5 !px-3 !text-xs"><i class="fas fa-rotate-right"></i> Actualizar</button>
+                        <button onclick="exportWaCsv(_waContacts)" class="btn btn-secondary !py-1.5 !px-3 !text-xs"><i class="fas fa-file-csv text-emerald-400"></i> Exportar CSV</button>
+                        <span id="wa-count-label" class="text-[11px] text-slate-400 ml-auto"></span>
+                    </div>
+                    <div id="wa-table-body" class="flex-1 overflow-y-auto p-1">
+                        <div class="text-center text-slate-500 text-xs py-8"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando registros...</div>
+                    </div>
+                </div>
+            </div>`;
+        await refreshWaLog();
+    }
+
+    async function refreshWaLog() {
+        const filterEl = document.getElementById('wa-filter-code');
+        const filterCode = filterEl ? filterEl.value.trim().toUpperCase() : '';
+        const tbody = document.getElementById('wa-table-body');
+        if (!tbody) return;
+        tbody.innerHTML = '<div class="text-center text-slate-500 text-xs py-8"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando...</div>';
+        try {
+            _waContacts = await loadWaContacts(filterCode || null);
+            const label = document.getElementById('wa-count-label');
+            if (label) label.textContent = `${_waContacts.length} registro${_waContacts.length !== 1 ? 's' : ''}`;
+            tbody.innerHTML = renderWaTable(_waContacts, filterCode);
+            // Actualizar badge en header
+            const badge = document.getElementById('wa-badge');
+            if (badge) {
+                if (_waContacts.length > 0) { badge.textContent = _waContacts.length > 99 ? '99+' : _waContacts.length; badge.classList.remove('hidden'); }
+                else badge.classList.add('hidden');
+            }
+        } catch (e) {
+            tbody.innerHTML = `<div class="text-center text-red-400 text-xs py-8"><i class="fas fa-triangle-exclamation mr-2"></i>${e.message}</div>`;
+        }
     }
 
     function openSettings() {

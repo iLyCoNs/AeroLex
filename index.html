@@ -1085,9 +1085,40 @@
         const GITHUB_REPO_OWNER = "ilycons";
         const GITHUB_REPO_NAME = "AeroLex";
 
-        // =========================================================================================
+        // ── Registro de contactos WhatsApp (fire-and-forget) ──────────────────
+        // Cada vez que el cliente pulsa un botón WA se registra la intención
+        // en el panel de administración para transparencia entre los socios.
+        const _WA_LOG_URL = 'https://chatbot-ad-mocha.vercel.app/api/wa-contact?id=aerolex';
+        let _waSessionId = 'portal_' + Math.random().toString(36).substring(2, 10) + '_' + Date.now();
+
+        /**
+         * Registra silenciosamente un intento de contacto WhatsApp.
+         * Nunca bloquea la apertura del enlace wa.me.
+         * @param {string} topic      - Motivo ('contacto_abogado', 'expediente', 'plazo', etc.)
+         * @param {string} message    - Fragmento del mensaje que se manda a WA (max 500 chars)
+         * @param {string|null} caseCode - Código ALX si aplica
+         */
+        function logWhatsAppContact(topic, message, caseCode) {
+            try {
+                fetch(_WA_LOG_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        source: 'portal',
+                        origin: window.location.href,
+                        topic: String(topic || 'contacto_web').slice(0, 200),
+                        message: String(message || '').slice(0, 500),
+                        caseCode: caseCode || null,
+                        sessionId: _waSessionId
+                    }),
+                    keepalive: true
+                }).catch(() => {}); // ignorar fallos de red silenciosamente
+            } catch (_) {}
+        }
+
+        // ═════════════════════════════════════════════════════════════════════
         // CONTROL DE MENÚ MÓVIL GENERAL
-        // =========================================================================================
+        // ═════════════════════════════════════════════════════════════════════
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             if (!menu) return;
@@ -1595,6 +1626,7 @@
         function contactDirect() {
             addUserMessage("Quiero contactar a un abogado");
             const waText = encodeURIComponent("Hola AeroLex, deseo hablar directamente con un abogado de mi situación. (Contacto iniciado desde el Asistente Web)");
+            logWhatsAppContact('contacto_asistente', 'Hola AeroLex, deseo hablar directamente con un abogado de mi situación. (Contacto iniciado desde el Asistente Web)', null);
             injectBotMessage(`Por supuesto. Nuestro equipo legal está disponible para atenderle de forma <strong>directa e inmediata</strong>.<br><a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waText}" target="_blank" class="btn-wa-final"><i class="fab fa-whatsapp"></i> Hablar ahora con un abogado</a><span class="block text-[11px] text-gray-400 mt-3 leading-relaxed"><i class="fas fa-clock mr-1"></i>Lun a Vie · 9:00 a 18:00 &nbsp;·&nbsp; <i class="fas fa-location-dot mr-1"></i>Benavente 405, Of. 305, Puerto Montt</span>`);
         }
 
@@ -1681,6 +1713,7 @@
             if (newCase) { waReport += `\n*Código de seguimiento:* ${newCase.code}\n*PIN de consulta:* ${newCase.pin}\n`; }
 
             let waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waReport)}`;
+            logWhatsAppContact('reporte_expediente', waReport, newCase?.code || null);
             
             const typingId = 'typing-' + Date.now();
             aiChatLog.insertAdjacentHTML('beforeend', `<div id="${typingId}" class="ai-chat-bubble-bot typing-indicator"><span></span><span></span><span></span></div>`);
@@ -1745,9 +1778,11 @@
                 injectBotMessage("He registrado su apunte. Por favor, seleccione una de las opciones de los botones para continuar con el perfilamiento automatizado.");
             } else if (clientSessionValid()) {
                 const waText = encodeURIComponent(`*CONSULTA PRIORITARIA — Expediente ${verifiedClient.code}*\n\nPregunta del cliente:\n"${text}"\n\n(Enviada desde el Asistente AeroLex)`);
+                logWhatsAppContact('consulta_expediente', `Consulta prioritaria expediente ${verifiedClient.code}: ${text.substring(0,200)}`, verifiedClient.code);
                 injectBotMessage(`✅ Su consulta quedó registrada con <strong>prioridad alta</strong> en la fila del expediente ${escapeHtml(verifiedClient.code)}. El abogado a cargo la revisará con preferencia.<br><a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waText}" target="_blank" class="btn-wa-final"><i class="fab fa-whatsapp"></i> Acelerar respuesta por WhatsApp</a>`);
             } else {
                 let waText = encodeURIComponent(`Consulta libre: ${text.substring(0,50)}...`);
+                logWhatsAppContact('consulta_libre', `Consulta libre: ${text.substring(0, 200)}`, null);
                 injectBotMessage(`He registrado su comentario en bitácora. Puede derivar sus inquietudes directamente al especialista:<br><a href="https://wa.me/${WHATSAPP_NUMBER}?text=${waText}" class="btn-wa-final"><i class="fab fa-whatsapp"></i> Hablar con especialista</a>`);
             }
         });
