@@ -144,7 +144,7 @@ module.exports = async (req, res) => {
         : {};
       const isVerify = req.method === 'POST' && (body.code !== undefined || body.pin !== undefined);
       if (isVerify) {
-        const code = String(body.code || '').toUpperCase().trim();
+        const code = String(body.code || '').toUpperCase().trim().replace(/^AXL-/i, 'ALX-');
         const pin = String(body.pin || '').trim();
         if (!code || !pin) return fail(res, 400, 'missing_params');
         if (!CASE_CODE_RE.test(code)) return fail(res, 400, 'bad_code');
@@ -160,7 +160,7 @@ module.exports = async (req, res) => {
 
     if (req.method === 'GET') {
       const url = new URL(req.url, 'http://localhost');
-      const code = (url.searchParams.get('code') || '').toUpperCase().trim();
+      const code = (url.searchParams.get('code') || '').toUpperCase().trim().replace(/^AXL-/i, 'ALX-');
       const pin = (url.searchParams.get('pin') || '').trim();
       if (!code || !pin) return fail(res, 400, 'missing_params');
       if (!CASE_CODE_RE.test(code)) return fail(res, 400, 'bad_code');
