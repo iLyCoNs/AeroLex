@@ -385,6 +385,15 @@
                     <button onclick="setStatusFilter('activo')" data-f="activo" class="filter-tab text-[11px] font-semibold px-2.5 py-1 rounded-lg border border-transparent transition">Activos</button>
                     <button onclick="setStatusFilter('finalizado')" data-f="finalizado" class="filter-tab text-[11px] font-semibold px-2.5 py-1 rounded-lg border border-transparent transition">Cerrados</button>
                 </div>
+                <div class="flex items-center justify-between pt-1 border-t border-[--border] text-[11px] text-slate-400">
+                    <div class="flex items-center gap-1.5">
+                        <i class="fas fa-arrow-down-wide-short text-[10px] text-slate-500"></i>
+                        <span class="text-[10px] uppercase tracking-wider font-bold text-slate-500">Orden:</span>
+                        <button type="button" onclick="setAdminSort('prioridad')" id="sort-btn-prioridad" class="admin-sort-btn px-1.5 py-0.5 rounded text-[11px] font-semibold text-blue-400 bg-blue-500/10 transition">Prioridad</button>
+                        <button type="button" onclick="setAdminSort('fecha')" id="sort-btn-fecha" class="admin-sort-btn px-1.5 py-0.5 rounded text-[11px] font-medium text-slate-400 hover:text-white transition">Fecha</button>
+                        <button type="button" onclick="setAdminSort('az')" id="sort-btn-az" class="admin-sort-btn px-1.5 py-0.5 rounded text-[11px] font-medium text-slate-400 hover:text-white transition">A-Z</button>
+                    </div>
+                </div>
             </div>
 
             <div id="cases-list" class="flex-1 overflow-y-auto pb-16 md:pb-2"></div>
@@ -1041,6 +1050,19 @@
         filterCases();
     }
 
+    let adminSortOrder = 'prioridad';
+
+    function setAdminSort(order) {
+        adminSortOrder = order;
+        document.querySelectorAll('.admin-sort-btn').forEach(btn => {
+            const isSel = btn.id === `sort-btn-${order}`;
+            btn.className = `admin-sort-btn px-1.5 py-0.5 rounded text-[11px] transition ${
+                isSel ? 'font-semibold text-blue-400 bg-blue-500/10' : 'font-medium text-slate-400 hover:text-white'
+            }`;
+        });
+        filterCases();
+    }
+
     function filterCases() {
         const txt = document.getElementById('search-case').value.toLowerCase();
         renderSidebar(txt);
@@ -1049,7 +1071,7 @@
     function renderSidebar(filterText = "") {
         const list = document.getElementById('cases-list');
         list.innerHTML = '';
-        let caseIds = Object.keys(casesDB).sort().reverse().filter(id => !id.startsWith('WA-'));
+        let caseIds = Object.keys(casesDB).filter(id => !id.startsWith('WA-'));
 
         if (statusFilter !== 'all') {
             caseIds = caseIds.filter(id => (casesDB[id].status || 'activo') === statusFilter);
@@ -1062,6 +1084,33 @@
                 (casesDB[id].materia || '').toLowerCase().includes(t)
             );
         }
+
+        const priorityScore = {
+            'urgente': 0,
+            'activo': 1,
+            'nuevo': 2,
+            'suspendido': 3,
+            'finalizado': 4
+        };
+
+        caseIds.sort((a, b) => {
+            const caseA = casesDB[a] || {};
+            const caseB = casesDB[b] || {};
+            if (adminSortOrder === 'prioridad') {
+                const scoreA = priorityScore[caseA.status || 'activo'] ?? 2;
+                const scoreB = priorityScore[caseB.status || 'activo'] ?? 2;
+                if (scoreA !== scoreB) return scoreA - scoreB;
+                return String(b).localeCompare(String(a));
+            }
+            if (adminSortOrder === 'fecha') {
+                const dateA = caseA.created_at || a;
+                const dateB = caseB.created_at || b;
+                return String(dateB).localeCompare(String(dateA));
+            }
+            const matA = caseA.materia || a;
+            const matB = caseB.materia || b;
+            return String(matA).localeCompare(String(matB));
+        });
 
         if (caseIds.length === 0) {
             list.innerHTML = `<div class="p-8 text-center text-xs text-slate-500"><i class="fas fa-inbox text-2xl mb-2 block opacity-30"></i>No se encontraron expedientes.</div>`;
