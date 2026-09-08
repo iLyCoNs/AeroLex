@@ -28,7 +28,11 @@ module.exports = async (req, res) => {
       const source = String(body.source || 'portal').slice(0, 50);
       const topic = String(body.topic || 'contacto_general').slice(0, 150);
       const caseCode = body.caseCode ? String(body.caseCode).toUpperCase().trim().slice(0, 50) : '';
-      const message = String(body.message || '').slice(0, 2000);
+      const clientName = body.clientName ? String(body.clientName).trim().slice(0, 100) : '';
+      let message = String(body.message || '').slice(0, 2000);
+      if (clientName && !message.includes(clientName)) {
+        message = `[Nombre: ${clientName}] ${message}`.slice(0, 2000);
+      }
       const phone = String(body.phone || '').slice(0, 30);
 
       const row = {
