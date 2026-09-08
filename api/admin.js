@@ -62,6 +62,11 @@ module.exports = async (req, res) => {
     const url = new URL(req.url, 'http://localhost');
 
     if (req.method === 'GET') {
+      if (url.searchParams.get('action') === 'check_tables') {
+        const resp = await fetch(`${SUPA_URL}/rest/v1/`, { headers: supaHeaders() });
+        const data = await resp.json().catch(() => ({}));
+        return res.status(200).json({ ok: true, tables: Object.keys(data.definitions || {}) });
+      }
       const resp = await fetch(`${SUPA_URL}/rest/v1/cases?select=*&order=created_at.desc`, { headers: supaHeaders() });
       if (!resp.ok) return fail(res, 500, 'db_error');
       const rows = await resp.json();
