@@ -1088,7 +1088,7 @@
         // ── Registro de contactos WhatsApp (fire-and-forget) ──────────────────
         // Cada vez que el cliente pulsa un botón WA se registra la intención
         // en el panel de administración para transparencia entre los socios.
-        const _WA_LOG_URL = 'https://chatbot-ad-mocha.vercel.app/api/wa-contact?id=aerolex';
+        const _WA_LOG_URL = '/api/wa-contact';
         let _waSessionId = 'portal_' + Math.random().toString(36).substring(2, 10) + '_' + Date.now();
 
         /**

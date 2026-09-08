@@ -1049,7 +1049,7 @@
     function renderSidebar(filterText = "") {
         const list = document.getElementById('cases-list');
         list.innerHTML = '';
-        let caseIds = Object.keys(casesDB).sort().reverse();
+        let caseIds = Object.keys(casesDB).sort().reverse().filter(id => !id.startsWith('WA-'));
 
         if (statusFilter !== 'all') {
             caseIds = caseIds.filter(id => (casesDB[id].status || 'activo') === statusFilter);
@@ -1305,7 +1305,7 @@
     }
 
     // ── Registro de contacto WA desde Admin (fire-and-forget) ───────────────
-    const _WA_LOG_ADMIN_URL = 'https://chatbot-ad-mocha.vercel.app/api/wa-contact?id=aerolex';
+    const _WA_LOG_ADMIN_URL = '/api/wa-contact';
     function logAdminWaContact(topic, message, caseCode) {
         const adminKey = sessionStorage.getItem('aerolex_admin_key') || '';
         try {
@@ -1331,10 +1331,8 @@
     async function loadWaContacts(caseCodeFilter) {
         const adminKey = sessionStorage.getItem('aerolex_admin_key') || '';
         if (!adminKey) return [];
-        const url = new URL('https://chatbot-ad-mocha.vercel.app/api/wa-contacts');
-        url.searchParams.set('id', 'aerolex');
-        url.searchParams.set('limit', '200');
-        if (caseCodeFilter) url.searchParams.set('caseCode', caseCodeFilter);
+        let url = '/api/wa-contact';
+        if (caseCodeFilter) url += `?caseCode=${encodeURIComponent(caseCodeFilter)}`;
         const res = await fetch(url, { headers: { 'x-admin-key': adminKey } });
         if (!res.ok) throw new Error('Error al cargar registros WA');
         const data = await res.json();
