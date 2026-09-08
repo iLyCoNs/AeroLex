@@ -175,11 +175,16 @@ module.exports = async (req, res) => {
 
     if (req.method === 'POST') {
       const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
-      const materia = String(body.materia || 'Consulta General').slice(0, 150);
-      const phone = String(body.phone || '').slice(0, 25);
+      const rawMateria = String(body.materia || 'Consulta General').slice(0, 150);
+      const clientName = String(body.name || body.client_name || '').slice(0, 100);
+      const materia = (clientName && !rawMateria.toLowerCase().includes(clientName.toLowerCase()))
+        ? `${rawMateria} — ${clientName}`
+        : rawMateria;
+      const phone = String(body.phone || body.client_phone || '').slice(0, 25);
+      const detalle = String(body.detalle || body.historia || body.notes || body.resumen || '').slice(0, 2000);
       const triage = Array.isArray(body.triage)
         ? body.triage.slice(0, 50).map(a => String(a).slice(0, 400))
-        : [];
+        : (detalle ? [detalle.slice(0, 300)] : []);
 
       const year = new Date().getFullYear();
       const { prefix, max } = await listYearCodes(year);
@@ -187,16 +192,16 @@ module.exports = async (req, res) => {
       for (let attempt = 1; attempt <= 3; attempt++) {
         const code = `${prefix}${String(max + attempt).padStart(2, '0')}`;
         const pin = securePin();
-        const isUrgent = triage.some(a => String(a).toUpperCase().includes('URGENCIA'));
+        const isUrgent = body.status === 'urgente' || triage.some(a => String(a).toUpperCase().includes('URGENCIA'));
         const row = {
           code,
           pin,
           materia,
           client_phone: phone,
           triage,
-          tribunal: '',
-          rit: '',
-          detalle: '',
+          tribunal: String(body.tribunal || '').slice(0, 200),
+          rit: String(body.rit || '').slice(0, 120),
+          detalle,
           estado_actual: 0,
           status: isUrgent ? 'urgente' : 'nuevo',
           steps: stepsTemplate(materia)
@@ -209,7 +214,14 @@ module.exports = async (req, res) => {
         if (resp.ok) {
           const created = await resp.json();
           const c = Array.isArray(created) ? created[0] : created;
-          return res.status(201).json({ ok: true, code: c.code, pin: c.pin, materia: c.materia });
+          return res.status(201).json({
+            ok: true,
+            code: c.code,
+            pin: c.pin,
+            materia: c.materia,
+            detalle: c.detalle,
+            status: c.status
+          });
         }
         if (resp.status !== 409) throw new Error('db_insert');
       }
