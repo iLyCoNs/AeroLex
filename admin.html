@@ -514,6 +514,82 @@
                         </div>
                     </div>
 
+                    <!-- SECCIÓN: ESTADO DIARIO PJUD (VIGILANCIA EN VIVO) -->
+                    <div class="panel-card overflow-hidden border border-cyan-500/30 shadow-[0_4px_25px_rgba(6,182,212,0.08)]">
+                        <div class="px-5 py-3.5 border-b border-[--border] bg-gradient-to-r from-[#0d1c2d] to-[#141B2B] flex flex-wrap items-center justify-between gap-3">
+                            <div class="flex items-center gap-2.5">
+                                <span class="relative flex h-2.5 w-2.5">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
+                                </span>
+                                <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">
+                                    Vigilancia Judicial · Estado Diario PJUD
+                                </span>
+                            </div>
+                            <button type="button" id="btn-check-ed" onclick="checkEstadoDiarioCurrent()" class="btn !bg-cyan-500 hover:!bg-cyan-400 text-slate-950 font-bold !text-xs !py-1.5 !px-3.5 shadow-[0_0_15px_rgba(6,182,212,0.4)] transition active:scale-95 flex items-center gap-2 cursor-pointer">
+                                <i class="fas fa-bolt text-xs" id="ed-bolt-icon"></i>
+                                <span id="btn-check-ed-text">⚡ Consultar Estado Diario Ahora</span>
+                            </button>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <!-- Sensor Temporal de Alta Precisión y Diagnóstico -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 p-3.5 rounded-xl border border-[--border] bg-[#0E1422]">
+                                <div>
+                                    <span class="field-label !mb-1">Última Comprobación (Hora Exacta)</span>
+                                    <div class="text-xs text-slate-200 font-mono flex items-center gap-1.5" id="ed-display-time">
+                                        <i class="far fa-clock text-cyan-400"></i>
+                                        <span id="ed-time-val">Sin comprobación previa</span>
+                                    </div>
+                                    <p class="text-[10px] text-slate-500 mt-0.5" id="ed-source-val">Auditoría con precisión de segundos</p>
+                                </div>
+                                <div>
+                                    <span class="field-label !mb-1">Estado en la OJV</span>
+                                    <div id="ed-status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700">
+                                        <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+                                        <span>Pendiente de consulta</span>
+                                    </div>
+                                    <p class="text-[10px] text-slate-500 mt-0.5" id="ed-novelty-summary">Monitoreo directo sin ClaveÚnica</p>
+                                </div>
+                                <div>
+                                    <span class="field-label !mb-1">Tribunal y RIT Vinculado</span>
+                                    <div class="text-xs text-white font-medium truncate" id="ed-court-val">—</div>
+                                    <p class="text-[10px] text-cyan-400 font-mono mt-0.5" id="ed-docket-val">—</p>
+                                </div>
+                            </div>
+
+                            <!-- Contenedor de Resoluciones y Proveídos Registrados -->
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="field-label !mb-0 text-slate-300">Resoluciones y Proveídos Oficiales Detectados</span>
+                                    <span class="text-[11px] text-slate-500 font-mono" id="ed-resolutions-count">0 registros</span>
+                                </div>
+                                <div id="ed-resolutions-list" class="space-y-2">
+                                    <div class="p-6 text-center text-xs text-slate-500 italic bg-[#0E1422] rounded-xl border border-[--border]">
+                                        Presiona "⚡ Consultar Estado Diario Ahora" para verificar resoluciones, proveídos y decretos judiciales oficiales en el Poder Judicial.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Monitor de Cuota y Frecuencia de GitHub Actions Nube -->
+                            <div class="p-3.5 rounded-xl border border-[--border] bg-[#0A0F1A] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></div>
+                                    <div>
+                                        <span class="font-semibold text-white">Cuota Nube GitHub Actions (Gratuita):</span>
+                                        <p class="text-[11px] text-slate-400 mt-0.5">
+                                            2.000 min/mes compartidos · Consumo estimado: ~44 min/mes (&lt;2.5%) · Alarma: Lunes a viernes 08:00 AM (incluso con tu PC apagado)
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="shrink-0 text-right">
+                                    <span class="px-2.5 py-1 rounded-full border border-[--border] font-mono text-[10px] text-cyan-300 bg-[#141B2B]">
+                                        Reinicio: 1º de cada mes (00:00 UTC)
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- SECCIÓN 3: CONTROL DE AVANCE PROCESAL (ETAPAS 0 A 5) — MOVER A VOLUNTAD -->
                     <div class="panel-card overflow-hidden">
                         <div class="px-5 py-3.5 border-b border-[--border] bg-[#141B2B] flex items-center justify-between">
@@ -1228,6 +1304,7 @@
         const stage = typeof c.estado_actual === 'number' ? c.estado_actual : 0;
         renderStepperUI(stage);
         renderMilestonesUI(c.steps || []);
+        renderEstadoDiarioUI(c.estado_diario, c);
         renderSidebar();
         renderStats();
         updateLivePreview();
@@ -1242,6 +1319,170 @@
             const currentVal = document.getElementById('case-matter').value;
             if (!currentVal) document.getElementById('case-matter').value = MATERIAS[cat][0];
         }
+    }
+
+    // =========================================================================
+    // 8.1 ESTADO DIARIO PJUD (VIGILANCIA EN VIVO)
+    // =========================================================================
+    async function checkEstadoDiarioCurrent() {
+        if (!currentEditingId) {
+            toast('Seleccione un expediente primero', 'err');
+            return;
+        }
+        const c = casesDB[currentEditingId];
+        if (!c) return;
+
+        const btn = document.getElementById('btn-check-ed');
+        const icon = document.getElementById('ed-bolt-icon');
+        const text = document.getElementById('btn-check-ed-text');
+        const origText = text.innerText;
+
+        btn.disabled = true;
+        icon.className = "fas fa-spinner fa-spin text-xs";
+        text.innerText = "Consultando PJUD en vivo…";
+
+        try {
+            const ritVal = document.getElementById('case-rit').value.trim() || c.rit || '';
+            const tribunalVal = document.getElementById('case-tribunal').value.trim() || c.tribunal || '';
+
+            if (!ritVal) {
+                throw new Error('Debes ingresar un RIT en la ficha (ej: C-1200-2023) para consultar el Estado Diario.');
+            }
+
+            const resp = await fetch(`/api/admin?action=check_pjud&code=${encodeURIComponent(currentEditingId)}`, {
+                method: 'POST',
+                headers: authHeaders({ 'Content-Type': 'application/json' }),
+                body: JSON.stringify({
+                    code: currentEditingId,
+                    rit: ritVal,
+                    tribunal: tribunalVal
+                })
+            });
+
+            const data = await resp.json();
+            if (!data.ok) throw new Error(data.error || 'Error al consultar PJUD');
+
+            if (data.estado_diario) {
+                c.estado_diario = data.estado_diario;
+                casesDB[currentEditingId] = { ...c, estado_diario: data.estado_diario };
+                renderEstadoDiarioUI(data.estado_diario, c);
+                toast(`Estado Diario verificado a las ${data.estado_diario.lastCheckedTime} hrs.`, 'ok');
+            }
+        } catch (error) {
+            toast(error.message, 'err');
+        } finally {
+            btn.disabled = false;
+            icon.className = "fas fa-bolt text-xs";
+            text.innerText = origText;
+        }
+    }
+
+    function renderEstadoDiarioUI(ed, caseData) {
+        const timeVal = document.getElementById('ed-time-val');
+        const sourceVal = document.getElementById('ed-source-val');
+        const statusBadge = document.getElementById('ed-status-badge');
+        const noveltySummary = document.getElementById('ed-novelty-summary');
+        const courtVal = document.getElementById('ed-court-val');
+        const docketVal = document.getElementById('ed-docket-val');
+        const list = document.getElementById('ed-resolutions-list');
+        const count = document.getElementById('ed-resolutions-count');
+
+        courtVal.innerText = caseData?.tribunal || (ed?.court || 'Tribunal no especificado');
+        docketVal.innerText = caseData?.rit ? `RIT: ${caseData.rit}` : (ed?.docket ? `RIT: ${ed.docket}` : 'Sin RIT');
+
+        if (!ed || !ed.lastCheckedAt) {
+            timeVal.innerText = 'Sin comprobación previa';
+            sourceVal.innerText = 'Presiona el botón para auditar';
+            statusBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700';
+            statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-500"></span><span>Pendiente de consulta</span>';
+            noveltySummary.innerText = 'Monitoreo directo sin ClaveÚnica';
+            list.innerHTML = `<div class="p-6 text-center text-xs text-slate-500 italic bg-[#0E1422] rounded-xl border border-[--border]">Presiona "⚡ Consultar Estado Diario Ahora" para verificar resoluciones, proveídos y decretos judiciales oficiales en el Poder Judicial.</div>`;
+            count.innerText = '0 registros';
+            return;
+        }
+
+        const dateObj = new Date(ed.lastCheckedAt);
+        const timeStr = ed.lastCheckedTime || dateObj.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+        const dateStr = ed.lastCheckedDate || dateObj.toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+        timeVal.innerText = `${timeStr} hrs (${dateStr})`;
+        sourceVal.innerText = ed.checkedBy === 'github_actions' ? 'Auditoría automática (GitHub Actions)' : 'Auditoría manual en vivo';
+
+        if (ed.status === 'con_novedades') {
+            statusBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse';
+            statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-400"></span><span>🔴 ¡Resolución / Movimiento Detectado Hoy!</span>';
+            noveltySummary.innerText = `${ed.resolutionsCount || 1} proveído(s) registrado(s)`;
+        } else if (ed.status === 'al_dia') {
+            statusBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+            statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>🟢 Al día (Sin movimientos hoy)</span>';
+            noveltySummary.innerText = ed.lastMovementDate ? `Última actuación: ${ed.lastMovementDate}` : 'Causa al día en el tribunal';
+        } else {
+            statusBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30';
+            statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400"></span><span>⚠️ No encontrada con este RIT</span>';
+            noveltySummary.innerText = 'Revisa el RIT y tribunal asignado';
+        }
+
+        const resolutions = Array.isArray(ed.resolutions) ? ed.resolutions : [];
+        count.innerText = `${resolutions.length} registro${resolutions.length === 1 ? '' : 's'}`;
+
+        if (resolutions.length === 0) {
+            list.innerHTML = `<div class="p-4 text-center text-xs text-slate-400 italic bg-[#0E1422] rounded-xl border border-[--border]">No se detectaron resoluciones públicas registradas para este RIT.</div>`;
+            return;
+        }
+
+        list.innerHTML = '';
+        resolutions.forEach(res => {
+            const card = document.createElement('div');
+            card.className = 'p-3.5 rounded-xl border border-[--border] bg-[#0E1422] space-y-2';
+            card.innerHTML = `
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded text-[10.5px] font-bold uppercase tracking-wider bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+                            ${escapeHtml(res.type || 'Resolución')}
+                        </span>
+                        <span class="text-xs font-mono text-white font-semibold">
+                            ${escapeHtml(res.date || '')} ${res.time ? '· ' + escapeHtml(res.time) + ' hrs' : ''}
+                        </span>
+                    </div>
+                    <span class="text-[11px] text-slate-400 truncate max-w-xs">
+                        ${escapeHtml(res.court || caseData.tribunal || '')}
+                    </span>
+                </div>
+                <p class="text-xs text-slate-200 leading-relaxed">
+                    ${escapeHtml(res.summary || '')}
+                </p>
+                <div class="pt-2 border-t border-[--border]/60 flex items-center justify-between text-xs">
+                    <a href="${res.documentUrl || 'https://oficinajudicialvirtual.pjud.cl/indexN.php'}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 font-semibold transition">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>Ver / Descargar en OJV</span>
+                    </a>
+                    <button type="button" onclick="addResolutionToMilestones('${escapeHtml(res.date || '')}', '${escapeHtml(res.summary || '')}')" class="text-[11px] text-slate-400 hover:text-white px-2 py-1 rounded border border-[--border] bg-[#141B2B] transition" title="Agregar como hito oficial de la causa">
+                        <i class="fas fa-plus mr-1"></i> Vincular como Hito
+                    </button>
+                </div>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    function addResolutionToMilestones(date, summary) {
+        if (!currentEditingId) return;
+        const c = casesDB[currentEditingId];
+        if (!c) return;
+        if (!c.steps) c.steps = [];
+        const title = `[Resolución Estado Diario] ${summary.slice(0, 150)}`;
+        if (c.steps.some(s => s.title === title)) {
+            toast('Esta resolución ya está registrada como hito.', 'ok');
+            return;
+        }
+        c.steps.push({
+            title,
+            date: date || new Date().toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/\./g, ''),
+            done: true
+        });
+        renderMilestonesUI(c.steps);
+        markUnsaved();
+        toast('Resolución agregada como hito en el avance.', 'ok');
     }
 
     function openMobileEditor() { document.getElementById('editor-view').classList.remove('translate-x-full'); }
