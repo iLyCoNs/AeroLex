@@ -1093,23 +1093,37 @@
             'finalizado': 4
         };
 
+        function getCaseCorrelative(code) {
+            const m = String(code || '').match(/^ALX-(\d{4})-(\d+)$/i);
+            if (m) {
+                return parseInt(m[1], 10) * 100000 + parseInt(m[2], 10);
+            }
+            return 0;
+        }
+
         caseIds.sort((a, b) => {
             const caseA = casesDB[a] || {};
             const caseB = casesDB[b] || {};
+            const numA = getCaseCorrelative(a);
+            const numB = getCaseCorrelative(b);
+
             if (adminSortOrder === 'prioridad') {
                 const scoreA = priorityScore[caseA.status || 'activo'] ?? 2;
                 const scoreB = priorityScore[caseB.status || 'activo'] ?? 2;
                 if (scoreA !== scoreB) return scoreA - scoreB;
+                if (numA !== numB) return numB - numA;
                 return String(b).localeCompare(String(a));
             }
             if (adminSortOrder === 'fecha') {
-                const dateA = caseA.created_at || a;
-                const dateB = caseB.created_at || b;
-                return String(dateB).localeCompare(String(dateA));
+                const timeA = caseA.created_at ? Date.parse(caseA.created_at) || 0 : 0;
+                const timeB = caseB.created_at ? Date.parse(caseB.created_at) || 0 : 0;
+                if (timeA !== timeB) return timeB - timeA;
+                if (numA !== numB) return numB - numA;
+                return String(b).localeCompare(String(a));
             }
-            const matA = caseA.materia || a;
-            const matB = caseB.materia || b;
-            return String(matA).localeCompare(String(matB));
+            const matA = (caseA.materia || a).toLowerCase();
+            const matB = (caseB.materia || b).toLowerCase();
+            return matA.localeCompare(matB, 'es', { sensitivity: 'base' });
         });
 
         if (caseIds.length === 0) {
@@ -1147,12 +1161,13 @@
     }
 
     function renderStats() {
-        const all = Object.values(casesDB);
-        const n = s => all.filter(c => (c.status || 'activo') === s).length;
+        const legalCases = Object.values(casesDB).filter(c => !String(c.code || '').toUpperCase().startsWith('WA-'));
+        const waContacts = Object.values(casesDB).filter(c => String(c.code || '').toUpperCase().startsWith('WA-'));
+        const n = s => legalCases.filter(c => (c.status || 'activo') === s).length;
         const bar = document.getElementById('stats-bar');
         bar.innerHTML = `
-            <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg border border-[--border] bg-[#141B2B] text-xs">
-                <span class="text-slate-400">Total:</span><b class="text-white">${all.length}</b>
+            <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg border border-[--border] bg-[#141B2B] text-xs" title="Total de expedientes judiciales en la bóveda">
+                <span class="text-slate-400">Total:</span><b class="text-white">${legalCases.length}</b>
             </div>
             <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg border border-cyan-500/20 bg-cyan-500/10 text-xs">
                 <span class="text-cyan-400">Nuevos:</span><b class="text-cyan-300">${n('nuevo')}</b>
@@ -1164,6 +1179,11 @@
                 <span class="text-emerald-400">Cerrados:</span><b class="text-emerald-300">${n('finalizado')}</b>
             </div>
         `;
+        const waBadge = document.getElementById('wa-badge');
+        if (waBadge) {
+            waBadge.innerText = waContacts.length;
+            waBadge.classList.toggle('hidden', waContacts.length === 0);
+        }
     }
 
     function loadCase(id) {

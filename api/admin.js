@@ -67,10 +67,16 @@ module.exports = async (req, res) => {
         const data = await resp.json().catch(() => ({}));
         return res.status(200).json({ ok: true, tables: Object.keys(data.definitions || {}) });
       }
+      const includeWa = url.searchParams.get('include_wa') === 'true';
       const resp = await fetch(`${SUPA_URL}/rest/v1/cases?select=*&order=created_at.desc`, { headers: supaHeaders() });
       if (!resp.ok) return fail(res, 500, 'db_error');
       const rows = await resp.json();
-      return res.status(200).json({ ok: true, cases: Array.isArray(rows) ? rows : [] });
+      const allRows = Array.isArray(rows) ? rows : [];
+      // Por defecto para administración de causas, retornar expedientes judiciales (los leads WA van por /api/wa-contact)
+      const cases = includeWa
+        ? allRows
+        : allRows.filter(r => !String(r.code || '').toUpperCase().startsWith('WA-'));
+      return res.status(200).json({ ok: true, cases, total: cases.length, rawTotal: allRows.length });
     }
 
     if (req.method === 'POST') {
@@ -175,11 +181,11 @@ module.exports = async (req, res) => {
     }
 
     if (req.method === 'DELETE') {
-      const code = (url.searchParams.get('code') || '').toUpperCase().trim();
+      const code = (url.searchParams.get('code') || body.code || '').toUpperCase().trim();
       if (!code) return fail(res, 400, 'missing_code');
       const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(code)}`, { method: 'DELETE', headers: supaHeaders() });
       if (!resp.ok) return fail(res, 500, 'db_error');
-      return res.status(200).json({ ok: true });
+      return res.status(200).json({ ok: true, deleted: code });
     }
 
     return fail(res, 405, 'method_not_allowed');
