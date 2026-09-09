@@ -575,7 +575,6 @@
     <!-- HERO SECTION -->
     <section id="inicio" class="pt-36 pb-12 flex flex-col items-center text-center px-4 relative z-10">
         <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-black/5 shadow-sm text-[11px] font-bold text-mac-dark uppercase tracking-widest mb-6 fade-in">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             Estudio Jurídico & LegalTech en Puerto Montt
         </div>
         <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-mac-dark tracking-tight mb-6">
@@ -600,31 +599,142 @@
                 </div>
                 Calculadora & Plazos
             </a>
-            <a href="#faq" class="px-4 py-2.5 rounded-full bg-white/90 hover:bg-white text-mac-dark border border-gray-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md hover:border-mac-dark/40 text-[13px] font-bold transition-all flex items-center gap-2 group">
-                <div class="w-6 h-6 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center text-xs group-hover:scale-110 transition-transform">
-                    <i class="fas fa-circle-question"></i>
-                </div>
-                Preguntas Frecuentes
-            </a>
             <a href="#servicios" class="px-4 py-2.5 rounded-full bg-white/90 hover:bg-white text-mac-dark border border-gray-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md hover:border-mac-dark/40 text-[13px] font-bold transition-all flex items-center gap-2 group">
                 <div class="w-6 h-6 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center text-xs group-hover:scale-110 transition-transform">
                     <i class="fas fa-scale-balanced"></i>
                 </div>
                 Servicios Jurídicos
             </a>
+            <a href="#faq" class="px-4 py-2.5 rounded-full bg-white/90 hover:bg-white text-mac-dark border border-gray-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md hover:border-mac-dark/40 text-[13px] font-bold transition-all flex items-center gap-2 group">
+                <div class="w-6 h-6 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center text-xs group-hover:scale-110 transition-transform">
+                    <i class="fas fa-circle-question"></i>
+                </div>
+                Preguntas Frecuentes
+            </a>
         </div>
     </section>
 
     <section class="max-w-7xl mx-auto px-4 pb-10 w-full relative z-10">
         <div class="urgent-access p-5 md:p-7">
-            <div class="flex items-start gap-3 mb-5">
-                <div class="w-11 h-11 rounded-2xl bg-white/15 flex items-center justify-center shrink-0"><i class="fas fa-bolt text-amber-300"></i></div>
-                <div><h2 class="text-lg md:text-xl font-extrabold">¿Necesita ayuda ahora?</h2><p class="text-[12px] md:text-[13px] text-gray-300 mt-1">Elija una opción. Le llevaremos directamente al lugar correcto.</p></div>
+            <div class="text-center mb-5">
+                <h2 class="text-lg md:text-xl font-extrabold">¿Necesita ayuda ahora?</h2>
+                <p class="text-[12px] md:text-[13px] text-gray-300 mt-1">Elija una opción. Le llevaremos directamente al lugar correcto.</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <button type="button" class="urgent-option" onclick="openAssistant(); setTimeout(startTracking, 250)"><i class="fas fa-file-circle-exclamation"></i><span><strong>Tengo una urgencia o notificación</strong><span>Quiero saber qué hacer y cuidar mi plazo.</span></span></button>
                 <button type="button" class="urgent-option" onclick="openAssistant(); setTimeout(startNewConsult, 250)"><i class="fas fa-comments"></i><span><strong>Quiero contar mi problema</strong><span>Le ayudaremos a encontrar la orientación adecuada.</span></span></button>
                 <button type="button" class="urgent-option" onclick="openAssistant(); setTimeout(contactDirect, 250)"><i class="fab fa-whatsapp"></i><span><strong>Hablar directamente con un abogado</strong><span>Contacto rápido con el estudio en Puerto Montt.</span></span></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- HERRAMIENTAS LEGALES INTELIGENTES -->
+    <section id="herramientas" class="max-w-7xl mx-auto px-4 pb-12 w-full relative z-10 mt-4">
+        <div class="text-center mb-6 px-4">
+            <span class="inline-flex items-center gap-2 text-[11px] font-bold text-mac-accent uppercase tracking-widest mb-3"><i class="fas fa-microchip"></i> AeroLex · Derecho + Tecnología</span>
+            <h2 class="text-2xl md:text-4xl font-extrabold text-mac-dark tracking-tight">Ayuda legal para tomar decisiones</h2>
+            <p class="text-mac-dark/60 text-[14px] md:text-[15px] mt-3 max-w-2xl mx-auto leading-relaxed">Herramientas simples para saber qué hacer, revisar un plazo y entender palabras jurídicas antes de conversar con un abogado.</p>
+        </div>
+
+        <div class="glass-effect rounded-[1.5rem] shadow-2xl shadow-black/5 overflow-hidden flex flex-col border border-white/60">
+            <div class="h-12 bg-white/40 border-b border-black/5 flex items-center px-4 shrink-0 backdrop-blur-md relative">
+                <div class="flex gap-2 absolute left-4">
+                    <div class="w-3 h-3 rounded-full bg-[#FF5F56] border border-black/10"></div>
+                    <div class="w-3 h-3 rounded-full bg-[#FFBD2E] border border-black/10"></div>
+                    <div class="w-3 h-3 rounded-full bg-[#27C93F] border border-black/10"></div>
+                </div>
+                <div class="w-full text-center text-[11px] font-bold text-mac-dark/40 tracking-widest uppercase">Asistente Legal Express</div>
+            </div>
+
+            <div class="flex gap-2 px-4 md:px-6 pt-4 pb-4 bg-white/30 border-b border-black/5 overflow-x-auto hide-scrollbar">
+                <button onclick="switchTool('plazos', this)" class="tool-tab active"><i class="fas fa-hourglass-half"></i> Plazos Legales</button>
+                <button onclick="switchTool('indicadores', this)" class="tool-tab"><i class="fas fa-coins"></i> UF / UTM</button>
+                <button onclick="switchTool('glosario', this)" class="tool-tab"><i class="fas fa-book-open"></i> Glosario Jurídico</button>
+            </div>
+
+            <div class="p-5 md:p-8 bg-white/40">
+
+                <!-- PANEL PLAZOS -->
+                <div id="tool-plazos">
+                    <div class="flex items-center justify-between gap-3 flex-wrap mb-5">
+                        <div class="deadline-mode">
+                            <button id="deadline-client" class="active" onclick="setDeadlineMode('client')"><i class="fas fa-user mr-1"></i> Soy cliente</button>
+                            <button id="deadline-lawyer" onclick="setDeadlineMode('lawyer')"><i class="fas fa-scale-balanced mr-1"></i> Soy abogado/a</button>
+                        </div>
+                        <span class="text-[10.5px] text-gray-400"><i class="fas fa-circle-check text-green-500 mr-1"></i> Feriados chilenos incluidos</span>
+                    </div>
+
+                    <div id="deadline-client-panel">
+                        <select id="plazo-select" class="hidden"></select>
+                        <input id="plazo-fecha" class="hidden" type="date">
+                        <span id="plazo-desde-label" class="hidden"></span><span id="plazo-ley" class="hidden"></span><div id="plazo-resultado" class="hidden"></div>
+                        <div class="deadline-steps">
+                            <span class="deadline-step active" data-step="1"><b>1</b> Suceso</span><i class="fas fa-chevron-right text-[9px]"></i>
+                            <span class="deadline-step" data-step="2"><b>2</b> Acción</span><i class="fas fa-chevron-right text-[9px]"></i>
+                            <span class="deadline-step" data-step="3"><b>3</b> Resultado</span>
+                        </div>
+                        <button id="deadline-back" type="button" class="hidden text-[12px] font-bold text-mac-accent mb-4 inline-flex items-center gap-2 hover:gap-3 transition-all" onclick="deadlineBack()"><i class="fas fa-arrow-left"></i> Volver</button>
+                        <div id="deadline-events">
+                            <p class="text-[13.5px] text-mac-dark/70 font-semibold mb-2"><i class="fas fa-circle-question text-mac-accent mr-1"></i>¿Qué le ocurrió? Elija la opción que más se parece a su situación.</p>
+                            <p class="text-[12px] text-gray-500 mb-5"><i class="fas fa-hand-point-right text-mac-accent mr-1"></i>No necesita conocer leyes: le explicaremos qué puede hacer y qué plazo debe cuidar.</p>
+                            <div id="event-grid" class="event-grid"></div>
+                        </div>
+                        <div id="deadline-actions" class="hidden"></div>
+                        <div id="deadline-result" class="hidden"></div>
+                    </div>
+
+                    <div id="deadline-lawyer-panel" class="hidden">
+                        <div class="relative mb-4">
+                            <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                            <input id="expert-search" class="tool-input !pl-10" placeholder="Buscar acción, norma o materia..." oninput="renderExpertDeadlines()">
+                        </div>
+                        <div id="expert-areas" class="flex gap-1.5 flex-wrap mb-4"></div>
+                        <div id="expert-list" class="space-y-2 max-h-[460px] overflow-y-auto pr-1"></div>
+                    </div>
+                </div>
+
+                <!-- PANEL INDICADORES -->
+                <div id="tool-indicadores" class="hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="ind-card">
+                            <div class="tool-label"><i class="fas fa-house-chimney mr-1.5 text-mac-accent"></i> Unidad de Fomento (UF)</div>
+                            <div class="ind-val" id="ind-uf">$ —</div>
+                            <p class="text-[11px] text-gray-400 mt-1.5">Referencia para contratos, arriendos y compraventas</p>
+                        </div>
+                        <div class="ind-card">
+                            <div class="tool-label"><i class="fas fa-receipt mr-1.5 text-mac-accent"></i> Unidad Tributaria Mensual (UTM)</div>
+                            <div class="ind-val" id="ind-utm">$ —</div>
+                            <p class="text-[11px] text-gray-400 mt-1.5">Base de multas, trámites y contribuciones</p>
+                        </div>
+                        <div class="ind-card">
+                            <div class="tool-label"><i class="fas fa-right-left mr-1.5 text-mac-accent"></i> Conversor Legal</div>
+                            <div class="flex gap-2">
+                                <input type="number" id="conv-monto" class="tool-input !py-2 !text-[13px]" placeholder="Monto" oninput="convertirMonto()">
+                                <select id="conv-tipo" class="tool-input !py-2 !text-[13px] !w-auto" onchange="convertirMonto()">
+                                    <option value="uf-clp">UF a CLP</option>
+                                    <option value="clp-uf">CLP a UF</option>
+                                    <option value="utm-clp">UTM a CLP</option>
+                                    <option value="clp-utm">CLP a UTM</option>
+                                </select>
+                            </div>
+                            <div id="conv-result" class="mt-3 text-[15px] font-extrabold text-mac-dark font-mono">—</div>
+                            <p id="ind-updated" class="text-[10px] text-gray-400 mt-2"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL GLOSARIO -->
+                <div id="tool-glosario" class="hidden">
+                    <div class="relative max-w-md">
+                        <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                        <input type="text" id="glos-search" class="tool-input !pl-10" placeholder="Buscar término: finiquito, RIT, deslinde, CBR..." oninput="renderGlosario()" autocomplete="off">
+                    </div>
+                    <div id="glos-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-5"></div>
+                </div>
+
+                <p class="text-[10.5px] text-gray-400 mt-6 leading-relaxed border-t border-gray-200/60 pt-4">
+                    <i class="fas fa-circle-info mr-1"></i> Herramientas de referencia orientativa. El cálculo de días hábiles no descuenta feriados legales y los plazos pueden variar según el procedimiento aplicable a su caso. No sustituyen la asesoría de un abogado. Valores UF/UTM según mindicador.cl.
+                </p>
             </div>
         </div>
     </section>
@@ -794,117 +904,7 @@
         </div>
     </section>
 
-    <!-- HERRAMIENTAS LEGALES INTELIGENTES -->
-    <section id="herramientas" class="max-w-7xl mx-auto px-4 pb-12 w-full relative z-10 mt-4">
-        <div class="text-center mb-6 px-4">
-            <span class="inline-flex items-center gap-2 text-[11px] font-bold text-mac-accent uppercase tracking-widest mb-3"><i class="fas fa-microchip"></i> AeroLex · Derecho + Tecnología</span>
-            <h2 class="text-2xl md:text-4xl font-extrabold text-mac-dark tracking-tight">Ayuda legal para tomar decisiones</h2>
-            <p class="text-mac-dark/60 text-[14px] md:text-[15px] mt-3 max-w-2xl mx-auto leading-relaxed">Herramientas simples para saber qué hacer, revisar un plazo y entender palabras jurídicas antes de conversar con un abogado.</p>
-        </div>
-
-        <div class="glass-effect rounded-[1.5rem] shadow-2xl shadow-black/5 overflow-hidden flex flex-col border border-white/60">
-            <div class="h-12 bg-white/40 border-b border-black/5 flex items-center px-4 shrink-0 backdrop-blur-md relative">
-                <div class="flex gap-2 absolute left-4">
-                    <div class="w-3 h-3 rounded-full bg-[#FF5F56] border border-black/10"></div>
-                    <div class="w-3 h-3 rounded-full bg-[#FFBD2E] border border-black/10"></div>
-                    <div class="w-3 h-3 rounded-full bg-[#27C93F] border border-black/10"></div>
-                </div>
-                <div class="w-full text-center text-[11px] font-bold text-mac-dark/40 tracking-widest uppercase">Asistente Legal Express</div>
-            </div>
-
-            <div class="flex gap-2 px-4 md:px-6 pt-4 pb-4 bg-white/30 border-b border-black/5 overflow-x-auto hide-scrollbar">
-                <button onclick="switchTool('plazos', this)" class="tool-tab active"><i class="fas fa-hourglass-half"></i> Plazos Legales</button>
-                <button onclick="switchTool('indicadores', this)" class="tool-tab"><i class="fas fa-coins"></i> UF / UTM</button>
-                <button onclick="switchTool('glosario', this)" class="tool-tab"><i class="fas fa-book-open"></i> Glosario Jurídico</button>
-            </div>
-
-            <div class="p-5 md:p-8 bg-white/40">
-
-                <!-- PANEL PLAZOS -->
-                <div id="tool-plazos">
-                    <div class="flex items-center justify-between gap-3 flex-wrap mb-5">
-                        <div class="deadline-mode">
-                            <button id="deadline-client" class="active" onclick="setDeadlineMode('client')"><i class="fas fa-user mr-1"></i> Soy cliente</button>
-                            <button id="deadline-lawyer" onclick="setDeadlineMode('lawyer')"><i class="fas fa-scale-balanced mr-1"></i> Soy abogado/a</button>
-                        </div>
-                        <span class="text-[10.5px] text-gray-400"><i class="fas fa-circle-check text-green-500 mr-1"></i> Feriados chilenos incluidos</span>
-                    </div>
-
-                    <div id="deadline-client-panel">
-                        <select id="plazo-select" class="hidden"></select>
-                        <input id="plazo-fecha" class="hidden" type="date">
-                        <span id="plazo-desde-label" class="hidden"></span><span id="plazo-ley" class="hidden"></span><div id="plazo-resultado" class="hidden"></div>
-                        <div class="deadline-steps">
-                            <span class="deadline-step active" data-step="1"><b>1</b> Suceso</span><i class="fas fa-chevron-right text-[9px]"></i>
-                            <span class="deadline-step" data-step="2"><b>2</b> Acción</span><i class="fas fa-chevron-right text-[9px]"></i>
-                            <span class="deadline-step" data-step="3"><b>3</b> Resultado</span>
-                        </div>
-                        <button id="deadline-back" type="button" class="hidden text-[12px] font-bold text-mac-accent mb-4 inline-flex items-center gap-2 hover:gap-3 transition-all" onclick="deadlineBack()"><i class="fas fa-arrow-left"></i> Volver</button>
-                        <div id="deadline-events">
-                            <p class="text-[13.5px] text-mac-dark/70 font-semibold mb-2"><i class="fas fa-circle-question text-mac-accent mr-1"></i>¿Qué le ocurrió? Elija la opción que más se parece a su situación.</p>
-                            <p class="text-[12px] text-gray-500 mb-5"><i class="fas fa-hand-point-right text-mac-accent mr-1"></i>No necesita conocer leyes: le explicaremos qué puede hacer y qué plazo debe cuidar.</p>
-                            <div id="event-grid" class="event-grid"></div>
-                        </div>
-                        <div id="deadline-actions" class="hidden"></div>
-                        <div id="deadline-result" class="hidden"></div>
-                    </div>
-
-                    <div id="deadline-lawyer-panel" class="hidden">
-                        <div class="relative mb-4">
-                            <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                            <input id="expert-search" class="tool-input !pl-10" placeholder="Buscar acción, norma o materia..." oninput="renderExpertDeadlines()">
-                        </div>
-                        <div id="expert-areas" class="flex gap-1.5 flex-wrap mb-4"></div>
-                        <div id="expert-list" class="space-y-2 max-h-[460px] overflow-y-auto pr-1"></div>
-                    </div>
-                </div>
-
-                <!-- PANEL INDICADORES -->
-                <div id="tool-indicadores" class="hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="ind-card">
-                            <div class="tool-label"><i class="fas fa-house-chimney mr-1.5 text-mac-accent"></i> Unidad de Fomento (UF)</div>
-                            <div class="ind-val" id="ind-uf">$ —</div>
-                            <p class="text-[11px] text-gray-400 mt-1.5">Referencia para contratos, arriendos y compraventas</p>
-                        </div>
-                        <div class="ind-card">
-                            <div class="tool-label"><i class="fas fa-receipt mr-1.5 text-mac-accent"></i> Unidad Tributaria Mensual (UTM)</div>
-                            <div class="ind-val" id="ind-utm">$ —</div>
-                            <p class="text-[11px] text-gray-400 mt-1.5">Base de multas, trámites y contribuciones</p>
-                        </div>
-                        <div class="ind-card">
-                            <div class="tool-label"><i class="fas fa-right-left mr-1.5 text-mac-accent"></i> Conversor Legal</div>
-                            <div class="flex gap-2">
-                                <input type="number" id="conv-monto" class="tool-input !py-2 !text-[13px]" placeholder="Monto" oninput="convertirMonto()">
-                                <select id="conv-tipo" class="tool-input !py-2 !text-[13px] !w-auto" onchange="convertirMonto()">
-                                    <option value="uf-clp">UF a CLP</option>
-                                    <option value="clp-uf">CLP a UF</option>
-                                    <option value="utm-clp">UTM a CLP</option>
-                                    <option value="clp-utm">CLP a UTM</option>
-                                </select>
-                            </div>
-                            <div id="conv-result" class="mt-3 text-[15px] font-extrabold text-mac-dark font-mono">—</div>
-                            <p id="ind-updated" class="text-[10px] text-gray-400 mt-2"></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PANEL GLOSARIO -->
-                <div id="tool-glosario" class="hidden">
-                    <div class="relative max-w-md">
-                        <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                        <input type="text" id="glos-search" class="tool-input !pl-10" placeholder="Buscar término: finiquito, RIT, deslinde, CBR..." oninput="renderGlosario()" autocomplete="off">
-                    </div>
-                    <div id="glos-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-5"></div>
-                </div>
-
-                <p class="text-[10.5px] text-gray-400 mt-6 leading-relaxed border-t border-gray-200/60 pt-4">
-                    <i class="fas fa-circle-info mr-1"></i> Herramientas de referencia orientativa. El cálculo de días hábiles no descuenta feriados legales y los plazos pueden variar según el procedimiento aplicable a su caso. No sustituyen la asesoría de un abogado. Valores UF/UTM según mindicador.cl.
-                </p>
-            </div>
-        </div>
-    </section>
-
+    
     <!-- PREGUNTAS FRECUENTES (FAQ PARA SEO Y ASISTENCIA AL CLIENTE) -->
     <section id="faq" class="max-w-7xl mx-auto px-4 pb-12 w-full relative z-10 mt-6">
         <div class="glass-effect rounded-[2rem] p-6 md:p-10 shadow-xl border border-white/80">

@@ -16,16 +16,6 @@
                     fontFamily: {
                         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
                         mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
-                    },
-                    colors: {
-                        brand: {
-                            50: '#EEF4FF',
-                            100: '#D9E6FF',
-                            500: '#3B82F6',
-                            600: '#2563EB',
-                            700: '#1D4ED8',
-                            900: '#1E293B'
-                        }
                     }
                 }
             }
@@ -33,27 +23,28 @@
     </script>
     <style>
         :root {
-            --bg: #0B0F19;
-            --panel: #121826;
-            --panel-raised: #182236;
-            --panel-inset: #0D131F;
-            --border: #222C3F;
-            --border-hover: #33425E;
-            --text: #F1F5F9;
-            --text-secondary: #94A3B8;
-            --text-faint: #64748B;
-            --accent: #3B82F6;
-            --accent-glow: rgba(59, 130, 246, 0.25);
-            --success: #10B981;
-            --warning: #F59E0B;
-            --danger: #EF4444;
+            --bg: #070707;
+            --panel: #111113;
+            --panel-raised: #18191c;
+            --panel-inset: #0d0e10;
+            --border: #24262b;
+            --border-hover: #353840;
+            --text: #fcfcfc;
+            --text-secondary: #9ca3af;
+            --text-faint: #6b7280;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --accent-glow: rgba(37, 99, 235, 0.25);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
         }
 
-        * { scrollbar-width: thin; scrollbar-color: #242E44 transparent; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        * { scrollbar-width: thin; scrollbar-color: #24262b transparent; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #242E44; border-radius: 999px; }
-        ::-webkit-scrollbar-thumb:hover { background: #33425E; }
+        ::-webkit-scrollbar-thumb { background: #24262b; border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #353840; }
 
         body {
             background-color: var(--bg);
@@ -61,30 +52,31 @@
             overflow: hidden;
             -webkit-font-smoothing: antialiased;
             font-family: 'Inter', sans-serif;
+            font-size: 13px;
         }
 
         .env-bg {
             position: fixed; inset: 0; z-index: 0; pointer-events: none;
             background:
-                radial-gradient(1000px 600px at 20% -10%, rgba(59, 130, 246, 0.08), transparent 60%),
-                radial-gradient(800px 500px at 90% 110%, rgba(16, 185, 129, 0.04), transparent 60%);
+                radial-gradient(1000px 600px at 20% -10%, rgba(37, 99, 235, 0.04), transparent 60%),
+                radial-gradient(800px 500px at 90% 110%, rgba(16, 185, 129, 0.02), transparent 60%);
         }
 
         .panel-card {
             background: var(--panel);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
         }
 
         .field-label {
             display: block;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             letter-spacing: 0.06em;
             text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
+            color: var(--text-faint);
+            margin-bottom: 5px;
         }
 
         .input-base {
@@ -92,180 +84,220 @@
             background: var(--panel-inset);
             border: 1px solid var(--border);
             color: var(--text);
-            border-radius: 10px;
-            padding: 9px 13px;
-            font-size: 13px;
-            transition: all 0.2s ease;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12.5px;
+            transition: all 0.18s ease;
             outline: none;
         }
         .input-base:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
-            background: #0E1524;
+            box-shadow: 0 0 0 2px var(--accent-glow);
+            background: #0e0f11;
         }
-        .input-base::placeholder { color: #4B5565; }
+        .input-base::placeholder { color: #4b5563; }
 
         select.input-base {
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394A3B8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239CA3AF'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 14px;
-            padding-right: 36px;
+            background-position: right 10px center;
+            background-size: 13px;
+            padding-right: 32px;
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 12.5px;
-            padding: 8px 16px;
-            transition: all 0.18s ease;
+            gap: 7px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 12px;
+            padding: 7px 14px;
+            transition: all 0.16s ease;
             cursor: pointer;
             border: 1px solid transparent;
             user-select: none;
             white-space: nowrap;
         }
         .btn-primary {
-            background: linear-gradient(180deg, #3B82F6 0%, #2563EB 100%);
+            background: var(--accent);
             color: white;
-            box-shadow: 0 2px 10px rgba(37, 99, 235, 0.35);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
         }
         .btn-primary:hover {
-            filter: brightness(1.1);
+            background: var(--accent-hover);
             transform: translateY(-1px);
         }
         .btn-primary:active { transform: translateY(0); }
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
         .btn-secondary {
-            background: var(--panel-raised);
+            background: rgba(255, 255, 255, 0.035);
             border-color: var(--border);
-            color: var(--text-secondary);
+            color: var(--text);
         }
         .btn-secondary:hover {
-            color: var(--text);
+            background: rgba(255, 255, 255, 0.07);
             border-color: var(--border-hover);
-            background: #1C273D;
         }
 
         .btn-danger {
-            background: rgba(239, 68, 68, 0.1);
+            background: rgba(239, 68, 68, 0.05);
             border-color: rgba(239, 68, 68, 0.25);
-            color: #F87171;
+            color: #f87171;
         }
         .btn-danger:hover {
-            background: rgba(239, 68, 68, 0.2);
+            background: rgba(239, 68, 68, 0.12);
             border-color: rgba(239, 68, 68, 0.4);
-            color: #FCA5A5;
+            color: #fca5a5;
         }
 
-        /* Chips */
+        /* Vanguardist Action Button (Bot Jurídico) */
+        .btn-vanguard-new {
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 55%, #0284c7 100%);
+            color: #ffffff;
+            border: 1px solid rgba(147, 197, 253, 0.45);
+            box-shadow: 0 3px 12px -2px rgba(37, 99, 235, 0.45);
+            transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-vanguard-new:hover:not(:disabled) {
+            transform: translateY(-1px) scale(1.01);
+            border-color: rgba(191, 219, 254, 0.85);
+            box-shadow: 0 6px 20px -2px rgba(37, 99, 235, 0.65);
+        }
+        .btn-vanguard-new:active:not(:disabled) {
+            transform: translateY(0) scale(0.99);
+        }
+
+        /* Chips / Badges sin puntos ni emojis */
         .chip {
             display: inline-flex;
             align-items: center;
             gap: 5px;
-            font-size: 10.5px;
-            font-weight: 700;
-            letter-spacing: 0.05em;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
             text-transform: uppercase;
-            padding: 2.5px 8.5px;
-            border-radius: 999px;
+            padding: 2.5px 7.5px;
+            border-radius: 6px;
             border: 1px solid;
         }
-        .chip-nuevo { color: #38BDF8; border-color: rgba(56, 189, 248, 0.3); background: rgba(56, 189, 248, 0.1); }
-        .chip-activo { color: #60A5FA; border-color: rgba(96, 165, 250, 0.3); background: rgba(96, 165, 250, 0.1); }
-        .chip-urgente { color: #F87171; border-color: rgba(248, 113, 113, 0.35); background: rgba(248, 113, 113, 0.12); }
-        .chip-finalizado { color: #34D399; border-color: rgba(52, 211, 153, 0.3); background: rgba(52, 211, 153, 0.1); }
-        .chip-suspendido { color: #94A3B8; border-color: rgba(148, 163, 184, 0.3); background: rgba(148, 163, 184, 0.1); }
+        .chip-nuevo { color: #38bdf8; border-color: rgba(56, 189, 248, 0.25); background: rgba(56, 189, 248, 0.06); }
+        .chip-activo { color: #60a5fa; border-color: rgba(96, 165, 250, 0.25); background: rgba(96, 165, 250, 0.06); }
+        .chip-urgente { color: #f87171; border-color: rgba(248, 113, 113, 0.25); background: rgba(248, 113, 113, 0.06); }
+        .chip-finalizado { color: #34d399; border-color: rgba(52, 211, 153, 0.25); background: rgba(52, 211, 153, 0.06); }
+        .chip-suspendido { color: #9ca3af; border-color: rgba(156, 163, 175, 0.25); background: rgba(156, 163, 175, 0.06); }
 
         /* Case list item */
         .case-item {
-            padding: 12px 16px;
+            padding: 11px 14px;
             border-left: 3px solid transparent;
             cursor: pointer;
             transition: all 0.15s ease;
-            border-bottom: 1px solid rgba(34, 44, 63, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.035);
         }
-        .case-item:hover { background: #151D2D; }
+        .case-item:hover { background: rgba(255, 255, 255, 0.03); }
         .case-item.active {
-            background: #182337;
+            background: rgba(255, 255, 255, 0.05);
             border-left-color: var(--accent);
         }
         .case-item.urgente { border-left-color: var(--danger); }
 
-        /* Stepper de etapas procesales (Paso 0 a 5) */
+        /* Tabs de navegación */
+        .tab-btn {
+            padding: 9px 15px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-bottom: 2px solid transparent;
+            transition: all 0.16s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .tab-btn:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .tab-btn.active {
+            color: #ffffff;
+            font-weight: 600;
+            border-bottom-color: var(--accent);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* Stepper de etapas procesales (0 a 5) */
         .step-pill {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
-            padding: 10px 8px;
-            border-radius: 12px;
+            gap: 5px;
+            padding: 8px 6px;
+            border-radius: 9px;
             border: 1px solid var(--border);
             background: var(--panel-inset);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.18s ease;
             text-align: center;
         }
         .step-pill:hover {
-            border-color: var(--accent);
-            background: #151D2E;
+            border-color: var(--border-hover);
+            background: rgba(255, 255, 255, 0.025);
         }
         .step-pill.active {
             border-color: var(--accent);
-            background: rgba(59, 130, 246, 0.15);
-            box-shadow: 0 0 16px rgba(59, 130, 246, 0.2);
+            background: rgba(37, 99, 235, 0.1);
         }
         .step-pill.completed {
-            border-color: rgba(16, 185, 129, 0.35);
-            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.25);
+            background: rgba(16, 185, 129, 0.05);
         }
 
         .step-circle {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             border-radius: 999px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
-            font-weight: 800;
-            background: #1A2436;
+            font-size: 10.5px;
+            font-weight: 700;
+            background: #18191c;
             color: var(--text-secondary);
             border: 1px solid var(--border);
-            transition: all 0.2s ease;
+            transition: all 0.18s ease;
         }
         .step-pill.active .step-circle {
             background: var(--accent);
             color: white;
             border-color: var(--accent);
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
         }
         .step-pill.completed .step-circle {
-            background: #10B981;
+            background: #10b981;
             color: white;
-            border-color: #10B981;
+            border-color: #10b981;
         }
 
         /* Switch hito interactivo */
         .milestone-switch {
-            width: 44px;
-            height: 24px;
+            width: 40px;
+            height: 22px;
             border-radius: 999px;
-            background: #242E44;
+            background: #24262b;
             position: relative;
             cursor: pointer;
-            transition: background-color 0.22s ease;
+            transition: background-color 0.2s ease;
             flex-shrink: 0;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
         .milestone-switch.done {
-            background: #10B981;
+            background: #10b981;
             border-color: #059669;
         }
         .milestone-switch::after {
@@ -273,94 +305,112 @@
             position: absolute;
             top: 2px;
             left: 2px;
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             border-radius: 999px;
             background: white;
-            transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
         }
         .milestone-switch.done::after {
-            transform: translateX(20px);
+            transform: translateX(18px);
         }
 
         /* Toasts */
         #toast-zone {
-            position: fixed; bottom: 24px; right: 24px; z-index: 999;
-            display: flex; flex-direction: column; gap: 10px;
+            position: fixed; bottom: 20px; right: 20px; z-index: 999;
+            display: flex; flex-direction: column; gap: 8px;
         }
         .toast-msg {
-            display: flex; align-items: center; gap: 12px;
-            background: #161D2C; border: 1px solid var(--border-hover);
-            border-radius: 12px; padding: 12px 18px; font-size: 13px; font-weight: 600;
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
-            animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; align-items: center; gap: 10px;
+            background: #141518; border: 1px solid var(--border-hover);
+            border-radius: 9px; padding: 10px 15px; font-size: 12.5px; font-weight: 500;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6);
+            animation: slideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .toast-msg.ok { border-color: rgba(16, 185, 129, 0.4); }
-        .toast-msg.ok i { color: #10B981; }
-        .toast-msg.err { border-color: rgba(239, 68, 68, 0.4); }
-        .toast-msg.err i { color: #EF4444; }
-        .toast-msg.info i { color: #3B82F6; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+        .toast-msg.ok { border-color: rgba(16, 185, 129, 0.35); }
+        .toast-msg.ok i { color: #10b981; }
+        .toast-msg.err { border-color: rgba(239, 68, 68, 0.35); }
+        .toast-msg.err i { color: #ef4444; }
+        .toast-msg.info i { color: #3b82f6; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+
+        .filter-tab {
+            color: var(--text-faint);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 9px;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+        }
+        .filter-tab:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .filter-tab.active {
+            background: rgba(37, 99, 235, 0.12);
+            color: #60a5fa;
+        }
     </style>
 </head>
 <body class="h-screen flex flex-col antialiased select-none md:select-auto">
 <div class="env-bg"></div>
 
 <!-- ==================== PANTALLA DE LOGIN ==================== -->
-<div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background: radial-gradient(1100px 700px at 50% -20%, #151F33 0%, #0B0F19 65%);">
+<div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background: radial-gradient(1100px 700px at 50% -20%, #15161a 0%, #070707 70%);">
     <div class="w-full max-w-sm relative">
-        <div class="text-center mb-8">
-            <div class="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center shadow-2xl mb-4" style="background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%); box-shadow: 0 10px 30px rgba(59,130,246,0.35);">
-                <i class="fas fa-scale-balanced text-2xl text-white"></i>
+        <div class="text-center mb-7">
+            <div class="w-12 h-12 rounded-xl mx-auto flex items-center justify-center shadow-lg mb-3.5 bg-gradient-to-br from-blue-600 to-blue-800 border border-blue-400/20">
+                <i class="fas fa-scale-balanced text-lg text-white"></i>
             </div>
-            <h1 class="text-2xl font-extrabold text-white tracking-tight">Bóveda AeroLex</h1>
-            <p class="text-xs text-slate-400 mt-1.5 uppercase tracking-widest font-semibold">Portal de Gestión Jurídica</p>
+            <h1 class="text-xl font-bold text-white tracking-tight">Bóveda AeroLex</h1>
+            <p class="text-[10.5px] text-slate-400 mt-1 uppercase tracking-wider font-semibold">Portal Forense & Sincronización</p>
         </div>
 
-        <div class="panel-card p-7 relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 via-blue-400 to-indigo-600"></div>
+        <div class="panel-card p-6 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-blue-600 via-blue-400 to-indigo-600"></div>
             <form id="login-form" class="space-y-4" autocomplete="off">
                 <div>
                     <label class="field-label">Clave de Administración</label>
                     <input type="password" id="admin-key" class="input-base" autocomplete="new-password" placeholder="••••••••••••" required>
                 </div>
-                <button type="submit" id="btn-connect" class="btn btn-primary w-full !py-3 !text-sm mt-2">
+                <button type="submit" id="btn-connect" class="btn btn-primary w-full !py-2.5 mt-2">
                     <i class="fas fa-lock-open mr-1"></i> Desbloquear Bóveda
                 </button>
             </form>
-            <p id="error-msg" class="text-red-400 text-xs text-center mt-3.5 hidden font-medium"></p>
+            <p id="error-msg" class="text-red-400 text-xs text-center mt-3 hidden font-medium"></p>
         </div>
-        <p class="text-center text-[11px] text-slate-500 mt-6 tracking-wide font-medium">Estudio Jurídico AeroLex · Puerto Montt, Chile</p>
+        <p class="text-center text-[10.5px] text-slate-500 mt-5 font-medium">Estudio Jurídico AeroLex · Puerto Montt</p>
     </div>
 </div>
 
 <!-- ==================== APLICACIÓN PRINCIPAL ==================== -->
 <div id="app-container" class="flex-1 flex flex-col overflow-hidden relative w-full h-full hidden">
 
-    <!-- BARRA SUPERIOR -->
-    <header class="h-14 border-b border-[--border] flex items-center justify-between px-4 md:px-6 shrink-0 z-20" style="background: rgba(18, 24, 38, 0.92); backdrop-filter: blur(12px);">
-        <div class="flex items-center gap-3.5">
-            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-blue-600 shadow-md shadow-blue-500/20">
+    <!-- BARRA SUPERIOR (ESTILO BOT JURÍDICO) -->
+    <header class="h-13 border-b border-[--border] flex items-center justify-between px-4 md:px-5 shrink-0 z-20" style="background: rgba(17, 17, 19, 0.95); backdrop-filter: blur(12px);">
+        <div class="flex items-center gap-3">
+            <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-blue-600 shadow-sm">
                 <i class="fas fa-scale-balanced text-white text-xs"></i>
             </div>
             <div>
-                <div class="font-bold text-white text-sm leading-tight flex items-center gap-2">
+                <div class="font-semibold text-white text-[13px] leading-tight flex items-center gap-2">
                     <span>Bóveda AeroLex</span>
-                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono font-bold">PORTAL WEB</span>
+                    <span class="text-[9.5px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-300 font-mono font-semibold">PORTAL WEB</span>
                 </div>
-                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Sincronización en Vivo</div>
+                <div class="text-[9.5px] text-slate-400 uppercase tracking-wider font-medium">Sincronización en Vivo con Bot Jurídico</div>
             </div>
         </div>
 
         <!-- Estadísticas en vivo -->
-        <div class="hidden lg:flex items-center gap-2.5" id="stats-bar">
+        <div class="hidden lg:flex items-center gap-2" id="stats-bar">
             <!-- Renderizado dinámico -->
         </div>
 
-        <div class="flex items-center gap-2">
-            <button onclick="openWaLog()" class="btn btn-secondary !p-2 relative" title="Registro de contactos WhatsApp" id="btn-wa-log">
+        <div class="flex items-center gap-1.5">
+            <button onclick="openWaLog()" class="btn btn-secondary !p-1.5 !px-2.5 relative" title="Registro de contactos WhatsApp" id="btn-wa-log">
                 <i class="fab fa-whatsapp text-emerald-400 text-xs"></i>
+                <span class="text-xs ml-1 hidden sm:inline text-slate-300">Consultas</span>
                 <span id="wa-badge" class="hidden absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center leading-none">0</span>
             </button>
             <button onclick="openSettings()" class="btn btn-secondary !p-2" title="Configuración WhatsApp"><i class="fas fa-gear text-xs"></i></button>
@@ -372,351 +422,423 @@
     <div class="flex flex-1 overflow-hidden relative">
 
         <!-- PANEL LATERAL: LISTA DE EXPEDIENTES -->
-        <aside id="sidebar" class="w-full md:w-[320px] lg:w-[350px] bg-[--panel] border-r border-[--border] flex flex-col shrink-0 absolute md:relative h-full z-10 transition-transform duration-300">
-            <div class="p-3 border-b border-[--border] shrink-0 space-y-2.5">
+        <aside id="sidebar" class="w-full md:w-[310px] lg:w-[330px] bg-[--panel] border-r border-[--border] flex flex-col shrink-0 absolute md:relative h-full z-10 transition-transform duration-300">
+            <div class="p-2.5 border-b border-[--border] shrink-0 space-y-2">
                 <div class="relative">
-                    <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
-                    <input type="text" id="search-case" onkeyup="filterCases()" class="input-base !pl-9 !py-2 !text-xs" placeholder="Buscar por código, RIT o materia..." autocomplete="off">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                    <input type="text" id="search-case" onkeyup="filterCases()" class="input-base !pl-8 !py-1.5 !text-xs" placeholder="Buscar código, RIT o materia..." autocomplete="off">
                 </div>
-                <div class="flex gap-1 overflow-x-auto pb-1" id="filter-bar">
-                    <button onclick="setStatusFilter('all')" data-f="all" class="filter-tab active text-[11px] font-semibold px-2.5 py-1 rounded-lg border border-transparent transition">Todos</button>
-                    <button onclick="setStatusFilter('nuevo')" data-f="nuevo" class="filter-tab text-[11px] font-semibold px-2.5 py-1 rounded-lg border border-transparent transition">Nuevos</button>
-                    <button onclick="setStatusFilter('urgente')" data-f="urgente" class="filter-tab text-[11px] font-semibold px-2.5 py-1 rounded-lg border border-transparent transition">Urgentes</button>
-                    <button onclick="setStatusFilter('activo')" data-f="activo" class="filter-tab text-[11px] font-semibold px-2.5 py-1 rounded-lg border border-transparent transition">Activos</button>
-                    <button onclick="setStatusFilter('finalizado')" data-f="finalizado" class="filter-tab text-[11px] font-semibold px-2.5 py-1 rounded-lg border border-transparent transition">Cerrados</button>
+                <div class="flex gap-1 overflow-x-auto pb-0.5" id="filter-bar">
+                    <button onclick="setStatusFilter('all')" data-f="all" class="filter-tab active">Todos</button>
+                    <button onclick="setStatusFilter('nuevo')" data-f="nuevo" class="filter-tab">Nuevos</button>
+                    <button onclick="setStatusFilter('urgente')" data-f="urgente" class="filter-tab">Urgentes</button>
+                    <button onclick="setStatusFilter('activo')" data-f="activo" class="filter-tab">Activos</button>
+                    <button onclick="setStatusFilter('finalizado')" data-f="finalizado" class="filter-tab">Cerrados</button>
                 </div>
-                <div class="flex items-center justify-between pt-1 border-t border-[--border] text-[11px] text-slate-400">
+                <div class="flex items-center justify-between pt-1 border-t border-[--border]/60 text-[10.5px] text-slate-400">
                     <div class="flex items-center gap-1.5">
-                        <i class="fas fa-arrow-down-wide-short text-[10px] text-slate-500"></i>
-                        <span class="text-[10px] uppercase tracking-wider font-bold text-slate-500">Orden:</span>
-                        <button type="button" onclick="setAdminSort('prioridad')" id="sort-btn-prioridad" class="admin-sort-btn px-1.5 py-0.5 rounded text-[11px] font-semibold text-blue-400 bg-blue-500/10 transition">Prioridad</button>
-                        <button type="button" onclick="setAdminSort('fecha')" id="sort-btn-fecha" class="admin-sort-btn px-1.5 py-0.5 rounded text-[11px] font-medium text-slate-400 hover:text-white transition">Fecha</button>
-                        <button type="button" onclick="setAdminSort('az')" id="sort-btn-az" class="admin-sort-btn px-1.5 py-0.5 rounded text-[11px] font-medium text-slate-400 hover:text-white transition">A-Z</button>
+                        <i class="fas fa-arrow-down-wide-short text-[9.5px] text-slate-500"></i>
+                        <span class="text-[9.5px] uppercase tracking-wider font-bold text-slate-500">Orden:</span>
+                        <button type="button" onclick="setAdminSort('prioridad')" id="sort-btn-prioridad" class="admin-sort-btn px-1.5 py-0.5 rounded text-[10.5px] font-semibold text-blue-400 bg-blue-500/10 transition">Prioridad</button>
+                        <button type="button" onclick="setAdminSort('fecha')" id="sort-btn-fecha" class="admin-sort-btn px-1.5 py-0.5 rounded text-[10.5px] font-medium text-slate-400 hover:text-white transition">Fecha</button>
+                        <button type="button" onclick="setAdminSort('az')" id="sort-btn-az" class="admin-sort-btn px-1.5 py-0.5 rounded text-[10.5px] font-medium text-slate-400 hover:text-white transition">A-Z</button>
                     </div>
                 </div>
             </div>
 
             <div id="cases-list" class="flex-1 overflow-y-auto pb-16 md:pb-2"></div>
 
-            <div class="p-3 border-t border-[--border] shrink-0">
-                <button onclick="createNewCase()" id="btn-new" class="btn btn-primary w-full !py-2.5">
+            <div class="p-2.5 border-t border-[--border] shrink-0">
+                <button onclick="createNewCase()" id="btn-new" class="btn btn-vanguard-new w-full !py-2 !text-xs font-semibold">
                     <i class="fas fa-plus"></i> Nuevo Expediente
                 </button>
             </div>
         </aside>
 
-        <!-- PANEL DERECHO: EDITOR DE EXPEDIENTE -->
+        <!-- PANEL DERECHO: EDITOR Y FICHA DE EXPEDIENTE -->
         <main id="editor-view" class="w-full md:flex-1 flex flex-col absolute md:relative h-full z-20 transition-transform duration-300 transform translate-x-full md:translate-x-0" style="background: var(--bg);">
 
             <!-- ENCABEZADO DEL EXPEDIENTE -->
-            <div class="h-16 border-b border-[--border] flex items-center justify-between px-4 md:px-8 shrink-0 gap-3" style="background: var(--panel);">
-                <div class="flex items-center gap-3 min-w-0">
-                    <button onclick="closeMobileEditor()" class="md:hidden btn btn-secondary !p-2 shrink-0"><i class="fas fa-chevron-left text-xs"></i></button>
+            <div class="h-14 border-b border-[--border] flex items-center justify-between px-4 md:px-6 shrink-0 gap-3" style="background: var(--panel);">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <button onclick="closeMobileEditor()" class="md:hidden btn btn-secondary !p-1.5 shrink-0"><i class="fas fa-chevron-left text-xs"></i></button>
                     <div class="min-w-0">
-                        <div class="flex items-center gap-2.5">
-                            <span id="editor-code" class="font-extrabold text-base md:text-lg text-white font-mono tracking-tight">Seleccione un expediente</span>
+                        <div class="flex items-center gap-2">
+                            <span id="editor-code" class="font-bold text-sm md:text-base text-white font-mono tracking-tight">Seleccione un expediente</span>
                             <span id="editor-badge" class="hidden"></span>
                         </div>
-                        <div id="editor-materia-title" class="text-xs text-slate-400 font-medium truncate"></div>
+                        <div id="editor-materia-title" class="text-[11px] text-slate-400 font-medium truncate"></div>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2.5 shrink-0">
-                    <div id="unsaved-badge" class="hidden text-xs font-semibold text-amber-400 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-400/10 border border-amber-400/20">
-                        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <div class="flex items-center gap-2 shrink-0">
+                    <div id="unsaved-badge" class="hidden text-[11px] font-medium text-amber-400 flex items-center gap-1 px-2 py-0.5 rounded bg-amber-400/10 border border-amber-400/20">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
                         <span>Sin guardar</span>
                     </div>
-                    <button onclick="confirmDelete()" id="btn-delete" class="hidden btn btn-danger !px-3.5"><i class="fas fa-trash-alt"></i><span class="hidden sm:inline">Eliminar</span></button>
-                    <button onclick="saveCase()" id="btn-sync" class="hidden btn btn-primary !px-5"><i class="fas fa-cloud-arrow-up"></i><span class="hidden sm:inline">Guardar</span></button>
+                    <button onclick="confirmDelete()" id="btn-delete" class="hidden btn btn-danger !px-3"><i class="fas fa-trash-alt"></i><span class="hidden sm:inline">Eliminar</span></button>
+                    <button onclick="saveCase()" id="btn-sync" class="hidden btn btn-primary !px-4"><i class="fas fa-cloud-arrow-up"></i><span class="hidden sm:inline">Guardar</span></button>
                 </div>
             </div>
 
-            <!-- CONTENIDO DEL EDITOR -->
-            <div id="editor-body" class="flex-1 overflow-y-auto p-4 md:p-8 hidden">
-                <div class="max-w-4xl mx-auto space-y-6 pb-28">
+            <!-- BARRA DE PESTAÑAS (ESTILO BOT JURÍDICO LEGAL CASE PANEL) -->
+            <div id="editor-tabs-bar" class="border-b border-[--border] px-4 md:px-6 flex items-center gap-1 shrink-0 overflow-x-auto hide-scrollbar hidden" style="background: rgba(17, 17, 19, 0.6);">
+                <button type="button" onclick="switchTab('resumen')" id="tab-resumen" class="tab-btn active">
+                    <i class="fas fa-file-lines text-xs"></i>
+                    <span>Resumen & Ficha</span>
+                </button>
+                <button type="button" onclick="switchTab('estado-diario')" id="tab-estado-diario" class="tab-btn">
+                    <i class="fas fa-gavel text-xs"></i>
+                    <span>Estado Diario PJUD</span>
+                </button>
+                <button type="button" onclick="switchTab('avance')" id="tab-avance" class="tab-btn">
+                    <i class="fas fa-list-check text-xs"></i>
+                    <span>Avance & Hitos</span>
+                </button>
+                <button type="button" onclick="switchTab('credenciales')" id="tab-credenciales" class="tab-btn">
+                    <i class="fas fa-key text-xs"></i>
+                    <span>Credenciales & Cliente</span>
+                </button>
+            </div>
 
-                    <!-- SECCIÓN 1: CREDENCIALES DEL CLIENTE -->
-                    <div class="panel-card overflow-hidden">
-                        <div class="flex items-center justify-between px-5 py-3.5 border-b border-[--border] bg-[#141B2B]">
-                            <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-400">
-                                <i class="fas fa-key"></i> Credenciales de Rastreo para el Cliente
-                            </div>
-                            <button onclick="sendCredentialsWA()" class="btn btn-secondary !text-xs !py-1.5 !px-3 hover:!text-emerald-400">
-                                <i class="fab fa-whatsapp text-emerald-400"></i> Enviar por WhatsApp
-                            </button>
-                        </div>
-                        <div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="p-4 rounded-xl border border-[--border] bg-[#0E1422] flex items-center justify-between">
-                                <div>
-                                    <span class="field-label">Código del Expediente</span>
-                                    <div id="cred-code" class="text-xl font-bold font-mono text-white tracking-wide">—</div>
-                                    <p class="text-[11px] text-slate-500 mt-1">Identificador único del caso</p>
-                                </div>
-                                <button onclick="copyText(document.getElementById('cred-code').innerText, 'Código copiado')" class="btn btn-secondary !p-2.5" title="Copiar código">
-                                    <i class="fas fa-copy text-xs"></i>
-                                </button>
-                            </div>
-                            <div class="p-4 rounded-xl border border-[--border] bg-[#0E1422] flex items-center justify-between">
-                                <div>
-                                    <span class="field-label">PIN de 4 Dígitos</span>
-                                    <div id="cred-pin" class="text-xl font-bold font-mono text-emerald-400 tracking-widest">—</div>
-                                    <p class="text-[11px] text-slate-500 mt-1">Clave privada de consulta para el cliente</p>
-                                </div>
-                                <button onclick="copyText(document.getElementById('cred-pin').innerText, 'PIN copiado')" class="btn btn-secondary !p-2.5" title="Copiar PIN">
-                                    <i class="fas fa-copy text-xs"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+            <!-- CONTENIDO DE LAS PESTAÑAS -->
+            <div id="editor-body" class="flex-1 overflow-y-auto p-4 md:p-6 hidden">
+                <div class="max-w-4xl mx-auto space-y-5 pb-20">
 
-                    <!-- SECCIÓN 2: DATOS GENERALES DE LA CAUSA -->
-                    <div class="panel-card overflow-hidden">
-                        <div class="px-5 py-3.5 border-b border-[--border] bg-[#141B2B] flex items-center justify-between">
-                            <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-400">
-                                <i class="fas fa-folder-open"></i> Ficha y Datos de la Causa
-                            </div>
-                            <select id="case-status" class="input-base !w-auto !py-1 !text-xs font-bold" onchange="markUnsaved()">
-                                <option value="nuevo">🔵 NUEVO (ingreso pendiente)</option>
-                                <option value="activo">▶️ ACTIVO (en tramitación)</option>
-                                <option value="urgente">🔴 URGENTE (plazo crítico)</option>
-                                <option value="suspendido">⏸️ SUSPENDIDO</option>
-                                <option value="finalizado">✅ FINALIZADO (cerrado)</option>
-                            </select>
-                        </div>
-                        <div class="p-5 space-y-4">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="field-label">RIT / Rol Judicial / Identificador Interno</label>
-                                    <input type="text" id="case-rit" class="input-base font-mono" placeholder="Ej: C-1450-2026" oninput="markUnsaved()">
+                    <!-- ==================== PESTAÑA 1: RESUMEN & FICHA FORENSE ==================== -->
+                    <div id="pane-resumen" class="tab-pane space-y-5">
+
+                        <!-- FICHA EJECUTIVA FORENSE (ALTA DIRECCIÓN LITIGACIÓN CHILENA) -->
+                        <div class="panel-card p-4 space-y-4 border border-[--border]">
+                            <div class="flex items-center justify-between pb-3 border-b border-[--border]">
+                                <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                    <i class="fas fa-shield-halved text-blue-400"></i> Ficha Ejecutiva Forense
                                 </div>
-                                <div>
-                                    <label class="field-label">Tribunal u Oficina</label>
-                                    <input type="text" id="case-tribunal" class="input-base" placeholder="Ej: 1° Juzgado Civil de Puerto Montt" oninput="markUnsaved()">
+                                <span class="text-[10px] text-slate-500 font-mono">Control de Litigación</span>
+                            </div>
+
+                            <!-- Cuadrante de 4 ejes -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                                <div class="p-3 rounded-lg border border-[--border] bg-[#0d0e10]">
+                                    <span class="field-label !mb-1">Parte Patrocinada</span>
+                                    <div class="text-xs font-semibold text-white truncate" id="forensic-client">—</div>
+                                    <span class="text-[10px] text-slate-500">Actor / Demandante</span>
+                                </div>
+                                <div class="p-3 rounded-lg border border-[--border] bg-[#0d0e10]">
+                                    <span class="field-label !mb-1">Tribunal Competente</span>
+                                    <div class="text-xs font-semibold text-white truncate" id="forensic-court">Pendiente de radicación</div>
+                                    <span class="text-[10px] text-slate-500" id="forensic-jurisdiction">Competencia Territorial</span>
+                                </div>
+                                <div class="p-3 rounded-lg border border-[--border] bg-[#0d0e10]">
+                                    <span class="field-label !mb-1">Rol Causa / RIT</span>
+                                    <div class="text-xs font-mono font-bold text-cyan-300 truncate" id="forensic-rit">Sin RIT asignado</div>
+                                    <span class="text-[10px] text-slate-500">Identificador PJUD</span>
+                                </div>
+                                <div class="p-3 rounded-lg border border-[--border] bg-[#0d0e10]">
+                                    <span class="field-label !mb-1">Vía Procesal</span>
+                                    <div class="text-[11px] font-medium text-slate-200 leading-tight" id="forensic-track">Declarativo Civil</div>
+                                    <span class="text-[9.5px] text-blue-400 uppercase tracking-tighter">Inferencia Procesal</span>
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="field-label">Categoría Legal</label>
-                                    <select id="case-category" class="input-base" onchange="updateServicesDropdown(); markUnsaved()"></select>
+                            <!-- Checklist dinámico de admisibilidad forense -->
+                            <div class="p-3 rounded-lg border border-[--border] bg-[#0a0b0d] space-y-2">
+                                <div class="text-[10.5px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                    <i class="fas fa-clipboard-check text-blue-400"></i> Auditoría de Admisibilidad & Requisitos Previos
                                 </div>
-                                <div>
-                                    <label class="field-label">Materia Específica</label>
-                                    <input type="text" id="case-matter" class="input-base" placeholder="Ej: Barraza con López" oninput="markUnsaved()">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs" id="forensic-checklist">
+                                    <!-- Inyectado dinámicamente -->
                                 </div>
-                            </div>
-
-                            <div>
-                                <label class="field-label">Apunte / Resumen para el Cliente (Visible en el portal web)</label>
-                                <textarea id="case-detail" rows="3" class="input-base resize-none" placeholder="Redacta un texto claro que el cliente leerá al rastrear su caso..." oninput="markUnsaved()"></textarea>
-                                <p class="text-[11px] text-slate-500 mt-1">Este mensaje se muestra de forma destacada en la consulta pública del cliente.</p>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- SECCIÓN: ESTADO DIARIO PJUD (VIGILANCIA EN VIVO) -->
-                    <div class="panel-card overflow-hidden border border-cyan-500/30 shadow-[0_4px_25px_rgba(6,182,212,0.08)]">
-                        <div class="px-5 py-3.5 border-b border-[--border] bg-gradient-to-r from-[#0d1c2d] to-[#141B2B] flex flex-wrap items-center justify-between gap-3">
-                            <div class="flex items-center gap-2.5">
-                                <span class="relative flex h-2.5 w-2.5">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
-                                </span>
-                                <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">
-                                    Vigilancia Judicial · Estado Diario PJUD
-                                </span>
+                        <!-- DATOS GENERALES DE LA CAUSA -->
+                        <div class="panel-card overflow-hidden">
+                            <div class="px-4 py-3 border-b border-[--border] bg-[#141518] flex items-center justify-between">
+                                <div class="flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-wider text-slate-300">
+                                    <i class="fas fa-folder-open text-blue-400"></i> Datos y Parámetros del Expediente
+                                </div>
+                                <select id="case-status" class="input-base !w-auto !py-1 !text-xs font-semibold" onchange="markUnsaved()">
+                                    <option value="nuevo">NUEVO (ingreso pendiente)</option>
+                                    <option value="activo">ACTIVO (en tramitación)</option>
+                                    <option value="urgente">URGENTE (plazo crítico)</option>
+                                    <option value="suspendido">SUSPENDIDO</option>
+                                    <option value="finalizado">FINALIZADO (cerrado)</option>
+                                </select>
                             </div>
-                            <button type="button" id="btn-check-ed" onclick="checkEstadoDiarioCurrent()" class="btn !bg-cyan-500 hover:!bg-cyan-400 text-slate-950 font-bold !text-xs !py-1.5 !px-3.5 shadow-[0_0_15px_rgba(6,182,212,0.4)] transition active:scale-95 flex items-center gap-2 cursor-pointer">
-                                <i class="fas fa-bolt text-xs" id="ed-bolt-icon"></i>
-                                <span id="btn-check-ed-text">⚡ Consultar Estado Diario Ahora</span>
-                            </button>
-                        </div>
-                        <div class="p-5 space-y-4">
-                            <!-- Sensor Temporal de Alta Precisión y Diagnóstico -->
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 p-3.5 rounded-xl border border-[--border] bg-[#0E1422]">
-                                <div>
-                                    <span class="field-label !mb-1">Última Comprobación (Hora Exacta)</span>
-                                    <div class="text-xs text-slate-200 font-mono flex items-center gap-1.5" id="ed-display-time">
-                                        <i class="far fa-clock text-cyan-400"></i>
-                                        <span id="ed-time-val">Sin comprobación previa</span>
-                                    </div>
-                                    <p class="text-[10px] text-slate-500 mt-0.5" id="ed-source-val">Auditoría con precisión de segundos</p>
-                                </div>
-                                <div>
-                                    <span class="field-label !mb-1">Estado en la OJV</span>
-                                    <div id="ed-status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700">
-                                        <span class="w-2 h-2 rounded-full bg-slate-500"></span>
-                                        <span>Pendiente de consulta</span>
-                                    </div>
-                                    <p class="text-[10px] text-slate-500 mt-0.5" id="ed-novelty-summary">Monitoreo directo sin ClaveÚnica</p>
-                                </div>
-                                <div>
-                                    <span class="field-label !mb-1">Tribunal y RIT Vinculado</span>
-                                    <div class="text-xs text-white font-medium truncate" id="ed-court-val">—</div>
-                                    <p class="text-[10px] text-cyan-400 font-mono mt-0.5" id="ed-docket-val">—</p>
-                                </div>
-                            </div>
-
-                            <!-- Contenedor de Resoluciones y Proveídos Registrados -->
-                            <div>
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="field-label !mb-0 text-slate-300">Resoluciones y Proveídos Oficiales Detectados</span>
-                                    <span class="text-[11px] text-slate-500 font-mono" id="ed-resolutions-count">0 registros</span>
-                                </div>
-                                <div id="ed-resolutions-list" class="space-y-2">
-                                    <div class="p-6 text-center text-xs text-slate-500 italic bg-[#0E1422] rounded-xl border border-[--border]">
-                                        Presiona "⚡ Consultar Estado Diario Ahora" para verificar resoluciones, proveídos y decretos judiciales oficiales en el Poder Judicial.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Monitor de Cuota y Frecuencia de GitHub Actions Nube -->
-                            <div class="p-3.5 rounded-xl border border-[--border] bg-[#0A0F1A] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></div>
+                            <div class="p-4 space-y-3.5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     <div>
-                                        <span class="font-semibold text-white">Cuota Nube GitHub Actions (Gratuita):</span>
-                                        <p class="text-[11px] text-slate-400 mt-0.5">
-                                            2.000 min/mes compartidos · Consumo estimado: ~44 min/mes (&lt;2.5%) · Alarma: Lunes a viernes 08:00 AM (incluso con tu PC apagado)
-                                        </p>
+                                        <label class="field-label">RIT / Rol Judicial (Oficina Judicial Virtual)</label>
+                                        <input type="text" id="case-rit" class="input-base font-mono" placeholder="Ej: C-1450-2026" oninput="markUnsaved(); updateForensicBrief();">
+                                    </div>
+                                    <div>
+                                        <label class="field-label">Tribunal u Oficina Competente</label>
+                                        <input type="text" id="case-tribunal" class="input-base" placeholder="Ej: 1° Juzgado Civil de Puerto Montt" oninput="markUnsaved(); updateForensicBrief();">
                                     </div>
                                 </div>
-                                <div class="shrink-0 text-right">
-                                    <span class="px-2.5 py-1 rounded-full border border-[--border] font-mono text-[10px] text-cyan-300 bg-[#141B2B]">
-                                        Reinicio: 1º de cada mes (00:00 UTC)
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="field-label">Categoría Jurídica</label>
+                                        <select id="case-category" class="input-base" onchange="updateServicesDropdown(); markUnsaved(); updateForensicBrief();"></select>
+                                    </div>
+                                    <div>
+                                        <label class="field-label">Carátula / Materia Específica</label>
+                                        <input type="text" id="case-matter" class="input-base" placeholder="Ej: Barraza con López" oninput="markUnsaved(); updateForensicBrief();">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="field-label">Apunte / Resumen para el Cliente (Visible en portal de consulta)</label>
+                                    <textarea id="case-detail" rows="3" class="input-base resize-none" placeholder="Redacta la observación clara que el cliente leerá al rastrear su caso..." oninput="markUnsaved()"></textarea>
+                                    <p class="text-[10.5px] text-slate-500 mt-1">Este informe se actualiza en tiempo real para el cliente en aerolex.cl.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- ==================== PESTAÑA 2: ESTADO DIARIO PJUD ==================== -->
+                    <div id="pane-estado-diario" class="tab-pane space-y-4 hidden">
+                        <div class="panel-card overflow-hidden border border-[--border]">
+                            <div class="px-4 py-3 border-b border-[--border] bg-[#141518] flex flex-wrap items-center justify-between gap-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 rounded-full bg-cyan-400"></div>
+                                    <span class="text-[11px] font-bold uppercase tracking-wider text-white">
+                                        Vigilancia Judicial · Estado Diario OJV
                                     </span>
                                 </div>
+                                <button type="button" id="btn-check-ed" onclick="checkEstadoDiarioCurrent()" class="btn btn-secondary !py-1.5 !px-3.5 !text-xs hover:!border-cyan-500/40 hover:!text-cyan-300">
+                                    <i class="fas fa-rotate text-xs" id="ed-bolt-icon"></i>
+                                    <span id="btn-check-ed-text">Consultar Estado Diario Ahora</span>
+                                </button>
+                            </div>
+                            <div class="p-4 space-y-3.5">
+                                <!-- Sensor Temporal de Alta Precisión -->
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 p-3 rounded-lg border border-[--border] bg-[#0d0e10]">
+                                    <div>
+                                        <span class="field-label !mb-0.5">Última Comprobación (Hora Exacta)</span>
+                                        <div class="text-xs text-white font-mono flex items-center gap-1.5" id="ed-display-time">
+                                            <i class="far fa-clock text-cyan-400"></i>
+                                            <span id="ed-time-val">Sin comprobación previa</span>
+                                        </div>
+                                        <p class="text-[10px] text-slate-500 mt-0.5" id="ed-source-val">Precisión de segundos</p>
+                                    </div>
+                                    <div>
+                                        <span class="field-label !mb-0.5">Estado en OJV</span>
+                                        <div id="ed-status-badge" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-semibold bg-[#18191c] text-slate-400 border border-[--border]">
+                                            <i class="fas fa-clock text-[10px]"></i>
+                                            <span>Pendiente de consulta</span>
+                                        </div>
+                                        <p class="text-[10px] text-slate-500 mt-0.5" id="ed-novelty-summary">Monitoreo sin ClaveÚnica</p>
+                                    </div>
+                                    <div>
+                                        <span class="field-label !mb-0.5">Tribunal y RIT Vinculado</span>
+                                        <div class="text-xs text-white font-medium truncate" id="ed-court-val">—</div>
+                                        <p class="text-[10px] text-cyan-400 font-mono mt-0.5" id="ed-docket-val">—</p>
+                                    </div>
+                                </div>
+
+                                <!-- Contenedor de Resoluciones y Proveídos -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="field-label !mb-0 text-slate-300">Resoluciones y Proveídos Detectados</span>
+                                        <span class="text-[10.5px] text-slate-500 font-mono" id="ed-resolutions-count">0 registros</span>
+                                    </div>
+                                    <div id="ed-resolutions-list" class="space-y-2">
+                                        <div class="p-5 text-center text-xs text-slate-500 italic bg-[#0d0e10] rounded-lg border border-[--border]">
+                                            Presiona "Consultar Estado Diario Ahora" para verificar resoluciones, proveídos y decretos judiciales oficiales en el Poder Judicial.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Monitor de Cuota GitHub Actions -->
+                                <div class="p-3 rounded-lg border border-[--border] bg-[#0a0b0d] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></div>
+                                        <div>
+                                            <span class="font-medium text-white">Vigilancia Desatendida (GitHub Actions):</span>
+                                            <p class="text-[10.5px] text-slate-400">
+                                                2.000 min/mes compartidos · Consumo real: ~2.4 seg/causa (&lt;2.5% cuota) · Cron: Lunes a viernes 08:00 AM
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="shrink-0">
+                                        <span class="px-2 py-0.5 rounded border border-[--border] font-mono text-[9.5px] text-cyan-300 bg-[#141518]">
+                                            Reinicio: 1º de cada mes
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- SECCIÓN 3: CONTROL DE AVANCE PROCESAL (ETAPAS 0 A 5) — MOVER A VOLUNTAD -->
-                    <div class="panel-card overflow-hidden">
-                        <div class="px-5 py-3.5 border-b border-[--border] bg-[#141B2B] flex items-center justify-between">
-                            <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-400">
-                                <i class="fas fa-sliders"></i> Control de Avance Procesal (Paso 0 a 5)
-                            </div>
-                            <div class="text-xs text-slate-400 font-semibold">
-                                <span id="stage-badge-text" class="text-blue-400 font-bold">Paso 1 de 5</span>
-                            </div>
-                        </div>
-                        <div class="p-5 space-y-4">
-                            <p class="text-xs text-slate-400">
-                                Haz clic en cualquiera de las 6 etapas para mover el avance procesal a voluntad. El cliente y el chatbot informarán este paso exacto.
-                            </p>
+                    <!-- ==================== PESTAÑA 3: AVANCE PROCESAL & HITOS ==================== -->
+                    <div id="pane-avance" class="tab-pane space-y-4 hidden">
 
-                            <!-- Barra interactiva de 6 etapas -->
-                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2" id="stepper-container">
-                                <!-- Generado dinámicamente -->
+                        <!-- CONTROL DE ETAPAS (PASO 0 A 5) -->
+                        <div class="panel-card overflow-hidden">
+                            <div class="px-4 py-3 border-b border-[--border] bg-[#141518] flex items-center justify-between">
+                                <div class="flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-wider text-slate-300">
+                                    <i class="fas fa-sliders text-blue-400"></i> Etapa Procesal Actual (Paso 0 a 5)
+                                </div>
+                                <div class="text-xs text-blue-400 font-bold" id="stage-badge-text">
+                                    Paso 1 de 5
+                                </div>
                             </div>
+                            <div class="p-4 space-y-3">
+                                <p class="text-xs text-slate-400">
+                                    Selecciona cualquiera de las 6 etapas procesales. El cliente y el chatbot informarán este avance exacto.
+                                </p>
 
-                            <!-- Botones de ajuste rápido -->
-                            <div class="flex items-center justify-between pt-2 border-t border-[--border]">
-                                <button type="button" onclick="stepChange(-1)" class="btn btn-secondary !text-xs !py-1.5 !px-3">
-                                    <i class="fas fa-chevron-left text-[10px]"></i> Retroceder etapa
-                                </button>
-                                <div class="text-xs font-medium text-slate-300 text-center">
-                                    <span id="stage-current-name" class="font-bold text-white">—</span>
+                                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2" id="stepper-container">
+                                    <!-- Generado dinámicamente -->
                                 </div>
-                                <button type="button" onclick="stepChange(1)" class="btn btn-secondary !text-xs !py-1.5 !px-3">
-                                    Avanzar etapa <i class="fas fa-chevron-right text-[10px]"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- SECCIÓN 4: HITOS PÚBLICOS DE LA CAUSA (LÍNEA DE TIEMPO) -->
-                    <div class="panel-card overflow-hidden">
-                        <div class="px-5 py-3.5 border-b border-[--border] bg-[#141B2B] flex items-center justify-between">
-                            <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-400">
-                                <i class="fas fa-timeline"></i> Hitos Públicos de la Línea de Tiempo
-                            </div>
-                            <span class="text-xs text-slate-400 font-medium" id="milestones-count">0 hitos</span>
-                        </div>
-                        <div class="p-5 space-y-4">
-                            <!-- Formulario para agregar hito rápido -->
-                            <div class="p-3.5 rounded-xl border border-[--border] bg-[#0E1422] grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center">
-                                <div class="sm:col-span-6">
-                                    <input type="text" id="new-step-title" class="input-base !text-xs" placeholder="Título del nuevo hito (ej. Demanda notificada)...">
-                                </div>
-                                <div class="sm:col-span-3">
-                                    <input type="text" id="new-step-date" class="input-base !text-xs" placeholder="Fecha (ej. 07 sep 2026)">
-                                </div>
-                                <div class="sm:col-span-3 flex items-center gap-2">
-                                    <label class="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer select-none">
-                                        <input type="checkbox" id="new-step-done" class="rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0">
-                                        <span>Cumplido</span>
-                                    </label>
-                                    <button type="button" onclick="addNewMilestone()" class="btn btn-primary !py-1.5 !px-3 !text-xs flex-1">
-                                        <i class="fas fa-plus"></i> Añadir
+                                <div class="flex items-center justify-between pt-2 border-t border-[--border]/60">
+                                    <button type="button" onclick="stepChange(-1)" class="btn btn-secondary !py-1 !px-2.5 !text-xs">
+                                        <i class="fas fa-chevron-left text-[9.5px]"></i> Retroceder
+                                    </button>
+                                    <div class="text-xs font-medium text-slate-300 text-center">
+                                        <span id="stage-current-name" class="font-bold text-white">—</span>
+                                    </div>
+                                    <button type="button" onclick="stepChange(1)" class="btn btn-secondary !py-1 !px-2.5 !text-xs">
+                                        Avanzar <i class="fas fa-chevron-right text-[9.5px]"></i>
                                     </button>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Lista interactiva de hitos -->
-                            <div id="milestones-list" class="space-y-2.5">
-                                <!-- Generado dinámicamente -->
+                        <!-- HITOS PÚBLICOS DE LA CAUSA -->
+                        <div class="panel-card overflow-hidden">
+                            <div class="px-4 py-3 border-b border-[--border] bg-[#141518] flex items-center justify-between">
+                                <div class="flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-wider text-slate-300">
+                                    <i class="fas fa-timeline text-blue-400"></i> Hitos Públicos de la Línea de Tiempo
+                                </div>
+                                <span class="text-[10.5px] text-slate-400 font-medium" id="milestones-count">0 hitos</span>
+                            </div>
+                            <div class="p-4 space-y-3">
+                                <!-- Formulario de nuevo hito -->
+                                <div class="p-3 rounded-lg border border-[--border] bg-[#0d0e10] grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                                    <div class="sm:col-span-6">
+                                        <input type="text" id="new-step-title" class="input-base !text-xs !py-1.5" placeholder="Título del nuevo hito (ej. Demanda notificada)...">
+                                    </div>
+                                    <div class="sm:col-span-3">
+                                        <input type="text" id="new-step-date" class="input-base !text-xs !py-1.5 font-mono" placeholder="Fecha (ej. 09 sep 2026)">
+                                    </div>
+                                    <div class="sm:col-span-3 flex items-center gap-2">
+                                        <label class="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer select-none">
+                                            <input type="checkbox" id="new-step-done" class="rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0">
+                                            <span>Cumplido</span>
+                                        </label>
+                                        <button type="button" onclick="addNewMilestone()" class="btn btn-primary !py-1.5 !px-3 !text-xs flex-1">
+                                            <i class="fas fa-plus"></i> Añadir
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div id="milestones-list" class="space-y-2">
+                                    <!-- Generado dinámicamente -->
+                                </div>
                             </div>
                         </div>
+
                     </div>
 
-                    <!-- SECCIÓN 5: PREVISUALIZACIÓN EN VIVO (LO QUE VE EL CLIENTE) -->
-                    <div class="panel-card overflow-hidden">
-                        <div class="px-5 py-3.5 border-b border-[--border] bg-[#141B2B] flex items-center justify-between">
-                            <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-300">
-                                <i class="fas fa-eye text-blue-400"></i> Previsualización: Vista del Cliente en AeroLex
+                    <!-- ==================== PESTAÑA 4: CREDENCIALES & VISTA CLIENTE ==================== -->
+                    <div id="pane-credenciales" class="tab-pane space-y-4 hidden">
+
+                        <!-- CREDENCIALES DE CONSULTA DEL CLIENTE -->
+                        <div class="panel-card overflow-hidden">
+                            <div class="flex items-center justify-between px-4 py-3 border-b border-[--border] bg-[#141518]">
+                                <div class="flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-wider text-slate-300">
+                                    <i class="fas fa-key text-blue-400"></i> Credenciales de Rastreo del Cliente
+                                </div>
+                                <button onclick="sendCredentialsWA()" class="btn btn-secondary !text-xs !py-1 !px-2.5 hover:!text-emerald-400">
+                                    <i class="fab fa-whatsapp text-emerald-400"></i> Enviar por WhatsApp
+                                </button>
                             </div>
-                            <span class="text-[11px] text-slate-400">Simulación en vivo</span>
-                        </div>
-                        <div class="p-5">
-                            <div class="p-5 rounded-2xl border border-[--border] bg-[#0E1422] space-y-4">
-                                <div class="flex items-center justify-between border-b border-[--border] pb-3.5">
+                            <div class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div class="p-3.5 rounded-lg border border-[--border] bg-[#0d0e10] flex items-center justify-between">
                                     <div>
-                                        <span class="text-[10px] font-bold tracking-widest text-blue-400 uppercase">AeroLex · Estudio Jurídico</span>
-                                        <h3 id="prev-code" class="text-lg font-extrabold font-mono text-white mt-0.5">ALX-2026-69</h3>
-                                        <div id="prev-materia" class="text-xs text-slate-300 font-medium">Barraza con López</div>
+                                        <span class="field-label">Código del Expediente</span>
+                                        <div id="cred-code" class="text-lg font-bold font-mono text-white tracking-wide">—</div>
+                                        <p class="text-[10px] text-slate-500 mt-0.5">Identificador en portal</p>
                                     </div>
-                                    <span id="prev-chip" class="chip chip-nuevo">NUEVO</span>
+                                    <button onclick="copyText(document.getElementById('cred-code').innerText, 'Código copiado')" class="btn btn-secondary !p-2" title="Copiar código">
+                                        <i class="fas fa-copy text-xs"></i>
+                                    </button>
                                 </div>
-
-                                <!-- Barra de progreso del cliente -->
-                                <div class="space-y-1.5">
-                                    <div class="flex justify-between text-xs text-slate-400">
-                                        <span id="prev-stage-text">Progreso: Paso 1 de 5</span>
-                                        <span id="prev-stage-pct" class="font-bold text-white">20%</span>
+                                <div class="p-3.5 rounded-lg border border-[--border] bg-[#0d0e10] flex items-center justify-between">
+                                    <div>
+                                        <span class="field-label">PIN Privado de 4 Dígitos</span>
+                                        <div id="cred-pin" class="text-lg font-bold font-mono text-emerald-400 tracking-widest">—</div>
+                                        <p class="text-[10px] text-slate-500 mt-0.5">Clave de acceso seguro</p>
                                     </div>
-                                    <div class="h-2 w-full rounded-full bg-[#182337] overflow-hidden">
-                                        <div id="prev-bar" class="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-300" style="width: 20%;"></div>
+                                    <button onclick="copyText(document.getElementById('cred-pin').innerText, 'PIN copiado')" class="btn btn-secondary !p-2" title="Copiar PIN">
+                                        <i class="fas fa-copy text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SIMULADOR EN VIVO (VISTA CLIENTE EN AEROLEX.CL) -->
+                        <div class="panel-card overflow-hidden">
+                            <div class="px-4 py-3 border-b border-[--border] bg-[#141518] flex items-center justify-between">
+                                <div class="flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-wider text-slate-300">
+                                    <i class="fas fa-eye text-blue-400"></i> Previsualización: Vista Pública del Cliente
+                                </div>
+                                <span class="text-[10px] text-slate-500 font-mono">aerolex.cl/portal</span>
+                            </div>
+                            <div class="p-4">
+                                <div class="p-4 rounded-xl border border-[--border] bg-[#0d0e10] space-y-3.5">
+                                    <div class="flex items-center justify-between border-b border-[--border] pb-3">
+                                        <div>
+                                            <span class="text-[9.5px] font-bold tracking-widest text-blue-400 uppercase">AeroLex · Estudio Jurídico</span>
+                                            <h3 id="prev-code" class="text-base font-bold font-mono text-white mt-0.5">—</h3>
+                                            <div id="prev-materia" class="text-xs text-slate-300 font-medium">—</div>
+                                        </div>
+                                        <span id="prev-chip" class="chip chip-nuevo">NUEVO</span>
                                     </div>
-                                </div>
 
-                                <!-- Apunte del caso -->
-                                <div class="p-3 rounded-xl border border-[--border] bg-[#131A2A]">
-                                    <div class="text-[11px] font-semibold text-blue-300 mb-1">Observación visible para el cliente:</div>
-                                    <p id="prev-detail" class="text-xs text-slate-200 whitespace-pre-wrap leading-relaxed">ESPERANDO ANTECEDENTES DEL CASO</p>
-                                </div>
+                                    <div class="space-y-1">
+                                        <div class="flex justify-between text-xs text-slate-400">
+                                            <span id="prev-stage-text">Progreso: Paso 1 de 5</span>
+                                            <span id="prev-stage-pct" class="font-bold text-white">20%</span>
+                                        </div>
+                                        <div class="h-1.5 w-full rounded-full bg-[#18191c] overflow-hidden">
+                                            <div id="prev-bar" class="h-full rounded-full bg-blue-500 transition-all duration-300" style="width: 20%;"></div>
+                                        </div>
+                                    </div>
 
-                                <!-- Hitos en preview -->
-                                <div class="space-y-2 pt-1">
-                                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Hitos registrados:</div>
-                                    <div id="prev-steps" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                        <!-- Inyectado dinámicamente -->
+                                    <div class="p-2.5 rounded-lg border border-[--border] bg-[#111215]">
+                                        <div class="text-[10px] font-semibold text-blue-300 uppercase tracking-wider mb-1">Informe del abogado para el cliente:</div>
+                                        <p id="prev-detail" class="text-xs text-slate-200 whitespace-pre-wrap leading-relaxed">—</p>
+                                    </div>
+
+                                    <div class="space-y-1.5 pt-1">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Hitos de la causa:</div>
+                                        <div id="prev-steps" class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                                            <!-- Inyectado dinámicamente -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
 
                 </div>
             </div>
 
             <!-- ESTADO VACÍO -->
-            <div id="editor-empty" class="flex-1 flex flex-col items-center justify-center text-slate-500 p-8 text-center">
-                <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 bg-slate-900 border border-slate-800">
-                    <i class="fas fa-folder-open text-2xl text-slate-600"></i>
+            <div id="editor-empty" class="flex-1 flex flex-col items-center justify-center text-slate-500 p-6 text-center">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3 bg-[#111113] border border-[--border]">
+                    <i class="fas fa-folder-open text-lg text-slate-600"></i>
                 </div>
-                <h3 class="text-sm font-bold text-slate-300">Selecciona un expediente</h3>
-                <p class="text-xs text-slate-500 mt-1 max-w-sm">Haz clic en una causa de la barra lateral para editar sus credenciales, hitos y avance procesal.</p>
+                <h3 class="text-xs font-semibold text-slate-300">Selecciona un expediente</h3>
+                <p class="text-[11px] text-slate-500 mt-1 max-w-xs">Elige una causa de la barra lateral para revisar su Ficha Forense, Estado Diario y avance procesal.</p>
             </div>
         </main>
     </div>
@@ -726,24 +848,9 @@
 <div id="toast-zone"></div>
 <div id="modal-zone"></div>
 
-<style>
-    .filter-tab {
-        color: var(--text-faint);
-    }
-    .filter-tab:hover {
-        color: var(--text);
-        background: #182236;
-    }
-    .filter-tab.active {
-        background: rgba(59, 130, 246, 0.15);
-        color: #60A5FA;
-        border-color: rgba(59, 130, 246, 0.35);
-    }
-</style>
-
 <script>
     // =========================================================================
-    // 1. ETAPAS PROCESALES Y MATERIAS
+    // 1. CONSTANTES, ETAPAS Y MATERIAS
     // =========================================================================
     const STAGES = [
         { id: 0, name: "Recepción e Ingreso", short: "Ingreso" },
@@ -772,13 +879,43 @@
     };
 
     // =========================================================================
-    // 2. ESTADO GLOBAL
+    // 2. INFERENCIA PROCESAL FORENSE (ALGORITMO BOT JURÍDICO)
+    // =========================================================================
+    function inferProceduralTrack(matter, title) {
+        const text = `${matter || ''} ${title || ''}`.toLowerCase();
+        if (text.includes('arriendo') || text.includes('arrendamiento') || text.includes('desalojo')) {
+            return "Procedimiento Especial de Arrendamiento (Ley 18.101 mod. Ley 21.461 'Devuélveme mi casa')";
+        }
+        if (text.includes('cobro') || text.includes('ejecutivo') || text.includes('pagare') || text.includes('factura')) {
+            return "Juicio Ejecutivo de Obligación de Dar (Art. 434 y ss. Código de Procedimiento Civil)";
+        }
+        if (text.includes('laboral') || text.includes('despido') || text.includes('tutela') || text.includes('autodespido')) {
+            return "Procedimiento Laboral de Aplicación General / Monitorio (Código del Trabajo)";
+        }
+        if (text.includes('familia') || text.includes('alimento') || text.includes('divorcio') || text.includes('cuidado personal')) {
+            return "Procedimiento Ordinario de Familia (Ley 19.968)";
+        }
+        if (text.includes('precario') || text.includes('comodato')) {
+            return "Juicio Sumario de Comodato Precario (Art. 680 N°6 Código de Procedimiento Civil)";
+        }
+        if (text.includes('particion') || text.includes('herencia')) {
+            return "Juicio Arbitral de Partición de Bienes (Art. 1325 Código Civil)";
+        }
+        if (text.includes('indemnizacion') || text.includes('perjuicio') || text.includes('responsabilidad')) {
+            return "Juicio Ordinario de Mayor Cuantía (Libro II Código de Procedimiento Civil)";
+        }
+        return "Procedimiento Declarativo Civil General (Código de Procedimiento Civil)";
+    }
+
+    // =========================================================================
+    // 3. ESTADO GLOBAL
     // =========================================================================
     let ADMIN_KEY = '';
     let casesDB = {};
     let currentEditingId = null;
     let hasUnsavedChanges = false;
     let statusFilter = 'all';
+    let currentTab = 'resumen';
 
     function escapeHtml(str) {
         if (str === null || str === undefined) return '';
@@ -794,7 +931,20 @@
     function authHeaders(extra = {}) { return { 'x-admin-key': ADMIN_KEY, ...extra }; }
 
     // =========================================================================
-    // 3. AUTENTICACIÓN Y CARGA
+    // 4. CONTROL DE PESTAÑAS (TABS)
+    // =========================================================================
+    function switchTab(tabId) {
+        currentTab = tabId;
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.id === `tab-${tabId}`);
+        });
+        document.querySelectorAll('.tab-pane').forEach(pane => {
+            pane.classList.toggle('hidden', pane.id !== `pane-${tabId}`);
+        });
+    }
+
+    // =========================================================================
+    // 5. AUTENTICACIÓN Y CARGA
     // =========================================================================
     document.getElementById('login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -847,7 +997,6 @@
             catSelect.innerHTML += `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`;
         });
 
-        // Hito fecha por defecto = hoy
         const today = new Date().toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/\./g, '');
         document.getElementById('new-step-date').value = today;
 
@@ -857,7 +1006,7 @@
     }
 
     // =========================================================================
-    // 4. GUARDADO Y PERSISTENCIA
+    // 6. GUARDADO Y PERSISTENCIA
     // =========================================================================
     async function saveCase() {
         if (!currentEditingId) return;
@@ -893,7 +1042,8 @@
             renderSidebar();
             renderStats();
             updateLivePreview();
-            toast('Expediente guardado. Actualización disponible de inmediato.', 'ok');
+            updateForensicBrief();
+            toast('Expediente guardado. Actualizado en la bóveda.', 'ok');
         } catch (error) {
             toast('No se pudo guardar el expediente: ' + error.message, 'err');
         } finally {
@@ -922,10 +1072,72 @@
         document.getElementById('unsaved-badge').classList.remove('hidden');
         saveCurrentFormToDB();
         updateLivePreview();
+        updateForensicBrief();
     }
 
     // =========================================================================
-    // 5. CONTROL DE AVANCE PROCESAL (ETAPAS 0 A 5) — MOVER A VOLUNTAD
+    // 7. FICHA EJECUTIVA FORENSE & CHECKLIST DINÁMICO
+    // =========================================================================
+    function updateForensicBrief() {
+        if (!currentEditingId) return;
+        const c = casesDB[currentEditingId] || {};
+        const matter = document.getElementById('case-matter')?.value || c.materia || '';
+        const tribunal = document.getElementById('case-tribunal')?.value || c.tribunal || '';
+        const rit = document.getElementById('case-rit')?.value || c.rit || '';
+        const detail = document.getElementById('case-detail')?.value || c.detalle || '';
+
+        // Actualizar cuadrante
+        document.getElementById('forensic-client').innerText = matter || 'Sin parte asignada';
+        document.getElementById('forensic-court').innerText = tribunal || 'Pendiente de radicación';
+        document.getElementById('forensic-jurisdiction').innerText = tribunal ? 'Competencia Territorial Asignada' : 'Sin tribunal registrado';
+        document.getElementById('forensic-rit').innerText = rit ? `RIT ${rit}` : 'Sin RIT asignado';
+
+        const track = inferProceduralTrack(matter, rit);
+        document.getElementById('forensic-track').innerText = track;
+
+        // Checklist de admisibilidad en tiempo real
+        const checklist = document.getElementById('forensic-checklist');
+        checklist.innerHTML = '';
+
+        const checks = [
+            {
+                name: "Competencia territorial",
+                ok: Boolean(tribunal.trim()),
+                desc: tribunal ? tribunal : "Falta designar juzgado u oficina competente"
+            },
+            {
+                name: "Rol Único de Causa (RIT)",
+                ok: Boolean(rit.trim()),
+                desc: rit ? `Asignado (${rit})` : "Pendiente de ingreso u obtención de rol"
+            },
+            {
+                name: "Materia / Carátula formal",
+                ok: Boolean(matter.trim()),
+                desc: matter ? matter : "Pendiente de definir carátula judicial"
+            },
+            {
+                name: "Resumen para el cliente",
+                ok: Boolean(detail.trim()),
+                desc: detail ? "Actualizado en el portal" : "Sin observación redactada"
+            }
+        ];
+
+        checks.forEach(chk => {
+            const item = document.createElement('div');
+            item.className = 'flex items-center gap-2 p-2 rounded bg-[#111215] border border-[--border]';
+            item.innerHTML = `
+                <i class="fas ${chk.ok ? 'fa-circle-check text-emerald-400' : 'fa-circle-exclamation text-amber-400'} text-xs shrink-0"></i>
+                <div class="min-w-0">
+                    <span class="font-medium text-[11px] ${chk.ok ? 'text-white' : 'text-slate-300'} block truncate">${chk.name}</span>
+                    <span class="text-[10px] text-slate-500 block truncate">${chk.desc}</span>
+                </div>
+            `;
+            checklist.appendChild(item);
+        });
+    }
+
+    // =========================================================================
+    // 8. CONTROL DE AVANCE PROCESAL (ETAPAS 0 A 5)
     // =========================================================================
     function setStage(stageId) {
         if (!currentEditingId) return;
@@ -954,9 +1166,9 @@
             card.className = `step-pill ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`;
             card.onclick = () => setStage(st.id);
             card.innerHTML = `
-                <div class="step-circle">${isCompleted ? '<i class="fas fa-check text-[10px]"></i>' : st.id}</div>
-                <div class="text-[11px] font-bold ${isActive ? 'text-white' : 'text-slate-300'} leading-tight">${st.short}</div>
-                <div class="text-[9px] text-slate-500 uppercase tracking-tighter">Paso ${st.id}</div>
+                <div class="step-circle">${isCompleted ? '<i class="fas fa-check text-[9px]"></i>' : st.id}</div>
+                <div class="text-[10.5px] font-semibold ${isActive ? 'text-white' : 'text-slate-300'} leading-tight">${st.short}</div>
+                <div class="text-[8.5px] text-slate-500 uppercase tracking-tighter">Paso ${st.id}</div>
             `;
             container.appendChild(card);
         });
@@ -967,7 +1179,7 @@
     }
 
     // =========================================================================
-    // 6. GESTIÓN DE HITOS (LÍNEA DE TIEMPO)
+    // 9. GESTIÓN DE HITOS (LÍNEA DE TIEMPO)
     // =========================================================================
     function renderMilestonesUI(steps) {
         const list = document.getElementById('milestones-list');
@@ -976,26 +1188,26 @@
         document.getElementById('milestones-count').innerText = `${arr.length} hito${arr.length === 1 ? '' : 's'}`;
 
         if (arr.length === 0) {
-            list.innerHTML = `<div class="p-6 text-center text-xs text-slate-500 italic bg-[#0E1422] rounded-xl border border-[--border]">Aún no hay hitos registrados en este expediente. Agrega uno arriba.</div>`;
+            list.innerHTML = `<div class="p-4 text-center text-xs text-slate-500 italic bg-[#0d0e10] rounded-lg border border-[--border]">Aún no hay hitos registrados en este expediente. Agrega uno arriba.</div>`;
             return;
         }
 
         arr.forEach((st, idx) => {
             const item = document.createElement('div');
-            item.className = 'p-3 rounded-xl border border-[--border] bg-[#0E1422] flex flex-col sm:flex-row sm:items-center gap-3 transition-colors';
+            item.className = 'p-2.5 rounded-lg border border-[--border] bg-[#0d0e10] flex flex-col sm:flex-row sm:items-center gap-2.5 transition-colors';
             item.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <div class="flex flex-col gap-1">
-                        <button type="button" onclick="moveMilestone(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="text-[10px] text-slate-500 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition" title="Subir"><i class="fas fa-chevron-up"></i></button>
-                        <button type="button" onclick="moveMilestone(${idx}, 1)" ${idx === arr.length - 1 ? 'disabled' : ''} class="text-[10px] text-slate-500 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition" title="Bajar"><i class="fas fa-chevron-down"></i></button>
+                <div class="flex items-center gap-2.5">
+                    <div class="flex flex-col gap-0.5">
+                        <button type="button" onclick="moveMilestone(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="text-[9px] text-slate-500 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition" title="Subir"><i class="fas fa-chevron-up"></i></button>
+                        <button type="button" onclick="moveMilestone(${idx}, 1)" ${idx === arr.length - 1 ? 'disabled' : ''} class="text-[9px] text-slate-500 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition" title="Bajar"><i class="fas fa-chevron-down"></i></button>
                     </div>
                     <div class="milestone-switch ${st.done ? 'done' : ''}" onclick="toggleMilestone(${idx})" title="Cambiar estado"></div>
                 </div>
                 <div class="flex-1 flex flex-col sm:flex-row gap-2">
-                    <input type="text" class="input-base !py-1.5 !text-xs flex-1 font-medium" value="${escapeHtml(st.title)}" oninput="updateMilestoneTitle(${idx}, this.value)" placeholder="Título del hito...">
-                    <input type="text" class="input-base !py-1.5 !text-xs sm:w-36 font-mono text-slate-300" value="${escapeHtml(st.date)}" oninput="updateMilestoneDate(${idx}, this.value)" placeholder="Fecha">
+                    <input type="text" class="input-base !py-1 !text-xs flex-1 font-medium" value="${escapeHtml(st.title)}" oninput="updateMilestoneTitle(${idx}, this.value)" placeholder="Título del hito...">
+                    <input type="text" class="input-base !py-1 !text-xs sm:w-32 font-mono text-slate-300" value="${escapeHtml(st.date)}" oninput="updateMilestoneDate(${idx}, this.value)" placeholder="Fecha">
                 </div>
-                <button type="button" onclick="deleteMilestone(${idx})" class="btn btn-danger !p-2 !text-xs shrink-0 self-end sm:self-auto" title="Eliminar hito">
+                <button type="button" onclick="deleteMilestone(${idx})" class="btn btn-danger !p-1.5 !text-xs shrink-0 self-end sm:self-auto" title="Eliminar hito">
                     <i class="fas fa-trash-alt text-xs"></i>
                 </button>
             `;
@@ -1068,11 +1280,11 @@
 
         renderMilestonesUI(casesDB[currentEditingId].steps);
         markUnsaved();
-        toast('Hito añadido.', 'ok');
+        toast('Hito añadido al avance.', 'ok');
     }
 
     // =========================================================================
-    // 7. PREVISUALIZACIÓN EN VIVO (VISTA CLIENTE)
+    // 10. PREVISUALIZACIÓN EN VIVO (VISTA CLIENTE)
     // =========================================================================
     function updateLivePreview() {
         if (!currentEditingId) return;
@@ -1108,7 +1320,7 @@
                 const row = document.createElement('div');
                 row.className = 'flex items-center gap-2 text-xs';
                 row.innerHTML = `
-                    <span class="w-2.5 h-2.5 rounded-full shrink-0 ${st.done ? 'bg-emerald-400' : 'bg-slate-600'}"></span>
+                    <i class="fas ${st.done ? 'fa-circle-check text-emerald-400' : 'fa-circle text-slate-600'} text-[10px] shrink-0"></i>
                     <span class="${st.done ? 'text-white font-medium' : 'text-slate-400'} truncate">${escapeHtml(st.title)}</span>
                     ${st.date ? `<span class="text-[10px] text-slate-500 shrink-0">· ${escapeHtml(st.date)}</span>` : ''}
                 `;
@@ -1118,7 +1330,7 @@
     }
 
     // =========================================================================
-    // 8. SIDEBAR Y CARGA DE CASO
+    // 11. SIDEBAR Y CARGA DE CASO
     // =========================================================================
     function setStatusFilter(f) {
         statusFilter = f;
@@ -1132,7 +1344,7 @@
         adminSortOrder = order;
         document.querySelectorAll('.admin-sort-btn').forEach(btn => {
             const isSel = btn.id === `sort-btn-${order}`;
-            btn.className = `admin-sort-btn px-1.5 py-0.5 rounded text-[11px] transition ${
+            btn.className = `admin-sort-btn px-1.5 py-0.5 rounded text-[10.5px] transition ${
                 isSel ? 'font-semibold text-blue-400 bg-blue-500/10' : 'font-medium text-slate-400 hover:text-white'
             }`;
         });
@@ -1203,7 +1415,7 @@
         });
 
         if (caseIds.length === 0) {
-            list.innerHTML = `<div class="p-8 text-center text-xs text-slate-500"><i class="fas fa-inbox text-2xl mb-2 block opacity-30"></i>No se encontraron expedientes.</div>`;
+            list.innerHTML = `<div class="p-6 text-center text-xs text-slate-500"><i class="fas fa-inbox text-xl mb-2 block opacity-30"></i>No se encontraron expedientes.</div>`;
             return;
         }
 
@@ -1228,7 +1440,7 @@
                     <span>${c.rit ? 'RIT ' + escapeHtml(c.rit) : 'Sin RIT'}</span>
                     <span>Paso ${stage} de 5</span>
                 </div>
-                <div class="h-1.5 w-full rounded-full bg-[#1A2436] overflow-hidden">
+                <div class="h-1 w-full rounded-full bg-[#18191c] overflow-hidden">
                     <div class="h-full rounded-full ${status === 'urgente' ? 'bg-red-500' : 'bg-blue-500'}" style="width: ${pct}%;"></div>
                 </div>
             `;
@@ -1242,16 +1454,16 @@
         const n = s => legalCases.filter(c => (c.status || 'activo') === s).length;
         const bar = document.getElementById('stats-bar');
         bar.innerHTML = `
-            <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg border border-[--border] bg-[#141B2B] text-xs" title="Total de expedientes judiciales en la bóveda">
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded border border-[--border] bg-[#141518] text-xs">
                 <span class="text-slate-400">Total:</span><b class="text-white">${legalCases.length}</b>
             </div>
-            <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg border border-cyan-500/20 bg-cyan-500/10 text-xs">
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded border border-cyan-500/20 bg-cyan-500/10 text-xs">
                 <span class="text-cyan-400">Nuevos:</span><b class="text-cyan-300">${n('nuevo')}</b>
             </div>
-            <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg border border-red-500/20 bg-red-500/10 text-xs">
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded border border-red-500/20 bg-red-500/10 text-xs">
                 <span class="text-red-400">Urgentes:</span><b class="text-red-300">${n('urgente')}</b>
             </div>
-            <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-xs">
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded border border-emerald-500/20 bg-emerald-500/10 text-xs">
                 <span class="text-emerald-400">Cerrados:</span><b class="text-emerald-300">${n('finalizado')}</b>
             </div>
         `;
@@ -1271,6 +1483,7 @@
         currentEditingId = id;
 
         document.getElementById('editor-empty').classList.add('hidden');
+        document.getElementById('editor-tabs-bar').classList.remove('hidden');
         document.getElementById('editor-body').classList.remove('hidden');
         document.getElementById('btn-sync').classList.remove('hidden');
         document.getElementById('btn-delete').classList.remove('hidden');
@@ -1294,7 +1507,6 @@
         document.getElementById('case-matter').value = c.materia || '';
         document.getElementById('case-detail').value = c.detalle || '';
 
-        // Determinar categoría por materia
         let foundCat = "Derecho Civil";
         for (let cat in MATERIAS) {
             if (MATERIAS[cat].includes(c.materia)) { foundCat = cat; break; }
@@ -1305,9 +1517,13 @@
         renderStepperUI(stage);
         renderMilestonesUI(c.steps || []);
         renderEstadoDiarioUI(c.estado_diario, c);
+        updateForensicBrief();
         renderSidebar();
         renderStats();
         updateLivePreview();
+
+        // Restaurar pestaña activa
+        switchTab(currentTab || 'resumen');
 
         hasUnsavedChanges = false;
         if (window.innerWidth < 768) openMobileEditor();
@@ -1322,7 +1538,7 @@
     }
 
     // =========================================================================
-    // 8.1 ESTADO DIARIO PJUD (VIGILANCIA EN VIVO)
+    // 12. ESTADO DIARIO PJUD (VIGILANCIA EN VIVO)
     // =========================================================================
     async function checkEstadoDiarioCurrent() {
         if (!currentEditingId) {
@@ -1372,7 +1588,7 @@
             toast(error.message, 'err');
         } finally {
             btn.disabled = false;
-            icon.className = "fas fa-bolt text-xs";
+            icon.className = "fas fa-rotate text-xs";
             text.innerText = origText;
         }
     }
@@ -1393,10 +1609,10 @@
         if (!ed || !ed.lastCheckedAt) {
             timeVal.innerText = 'Sin comprobación previa';
             sourceVal.innerText = 'Presiona el botón para auditar';
-            statusBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700';
-            statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-500"></span><span>Pendiente de consulta</span>';
-            noveltySummary.innerText = 'Monitoreo directo sin ClaveÚnica';
-            list.innerHTML = `<div class="p-6 text-center text-xs text-slate-500 italic bg-[#0E1422] rounded-xl border border-[--border]">Presiona "⚡ Consultar Estado Diario Ahora" para verificar resoluciones, proveídos y decretos judiciales oficiales en el Poder Judicial.</div>`;
+            statusBadge.className = 'inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-semibold bg-[#18191c] text-slate-400 border border-[--border]';
+            statusBadge.innerHTML = '<i class="fas fa-clock text-[10px]"></i><span>Pendiente de consulta</span>';
+            noveltySummary.innerText = 'Monitoreo sin ClaveÚnica';
+            list.innerHTML = `<div class="p-5 text-center text-xs text-slate-500 italic bg-[#0d0e10] rounded-lg border border-[--border]">Presiona "Consultar Estado Diario Ahora" para verificar resoluciones, proveídos y decretos judiciales oficiales en el Poder Judicial.</div>`;
             count.innerText = '0 registros';
             return;
         }
@@ -1409,16 +1625,16 @@
         sourceVal.innerText = ed.checkedBy === 'github_actions' ? 'Auditoría automática (GitHub Actions)' : 'Auditoría manual en vivo';
 
         if (ed.status === 'con_novedades') {
-            statusBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse';
-            statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-400"></span><span>🔴 ¡Resolución / Movimiento Detectado Hoy!</span>';
+            statusBadge.className = 'inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-semibold bg-red-500/15 text-red-400 border border-red-500/30';
+            statusBadge.innerHTML = '<i class="fas fa-circle-exclamation text-xs text-red-400"></i><span>Resolución / Movimiento Detectado Hoy</span>';
             noveltySummary.innerText = `${ed.resolutionsCount || 1} proveído(s) registrado(s)`;
         } else if (ed.status === 'al_dia') {
-            statusBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
-            statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>🟢 Al día (Sin movimientos hoy)</span>';
+            statusBadge.className = 'inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
+            statusBadge.innerHTML = '<i class="fas fa-circle-check text-xs text-emerald-400"></i><span>Al día (Sin movimientos hoy)</span>';
             noveltySummary.innerText = ed.lastMovementDate ? `Última actuación: ${ed.lastMovementDate}` : 'Causa al día en el tribunal';
         } else {
-            statusBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30';
-            statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400"></span><span>⚠️ No encontrada con este RIT</span>';
+            statusBadge.className = 'inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30';
+            statusBadge.innerHTML = '<i class="fas fa-triangle-exclamation text-xs text-amber-400"></i><span>No encontrada con este RIT</span>';
             noveltySummary.innerText = 'Revisa el RIT y tribunal asignado';
         }
 
@@ -1426,25 +1642,25 @@
         count.innerText = `${resolutions.length} registro${resolutions.length === 1 ? '' : 's'}`;
 
         if (resolutions.length === 0) {
-            list.innerHTML = `<div class="p-4 text-center text-xs text-slate-400 italic bg-[#0E1422] rounded-xl border border-[--border]">No se detectaron resoluciones públicas registradas para este RIT.</div>`;
+            list.innerHTML = `<div class="p-4 text-center text-xs text-slate-400 italic bg-[#0d0e10] rounded-lg border border-[--border]">No se detectaron resoluciones públicas registradas para este RIT.</div>`;
             return;
         }
 
         list.innerHTML = '';
         resolutions.forEach(res => {
             const card = document.createElement('div');
-            card.className = 'p-3.5 rounded-xl border border-[--border] bg-[#0E1422] space-y-2';
+            card.className = 'p-3 rounded-lg border border-[--border] bg-[#0d0e10] space-y-2';
             card.innerHTML = `
                 <div class="flex flex-wrap items-center justify-between gap-2">
                     <div class="flex items-center gap-2">
-                        <span class="px-2 py-0.5 rounded text-[10.5px] font-bold uppercase tracking-wider bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
                             ${escapeHtml(res.type || 'Resolución')}
                         </span>
                         <span class="text-xs font-mono text-white font-semibold">
                             ${escapeHtml(res.date || '')} ${res.time ? '· ' + escapeHtml(res.time) + ' hrs' : ''}
                         </span>
                     </div>
-                    <span class="text-[11px] text-slate-400 truncate max-w-xs">
+                    <span class="text-[10.5px] text-slate-400 truncate max-w-xs">
                         ${escapeHtml(res.court || caseData.tribunal || '')}
                     </span>
                 </div>
@@ -1456,7 +1672,7 @@
                         <i class="fas fa-file-pdf"></i>
                         <span>Ver / Descargar en OJV</span>
                     </a>
-                    <button type="button" onclick="addResolutionToMilestones('${escapeHtml(res.date || '')}', '${escapeHtml(res.summary || '')}')" class="text-[11px] text-slate-400 hover:text-white px-2 py-1 rounded border border-[--border] bg-[#141B2B] transition" title="Agregar como hito oficial de la causa">
+                    <button type="button" onclick="addResolutionToMilestones('${escapeHtml(res.date || '')}', '${escapeHtml(res.summary || '')}')" class="btn btn-secondary !py-1 !px-2 !text-[10.5px]" title="Agregar como hito oficial de la causa">
                         <i class="fas fa-plus mr-1"></i> Vincular como Hito
                     </button>
                 </div>
@@ -1493,7 +1709,7 @@
     }
 
     // =========================================================================
-    // 9. CREAR Y ELIMINAR EXPEDIENTES
+    // 13. CREAR Y ELIMINAR EXPEDIENTES
     // =========================================================================
     async function createNewCase() {
         const btn = document.getElementById('btn-new');
@@ -1544,6 +1760,7 @@
             currentEditingId = null;
 
             document.getElementById('editor-body').classList.add('hidden');
+            document.getElementById('editor-tabs-bar').classList.add('hidden');
             document.getElementById('editor-empty').classList.remove('hidden');
             document.getElementById('btn-sync').classList.add('hidden');
             document.getElementById('btn-delete').classList.add('hidden');
@@ -1561,7 +1778,7 @@
     }
 
     // =========================================================================
-    // 10. UTILIDADES Y MODALES
+    // 14. UTILIDADES, WHATSAPP Y MODALES
     // =========================================================================
     function toast(msg, type = 'info') {
         const zone = document.getElementById('toast-zone');
@@ -1572,7 +1789,7 @@
         zone.appendChild(el);
         setTimeout(() => {
             el.style.opacity = '0';
-            el.style.transform = 'translateX(40px)';
+            el.style.transform = 'translateX(30px)';
             el.style.transition = 'all 0.3s ease';
             setTimeout(() => el.remove(), 300);
         }, 3500);
@@ -1581,18 +1798,18 @@
     function showConfirm(title, htmlMsg, onOk) {
         const zone = document.getElementById('modal-zone');
         zone.innerHTML = `
-            <div class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeModal()">
-                <div class="panel-card max-w-md w-full p-6 shadow-2xl space-y-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/30 flex items-center justify-center shrink-0">
-                            <i class="fas fa-triangle-exclamation text-red-400"></i>
+            <div class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeModal()">
+                <div class="panel-card max-w-md w-full p-5 shadow-2xl space-y-3.5">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/25 flex items-center justify-center shrink-0">
+                            <i class="fas fa-triangle-exclamation text-red-400 text-xs"></i>
                         </div>
-                        <h3 class="text-base font-bold text-white">${escapeHtml(title)}</h3>
+                        <h3 class="text-sm font-bold text-white">${escapeHtml(title)}</h3>
                     </div>
                     <p class="text-xs text-slate-300 leading-relaxed">${htmlMsg}</p>
-                    <div class="flex gap-2.5 justify-end pt-2">
-                        <button onclick="closeModal()" class="btn btn-secondary !py-1.5 !px-4">Cancelar</button>
-                        <button onclick="closeModal(); (${onOk.name})()" class="btn btn-danger !py-1.5 !px-4">Sí, eliminar</button>
+                    <div class="flex gap-2 justify-end pt-2">
+                        <button onclick="closeModal()" class="btn btn-secondary !py-1.5 !px-3.5">Cancelar</button>
+                        <button onclick="closeModal(); (${onOk.name})()" class="btn btn-danger !py-1.5 !px-3.5">Sí, eliminar</button>
                     </div>
                 </div>
             </div>`;
@@ -1609,12 +1826,10 @@
         const c = casesDB[currentEditingId];
         if (!c) return;
         const msg = `*AeroLex — Sus credenciales de seguimiento*\n\nExpediente: *${c.code}*\nPIN de consulta: *${c.pin}*\n\nPuede consultar el avance procesal de su caso en tiempo real en nuestro portal web https://aerolex.cl, o directamente con nuestro asistente virtual seleccionando "Rastrear mi caso".\n\n— Estudio Jurídico AeroLex, Puerto Montt`;
-        // Registrar que el abogado envió credenciales por WA
         logAdminWaContact('envio_credenciales', msg, c.code);
         window.open(`https://wa.me/${getWaNumber()}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    // ── Registro de contacto WA desde Admin (fire-and-forget) ───────────────
     const _WA_LOG_ADMIN_URL = '/api/wa-contact';
     function logAdminWaContact(topic, message, caseCode) {
         const adminKey = sessionStorage.getItem('aerolex_admin_key') || '';
@@ -1635,7 +1850,6 @@
         } catch (_) {}
     }
 
-    // ── Panel de Registro de Contactos WhatsApp ──────────────────────────────
     let _waContacts = [];
 
     async function loadWaContacts(caseCodeFilter) {
@@ -1651,47 +1865,47 @@
 
     function topicLabel(topic) {
         const map = {
-            'vip_prioritario': '⭐ VIP Prioritario',
-            'contacto_legal': '⚖️ Contacto Legal',
-            'contacto_asistente': '💬 Asistente Web',
-            'reporte_expediente': '📋 Reporte Expediente',
-            'consulta_expediente': '🔍 Consulta Expediente',
-            'consulta_libre': '💭 Consulta Libre',
-            'cita_agendada': '📅 Cita Agendada',
-            'envio_credenciales': '🔑 Envío Credenciales',
-            'contacto_web': '🌐 Portal Web'
+            'vip_prioritario': 'VIP Prioritario',
+            'contacto_legal': 'Contacto Legal',
+            'contacto_asistente': 'Asistente Web',
+            'reporte_expediente': 'Reporte Expediente',
+            'consulta_expediente': 'Consulta Expediente',
+            'consulta_libre': 'Consulta Libre',
+            'cita_agendada': 'Cita Agendada',
+            'envio_credenciales': 'Envío Credenciales',
+            'contacto_web': 'Portal Web'
         };
-        return map[topic] || ('📌 ' + topic);
+        return map[topic] || topic;
     }
 
     function sourceLabel(src) {
-        return src === 'portal' ? '🌐 Portal' : src === 'admin' ? '🔧 Admin' : '🤖 Chatbot';
+        return src === 'portal' ? 'Portal' : src === 'admin' ? 'Admin' : 'Chatbot';
     }
 
     function renderWaTable(contacts, filterCode) {
         if (!contacts.length) {
-            return `<div class="text-center text-slate-400 text-sm py-12"><i class="fab fa-whatsapp text-3xl mb-3 block text-slate-600"></i>No hay registros de contactos WhatsApp${filterCode ? ' para ' + filterCode : ''}.</div>`;
+            return `<div class="text-center text-slate-400 text-xs py-10"><i class="fab fa-whatsapp text-2xl mb-2 block text-slate-600"></i>No hay registros de contactos WhatsApp${filterCode ? ' para ' + filterCode : ''}.</div>`;
         }
         const rows = contacts.map(c => {
             const dt = c.timestamp ? new Date(c.timestamp).toLocaleString('es-CL', {timeZone:'America/Santiago', day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit'}) : '—';
-            const code = c.caseCode ? `<span class="font-mono text-blue-300 font-bold">${c.caseCode}</span>` : '<span class="text-slate-500">—</span>';
+            const code = c.caseCode ? `<span class="font-mono text-blue-300 font-semibold">${c.caseCode}</span>` : '<span class="text-slate-500">—</span>';
             const msg = (c.message || '').slice(0, 80).replace(/</g,'&lt;');
-            return `<tr class="border-b border-[--border] hover:bg-white/5 transition">
-                <td class="px-3 py-2.5 text-[11px] text-slate-300 whitespace-nowrap">${dt}</td>
-                <td class="px-3 py-2.5 text-[11px]">${sourceLabel(c.source)}</td>
-                <td class="px-3 py-2.5 text-[11px]">${topicLabel(c.topic)}</td>
-                <td class="px-3 py-2.5 text-[11px]">${code}</td>
-                <td class="px-3 py-2.5 text-[11px] text-slate-400 max-w-[220px] truncate" title="${c.message || ''}">${msg || '—'}</td>
+            return `<tr class="border-b border-[--border] hover:bg-white/[0.02] transition">
+                <td class="px-3 py-2 text-[11px] text-slate-300 whitespace-nowrap">${dt}</td>
+                <td class="px-3 py-2 text-[11px] text-slate-400">${sourceLabel(c.source)}</td>
+                <td class="px-3 py-2 text-[11px] font-medium text-white">${topicLabel(c.topic)}</td>
+                <td class="px-3 py-2 text-[11px]">${code}</td>
+                <td class="px-3 py-2 text-[11px] text-slate-400 max-w-[220px] truncate" title="${c.message || ''}">${msg || '—'}</td>
             </tr>`;
         }).join('');
         return `<div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
-                <thead><tr class="border-b border-[--border] text-[10px] uppercase tracking-wider text-slate-500">
-                    <th class="px-3 py-2">Fecha/Hora</th>
-                    <th class="px-3 py-2">Origen</th>
-                    <th class="px-3 py-2">Tipo</th>
-                    <th class="px-3 py-2">Expediente</th>
-                    <th class="px-3 py-2">Mensaje</th>
+                <thead><tr class="border-b border-[--border] text-[9.5px] uppercase tracking-wider text-slate-500">
+                    <th class="px-3 py-1.5">Fecha/Hora</th>
+                    <th class="px-3 py-1.5">Origen</th>
+                    <th class="px-3 py-1.5">Tipo</th>
+                    <th class="px-3 py-1.5">Expediente</th>
+                    <th class="px-3 py-1.5">Mensaje</th>
                 </tr></thead>
                 <tbody>${rows}</tbody>
             </table></div>`;
@@ -1716,24 +1930,24 @@
         const filter = preFilterCode || '';
         zone.innerHTML = `
             <div class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 md:p-6" onclick="if(event.target===this) closeModal()">
-                <div class="panel-card w-full max-w-4xl flex flex-col shadow-2xl" style="max-height:88vh">
-                    <div class="flex items-center justify-between px-5 py-3.5 border-b border-[--border] shrink-0">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0">
-                                <i class="fab fa-whatsapp text-emerald-400"></i>
+                <div class="panel-card w-full max-w-3xl flex flex-col shadow-2xl" style="max-height:85vh">
+                    <div class="flex items-center justify-between px-4 py-3 border-b border-[--border] shrink-0">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center shrink-0">
+                                <i class="fab fa-whatsapp text-emerald-400 text-xs"></i>
                             </div>
                             <div>
-                                <h3 class="text-sm font-bold text-white">Registro de Contactos WhatsApp</h3>
-                                <p class="text-[11px] text-slate-400">Cada clic de cliente en botón WA queda registrado aquí</p>
+                                <h3 class="text-xs font-bold text-white">Registro de Contactos WhatsApp</h3>
+                                <p class="text-[10px] text-slate-400">Consultas recibidas en tiempo real</p>
                             </div>
                         </div>
-                        <button onclick="closeModal()" class="btn btn-secondary !p-2"><i class="fas fa-xmark text-xs"></i></button>
+                        <button onclick="closeModal()" class="btn btn-secondary !p-1.5"><i class="fas fa-xmark text-xs"></i></button>
                     </div>
-                    <div class="px-5 py-3 border-b border-[--border] flex flex-wrap gap-2 items-center shrink-0">
-                        <input type="text" id="wa-filter-code" value="${filter}" placeholder="Filtrar por código ALX..." class="input-base !py-1.5 !text-xs !w-44">
-                        <button onclick="refreshWaLog()" class="btn btn-secondary !py-1.5 !px-3 !text-xs"><i class="fas fa-rotate-right"></i> Actualizar</button>
-                        <button onclick="exportWaCsv(_waContacts)" class="btn btn-secondary !py-1.5 !px-3 !text-xs"><i class="fas fa-file-csv text-emerald-400"></i> Exportar CSV</button>
-                        <span id="wa-count-label" class="text-[11px] text-slate-400 ml-auto"></span>
+                    <div class="px-4 py-2.5 border-b border-[--border] flex flex-wrap gap-2 items-center shrink-0">
+                        <input type="text" id="wa-filter-code" value="${filter}" placeholder="Filtrar por código ALX..." class="input-base !py-1 !text-xs !w-44">
+                        <button onclick="refreshWaLog()" class="btn btn-secondary !py-1 !px-2.5 !text-xs"><i class="fas fa-rotate-right"></i> Actualizar</button>
+                        <button onclick="exportWaCsv(_waContacts)" class="btn btn-secondary !py-1 !px-2.5 !text-xs"><i class="fas fa-file-csv text-emerald-400"></i> Exportar CSV</button>
+                        <span id="wa-count-label" class="text-[10.5px] text-slate-400 ml-auto"></span>
                     </div>
                     <div id="wa-table-body" class="flex-1 overflow-y-auto p-1">
                         <div class="text-center text-slate-500 text-xs py-8"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando registros...</div>
@@ -1754,7 +1968,6 @@
             const label = document.getElementById('wa-count-label');
             if (label) label.textContent = `${_waContacts.length} registro${_waContacts.length !== 1 ? 's' : ''}`;
             tbody.innerHTML = renderWaTable(_waContacts, filterCode);
-            // Actualizar badge en header
             const badge = document.getElementById('wa-badge');
             if (badge) {
                 if (_waContacts.length > 0) { badge.textContent = _waContacts.length > 99 ? '99+' : _waContacts.length; badge.classList.remove('hidden'); }
@@ -1768,25 +1981,25 @@
     function openSettings() {
         const zone = document.getElementById('modal-zone');
         zone.innerHTML = `
-            <div class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeModal()">
-                <div class="panel-card max-w-md w-full p-6 shadow-2xl space-y-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center shrink-0">
-                            <i class="fas fa-gear text-blue-400"></i>
+            <div class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeModal()">
+                <div class="panel-card max-w-sm w-full p-5 shadow-2xl space-y-3.5">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/25 flex items-center justify-center shrink-0">
+                            <i class="fas fa-gear text-blue-400 text-xs"></i>
                         </div>
                         <div>
-                            <h3 class="text-base font-bold text-white">Configuración del Estudio</h3>
-                            <p class="text-xs text-slate-400">Canal de comunicación directa con clientes</p>
+                            <h3 class="text-xs font-bold text-white">Configuración del Estudio</h3>
+                            <p class="text-[10px] text-slate-400">Canal de comunicación</p>
                         </div>
                     </div>
                     <div>
-                        <label class="field-label">Teléfono WhatsApp del Estudio (con código país, sin +)</label>
+                        <label class="field-label">Teléfono WhatsApp del Estudio</label>
                         <input type="text" id="wa-number" class="input-base font-mono" value="${getWaNumber()}" placeholder="56912345678">
-                        <p class="text-[11px] text-slate-500 mt-1">Se utiliza al pulsar "Enviar por WhatsApp". Se guarda en este navegador.</p>
+                        <p class="text-[10px] text-slate-500 mt-1">Con código de país, sin signo +.</p>
                     </div>
-                    <div class="flex gap-2.5 justify-end pt-2">
-                        <button onclick="closeModal()" class="btn btn-secondary !py-1.5 !px-4">Cancelar</button>
-                        <button onclick="saveSettings()" class="btn btn-primary !py-1.5 !px-4">Guardar</button>
+                    <div class="flex gap-2 justify-end pt-1">
+                        <button onclick="closeModal()" class="btn btn-secondary !py-1.5 !px-3">Cancelar</button>
+                        <button onclick="saveSettings()" class="btn btn-primary !py-1.5 !px-3">Guardar</button>
                     </div>
                 </div>
             </div>`;
@@ -1806,7 +2019,6 @@
         window.location.reload();
     }
 
-    // Atajo de teclado Ctrl+S / Cmd+S para guardar
     document.addEventListener('keydown', (e) => {
         if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
             e.preventDefault();
