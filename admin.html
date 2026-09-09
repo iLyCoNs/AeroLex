@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bóveda AeroLex · Gestión de Expedientes</title>
+    <script>
+        (function() {
+            try {
+                const saved = localStorage.getItem('aerolex_admin_theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', saved);
+            } catch (_) {}
+        })();
+    </script>
     <!-- FAVICON & IDENTIDAD VISUAL -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
@@ -29,11 +37,12 @@
         }
     </script>
     <style>
-        :root {
+        :root, [data-theme="dark"] {
             --bg: #070707;
             --panel: #111113;
-            --panel-raised: #18191c;
+            --panel-raised: #141518;
             --panel-inset: #0d0e10;
+            --panel-subtle: #18191c;
             --border: #24262b;
             --border-hover: #353840;
             --text: #fcfcfc;
@@ -45,13 +54,52 @@
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
+            --header-bg: rgba(17, 17, 19, 0.95);
+            --tabs-bg: rgba(17, 17, 19, 0.6);
+            --input-bg: #0d0e10;
+            --input-focus-bg: #0e0f11;
+            --placeholder: #4b5563;
+            --scrollbar-thumb: #24262b;
+            --scrollbar-thumb-hover: #353840;
+            --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+            --login-bg: radial-gradient(1100px 700px at 50% -20%, #15161a 0%, #070707 70%);
+            --modal-backdrop: rgba(0, 0, 0, 0.8);
         }
 
-        * { scrollbar-width: thin; scrollbar-color: #24262b transparent; }
+        [data-theme="light"] {
+            --bg: #f4f6f9;
+            --panel: #ffffff;
+            --panel-raised: #f8fafc;
+            --panel-inset: #f1f5f9;
+            --panel-subtle: #e2e8f0;
+            --border: #e2e8f0;
+            --border-hover: #cbd5e1;
+            --text: #0f172a;
+            --text-secondary: #475569;
+            --text-faint: #64748b;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --accent-glow: rgba(37, 99, 235, 0.15);
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --header-bg: rgba(255, 255, 255, 0.94);
+            --tabs-bg: rgba(248, 250, 252, 0.94);
+            --input-bg: #ffffff;
+            --input-focus-bg: #ffffff;
+            --placeholder: #94a3b8;
+            --scrollbar-thumb: #cbd5e1;
+            --scrollbar-thumb-hover: #94a3b8;
+            --card-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04);
+            --login-bg: radial-gradient(1100px 700px at 50% -20%, #e2e8f0 0%, #f1f5f9 70%);
+            --modal-backdrop: rgba(15, 23, 42, 0.45);
+        }
+
+        * { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent; }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #24262b; border-radius: 999px; }
-        ::-webkit-scrollbar-thumb:hover { background: #353840; }
+        ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
 
         body {
             background-color: var(--bg);
@@ -358,13 +406,200 @@
             background: rgba(37, 99, 235, 0.12);
             color: #60a5fa;
         }
+
+        /* Transiciones suaves al alternar tema */
+        body, header, aside, main, .panel-card, .btn, .input-base, .case-item, .step-pill, .tab-btn {
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* Modal backdrop adaptativo */
+        .modal-backdrop { background: var(--modal-backdrop); }
+
+        /* Reglas especializadas para Skin Clara (Día) */
+        [data-theme="light"] body {
+            background-color: var(--bg);
+            color: var(--text);
+        }
+
+        [data-theme="light"] .env-bg {
+            background:
+                radial-gradient(1000px 600px at 20% -10%, rgba(37, 99, 235, 0.035), transparent 60%),
+                radial-gradient(800px 500px at 90% 110%, rgba(16, 185, 129, 0.02), transparent 60%);
+        }
+
+        [data-theme="light"] .text-white:not(.keep-white) {
+            color: #0f172a !important;
+        }
+
+        [data-theme="light"] .keep-white,
+        [data-theme="light"] .btn-primary,
+        [data-theme="light"] .btn-primary *,
+        [data-theme="light"] .btn-vanguard-new,
+        [data-theme="light"] .btn-vanguard-new *,
+        [data-theme="light"] .step-pill.active .step-circle,
+        [data-theme="light"] .step-pill.completed .step-circle,
+        [data-theme="light"] #wa-badge,
+        [data-theme="light"] .bg-blue-600 i,
+        [data-theme="light"] .bg-blue-800 i,
+        [data-theme="light"] .bg-gradient-to-br i {
+            color: #ffffff !important;
+        }
+
+        [data-theme="light"] .text-slate-200,
+        [data-theme="light"] .text-slate-300 {
+            color: #334155 !important;
+        }
+
+        [data-theme="light"] .text-slate-400 {
+            color: #64748b !important;
+        }
+
+        [data-theme="light"] .text-slate-500 {
+            color: #64748b !important;
+        }
+
+        [data-theme="light"] .text-cyan-300 {
+            color: #0284c7 !important;
+        }
+
+        [data-theme="light"] .input-base {
+            background: var(--input-bg);
+            border-color: var(--border);
+            color: var(--text);
+        }
+        [data-theme="light"] .input-base:focus {
+            background: var(--input-focus-bg);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-glow);
+        }
+        [data-theme="light"] .input-base::placeholder {
+            color: var(--placeholder);
+        }
+
+        [data-theme="light"] .btn-secondary {
+            background: #ffffff;
+            border-color: var(--border);
+            color: var(--text);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+        [data-theme="light"] .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: var(--border-hover);
+            color: #0f172a;
+        }
+
+        [data-theme="light"] .btn-danger {
+            background: rgba(239, 68, 68, 0.08);
+            border-color: rgba(239, 68, 68, 0.25);
+            color: #dc2626;
+        }
+        [data-theme="light"] .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #b91c1c;
+        }
+
+        [data-theme="light"] .case-item {
+            border-bottom: 1px solid var(--border);
+        }
+        [data-theme="light"] .case-item:hover {
+            background: #f8fafc;
+        }
+        [data-theme="light"] .case-item.active {
+            background: #eff6ff;
+            border-left-color: var(--accent);
+        }
+
+        [data-theme="light"] .tab-btn {
+            color: var(--text-secondary);
+        }
+        [data-theme="light"] .tab-btn:hover {
+            color: var(--text);
+            background: rgba(0, 0, 0, 0.03);
+        }
+        [data-theme="light"] .tab-btn.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+            background: rgba(37, 99, 235, 0.06);
+            font-weight: 600;
+        }
+
+        [data-theme="light"] .step-pill {
+            background: var(--panel-raised);
+            border-color: var(--border);
+        }
+        [data-theme="light"] .step-pill:hover {
+            background: #f1f5f9;
+            border-color: var(--border-hover);
+        }
+        [data-theme="light"] .step-pill.active {
+            background: #eff6ff;
+            border-color: var(--accent);
+        }
+        [data-theme="light"] .step-pill.completed {
+            background: #f0fdf4;
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+        [data-theme="light"] .step-circle {
+            background: #e2e8f0;
+            color: #475569;
+            border-color: var(--border);
+        }
+
+        [data-theme="light"] .milestone-switch {
+            background: #cbd5e1;
+            border-color: #94a3b8;
+        }
+
+        [data-theme="light"] .toast-msg {
+            background: #ffffff;
+            border-color: var(--border);
+            color: var(--text);
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+        }
+
+        [data-theme="light"] .filter-tab {
+            color: var(--text-faint);
+        }
+        [data-theme="light"] .filter-tab:hover {
+            color: var(--text);
+            background: rgba(0, 0, 0, 0.05);
+        }
+        [data-theme="light"] .filter-tab.active {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--accent);
+        }
+
+        /* Remapeo de cajas oscuras de fondo a variables de tema claro */
+        [data-theme="light"] .bg-\[\#0d0e10\],
+        [data-theme="light"] .bg-\[\#0a0b0d\],
+        [data-theme="light"] .bg-\[\#111215\],
+        [data-theme="light"] .bg-\[\#111113\] {
+            background-color: var(--panel-inset) !important;
+        }
+        [data-theme="light"] .bg-\[\#141518\] {
+            background-color: var(--panel-raised) !important;
+        }
+        [data-theme="light"] .bg-\[\#18191c\] {
+            background-color: var(--panel-subtle) !important;
+        }
+
+        /* Chips adaptados en tema claro */
+        [data-theme="light"] .chip-nuevo { color: #0284c7; border-color: rgba(2, 132, 199, 0.3); background: rgba(2, 132, 199, 0.08); }
+        [data-theme="light"] .chip-activo { color: #2563eb; border-color: rgba(37, 99, 235, 0.3); background: rgba(37, 99, 235, 0.08); }
+        [data-theme="light"] .chip-urgente { color: #dc2626; border-color: rgba(220, 38, 38, 0.3); background: rgba(220, 38, 38, 0.08); }
+        [data-theme="light"] .chip-finalizado { color: #059669; border-color: rgba(5, 150, 105, 0.3); background: rgba(5, 150, 105, 0.08); }
+        [data-theme="light"] .chip-suspendido { color: #475569; border-color: rgba(71, 85, 105, 0.3); background: rgba(71, 85, 105, 0.08); }
     </style>
 </head>
 <body class="h-screen flex flex-col antialiased select-none md:select-auto">
 <div class="env-bg"></div>
 
 <!-- ==================== PANTALLA DE LOGIN ==================== -->
-<div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background: radial-gradient(1100px 700px at 50% -20%, #15161a 0%, #070707 70%);">
+<div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background: var(--login-bg);">
+    <button id="btn-theme-toggle-login" onclick="toggleTheme()" class="btn btn-secondary !p-2 absolute top-4 right-4 z-10 transition-transform duration-200 hover:scale-105 active:scale-95" title="Cambiar a modo claro (Día)" aria-label="Cambiar tema día/noche">
+        <i id="theme-toggle-login-icon" class="fas fa-sun text-amber-400 text-xs"></i>
+    </button>
     <div class="w-full max-w-sm relative">
         <div class="text-center mb-7">
             <div class="w-12 h-12 rounded-xl mx-auto flex items-center justify-center shadow-lg mb-3.5 bg-gradient-to-br from-blue-600 to-blue-800 border border-blue-400/20">
@@ -395,7 +630,7 @@
 <div id="app-container" class="flex-1 flex flex-col overflow-hidden relative w-full h-full hidden">
 
     <!-- BARRA SUPERIOR (ESTILO BOT JURÍDICO) -->
-    <header class="h-13 border-b border-[--border] flex items-center justify-between px-4 md:px-5 shrink-0 z-20" style="background: rgba(17, 17, 19, 0.95); backdrop-filter: blur(12px);">
+    <header class="h-13 border-b border-[--border] flex items-center justify-between px-4 md:px-5 shrink-0 z-20" style="background: var(--header-bg); backdrop-filter: blur(12px);">
         <div class="flex items-center gap-3">
             <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-blue-600 shadow-sm">
                 <i class="fas fa-scale-balanced text-white text-xs"></i>
@@ -421,6 +656,9 @@
                 <span id="wa-badge" class="hidden absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center leading-none">0</span>
             </button>
             <button onclick="openSettings()" class="btn btn-secondary !p-2" title="Configuración WhatsApp"><i class="fas fa-gear text-xs"></i></button>
+            <button id="btn-theme-toggle" onclick="toggleTheme()" class="btn btn-secondary !p-2 transition-transform duration-200 hover:scale-105 active:scale-95" title="Cambiar a modo claro (Día)" aria-label="Cambiar tema día/noche">
+                <i id="theme-toggle-icon" class="fas fa-sun text-amber-400 text-xs"></i>
+            </button>
             <button onclick="logout()" class="btn btn-secondary !p-2 !text-red-400 hover:!bg-red-500/10" title="Cerrar sesión"><i class="fas fa-power-off text-xs"></i></button>
         </div>
     </header>
@@ -489,7 +727,7 @@
             </div>
 
             <!-- BARRA DE PESTAÑAS (ESTILO BOT JURÍDICO LEGAL CASE PANEL) -->
-            <div id="editor-tabs-bar" class="border-b border-[--border] px-4 md:px-6 flex items-center gap-1 shrink-0 overflow-x-auto hide-scrollbar hidden" style="background: rgba(17, 17, 19, 0.6);">
+            <div id="editor-tabs-bar" class="border-b border-[--border] px-4 md:px-6 flex items-center gap-1 shrink-0 overflow-x-auto hide-scrollbar hidden" style="background: var(--tabs-bg);">
                 <button type="button" onclick="switchTab('resumen')" id="tab-resumen" class="tab-btn active">
                     <i class="fas fa-file-lines text-xs"></i>
                     <span>Resumen & Ficha</span>
@@ -526,22 +764,22 @@
 
                             <!-- Cuadrante de 4 ejes -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
-                                <div class="p-3 rounded-lg border border-[--border] bg-[#0d0e10]">
+                                <div class="p-3 rounded-lg border border-[--border] bg-[--panel-inset]">
                                     <span class="field-label !mb-1">Parte Patrocinada</span>
                                     <div class="text-xs font-semibold text-white truncate" id="forensic-client">—</div>
                                     <span class="text-[10px] text-slate-500">Actor / Demandante</span>
                                 </div>
-                                <div class="p-3 rounded-lg border border-[--border] bg-[#0d0e10]">
+                                <div class="p-3 rounded-lg border border-[--border] bg-[--panel-inset]">
                                     <span class="field-label !mb-1">Tribunal Competente</span>
                                     <div class="text-xs font-semibold text-white truncate" id="forensic-court">Pendiente de radicación</div>
                                     <span class="text-[10px] text-slate-500" id="forensic-jurisdiction">Competencia Territorial</span>
                                 </div>
-                                <div class="p-3 rounded-lg border border-[--border] bg-[#0d0e10]">
+                                <div class="p-3 rounded-lg border border-[--border] bg-[--panel-inset]">
                                     <span class="field-label !mb-1">Rol Causa / RIT</span>
                                     <div class="text-xs font-mono font-bold text-cyan-300 truncate" id="forensic-rit">Sin RIT asignado</div>
                                     <span class="text-[10px] text-slate-500">Identificador PJUD</span>
                                 </div>
-                                <div class="p-3 rounded-lg border border-[--border] bg-[#0d0e10]">
+                                <div class="p-3 rounded-lg border border-[--border] bg-[--panel-inset]">
                                     <span class="field-label !mb-1">Vía Procesal</span>
                                     <div class="text-[11px] font-medium text-slate-200 leading-tight" id="forensic-track">Declarativo Civil</div>
                                     <span class="text-[9.5px] text-blue-400 uppercase tracking-tighter">Inferencia Procesal</span>
@@ -549,7 +787,7 @@
                             </div>
 
                             <!-- Checklist dinámico de admisibilidad forense -->
-                            <div class="p-3 rounded-lg border border-[--border] bg-[#0a0b0d] space-y-2">
+                            <div class="p-3 rounded-lg border border-[--border] bg-[--panel-inset] space-y-2">
                                 <div class="text-[10.5px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
                                     <i class="fas fa-clipboard-check text-blue-400"></i> Auditoría de Admisibilidad & Requisitos Previos
                                 </div>
@@ -561,7 +799,7 @@
 
                         <!-- DATOS GENERALES DE LA CAUSA -->
                         <div class="panel-card overflow-hidden">
-                            <div class="px-4 py-3 border-b border-[--border] bg-[#141518] flex items-center justify-between">
+                            <div class="px-4 py-3 border-b border-[--border] bg-[--panel-raised] flex items-center justify-between">
                                 <div class="flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-wider text-slate-300">
                                     <i class="fas fa-folder-open text-blue-400"></i> Datos y Parámetros del Expediente
                                 </div>
@@ -609,7 +847,7 @@
                     <!-- ==================== PESTAÑA 2: ESTADO DIARIO PJUD ==================== -->
                     <div id="pane-estado-diario" class="tab-pane space-y-4 hidden">
                         <div class="panel-card overflow-hidden border border-[--border]">
-                            <div class="px-4 py-3 border-b border-[--border] bg-[#141518] flex flex-wrap items-center justify-between gap-3">
+                            <div class="px-4 py-3 border-b border-[--border] bg-[--panel-raised] flex flex-wrap items-center justify-between gap-3">
                                 <div class="flex items-center gap-2">
                                     <div class="w-2 h-2 rounded-full bg-cyan-400"></div>
                                     <span class="text-[11px] font-bold uppercase tracking-wider text-white">
@@ -623,7 +861,7 @@
                             </div>
                             <div class="p-4 space-y-3.5">
                                 <!-- Sensor Temporal de Alta Precisión -->
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 p-3 rounded-lg border border-[--border] bg-[#0d0e10]">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 p-3 rounded-lg border border-[--border] bg-[--panel-inset]">
                                     <div>
                                         <span class="field-label !mb-0.5">Última Comprobación (Hora Exacta)</span>
                                         <div class="text-xs text-white font-mono flex items-center gap-1.5" id="ed-display-time">
@@ -634,7 +872,7 @@
                                     </div>
                                     <div>
                                         <span class="field-label !mb-0.5">Estado en OJV</span>
-                                        <div id="ed-status-badge" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-semibold bg-[#18191c] text-slate-400 border border-[--border]">
+                                        <div id="ed-status-badge" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-semibold bg-[--panel-subtle] text-slate-400 border border-[--border]">
                                             <i class="fas fa-clock text-[10px]"></i>
                                             <span>Pendiente de consulta</span>
                                         </div>
@@ -654,14 +892,14 @@
                                         <span class="text-[10.5px] text-slate-500 font-mono" id="ed-resolutions-count">0 registros</span>
                                     </div>
                                     <div id="ed-resolutions-list" class="space-y-2">
-                                        <div class="p-5 text-center text-xs text-slate-500 italic bg-[#0d0e10] rounded-lg border border-[--border]">
+                                        <div class="p-5 text-center text-xs text-slate-500 italic bg-[--panel-inset] rounded-lg border border-[--border]">
                                             Presiona "Consultar Estado Diario Ahora" para verificar resoluciones, proveídos y decretos judiciales oficiales en el Poder Judicial.
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Monitor de Cuota GitHub Actions -->
-                                <div class="p-3 rounded-lg border border-[--border] bg-[#0a0b0d] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs">
+                                <div class="p-3 rounded-lg border border-[--border] bg-[--panel-inset] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs">
                                     <div class="flex items-center gap-2">
                                         <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></div>
                                         <div>
@@ -672,7 +910,7 @@
                                         </div>
                                     </div>
                                     <div class="shrink-0">
-                                        <span class="px-2 py-0.5 rounded border border-[--border] font-mono text-[9.5px] text-cyan-300 bg-[#141518]">
+                                        <span class="px-2 py-0.5 rounded border border-[--border] font-mono text-[9.5px] text-cyan-300 bg-[--panel-raised]">
                                             Reinicio: 1º de cada mes
                                         </span>
                                     </div>
@@ -686,7 +924,7 @@
 
                         <!-- CONTROL DE ETAPAS (PASO 0 A 5) -->
                         <div class="panel-card overflow-hidden">
-                            <div class="px-4 py-3 border-b border-[--border] bg-[#141518] flex items-center justify-between">
+                            <div class="px-4 py-3 border-b border-[--border] bg-[--panel-raised] flex items-center justify-between">
                                 <div class="flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-wider text-slate-300">
                                     <i class="fas fa-sliders text-blue-400"></i> Etapa Procesal Actual (Paso 0 a 5)
                                 </div>
@@ -696,7 +934,7 @@
                             </div>
                             <div class="p-4 space-y-3">
                                 <p class="text-xs text-slate-400">
-                                    Selecciona cualquiera de las 6 etapas procesales. El cliente y el chatbot informarán este avance exacto.
+                                     Selecciona cualquiera de las 6 etapas procesales. El cliente y el chatbot informarán este avance exacto.
                                 </p>
 
                                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2" id="stepper-container">
@@ -719,7 +957,7 @@
 
                         <!-- HITOS PÚBLICOS DE LA CAUSA -->
                         <div class="panel-card overflow-hidden">
-                            <div class="px-4 py-3 border-b border-[--border] bg-[#141518] flex items-center justify-between">
+                            <div class="px-4 py-3 border-b border-[--border] bg-[--panel-raised] flex items-center justify-between">
                                 <div class="flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-wider text-slate-300">
                                     <i class="fas fa-timeline text-blue-400"></i> Hitos Públicos de la Línea de Tiempo
                                 </div>
@@ -727,7 +965,7 @@
                             </div>
                             <div class="p-4 space-y-3">
                                 <!-- Formulario de nuevo hito -->
-                                <div class="p-3 rounded-lg border border-[--border] bg-[#0d0e10] grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                                <div class="p-3 rounded-lg border border-[--border] bg-[--panel-inset] grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
                                     <div class="sm:col-span-6">
                                         <input type="text" id="new-step-title" class="input-base !text-xs !py-1.5" placeholder="Título del nuevo hito (ej. Demanda notificada)...">
                                     </div>
@@ -758,7 +996,7 @@
 
                         <!-- CREDENCIALES DE CONSULTA DEL CLIENTE -->
                         <div class="panel-card overflow-hidden">
-                            <div class="flex items-center justify-between px-4 py-3 border-b border-[--border] bg-[#141518]">
+                            <div class="flex items-center justify-between px-4 py-3 border-b border-[--border] bg-[--panel-raised]">
                                 <div class="flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-wider text-slate-300">
                                     <i class="fas fa-key text-blue-400"></i> Credenciales de Rastreo del Cliente
                                 </div>
@@ -767,7 +1005,7 @@
                                 </button>
                             </div>
                             <div class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div class="p-3.5 rounded-lg border border-[--border] bg-[#0d0e10] flex items-center justify-between">
+                                <div class="p-3.5 rounded-lg border border-[--border] bg-[--panel-inset] flex items-center justify-between">
                                     <div>
                                         <span class="field-label">Código del Expediente</span>
                                         <div id="cred-code" class="text-lg font-bold font-mono text-white tracking-wide">—</div>
@@ -777,7 +1015,7 @@
                                         <i class="fas fa-copy text-xs"></i>
                                     </button>
                                 </div>
-                                <div class="p-3.5 rounded-lg border border-[--border] bg-[#0d0e10] flex items-center justify-between">
+                                <div class="p-3.5 rounded-lg border border-[--border] bg-[--panel-inset] flex items-center justify-between">
                                     <div>
                                         <span class="field-label">PIN Privado de 4 Dígitos</span>
                                         <div id="cred-pin" class="text-lg font-bold font-mono text-emerald-400 tracking-widest">—</div>
@@ -792,14 +1030,14 @@
 
                         <!-- SIMULADOR EN VIVO (VISTA CLIENTE EN AEROLEX.CL) -->
                         <div class="panel-card overflow-hidden">
-                            <div class="px-4 py-3 border-b border-[--border] bg-[#141518] flex items-center justify-between">
+                            <div class="px-4 py-3 border-b border-[--border] bg-[--panel-raised] flex items-center justify-between">
                                 <div class="flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-wider text-slate-300">
                                     <i class="fas fa-eye text-blue-400"></i> Previsualización: Vista Pública del Cliente
                                 </div>
                                 <span class="text-[10px] text-slate-500 font-mono">aerolex.cl/portal</span>
                             </div>
                             <div class="p-4">
-                                <div class="p-4 rounded-xl border border-[--border] bg-[#0d0e10] space-y-3.5">
+                                <div class="p-4 rounded-xl border border-[--border] bg-[--panel-inset] space-y-3.5">
                                     <div class="flex items-center justify-between border-b border-[--border] pb-3">
                                         <div>
                                             <span class="text-[9.5px] font-bold tracking-widest text-blue-400 uppercase">AeroLex · Estudio Jurídico</span>
@@ -814,12 +1052,12 @@
                                             <span id="prev-stage-text">Progreso: Paso 1 de 5</span>
                                             <span id="prev-stage-pct" class="font-bold text-white">20%</span>
                                         </div>
-                                        <div class="h-1.5 w-full rounded-full bg-[#18191c] overflow-hidden">
+                                        <div class="h-1.5 w-full rounded-full bg-[--panel-subtle] overflow-hidden">
                                             <div id="prev-bar" class="h-full rounded-full bg-blue-500 transition-all duration-300" style="width: 20%;"></div>
                                         </div>
                                     </div>
 
-                                    <div class="p-2.5 rounded-lg border border-[--border] bg-[#111215]">
+                                    <div class="p-2.5 rounded-lg border border-[--border] bg-[--panel-inset]">
                                         <div class="text-[10px] font-semibold text-blue-300 uppercase tracking-wider mb-1">Informe del abogado para el cliente:</div>
                                         <p id="prev-detail" class="text-xs text-slate-200 whitespace-pre-wrap leading-relaxed">—</p>
                                     </div>
@@ -841,7 +1079,7 @@
 
             <!-- ESTADO VACÍO -->
             <div id="editor-empty" class="flex-1 flex flex-col items-center justify-center text-slate-500 p-6 text-center">
-                <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3 bg-[#111113] border border-[--border]">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3 bg-[--panel-raised] border border-[--border]">
                     <i class="fas fa-folder-open text-lg text-slate-600"></i>
                 </div>
                 <h3 class="text-xs font-semibold text-slate-300">Selecciona un expediente</h3>
@@ -856,6 +1094,54 @@
 <div id="modal-zone"></div>
 
 <script>
+    // =========================================================================
+    // 0. CONTROL DE TEMA (SKIN CLARA / SKIN OSCURA - DÍA / NOCHE)
+    // =========================================================================
+    function getStoredTheme() {
+        try {
+            return localStorage.getItem('aerolex_admin_theme') || 'dark';
+        } catch (_) {
+            return 'dark';
+        }
+    }
+
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        try {
+            localStorage.setItem('aerolex_admin_theme', theme);
+        } catch (_) {}
+        updateThemeButtons(theme);
+    }
+
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        const name = next === 'light' ? 'Skin Clara (Día)' : 'Skin Oscura (Noche)';
+        toast(`Tema cambiado: ${name}`, 'info');
+    }
+
+    function updateThemeButtons(theme) {
+        const isLight = theme === 'light';
+        const iconCls = isLight ? 'fas fa-moon text-blue-600 text-xs' : 'fas fa-sun text-amber-400 text-xs';
+        const tooltip = isLight ? 'Cambiar a modo oscuro (Noche)' : 'Cambiar a modo claro (Día)';
+
+        const mainIcon = document.getElementById('theme-toggle-icon');
+        const mainBtn = document.getElementById('btn-theme-toggle');
+        if (mainIcon) mainIcon.className = iconCls;
+        if (mainBtn) mainBtn.title = tooltip;
+
+        const loginIcon = document.getElementById('theme-toggle-login-icon');
+        const loginBtn = document.getElementById('btn-theme-toggle-login');
+        if (loginIcon) loginIcon.className = iconCls;
+        if (loginBtn) loginBtn.title = tooltip;
+    }
+
+    // Inicialización inmediata de botones de tema
+    document.addEventListener('DOMContentLoaded', () => {
+        updateThemeButtons(getStoredTheme());
+    });
+
     // =========================================================================
     // 1. CONSTANTES, ETAPAS Y MATERIAS
     // =========================================================================
@@ -1131,7 +1417,7 @@
 
         checks.forEach(chk => {
             const item = document.createElement('div');
-            item.className = 'flex items-center gap-2 p-2 rounded bg-[#111215] border border-[--border]';
+            item.className = 'flex items-center gap-2 p-2 rounded bg-[--panel-inset] border border-[--border]';
             item.innerHTML = `
                 <i class="fas ${chk.ok ? 'fa-circle-check text-emerald-400' : 'fa-circle-exclamation text-amber-400'} text-xs shrink-0"></i>
                 <div class="min-w-0">
@@ -1195,13 +1481,13 @@
         document.getElementById('milestones-count').innerText = `${arr.length} hito${arr.length === 1 ? '' : 's'}`;
 
         if (arr.length === 0) {
-            list.innerHTML = `<div class="p-4 text-center text-xs text-slate-500 italic bg-[#0d0e10] rounded-lg border border-[--border]">Aún no hay hitos registrados en este expediente. Agrega uno arriba.</div>`;
+            list.innerHTML = `<div class="p-4 text-center text-xs text-slate-500 italic bg-[--panel-inset] rounded-lg border border-[--border]">Aún no hay hitos registrados en este expediente. Agrega uno arriba.</div>`;
             return;
         }
 
         arr.forEach((st, idx) => {
             const item = document.createElement('div');
-            item.className = 'p-2.5 rounded-lg border border-[--border] bg-[#0d0e10] flex flex-col sm:flex-row sm:items-center gap-2.5 transition-colors';
+            item.className = 'p-2.5 rounded-lg border border-[--border] bg-[--panel-inset] flex flex-col sm:flex-row sm:items-center gap-2.5 transition-colors';
             item.innerHTML = `
                 <div class="flex items-center gap-2.5">
                     <div class="flex flex-col gap-0.5">
@@ -1447,7 +1733,7 @@
                     <span>${c.rit ? 'RIT ' + escapeHtml(c.rit) : 'Sin RIT'}</span>
                     <span>Paso ${stage} de 5</span>
                 </div>
-                <div class="h-1 w-full rounded-full bg-[#18191c] overflow-hidden">
+                <div class="h-1 w-full rounded-full bg-[--panel-subtle] overflow-hidden">
                     <div class="h-full rounded-full ${status === 'urgente' ? 'bg-red-500' : 'bg-blue-500'}" style="width: ${pct}%;"></div>
                 </div>
             `;
@@ -1461,7 +1747,7 @@
         const n = s => legalCases.filter(c => (c.status || 'activo') === s).length;
         const bar = document.getElementById('stats-bar');
         bar.innerHTML = `
-            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded border border-[--border] bg-[#141518] text-xs">
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded border border-[--border] bg-[--panel-raised] text-xs">
                 <span class="text-slate-400">Total:</span><b class="text-white">${legalCases.length}</b>
             </div>
             <div class="flex items-center gap-1.5 px-2.5 py-1 rounded border border-cyan-500/20 bg-cyan-500/10 text-xs">
@@ -1616,10 +1902,10 @@
         if (!ed || !ed.lastCheckedAt) {
             timeVal.innerText = 'Sin comprobación previa';
             sourceVal.innerText = 'Presiona el botón para auditar';
-            statusBadge.className = 'inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-semibold bg-[#18191c] text-slate-400 border border-[--border]';
+            statusBadge.className = 'inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-semibold bg-[--panel-subtle] text-slate-400 border border-[--border]';
             statusBadge.innerHTML = '<i class="fas fa-clock text-[10px]"></i><span>Pendiente de consulta</span>';
             noveltySummary.innerText = 'Monitoreo sin ClaveÚnica';
-            list.innerHTML = `<div class="p-5 text-center text-xs text-slate-500 italic bg-[#0d0e10] rounded-lg border border-[--border]">Presiona "Consultar Estado Diario Ahora" para verificar resoluciones, proveídos y decretos judiciales oficiales en el Poder Judicial.</div>`;
+            list.innerHTML = `<div class="p-5 text-center text-xs text-slate-500 italic bg-[--panel-inset] rounded-lg border border-[--border]">Presiona "Consultar Estado Diario Ahora" para verificar resoluciones, proveídos y decretos judiciales oficiales en el Poder Judicial.</div>`;
             count.innerText = '0 registros';
             return;
         }
@@ -1649,14 +1935,14 @@
         count.innerText = `${resolutions.length} registro${resolutions.length === 1 ? '' : 's'}`;
 
         if (resolutions.length === 0) {
-            list.innerHTML = `<div class="p-4 text-center text-xs text-slate-400 italic bg-[#0d0e10] rounded-lg border border-[--border]">No se detectaron resoluciones públicas registradas para este RIT.</div>`;
+            list.innerHTML = `<div class="p-4 text-center text-xs text-slate-400 italic bg-[--panel-inset] rounded-lg border border-[--border]">No se detectaron resoluciones públicas registradas para este RIT.</div>`;
             return;
         }
 
         list.innerHTML = '';
         resolutions.forEach(res => {
             const card = document.createElement('div');
-            card.className = 'p-3 rounded-lg border border-[--border] bg-[#0d0e10] space-y-2';
+            card.className = 'p-3 rounded-lg border border-[--border] bg-[--panel-inset] space-y-2';
             card.innerHTML = `
                 <div class="flex flex-wrap items-center justify-between gap-2">
                     <div class="flex items-center gap-2">
@@ -1805,7 +2091,7 @@
     function showConfirm(title, htmlMsg, onOk) {
         const zone = document.getElementById('modal-zone');
         zone.innerHTML = `
-            <div class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeModal()">
+            <div class="fixed inset-0 modal-backdrop backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeModal()">
                 <div class="panel-card max-w-md w-full p-5 shadow-2xl space-y-3.5">
                     <div class="flex items-center gap-2.5">
                         <div class="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/25 flex items-center justify-center shrink-0">
@@ -1936,7 +2222,7 @@
         const zone = document.getElementById('modal-zone');
         const filter = preFilterCode || '';
         zone.innerHTML = `
-            <div class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 md:p-6" onclick="if(event.target===this) closeModal()">
+            <div class="fixed inset-0 modal-backdrop backdrop-blur-sm z-50 flex items-center justify-center p-3 md:p-6" onclick="if(event.target===this) closeModal()">
                 <div class="panel-card w-full max-w-3xl flex flex-col shadow-2xl" style="max-height:85vh">
                     <div class="flex items-center justify-between px-4 py-3 border-b border-[--border] shrink-0">
                         <div class="flex items-center gap-2.5">
@@ -1988,7 +2274,7 @@
     function openSettings() {
         const zone = document.getElementById('modal-zone');
         zone.innerHTML = `
-            <div class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeModal()">
+            <div class="fixed inset-0 modal-backdrop backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeModal()">
                 <div class="panel-card max-w-sm w-full p-5 shadow-2xl space-y-3.5">
                     <div class="flex items-center gap-2.5">
                         <div class="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/25 flex items-center justify-center shrink-0">
