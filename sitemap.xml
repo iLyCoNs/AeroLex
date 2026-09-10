@@ -1,7 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Pagina Principal AeroLex Puerto Montt -->
   <url>
     <loc>https://aerolex.cl/</loc>
-    <lastmod>2026-09-08</lastmod>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Catalogo de Servicios Juridicos -->
+  <url>
+    <loc>https://aerolex.cl/#servicios</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Cobertura Jurisdiccional & Tribunales Los Lagos -->
+  <url>
+    <loc>https://aerolex.cl/#cobertura-tribunales</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Calculadora de Plazos Legales & Glosario Procesal -->
+  <url>
+    <loc>https://aerolex.cl/#herramientas</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Preguntas Frecuentes Juridicas Puerto Montt -->
+  <url>
+    <loc>https://aerolex.cl/#faq</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Datos de Contacto, Ubicacion y Oficina Puerto Montt -->
+  <url>
+    <loc>https://aerolex.cl/#contacto</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>
