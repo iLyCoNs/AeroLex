@@ -1465,26 +1465,143 @@
         const GITHUB_REPO_OWNER = "ilycons";
         const GITHUB_REPO_NAME = "AeroLex";
 
-        // ── Registro de contactos WhatsApp (fire-and-forget) ──────────────────
-        // Cada vez que el cliente pulsa un botón WA se registra la intención
-        // en el panel de administración para transparencia entre los socios.
+        // ── SISTEMA DE TELEMETRÍA Y ATRIBUCIÓN GOOGLE ADS & SEO ───────────────
         const _WA_LOG_URL = '/api/wa-contact';
         let _waSessionId = 'portal_' + Math.random().toString(36).substring(2, 10) + '_' + Date.now();
 
-        /**
-         * Registra silenciosamente un intento de contacto WhatsApp.
-         * Nunca bloquea la apertura del enlace wa.me.
-         * @param {string} topic      - Motivo ('contacto_abogado', 'expediente', 'plazo', etc.)
-         * @param {string} message    - Fragmento del mensaje que se manda a WA (max 500 chars)
-         * @param {string|null} caseCode - Código ALX si aplica
-         */
+        const AeroLexTelemetry = (function() {
+            const ENDPOINT = '/api/telemetry';
+            let sessionId = sessionStorage.getItem('alx_telemetry_sid');
+            if (!sessionId) {
+                sessionId = 'sid_' + Math.random().toString(36).substring(2, 10) + '_' + Date.now();
+                sessionStorage.setItem('alx_telemetry_sid', sessionId);
+            }
+
+            // Detección de Origen de Tráfico (Google Ads vs Orgánico vs Directo)
+            function detectSource() {
+                try {
+                    const params = new URLSearchParams(window.location.search);
+                    const gclid = params.get('gclid') || params.get('gbraid') || params.get('wbraid');
+                    const utmSource = params.get('utm_source');
+                    const utmCampaign = params.get('utm_campaign');
+
+                    if (gclid) {
+                        sessionStorage.setItem('alx_traffic_src', 'google_ads');
+                        sessionStorage.setItem('alx_gclid', gclid);
+                        if (utmCampaign) sessionStorage.setItem('alx_utm_campaign', utmCampaign);
+                        return { source: 'google_ads', gclid, utmCampaign };
+                    }
+
+                    if (utmSource && utmSource.toLowerCase().includes('google')) {
+                        sessionStorage.setItem('alx_traffic_src', 'google_ads');
+                        sessionStorage.setItem('alx_utm_campaign', utmCampaign || 'google_campaign');
+                        return { source: 'google_ads', gclid: '', utmCampaign: utmCampaign || 'utm_google' };
+                    }
+
+                    const cachedSrc = sessionStorage.getItem('alx_traffic_src');
+                    if (cachedSrc) {
+                        return {
+                            source: cachedSrc,
+                            gclid: sessionStorage.getItem('alx_gclid') || '',
+                            utmCampaign: sessionStorage.getItem('alx_utm_campaign') || ''
+                        };
+                    }
+
+                    // Detección de Google Orgánico (Buscador google.cl / google.com)
+                    const ref = document.referrer || '';
+                    if (ref.includes('google.') || ref.includes('android-app://com.google.android.googlequicksearchbox')) {
+                        sessionStorage.setItem('alx_traffic_src', 'google_organic');
+                        return { source: 'google_organic', gclid: '', utmCampaign: '' };
+                    }
+
+                    return { source: 'direct_other', gclid: '', utmCampaign: '' };
+                } catch (_) {
+                    return { source: 'direct_other', gclid: '', utmCampaign: '' };
+                }
+            }
+
+            function getDevice() {
+                const w = window.innerWidth;
+                const ua = navigator.userAgent || '';
+                if (/Mobi|Android|iPhone|iPod/i.test(ua) || w < 768) return 'movil';
+                if (/iPad|Tablet/i.test(ua) || (w >= 768 && w < 1024)) return 'tablet';
+                return 'desktop';
+            }
+
+            const trafficInfo = detectSource();
+
+            function track(eventType, detail) {
+                try {
+                    const payload = {
+                        session_id: sessionId,
+                        source: trafficInfo.source,
+                        gclid: trafficInfo.gclid || sessionStorage.getItem('alx_gclid') || '',
+                        utm_campaign: trafficInfo.utmCampaign || sessionStorage.getItem('alx_utm_campaign') || '',
+                        event: eventType,
+                        detail: String(detail || '').slice(0, 500),
+                        device: getDevice(),
+                        path: window.location.pathname + window.location.hash,
+                        referrer: document.referrer ? document.referrer.slice(0, 200) : ''
+                    };
+
+                    // Respaldo en localStorage de los últimos 50 eventos locales
+                    try {
+                        const local = JSON.parse(localStorage.getItem('alx_local_events') || '[]');
+                        local.unshift({ ...payload, timestamp: new Date().toISOString() });
+                        if (local.length > 50) local.length = 50;
+                        localStorage.setItem('alx_local_events', JSON.stringify(local));
+                    } catch (_) {}
+
+                    fetch(ENDPOINT, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload),
+                        keepalive: true
+                    }).catch(() => {});
+                } catch (_) {}
+            }
+
+            // Registrar visita inicial (1 vez por sesión)
+            if (!sessionStorage.getItem('alx_visit_tracked')) {
+                sessionStorage.setItem('alx_visit_tracked', '1');
+                const srcLabel = trafficInfo.source === 'google_ads' ? 'Google Ads' : (trafficInfo.source === 'google_organic' ? 'Google Orgánico' : 'Directo/Otro');
+                track('visita', `Visita detectada desde ${srcLabel}${trafficInfo.gclid ? ' (GCLID: ' + trafficInfo.gclid.slice(0, 10) + '...)' : ''}`);
+            }
+
+            return {
+                track,
+                getSource: () => trafficInfo.source,
+                getGclid: () => trafficInfo.gclid
+            };
+        })();
+
+        // Listener global para capturar cualquier clic en botones de WhatsApp
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('a[href*="wa.me"], a[href*="whatsapp"], button, .service-widget');
+            if (!btn) return;
+            const href = btn.getAttribute('href') || '';
+            const txt = (btn.innerText || '').replace(/\s+/g, ' ').trim();
+            if (href.includes('wa.me') || href.includes('whatsapp') || txt.includes('Abogado de Turno') || (btn.onclick && String(btn.onclick).includes('contactDirect'))) {
+                AeroLexTelemetry.track('whatsapp_click', `Botón: "${txt.slice(0, 45)}" | Destino: ${href.slice(0, 50) || 'WhatsApp Directo'}`);
+            }
+        }, { capture: true });
+
+        // Listener para registrar aperturas de preguntas en el FAQ
+        document.addEventListener('toggle', (e) => {
+            if (e.target && e.target.tagName === 'DETAILS' && e.target.open) {
+                const summaryText = e.target.querySelector('summary')?.innerText?.replace(/\s+/g, ' ').trim() || 'Pregunta FAQ';
+                AeroLexTelemetry.track('faq_open', `FAQ leída: ${summaryText.slice(0, 100)}`);
+            }
+        }, { capture: true });
+
         function logWhatsAppContact(topic, message, caseCode) {
             try {
+                AeroLexTelemetry.track('whatsapp_click', `Tema: ${topic} | Msg: ${String(message || '').slice(0, 80)}`);
                 fetch(_WA_LOG_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        source: 'portal',
+                        source: AeroLexTelemetry.getSource() === 'google_ads' ? 'google_ads' : 'portal',
                         origin: window.location.href,
                         topic: String(topic || 'contacto_web').slice(0, 200),
                         message: String(message || '').slice(0, 500),
@@ -1492,7 +1609,7 @@
                         sessionId: _waSessionId
                     }),
                     keepalive: true
-                }).catch(() => {}); // ignorar fallos de red silenciosamente
+                }).catch(() => {});
             } catch (_) {}
         }
 
@@ -2069,6 +2186,9 @@
             currentServiceTitle = serviceTitle;
             currentFlowId = flows[serviceId] ? serviceId : 'default';
             answersTracker = [];
+            if (typeof AeroLexTelemetry !== 'undefined') {
+                AeroLexTelemetry.track('triage_start', `Triaje IA: ${serviceTitle} (ID: ${serviceId})`);
+            }
             setTimeout(() => askNode(currentFlowId), 400); 
         }
 
@@ -2184,6 +2304,9 @@
                     return;
                 }
                 injectBotMessage(`Verificando credenciales del expediente <strong>${escapeHtml(codeToCheck)}</strong>...`);
+                if (typeof AeroLexTelemetry !== 'undefined') {
+                    AeroLexTelemetry.track('case_check', `Consulta expediente ${codeToCheck}`);
+                }
                 fetchCaseFromAPI(codeToCheck, pinIntent, true);
                 return;
             }
@@ -2373,6 +2496,10 @@
             document.getElementById('content-desc').innerText = dataObj.desc;
             document.getElementById('content-icon').className = `fas ${dataObj.icon} text-2xl text-mac-dark`;
             
+            if (typeof AeroLexTelemetry !== 'undefined') {
+                AeroLexTelemetry.track('service_view', `Categoría: ${dataObj.title}`);
+            }
+            
             servicesGrid.innerHTML = '';
             dataObj.items.forEach((item, index) => {
                 const card = document.createElement('div');
@@ -2527,6 +2654,10 @@
             const waMsg = rest <= 0
                 ? `Hola AeroLex: consulté el plazo de "${p.label}" en su sitio y figura VENCIDO (${vencStr}). ¿Existen vías para mi caso?`
                 : `Hola AeroLex: calculé el plazo de "${p.label}" en su sitio y vence el ${vencStr} (${rest} ${unidad}). Necesito asesoría.`;
+
+            if (typeof AeroLexTelemetry !== 'undefined') {
+                AeroLexTelemetry.track('calculator_use', `Calculó: "${p.label}" - Estado: ${st} (${rest} días)`);
+            }
 
             box.innerHTML = `
                 <div class="plazo-res fade-in" style="border-color:${border}">

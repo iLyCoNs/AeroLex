@@ -356,7 +356,10 @@ module.exports = async (req, res) => {
       const processedRows = allRows.map(unpackCaseEstadoDiario);
       const cases = includeWa
         ? processedRows
-        : processedRows.filter(r => !String(r.code || '').toUpperCase().startsWith('WA-'));
+        : processedRows.filter(r => {
+            const c = String(r.code || '').toUpperCase();
+            return !c.startsWith('WA-') && !c.startsWith('EV-');
+          });
       return res.status(200).json({ ok: true, cases, total: cases.length, rawTotal: allRows.length });
     }
 

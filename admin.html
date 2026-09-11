@@ -650,6 +650,18 @@
         </div>
 
         <div class="flex items-center gap-1.5">
+            <!-- Botón Telemetría Google Ads & Tráfico -->
+            <button onclick="openTelemetryModal()" class="btn btn-secondary !p-1.5 !px-2.5 relative flex items-center gap-1.5" title="Telemetría y Tráfico Google Ads / SEO" id="btn-telemetry">
+                <span class="relative flex w-2 h-2">
+                    <span class="absolute inline-flex w-full h-full rounded-full bg-blue-400 opacity-75 animate-ping"></span>
+                    <span class="relative inline-flex rounded-full w-2 h-2 bg-blue-500"></span>
+                </span>
+                <i class="fab fa-google text-blue-400 text-xs"></i>
+                <span class="text-xs hidden sm:inline text-slate-300 font-medium">Google</span>
+                <span id="telemetry-gads-badge" class="px-1.5 py-0.2 rounded text-[9.5px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">0 Ads</span>
+                <span id="telemetry-wa-badge" class="hidden md:inline px-1.5 py-0.2 rounded text-[9.5px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">0 WA</span>
+            </button>
+
             <button onclick="openWaLog()" class="btn btn-secondary !p-1.5 !px-2.5 relative" title="Registro de contactos WhatsApp" id="btn-wa-log">
                 <i class="fab fa-whatsapp text-emerald-400 text-xs"></i>
                 <span class="text-xs ml-1 hidden sm:inline text-slate-300">Consultas</span>
@@ -1296,6 +1308,10 @@
         renderSidebar();
         renderStats();
         renderStepperUI(0);
+        if (typeof updateTelemetryBadges === 'function') {
+            updateTelemetryBadges();
+            setInterval(updateTelemetryBadges, 45000);
+        }
     }
 
     // =========================================================================
@@ -1742,7 +1758,10 @@
     }
 
     function renderStats() {
-        const legalCases = Object.values(casesDB).filter(c => !String(c.code || '').toUpperCase().startsWith('WA-'));
+        const legalCases = Object.values(casesDB).filter(c => {
+            const code = String(c.code || '').toUpperCase();
+            return !code.startsWith('WA-') && !code.startsWith('EV-');
+        });
         const waContacts = Object.values(casesDB).filter(c => String(c.code || '').toUpperCase().startsWith('WA-'));
         const n = s => legalCases.filter(c => (c.status || 'activo') === s).length;
         const bar = document.getElementById('stats-bar');
@@ -2305,6 +2324,367 @@
             toast('Número de WhatsApp guardado.', 'ok');
         }
         closeModal();
+    }
+
+    // =========================================================================
+    // 12. TELEMETRÍA Y CONTADOR GOOGLE ADS / SEO
+    // =========================================================================
+    let _telemetryData = { metrics: {}, events: [] };
+    let _telemetryFilter = 'all';
+
+    async function loadTelemetryData() {
+        try {
+            const resp = await fetch('/api/telemetry', { headers: authHeaders() });
+            if (resp.ok) {
+                const data = await resp.json();
+                if (data && data.ok) {
+                    _telemetryData = data;
+                    return data;
+                }
+            }
+        } catch (_) {}
+
+        // Fallback local: recuperar eventos desde localStorage
+        try {
+            const local = JSON.parse(localStorage.getItem('alx_local_events') || '[]');
+            const gads = local.filter(e => e.source === 'google_ads' && (e.event === 'visita' || e.eventType === 'visita')).length;
+            const org = local.filter(e => e.source === 'google_organic' && (e.event === 'visita' || e.eventType === 'visita')).length;
+            const oth = local.filter(e => e.source === 'direct_other' && (e.event === 'visita' || e.eventType === 'visita')).length;
+            const wa = local.filter(e => e.event === 'whatsapp_click' || e.eventType === 'whatsapp_click').length;
+            const searches = local.filter(e => ['triage_start', 'calculator_use', 'faq_open', 'service_view', 'case_check'].includes(e.event || e.eventType)).length;
+            const tot = gads + org + oth;
+            const cvr = (gads + org) > 0 ? ((wa / (gads + org)) * 100).toFixed(1) + '%' : '0.0%';
+
+            _telemetryData = {
+                metrics: {
+                    googleAdsVisits: gads,
+                    googleOrganicVisits: org,
+                    otherVisits: oth,
+                    totalVisits: tot,
+                    whatsappClicks: wa,
+                    searchesCount: searches,
+                    googleConversionRate: cvr
+                },
+                events: local.map(e => ({
+                    code: e.code || 'LOCAL',
+                    timestamp: e.timestamp || new Date().toISOString(),
+                    source: e.source || 'direct_other',
+                    eventType: e.event || e.eventType || 'evento',
+                    detail: e.detail || '',
+                    gclid: e.gclid || '',
+                    device: e.device || 'desktop',
+                    path: e.path || '/'
+                })),
+                totalEvents: local.length
+            };
+            return _telemetryData;
+        } catch (_) {
+            return _telemetryData;
+        }
+    }
+
+    async function updateTelemetryBadges() {
+        const data = await loadTelemetryData();
+        const m = data.metrics || {};
+        const gadsBadge = document.getElementById('telemetry-gads-badge');
+        const waBadge = document.getElementById('telemetry-wa-badge');
+        if (gadsBadge) gadsBadge.textContent = `${m.googleAdsVisits || 0} Ads`;
+        if (waBadge) waBadge.textContent = `${m.whatsappClicks || 0} WA`;
+    }
+
+    async function openTelemetryModal() {
+        const zone = document.getElementById('modal-zone');
+        zone.innerHTML = `
+            <div class="fixed inset-0 modal-backdrop backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 md:p-6" onclick="if(event.target===this) closeModal()">
+                <div class="panel-card w-full max-w-4xl flex flex-col shadow-2xl overflow-hidden border border-[--border]" style="max-height: 90vh;">
+                    
+                    <!-- ENCABEZADO TÉCNICO -->
+                    <div class="flex items-center justify-between px-4 py-3 border-b border-[--border] shrink-0" style="background: var(--panel-raised);">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center shrink-0">
+                                <i class="fab fa-google text-blue-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-xs md:text-sm font-bold text-white tracking-tight">Telemetría de Tráfico & Google Ads</h3>
+                                    <span class="px-1.5 py-0.5 rounded text-[9.5px] font-mono font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/25">EN VIVO</span>
+                                </div>
+                                <p class="text-[10px] text-slate-400">Atribución de campañas, búsquedas e intención de contacto en Puerto Montt</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="refreshTelemetryModal()" class="btn btn-secondary !py-1 !px-2.5 !text-xs" title="Recargar métricas"><i id="telemetry-spin" class="fas fa-rotate-right"></i> Actualizar</button>
+                            <button onclick="exportTelemetryCsv()" class="btn btn-secondary !py-1 !px-2.5 !text-xs"><i class="fas fa-file-csv text-emerald-400"></i> Exportar</button>
+                            <button onclick="closeModal()" class="btn btn-secondary !p-1.5 !px-2"><i class="fas fa-xmark text-xs"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- REJILLA DE 4 MINI KPIS TÉCNICOS -->
+                    <div class="p-3 md:p-4 border-b border-[--border] bg-[--panel-inset] grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-3 shrink-0">
+                        <div class="p-3 rounded-lg border border-blue-500/25 bg-blue-500/5 flex flex-col justify-between">
+                            <div class="flex items-center justify-between text-[10px] font-bold text-blue-400 uppercase tracking-wider">
+                                <span>Google Ads</span>
+                                <i class="fas fa-bullseye"></i>
+                            </div>
+                            <div class="my-1">
+                                <div class="text-xl md:text-2xl font-mono font-extrabold text-blue-300" id="tele-val-gads">0</div>
+                            </div>
+                            <div class="text-[9.5px] text-slate-400">Visitas con gclid / PPC</div>
+                        </div>
+
+                        <div class="p-3 rounded-lg border border-indigo-500/25 bg-indigo-500/5 flex flex-col justify-between">
+                            <div class="flex items-center justify-between text-[10px] font-bold text-indigo-400 uppercase tracking-wider">
+                                <span>Google SEO</span>
+                                <i class="fas fa-magnifying-glass"></i>
+                            </div>
+                            <div class="my-1">
+                                <div class="text-xl md:text-2xl font-mono font-extrabold text-indigo-300" id="tele-val-seo">0</div>
+                            </div>
+                            <div class="text-[9.5px] text-slate-400">Buscador google.cl / .com</div>
+                        </div>
+
+                        <div class="p-3 rounded-lg border border-emerald-500/25 bg-emerald-500/5 flex flex-col justify-between">
+                            <div class="flex items-center justify-between text-[10px] font-bold text-emerald-400 uppercase tracking-wider">
+                                <span>Clics WhatsApp</span>
+                                <i class="fab fa-whatsapp text-xs"></i>
+                            </div>
+                            <div class="my-1 flex items-baseline gap-2">
+                                <span class="text-xl md:text-2xl font-mono font-extrabold text-emerald-300" id="tele-val-wa">0</span>
+                                <span class="text-[10.5px] font-mono font-semibold text-emerald-400" id="tele-val-cvr">0% CVR</span>
+                            </div>
+                            <div class="text-[9.5px] text-slate-400">Intención directa a contacto</div>
+                        </div>
+
+                        <div class="p-3 rounded-lg border border-purple-500/25 bg-purple-500/5 flex flex-col justify-between">
+                            <div class="flex items-center justify-between text-[10px] font-bold text-purple-400 uppercase tracking-wider">
+                                <span>Búsquedas & Info</span>
+                                <i class="fas fa-chart-simple text-xs"></i>
+                            </div>
+                            <div class="my-1">
+                                <div class="text-xl md:text-2xl font-mono font-extrabold text-purple-300" id="tele-val-info">0</div>
+                            </div>
+                            <div class="text-[9.5px] text-slate-400">Triajes, plazos y FAQs</div>
+                        </div>
+                    </div>
+
+                    <!-- BARRA DE FILTROS TÉCNICOS -->
+                    <div class="px-4 py-2 border-b border-[--border] flex flex-wrap items-center justify-between gap-2 shrink-0 bg-[--panel]">
+                        <div class="flex items-center gap-1 overflow-x-auto pb-0.5" id="telemetry-filters-bar">
+                            <button type="button" onclick="setTelemetryFilter('all')" id="tfilter-all" class="filter-tab active">Todos</button>
+                            <button type="button" onclick="setTelemetryFilter('google_ads')" id="tfilter-google_ads" class="filter-tab">Google Ads</button>
+                            <button type="button" onclick="setTelemetryFilter('google_organic')" id="tfilter-google_organic" class="filter-tab">Google SEO</button>
+                            <button type="button" onclick="setTelemetryFilter('whatsapp_click')" id="tfilter-whatsapp_click" class="filter-tab">WhatsApp</button>
+                            <button type="button" onclick="setTelemetryFilter('info')" id="tfilter-info" class="filter-tab">Búsquedas / Triajes</button>
+                        </div>
+                        <input type="text" id="telemetry-search" onkeyup="renderTelemetryRows()" placeholder="Buscar evento, gclid o detalle..." class="input-base !py-1 !px-2.5 !text-xs !w-48">
+                    </div>
+
+                    <!-- VISOR DE EVENTOS (LIVE STREAM) -->
+                    <div id="telemetry-table-zone" class="flex-1 overflow-y-auto p-2 bg-[--panel-inset]">
+                        <div class="text-center text-slate-500 text-xs py-10"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando eventos...</div>
+                    </div>
+
+                    <!-- PIE DE VENTANA CON DIAGNÓSTICO -->
+                    <div class="px-4 py-2 border-t border-[--border] flex items-center justify-between text-[10px] text-slate-400 shrink-0 bg-[--panel-raised]">
+                        <div class="flex items-center gap-2 font-mono" id="telemetry-footer-status">
+                            <span>Google Ads Activo</span>
+                        </div>
+                        <button onclick="purgeTelemetryConfirm()" class="text-red-400/80 hover:text-red-400 transition text-[10px]">
+                            <i class="fas fa-trash-can mr-1"></i> Purgar telemetría
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+
+        await refreshTelemetryModal();
+    }
+
+    async function refreshTelemetryModal() {
+        const spin = document.getElementById('telemetry-spin');
+        if (spin) spin.classList.add('fa-spin');
+        try {
+            await loadTelemetryData();
+            const m = _telemetryData.metrics || {};
+            const gEl = document.getElementById('tele-val-gads');
+            const sEl = document.getElementById('tele-val-seo');
+            const wEl = document.getElementById('tele-val-wa');
+            const cEl = document.getElementById('tele-val-cvr');
+            const iEl = document.getElementById('tele-val-info');
+
+            if (gEl) gEl.innerText = m.googleAdsVisits || 0;
+            if (sEl) sEl.innerText = m.googleOrganicVisits || 0;
+            if (wEl) wEl.innerText = m.whatsappClicks || 0;
+            if (cEl) cEl.innerText = `${m.googleConversionRate || '0.0%'}`;
+            if (iEl) iEl.innerText = m.searchesCount || 0;
+
+            renderTelemetryRows();
+            updateTelemetryBadges();
+        } finally {
+            if (spin) spin.classList.remove('fa-spin');
+        }
+    }
+
+    function setTelemetryFilter(filter) {
+        _telemetryFilter = filter;
+        document.querySelectorAll('#telemetry-filters-bar .filter-tab').forEach(b => {
+            b.classList.toggle('active', b.id === `tfilter-${filter}`);
+        });
+        renderTelemetryRows();
+    }
+
+    function renderTelemetryRows() {
+        const zone = document.getElementById('telemetry-table-zone');
+        if (!zone) return;
+
+        const q = (document.getElementById('telemetry-search')?.value || '').toLowerCase().trim();
+        const allEvents = _telemetryData.events || [];
+
+        const filtered = allEvents.filter(e => {
+            if (_telemetryFilter === 'google_ads' && e.source !== 'google_ads') return false;
+            if (_telemetryFilter === 'google_organic' && e.source !== 'google_organic') return false;
+            if (_telemetryFilter === 'whatsapp_click' && e.eventType !== 'whatsapp_click') return false;
+            if (_telemetryFilter === 'info' && !['triage_start', 'calculator_use', 'faq_open', 'service_view', 'case_check'].includes(e.eventType)) return false;
+
+            if (q) {
+                const haystack = `${e.source} ${e.eventType} ${e.detail} ${e.gclid || ''} ${e.device || ''}`.toLowerCase();
+                if (!haystack.includes(q)) return false;
+            }
+            return true;
+        });
+
+        const footerStatus = document.getElementById('telemetry-footer-status');
+        if (footerStatus) {
+            footerStatus.innerHTML = `<span class="text-blue-400 font-semibold">${filtered.length}</span> eventos mostrados (de ${allEvents.length} totales)`;
+        }
+
+        if (filtered.length === 0) {
+            zone.innerHTML = `
+                <div class="text-center text-slate-500 text-xs py-12">
+                    <i class="fas fa-chart-line text-2xl mb-2 block text-slate-600"></i>
+                    No se encontraron eventos para el filtro seleccionado.
+                </div>`;
+            return;
+        }
+
+        const rows = filtered.map(e => {
+            const dt = e.timestamp
+                ? new Date(e.timestamp).toLocaleString('es-CL', {
+                    timeZone: 'America/Santiago',
+                    day: '2-digit', month: '2-digit', year: '2-digit',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit'
+                })
+                : '—';
+
+            let srcBadge = '';
+            if (e.source === 'google_ads') {
+                srcBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 whitespace-nowrap"><i class="fab fa-google text-[9px] mr-1"></i>Ads${e.gclid ? ' • ' + e.gclid.slice(0, 8) + '...' : ''}</span>`;
+            } else if (e.source === 'google_organic') {
+                srcBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 whitespace-nowrap"><i class="fas fa-magnifying-glass text-[9px] mr-1"></i>SEO</span>`;
+            } else {
+                srcBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-medium bg-slate-500/20 text-slate-400 whitespace-nowrap">Directo</span>`;
+            }
+
+            const deviceIcon = e.device === 'movil'
+                ? '<i class="fas fa-mobile-screen text-slate-400 text-xs" title="Celular"></i>'
+                : (e.device === 'tablet' ? '<i class="fas fa-tablet-screen-button text-slate-400 text-xs" title="Tablet"></i>' : '<i class="fas fa-laptop text-slate-400 text-xs" title="Computador"></i>');
+
+            let eventBadge = '';
+            switch (e.eventType) {
+                case 'visita':
+                case 'page_view':
+                    eventBadge = '<span class="text-slate-200 font-medium text-[11px]"><i class="fas fa-arrow-right-to-bracket text-blue-400 mr-1.5"></i>Visita Web</span>';
+                    break;
+                case 'whatsapp_click':
+                    eventBadge = '<span class="text-emerald-400 font-bold text-[11px]"><i class="fab fa-whatsapp text-emerald-400 mr-1.5"></i>Clic WhatsApp</span>';
+                    break;
+                case 'triage_start':
+                    eventBadge = '<span class="text-cyan-300 font-semibold text-[11px]"><i class="fas fa-robot text-cyan-400 mr-1.5"></i>Triaje IA</span>';
+                    break;
+                case 'calculator_use':
+                    eventBadge = '<span class="text-amber-300 font-semibold text-[11px]"><i class="fas fa-calculator text-amber-400 mr-1.5"></i>Calculadora</span>';
+                    break;
+                case 'faq_open':
+                    eventBadge = '<span class="text-purple-300 font-semibold text-[11px]"><i class="fas fa-circle-question text-purple-400 mr-1.5"></i>Lectura FAQ</span>';
+                    break;
+                case 'service_view':
+                    eventBadge = '<span class="text-sky-300 font-semibold text-[11px]"><i class="fas fa-briefcase text-sky-400 mr-1.5"></i>Servicios</span>';
+                    break;
+                case 'case_check':
+                    eventBadge = '<span class="text-blue-300 font-semibold text-[11px]"><i class="fas fa-folder-open text-blue-400 mr-1.5"></i>Rastreo Caso</span>';
+                    break;
+                default:
+                    eventBadge = `<span class="text-slate-300 text-[11px]">${escapeHtml(e.eventType)}</span>`;
+            }
+
+            const cleanDetail = escapeHtml(e.detail || '—');
+
+            return `
+                <tr class="border-b border-[--border] hover:bg-white/[0.02] transition">
+                    <td class="px-2.5 py-1.5 text-[10.5px] text-slate-400 whitespace-nowrap font-mono">${dt}</td>
+                    <td class="px-2.5 py-1.5">${srcBadge}</td>
+                    <td class="px-2 py-1.5 text-center">${deviceIcon}</td>
+                    <td class="px-2.5 py-1.5 whitespace-nowrap">${eventBadge}</td>
+                    <td class="px-2.5 py-1.5 text-[11px] text-slate-300 max-w-[280px] truncate" title="${cleanDetail}">${cleanDetail}</td>
+                </tr>`;
+        }).join('');
+
+        zone.innerHTML = `
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-[--border] text-[9.5px] uppercase tracking-wider text-slate-500">
+                            <th class="px-2.5 py-1.5">Fecha/Hora</th>
+                            <th class="px-2.5 py-1.5">Origen</th>
+                            <th class="px-2 py-1.5 text-center">Disp.</th>
+                            <th class="px-2.5 py-1.5">Evento</th>
+                            <th class="px-2.5 py-1.5">Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>`;
+    }
+
+    function exportTelemetryCsv() {
+        const events = _telemetryData.events || [];
+        if (events.length === 0) {
+            toast('No hay eventos de telemetría para exportar.', 'err');
+            return;
+        }
+
+        const header = ['Fecha_Hora', 'Origen', 'Dispositivo', 'Tipo_Evento', 'GCLID', 'Campana_UTM', 'Detalle'];
+        const rows = events.map(e => [
+            e.timestamp ? new Date(e.timestamp).toLocaleString('es-CL', { timeZone: 'America/Santiago' }) : '',
+            e.source || '',
+            e.device || '',
+            e.eventType || '',
+            e.gclid || '',
+            e.utmCampaign || '',
+            (e.detail || '').replace(/"/g, '""')
+        ].map(v => `"${v}"`).join(','));
+
+        const csv = [header.join(','), ...rows].join('\n');
+        const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `aerolex-telemetria-google-${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        toast('Archivo CSV exportado exitosamente.', 'ok');
+    }
+
+    async function purgeTelemetryConfirm() {
+        if (!confirm("¿Está seguro de que desea purgar los registros antiguos de telemetría? Esta acción es irreversible.")) return;
+        try {
+            const resp = await fetch('/api/telemetry', {
+                method: 'DELETE',
+                headers: authHeaders()
+            });
+            localStorage.removeItem('alx_local_events');
+            toast('Telemetría purgada exitosamente.', 'ok');
+            await refreshTelemetryModal();
+        } catch (e) {
+            toast('Error al purgar telemetría: ' + e.message, 'err');
+        }
     }
 
     function logout() {
