@@ -131,9 +131,13 @@ async function syncPartnerCausesToSupabase() {
         materia: pc.materia,
         tribunal: pc.tribunal,
         rit: pc.rit,
-        detalle: JSON.stringify({ description: pc.detalle, syncedBy: 'github_actions_vigia' }),
+        detalle: pc.detalle,
         estado_actual: 1,
-        steps: [],
+        triage: [],
+        steps: [
+          { title: 'Expediente recibido por AeroLex', date: '13-sep-2026', done: true },
+          { title: 'Vigilancia procesal activa en OJV', date: 'En curso', done: false }
+        ],
         status: pc.status,
         created_at: new Date().toISOString()
       };
@@ -527,16 +531,12 @@ async function main() {
       docket: result.docket,
     };
 
-    let existingTriage = {};
-    try {
-      if (c.detalle) {
-        const parsed = JSON.parse(c.detalle);
-        if (parsed && typeof parsed === 'object' && parsed.triage) existingTriage = parsed.triage;
-      }
-    } catch (_) {}
+    let triageArray = Array.isArray(c.triage) ? [...c.triage] : [];
+    triageArray = triageArray.filter(item => typeof item !== 'string' || !item.startsWith('__ESTADO_DIARIO__:'));
+    triageArray.push('__ESTADO_DIARIO__:' + JSON.stringify(edData));
 
     const patch = {
-      detalle: JSON.stringify({ triage: existingTriage, estado_diario: edData }),
+      triage: triageArray,
       updated_at: new Date().toISOString()
     };
 
