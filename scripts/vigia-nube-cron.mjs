@@ -338,7 +338,7 @@ async function sendEmailAlert(novelties, isTest = false, allWatched = []) {
         ${n.materia || n.caratula || 'Causa Activa'}
       </div>
       <div style="font-size:11.5px; color:#64748b; margin-top:3px;">
-        Tribunal: <strong>${n.court || n.tribunal || 'Poder Judicial'}</strong> | Último Registro: <strong>${n.lastMovementDate || dateStr}</strong>
+        Tribunal: <strong>${n.court || n.tribunal || 'Poder Judicial'}</strong> | Abogado(a): <strong>${n.abogado || 'Jaime Vidal Paredes'}</strong> | Último Registro: <strong>${n.lastMovementDate || dateStr}</strong>
       </div>
       <div style="margin-top:8px; font-size:11.5px; background:#eff6ff; border-left:3px solid #2563eb; padding:6px 10px; color:#1e3a8a;">
         Estado: <strong>${n.hasNoveltiesToday ? 'Novedad Detectada Hoy en OJV' : 'Inspeccionada en OJV (Al Día)'}</strong>
@@ -500,12 +500,21 @@ async function main() {
     const result = await checkPjudCase(c.rit, c.tribunal);
     console.log(`  · Resultado: ${result.found ? 'Encontrada' : 'No encontrada'} | Novedades hoy: ${result.hasNoveltiesToday ? 'SI' : 'NO'}`);
 
+    let caseLawyer = "Jaime Vidal Paredes";
+    if (Array.isArray(c.triage)) {
+      const ab = c.triage.find(t => typeof t === 'string' && t.startsWith('__ABOGADO__:'));
+      if (ab) caseLawyer = ab.replace('__ABOGADO__:', '').trim();
+    } else if (c.abogado) {
+      caseLawyer = c.abogado;
+    }
+
     scannedSummary.push({
       code: c.code,
       rit: c.rit,
       tribunal: c.tribunal,
       materia: c.materia,
       court: result.court,
+      abogado: caseLawyer,
       lastMovementDate: result.lastMovementDate,
       hasNoveltiesToday: result.hasNoveltiesToday,
       caratula: result.caratula,
@@ -518,6 +527,7 @@ async function main() {
         tribunal: c.tribunal,
         materia: c.materia,
         court: result.court,
+        abogado: caseLawyer,
         lastMovementDate: result.lastMovementDate,
         caratula: result.caratula,
       });
