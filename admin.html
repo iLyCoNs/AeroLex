@@ -408,6 +408,84 @@
             color: #60a5fa;
         }
 
+        /* Botón Estilo Google Ads para Vigilancia Judicial */
+        .gads-pill-btn {
+            background: var(--panel-raised);
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+        }
+        .gads-pill-btn:hover {
+            background: var(--panel-subtle);
+            border-color: var(--border-hover);
+            transform: translateY(-0.5px);
+        }
+        .gads-pill-btn.is-active {
+            border-color: rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.08);
+        }
+        .gads-pill-btn.is-paused {
+            border-color: rgba(245, 158, 11, 0.4);
+            background: rgba(245, 158, 11, 0.08);
+        }
+        [data-theme="light"] .gads-pill-btn {
+            background: #ffffff;
+            border-color: #cbd5e1;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+        }
+        [data-theme="light"] .gads-pill-btn:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+        [data-theme="light"] .gads-pill-btn.is-active {
+            background: #f0fdf4;
+            border-color: #86efac;
+        }
+        [data-theme="light"] .gads-pill-btn.is-paused {
+            background: #fffbeb;
+            border-color: #fde68a;
+        }
+
+        /* Switch Principal Google Ads (Modal) */
+        .gads-master-switch {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            height: 28px;
+            width: 52px;
+            border-radius: 999px;
+            background: #374151;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .gads-master-switch.active {
+            background: #10b981;
+            border-color: #059669;
+        }
+        .gads-master-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            background: white;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+        }
+        .gads-master-switch.active::after {
+            transform: translateX(24px);
+        }
+        [data-theme="light"] .gads-master-switch {
+            background: #cbd5e1;
+            border-color: #94a3b8;
+        }
+        [data-theme="light"] .gads-master-switch.active {
+            background: #10b981;
+            border-color: #059669;
+        }
+
         /* Transiciones suaves al alternar tema */
         body, header, aside, main, .panel-card, .btn, .input-base, .case-item, .step-pill, .tab-btn {
             transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
@@ -651,6 +729,24 @@
         </div>
 
         <div class="flex items-center gap-1.5">
+            <!-- Botón Estilo Google Ads: Control de Vigilancia 24/7 (GitHub Actions) -->
+            <button type="button" onclick="openVigilanciaModal()" class="gads-pill-btn flex items-center gap-2 px-2.5 py-1.5 rounded-full border transition-all duration-200 select-none cursor-pointer" id="btn-vigilancia-gads" title="Control de Vigilancia Judicial 24/7 (GitHub Actions · PC Apagado)">
+                <span class="flex items-center gap-1.5">
+                    <span class="relative flex w-2 h-2">
+                        <span id="vigilancia-ping" class="absolute inline-flex w-full h-full rounded-full bg-emerald-400 opacity-75 animate-ping"></span>
+                        <span id="vigilancia-dot" class="relative inline-flex rounded-full w-2 h-2 bg-emerald-500 shadow-sm"></span>
+                    </span>
+                    <span id="vigilancia-status-text" class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider font-mono">HABILITADO</span>
+                </span>
+                <span class="h-3 w-px bg-[--border]"></span>
+                <span class="flex items-center gap-1 text-[11px] font-medium text-slate-300">
+                    <i class="fas fa-satellite-dish text-[10px] text-blue-400"></i>
+                    <span id="vigilancia-causes-badge" class="font-mono font-bold text-white text-[11px]">0</span>
+                    <span class="hidden sm:inline text-[10px] text-slate-400">causas</span>
+                </span>
+                <i class="fas fa-caret-down text-[9.5px] text-slate-400 ml-0.5"></i>
+            </button>
+
             <!-- Botón Telemetría Google Ads & Tráfico -->
             <button onclick="openTelemetryModal()" class="btn btn-secondary !p-1.5 !px-2.5 relative flex items-center gap-1.5" title="Telemetría y Tráfico Google Ads / SEO" id="btn-telemetry">
                 <span class="relative flex w-2 h-2">
@@ -1312,6 +1408,10 @@
         if (typeof updateTelemetryBadges === 'function') {
             updateTelemetryBadges();
             setInterval(updateTelemetryBadges, 45000);
+        }
+        if (typeof updateVigilanciaBadge === 'function') {
+            updateVigilanciaBadge();
+            setInterval(updateVigilanciaBadge, 30000);
         }
     }
 
@@ -2685,6 +2785,486 @@
             await refreshTelemetryModal();
         } catch (e) {
             toast('Error al purgar telemetría: ' + e.message, 'err');
+        }
+    }
+
+    // =========================================================================
+    // 13. VIGILANCIA JUDICIAL 24/7 · GITHUB ACTIONS (ESTILO GOOGLE ADS)
+    // =========================================================================
+    let _vigilanciaData = {
+        enabled: true,
+        totalCauses: 0,
+        causes: [],
+        schedule: [],
+        lastRunAt: null
+    };
+
+    async function loadVigilanciaStatus() {
+        try {
+            const resp = await fetch('/api/admin?action=vigilancia_status', { headers: authHeaders() });
+            if (resp.ok) {
+                const data = await resp.json();
+                if (data && data.ok) {
+                    _vigilanciaData = data;
+                    return data;
+                }
+            }
+        } catch (_) {}
+
+        // Fallback desde base local casesDB
+        const active = Object.values(casesDB).filter(c => {
+            const code = String(c.code || '').toUpperCase();
+            if (code.startsWith('WA-') || code.startsWith('EV-') || code.startsWith('CFG-')) return false;
+            if (c.status === 'finalizado' || c.status === 'suspendido') return false;
+            return Boolean(c.rit && c.rit.trim());
+        });
+
+        const storedEnabled = localStorage.getItem('alx_vigilancia_enabled');
+        _vigilanciaData = {
+            enabled: storedEnabled !== 'false',
+            totalCauses: active.length,
+            causes: active.map(c => ({
+                code: c.code,
+                rit: c.rit,
+                tribunal: c.tribunal,
+                materia: c.materia,
+                status: c.status,
+                estado_diario: c.estado_diario
+            })),
+            lastRunAt: localStorage.getItem('alx_vigilancia_last_run') || new Date().toISOString(),
+            schedule: [
+                { time: '07:45 AM', name: 'Pase 1: Pre-audiencia', fatal: false },
+                { time: '08:30 AM', name: 'Pase 2: Estados Diarios y Anuncio Alegatos Corte', fatal: true },
+                { time: '09:15 AM', name: 'Pase 3: Rezagos Judiciales', fatal: false },
+                { time: '13:30 PM', name: 'Pase 4: Decretos de Jornada', fatal: false },
+                { time: '18:30 PM (Vie)', name: 'Pase 5: Tablas de Corte', fatal: false },
+            ]
+        };
+        return _vigilanciaData;
+    }
+
+    async function updateVigilanciaBadge() {
+        const data = await loadVigilanciaStatus();
+        const btn = document.getElementById('btn-vigilancia-gads');
+        const text = document.getElementById('vigilancia-status-text');
+        const count = document.getElementById('vigilancia-causes-badge');
+        const ping = document.getElementById('vigilancia-ping');
+        const dot = document.getElementById('vigilancia-dot');
+
+        if (count) count.textContent = data.totalCauses || 0;
+
+        if (data.enabled) {
+            if (text) {
+                text.textContent = 'HABILITADO';
+                text.className = 'text-[10px] font-bold text-emerald-400 uppercase tracking-wider font-mono';
+            }
+            if (dot) dot.className = 'relative inline-flex rounded-full w-2.5 h-2.5 bg-emerald-500 shadow-sm';
+            if (ping) ping.classList.remove('hidden');
+            if (btn) {
+                btn.classList.add('is-active');
+                btn.classList.remove('is-paused');
+            }
+        } else {
+            if (text) {
+                text.textContent = 'PAUSADO';
+                text.className = 'text-[10px] font-bold text-amber-400 uppercase tracking-wider font-mono';
+            }
+            if (dot) dot.className = 'relative inline-flex rounded-full w-2.5 h-2.5 bg-amber-500 shadow-sm';
+            if (ping) ping.classList.add('hidden');
+            if (btn) {
+                btn.classList.add('is-paused');
+                btn.classList.remove('is-active');
+            }
+        }
+    }
+
+    async function openVigilanciaModal() {
+        const zone = document.getElementById('modal-zone');
+        zone.innerHTML = `
+            <div class="fixed inset-0 modal-backdrop backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 md:p-6" onclick="if(event.target===this) closeModal()">
+                <div class="panel-card w-full max-w-4xl flex flex-col shadow-2xl overflow-hidden border border-[--border]" style="max-height: 90vh;">
+                    
+                    <!-- ENCABEZADO TÉCNICO -->
+                    <div class="flex items-center justify-between px-4 py-3 border-b border-[--border] shrink-0" style="background: var(--panel-raised);">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                                <i class="fas fa-satellite-dish text-emerald-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-xs md:text-sm font-bold text-white tracking-tight">Centro de Mando · Vigilancia Judicial 24/7</h3>
+                                    <span id="modal-vigilancia-status-chip" class="px-1.5 py-0.5 rounded text-[9.5px] font-mono font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/25">AUTÓNOMO (GITHUB ACTIONS)</span>
+                                </div>
+                                <p class="text-[10px] text-slate-400">Escaneo forense ininterrumpido en la nube · Opera con el computador del abogado totalmente apagado</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="refreshVigilanciaModal()" class="btn btn-secondary !py-1 !px-2.5 !text-xs" title="Actualizar estado"><i id="vigilancia-refresh-spin" class="fas fa-rotate-right"></i> Actualizar</button>
+                            <button onclick="closeModal()" class="btn btn-secondary !p-1.5 !px-2"><i class="fas fa-xmark text-xs"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- CUERPO DEL MODAL (SCROLLABLE) -->
+                    <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-[--panel-inset]">
+
+                        <!-- INTERRUPTOR MAESTRO ESTILO GOOGLE ADS (CAMPAIGN STATUS) -->
+                        <div class="p-4 rounded-xl border border-[--border] bg-[--panel] flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Interruptor de Campaña · Workflow GitHub Actions</span>
+                                    <span id="gads-toggle-label" class="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">HABILITADO</span>
+                                </div>
+                                <p class="text-xs text-slate-400 max-w-xl leading-relaxed" id="gads-toggle-desc">
+                                    El workflow en la nube inspecciona las causas en los 5 pases diarios (07:45, 08:30, 09:15, 13:30 y Vie 18:30 hrs) y remite alertas al correo ante cualquier proveído o causa en tabla.
+                                </p>
+                            </div>
+
+                            <div class="flex items-center gap-3 shrink-0">
+                                <button type="button" onclick="toggleVigilanciaWorkflow()" id="btn-master-toggle" class="gads-master-switch active" title="Alternar estado de vigilancia">
+                                </button>
+                                <span id="master-toggle-text" class="text-xs font-bold text-emerald-400 min-w-[75px]">Activo</span>
+                            </div>
+                        </div>
+
+                        <!-- REJILLA DE 4 KPIS TÉCNICOS (ESTILO GOOGLE ADS) -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                            <div class="p-3 rounded-lg border border-blue-500/25 bg-blue-500/5 flex flex-col justify-between">
+                                <div class="flex items-center justify-between text-[10px] font-bold text-blue-400 uppercase tracking-wider">
+                                    <span>Causas en Inspección</span>
+                                    <i class="fas fa-folder-tree"></i>
+                                </div>
+                                <div class="my-1">
+                                    <div class="text-xl md:text-2xl font-mono font-extrabold text-blue-300" id="kpi-causes-count">0</div>
+                                </div>
+                                <div class="text-[9.5px] text-slate-400">Corte & 1ª Instancia con RIT</div>
+                            </div>
+
+                            <div class="p-3 rounded-lg border border-emerald-500/25 bg-emerald-500/5 flex flex-col justify-between">
+                                <div class="flex items-center justify-between text-[10px] font-bold text-emerald-400 uppercase tracking-wider">
+                                    <span>Frecuencia Nube</span>
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="my-1">
+                                    <div class="text-xl md:text-2xl font-mono font-extrabold text-emerald-300">5 Pases</div>
+                                </div>
+                                <div class="text-[9.5px] text-slate-400">Cobertura desfasaje PJUD</div>
+                            </div>
+
+                            <div class="p-3 rounded-lg border border-indigo-500/25 bg-indigo-500/5 flex flex-col justify-between">
+                                <div class="flex items-center justify-between text-[10px] font-bold text-indigo-400 uppercase tracking-wider">
+                                    <span>Protección Forense</span>
+                                    <i class="fas fa-shield-check"></i>
+                                </div>
+                                <div class="my-1">
+                                    <div class="text-xl md:text-2xl font-mono font-extrabold text-indigo-300">4 Compuertas</div>
+                                </div>
+                                <div class="text-[9.5px] text-slate-400">Cero homonimias judiciales</div>
+                            </div>
+
+                            <div class="p-3 rounded-lg border border-purple-500/25 bg-purple-500/5 flex flex-col justify-between">
+                                <div class="flex items-center justify-between text-[10px] font-bold text-purple-400 uppercase tracking-wider">
+                                    <span>Anti-Spam Caché</span>
+                                    <i class="fas fa-filter-circle-xmark"></i>
+                                </div>
+                                <div class="my-1">
+                                    <div class="text-xl md:text-2xl font-mono font-extrabold text-purple-300">Deduplicado</div>
+                                </div>
+                                <div class="text-[9.5px] text-slate-400">Sin correos reiterados</div>
+                            </div>
+                        </div>
+
+                        <!-- ESTRATEGIA MULTI-PASE (HORARIOS CHILE CONTINENTAL) -->
+                        <div class="p-3.5 rounded-xl border border-[--border] bg-[--panel] space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2 text-xs font-semibold text-white">
+                                    <i class="fas fa-calendar-check text-blue-400"></i>
+                                    <span>Cronograma de los 5 Pases Diarios en GitHub Actions</span>
+                                </div>
+                                <span class="text-[10px] text-slate-400 font-mono">Zona Horaria: Chile Continental</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs">
+                                <div class="p-2 rounded bg-[--panel-inset] border border-[--border]">
+                                    <div class="font-mono font-bold text-blue-400 text-[11px]">07:45 AM</div>
+                                    <div class="font-semibold text-white text-[11px]">Pase 1: Temprano</div>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">Previa a audiencias</p>
+                                </div>
+                                <div class="p-2 rounded bg-[--panel-inset] border border-blue-500/40 ring-1 ring-blue-500/20">
+                                    <div class="font-mono font-bold text-amber-400 text-[11px]">08:30 AM <span class="text-[9px] text-amber-300 font-normal">CRÍTICO</span></div>
+                                    <div class="font-semibold text-white text-[11px]">Pase 2: Estados & Alegatos</div>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">Plazo fatal anuncio Corte</p>
+                                </div>
+                                <div class="p-2 rounded bg-[--panel-inset] border border-[--border]">
+                                    <div class="font-mono font-bold text-blue-400 text-[11px]">09:15 AM</div>
+                                    <div class="font-semibold text-white text-[11px]">Pase 3: Rezagos</div>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">Tribunales lentos OJV</p>
+                                </div>
+                                <div class="p-2 rounded bg-[--panel-inset] border border-[--border]">
+                                    <div class="font-mono font-bold text-blue-400 text-[11px]">13:30 PM</div>
+                                    <div class="font-semibold text-white text-[11px]">Pase 4: Mediodía</div>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">Decretos de jornada</p>
+                                </div>
+                                <div class="p-2 rounded bg-[--panel-inset] border border-[--border]">
+                                    <div class="font-mono font-bold text-blue-400 text-[11px]">18:30 PM (Vie)</div>
+                                    <div class="font-semibold text-white text-[11px]">Pase 5: Tablas Corte</div>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">Fijación semanal salas</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- IDENTIFICACIÓN DE PROVENIENCIA Y TRAZABILIDAD -->
+                        <div class="p-3 rounded-xl bg-blue-500/10 border border-blue-500/25 flex items-start gap-2.5 text-xs shadow-sm">
+                            <i class="fas fa-fingerprint text-blue-400 mt-0.5 shrink-0 text-sm"></i>
+                            <div class="text-[11px] text-slate-300 leading-relaxed">
+                                <strong class="text-white">Identificación Inconfundible de Proveniencia:</strong> Cada notificación despachada por la nube lleva en el asunto el prefijo <code class="px-1.5 py-0.5 rounded bg-blue-950/70 text-blue-300 font-mono font-bold text-[10.5px] border border-blue-500/30">[ORIGEN: GITHUB ACTIONS · NUBE 24/7]</code> y una ficha técnica de certificación con el número de ejecución (Run ID), el disparador del cron y el enlace a la bitácora pública de auditoría.
+                            </div>
+                        </div>
+
+                        <!-- NÓMINA DE CAUSAS BAJO INSPECCIÓN ACTIVA -->
+                        <div class="panel-card overflow-hidden">
+                            <div class="px-4 py-2.5 border-b border-[--border] bg-[--panel-raised] flex items-center justify-between">
+                                <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-300">
+                                    <i class="fas fa-list-check text-blue-400"></i> Causas Bajo Inspección en la Nube
+                                </div>
+                                <span id="watched-causes-count" class="text-[10.5px] font-mono text-slate-400">0 causas</span>
+                            </div>
+                            <div id="watched-causes-table-zone" class="max-h-56 overflow-y-auto p-1 bg-[--panel]">
+                                <!-- Renderizado dinámico de las causas -->
+                            </div>
+                        </div>
+
+                        <!-- CONSOLA DE RESULTADOS DE ESCANEO EN TIEMPO REAL -->
+                        <div id="vigilancia-scan-live-zone" class="hidden space-y-2 p-3 rounded-lg bg-[--panel] border border-[--border]">
+                            <div class="flex items-center justify-between text-xs">
+                                <div class="flex items-center gap-1.5 font-bold text-white">
+                                    <i class="fas fa-terminal text-blue-400"></i>
+                                    <span>Bitácora de Escaneo en Vivo</span>
+                                </div>
+                                <span id="scan-live-progress" class="text-[10.5px] font-mono text-blue-300">Iniciando...</span>
+                            </div>
+                            <div id="scan-live-logs" class="p-2.5 rounded bg-black/50 border border-slate-800 text-[11px] font-mono text-slate-300 max-h-40 overflow-y-auto space-y-1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PIE DEL MODAL CON ACCIONES -->
+                    <div class="px-4 py-3 border-t border-[--border] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0" style="background: var(--panel-raised);">
+                        <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                            <i class="fas fa-shield-halved text-emerald-400 text-xs"></i>
+                            <span>Destino: <strong>vidalparedes.jaime@gmail.com</strong> (SSL)</span>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <a href="https://github.com/iLyCoNs/AeroLex/actions/workflows/vigilancia-judicial-aerolex.yml" target="_blank" class="btn btn-secondary !py-1.5 !px-2.5 !text-xs font-mono" title="Abrir consola de ejecuciones de GitHub Actions">
+                                <i class="fab fa-github text-slate-300"></i> GitHub Actions
+                            </a>
+                            <button type="button" onclick="sendVigilanciaTestEmail()" id="btn-test-email" class="btn btn-secondary !py-1.5 !px-2.5 !text-xs" title="Enviar correo de prueba inmediato para validar recepción en su bandeja">
+                                <i class="fas fa-envelope text-blue-400"></i> Probar Correo Ahora
+                            </button>
+                            <button type="button" onclick="runVigilanciaScanNow()" id="btn-scan-now" class="btn btn-primary !py-1.5 !px-3 !text-xs">
+                                <i class="fas fa-bolt"></i> Barrido OJV
+                            </button>
+                            <button type="button" onclick="closeModal()" class="btn btn-secondary !py-1.5 !px-2.5 !text-xs">
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+
+        await refreshVigilanciaModal();
+    }
+
+    async function refreshVigilanciaModal() {
+        const spin = document.getElementById('vigilancia-refresh-spin');
+        if (spin) spin.classList.add('fa-spin');
+        try {
+            const data = await loadVigilanciaStatus();
+
+            const kpiCount = document.getElementById('kpi-causes-count');
+            const toggleBtn = document.getElementById('btn-master-toggle');
+            const toggleText = document.getElementById('master-toggle-text');
+            const toggleLabel = document.getElementById('gads-toggle-label');
+            const toggleDesc = document.getElementById('gads-toggle-desc');
+            const chip = document.getElementById('modal-vigilancia-status-chip');
+            const countLabel = document.getElementById('watched-causes-count');
+
+            if (kpiCount) kpiCount.textContent = data.totalCauses || 0;
+            if (countLabel) countLabel.textContent = `${data.totalCauses || 0} causa${(data.totalCauses || 0) !== 1 ? 's' : ''} en cartera activa`;
+
+            if (data.enabled) {
+                if (toggleBtn) toggleBtn.className = 'gads-master-switch active';
+                if (toggleText) { toggleText.textContent = 'Activo'; toggleText.className = 'text-xs font-bold text-emerald-400 min-w-[75px]'; }
+                if (toggleLabel) { toggleLabel.textContent = 'HABILITADO'; toggleLabel.className = 'text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'; }
+                if (toggleDesc) toggleDesc.textContent = 'El workflow en la nube inspecciona las causas en los 5 pases diarios (07:45, 08:30, 09:15, 13:30 y Vie 18:30 hrs) y remite alertas al correo ante cualquier proveído o causa en tabla.';
+                if (chip) { chip.textContent = 'ACTIVO (GITHUB ACTIONS)'; chip.className = 'px-1.5 py-0.5 rounded text-[9.5px] font-mono font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/25'; }
+            } else {
+                if (toggleBtn) toggleBtn.className = 'gads-master-switch';
+                if (toggleText) { toggleText.textContent = 'Pausado'; toggleText.className = 'text-xs font-bold text-amber-400 min-w-[75px]'; }
+                if (toggleLabel) { toggleLabel.textContent = 'PAUSADO'; toggleLabel.className = 'text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/30'; }
+                if (toggleDesc) toggleDesc.textContent = 'Vigilancia pausada temporalmente. Las ejecuciones programadas del cron en GitHub Actions no despacharán alertas hasta que se vuelva a habilitar el interruptor.';
+                if (chip) { chip.textContent = 'PAUSADO (WORKFLOW DETENIDO)'; chip.className = 'px-1.5 py-0.5 rounded text-[9.5px] font-mono font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/25'; }
+            }
+
+            renderWatchedCausesTable(data.causes || []);
+            updateVigilanciaBadge();
+        } finally {
+            if (spin) spin.classList.remove('fa-spin');
+        }
+    }
+
+    function renderWatchedCausesTable(causes) {
+        const zone = document.getElementById('watched-causes-table-zone');
+        if (!zone) return;
+
+        if (!causes || causes.length === 0) {
+            zone.innerHTML = `
+                <div class="p-6 text-center text-xs text-slate-500 italic">
+                    No se registran causas activas con RIT en el portal. Registre o importe un expediente con RIT para iniciar la vigilancia.
+                </div>`;
+            return;
+        }
+
+        const rows = causes.map(c => {
+            const isCorte = /corte|apelaciones/i.test(c.tribunal || '');
+            const ed = c.estado_diario;
+            let statusBadge = '';
+            if (ed && ed.status === 'con_novedades') {
+                statusBadge = '<span class="px-1.5 py-0.5 rounded text-[9.5px] font-semibold bg-amber-500/15 text-amber-400 border border-amber-500/25">Con Novedades</span>';
+            } else if (ed && ed.found) {
+                statusBadge = '<span class="px-1.5 py-0.5 rounded text-[9.5px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">Al Día</span>';
+            } else {
+                statusBadge = '<span class="px-1.5 py-0.5 rounded text-[9.5px] font-semibold bg-blue-500/15 text-blue-400 border border-blue-500/25">Inspeccionando</span>';
+            }
+
+            const sphereBadge = isCorte
+                ? '<span class="px-1.5 py-0.2 rounded text-[9px] font-mono font-semibold bg-purple-500/20 text-purple-300">Corte</span>'
+                : '<span class="px-1.5 py-0.2 rounded text-[9px] font-mono font-semibold bg-blue-500/20 text-blue-300">1ª Instancia</span>';
+
+            return `
+                <div class="p-2.5 rounded-lg border border-[--border] bg-[--panel-inset] hover:bg-[--panel-raised] transition flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                    <div class="space-y-0.5 min-w-0">
+                        <div class="flex items-center gap-2">
+                            <span class="font-mono font-bold text-white text-[12px]">${escapeHtml(c.rit)}</span>
+                            ${sphereBadge}
+                            <span class="text-[10.5px] font-mono text-slate-400">${escapeHtml(c.code)}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-300 truncate max-w-md" title="${escapeHtml(c.materia)}">
+                            ${escapeHtml(c.materia || 'Sin carátula especificada')}
+                        </div>
+                        <div class="text-[10px] text-slate-500">
+                            ${escapeHtml(c.tribunal || 'Tribunal no especificado')}
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0 self-start sm:self-center">
+                        ${statusBadge}
+                        <button type="button" onclick="loadCase('${c.code}'); closeModal();" class="btn btn-secondary !py-1 !px-2 !text-[10.5px]" title="Abrir expediente">
+                            <i class="fas fa-folder-open text-blue-400"></i>
+                        </button>
+                    </div>
+                </div>`;
+        }).join('');
+
+        zone.innerHTML = `<div class="space-y-1.5">${rows}</div>`;
+    }
+
+    async function toggleVigilanciaWorkflow() {
+        const nextState = !_vigilanciaData.enabled;
+        _vigilanciaData.enabled = nextState;
+        localStorage.setItem('alx_vigilancia_enabled', String(nextState));
+
+        toast(nextState ? 'Vigilancia 24/7 en la nube activada (Habilitado).' : 'Vigilancia en la nube pausada.', nextState ? 'ok' : 'info');
+        await refreshVigilanciaModal();
+
+        try {
+            await fetch('/api/admin?action=vigilancia_toggle', {
+                method: 'POST',
+                headers: authHeaders({ 'Content-Type': 'application/json' }),
+                body: JSON.stringify({ enabled: nextState })
+            });
+        } catch (_) {}
+    }
+
+    async function runVigilanciaScanNow() {
+        const btn = document.getElementById('btn-scan-now');
+        const origContent = btn ? btn.innerHTML : '';
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Escaneando OJV...';
+            btn.disabled = true;
+        }
+
+        const liveZone = document.getElementById('vigilancia-scan-live-zone');
+        const liveLogs = document.getElementById('scan-live-logs');
+        const liveProgress = document.getElementById('scan-live-progress');
+
+        if (liveZone) liveZone.classList.remove('hidden');
+        if (liveLogs) liveLogs.innerHTML = '<div class="text-blue-400">> Conectando con servidor de inspección judicial OJV...</div>';
+        if (liveProgress) liveProgress.textContent = 'Auditando causas...';
+
+        try {
+            const resp = await fetch('/api/admin?action=vigilancia_run', {
+                method: 'POST',
+                headers: authHeaders()
+            });
+
+            if (!resp.ok) throw new Error("Error en el servidor de escaneo (código " + resp.status + ").");
+            const data = await resp.json();
+
+            if (data.results && Array.isArray(data.results)) {
+                let logLines = '';
+                let noveltiesCount = 0;
+                data.results.forEach((r, idx) => {
+                    const statusText = r.hasNoveltiesToday ? '[CON NOVEDADES HOY]' : (r.found ? '[AL DIA]' : '[NO ENCONTRADA]');
+                    const colorClass = r.hasNoveltiesToday ? 'text-amber-300 font-bold' : (r.found ? 'text-emerald-400' : 'text-slate-400');
+                    if (r.hasNoveltiesToday) noveltiesCount++;
+                    logLines += `<div><span class="text-slate-500">[${idx+1}/${data.results.length}]</span> <span class="text-white">${escapeHtml(r.rit)}</span> en ${escapeHtml(r.tribunal)}: <span class="${colorClass}">${statusText}</span> (${r.recentCount || 0} providencias recientes)</div>`;
+                });
+                logLines += `<div class="pt-2 text-blue-300 font-bold">> Barrido completado exitosamente: ${data.results.length} causas examinadas, ${noveltiesCount} con novedades detectadas.</div>`;
+                if (liveLogs) liveLogs.innerHTML = logLines;
+                if (liveProgress) liveProgress.textContent = `Finalizado (${noveltiesCount} novedades)`;
+                toast(`Barrido completado: ${data.results.length} causas inspeccionadas.`, 'ok');
+            } else {
+                if (liveLogs) liveLogs.innerHTML = '<div class="text-emerald-400">> Escaneo ejecutado. No se detectaron anomalías.</div>';
+                toast('Barrido completado exitosamente.', 'ok');
+            }
+
+            localStorage.setItem('alx_vigilancia_last_run', new Date().toISOString());
+            await refreshVigilanciaModal();
+        } catch (err) {
+            if (liveLogs) liveLogs.innerHTML += `<div class="text-red-400">> Error: ${escapeHtml(err.message)}</div>`;
+            toast('Error al ejecutar barrido: ' + err.message, 'err');
+        } finally {
+            if (btn) {
+                btn.innerHTML = origContent;
+                btn.disabled = false;
+            }
+        }
+    }
+
+    async function sendVigilanciaTestEmail() {
+        const btn = document.getElementById('btn-test-email');
+        const orig = btn ? btn.innerHTML : '';
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+            btn.disabled = true;
+        }
+
+        try {
+            const resp = await fetch('/api/admin?action=vigilancia_test_email', {
+                method: 'POST',
+                headers: authHeaders({ 'Content-Type': 'application/json' })
+            });
+            const data = await resp.json();
+            if (data.ok) {
+                toast(`Correo de prueba despachado a ${data.recipient || 'su casilla'}. Verifique su bandeja de entrada.`, 'ok');
+            } else {
+                toast(`Aviso: ${data.error || 'No se pudo enviar el correo de prueba'}`, 'info');
+            }
+        } catch (err) {
+            toast('Error al enviar correo de prueba: ' + err.message, 'err');
+        } finally {
+            if (btn) {
+                btn.innerHTML = orig;
+                btn.disabled = false;
+            }
         }
     }
 

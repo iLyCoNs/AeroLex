@@ -1,0 +1,51 @@
+name: Vigilancia Judicial 24/7 AeroLex (OJV y Estados Diarios)
+
+on:
+  schedule:
+    # 1. Primer barrido matutino (07:45 AM Chile Continental / 10:45 UTC)
+    - cron: '45 10 * * 1-5'
+    # 2. Hora crítica de Estados Diarios y Anuncio de Alegatos (08:30 AM Chile Continental / 11:30 UTC)
+    - cron: '30 11 * * 1-5'
+    # 3. Barrido de confirmación y rezagos (09:15 AM Chile Continental / 12:15 UTC)
+    - cron: '15 12 * * 1-5'
+    # 4. Barrido de mediodía y decretos de jornada (13:30 PM Chile Continental / 16:30 UTC)
+    - cron: '30 16 * * 1-5'
+    # 5. Viernes por la tarde - Publicación de Tablas Semanales de Corte (18:30 PM Chile Continental / 21:30 UTC)
+    - cron: '30 21 * * 5'
+  workflow_dispatch:
+    inputs:
+      modo_prueba:
+        description: 'Forzar envío de correo de prueba para verificar funcionamiento inmediato'
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  vigilancia-autonoma:
+    name: Escaneo Forense OJV y Despacho de Alertas
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Ejecutar Vigilancia Nube 24/7 (PC Apagado)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          AEROLEX_NOTIFY_EMAIL: ${{ secrets.AEROLEX_NOTIFY_EMAIL || 'vidalparedes.jaime@gmail.com' }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
+        run: |
+          if [ "${{ github.event.inputs.modo_prueba }}" = "true" ]; then
+            echo "Ejecutando en Modo Prueba (Verificación Operativa con despacho forzado)..."
+            node scripts/vigia-nube-cron.mjs --test
+          else
+            node scripts/vigia-nube-cron.mjs
+          fi

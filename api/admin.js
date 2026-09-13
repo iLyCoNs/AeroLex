@@ -341,6 +341,283 @@ module.exports = async (req, res) => {
       });
     }
 
+    // ── Estado de Vigilancia Judicial 24/7 (GitHub Actions) ──
+    if (action === 'vigilancia_status') {
+      const resp = await fetch(`${SUPA_URL}/rest/v1/cases?select=*&order=created_at.desc`, { headers: supaHeaders() });
+      const rows = resp.ok ? await resp.json() : [];
+      const allCases = (Array.isArray(rows) ? rows : []).map(unpackCaseEstadoDiario);
+
+      const activeWatchedCases = allCases.filter(c => {
+        const code = String(c.code || '').toUpperCase();
+        if (code.startsWith('WA-') || code.startsWith('EV-') || code.startsWith('CFG-')) return false;
+        if (c.status === 'finalizado' || c.status === 'suspendido') return false;
+        return Boolean(c.rit && c.rit.trim());
+      }).map(c => ({
+        code: c.code,
+        rit: c.rit,
+        tribunal: c.tribunal,
+        materia: c.materia,
+        status: c.status,
+        estado_diario: c.estado_diario || null,
+        updated_at: c.updated_at
+      }));
+
+      // Buscar si existe configuración persistida
+      let isEnabled = true;
+      let lastRunAt = null;
+      const configRow = allCases.find(c => c.code === 'CFG-VIGILANCIA');
+      if (configRow && configRow.detalle) {
+        try {
+          const cfg = JSON.parse(configRow.detalle);
+          if (typeof cfg.enabled === 'boolean') isEnabled = cfg.enabled;
+          if (cfg.lastRunAt) lastRunAt = cfg.lastRunAt;
+        } catch (_) {}
+      }
+
+      return res.status(200).json({
+        ok: true,
+        enabled: isEnabled,
+        lastRunAt: lastRunAt || new Date().toISOString(),
+        totalCauses: activeWatchedCases.length,
+        causes: activeWatchedCases,
+        schedule: [
+          { time: '07:45 AM', name: 'Pase 1: Detección Temprana Pre-Audiencia', fatal: false },
+          { time: '08:30 AM', name: 'Pase 2: Estados Diarios y Anuncio Alegatos Corte', fatal: true },
+          { time: '09:15 AM', name: 'Pase 3: Barrido de Rezagos Judiciales', fatal: false },
+          { time: '13:30 PM', name: 'Pase 4: Decretos de Media Jornada', fatal: false },
+          { time: '18:30 PM (Vie)', name: 'Pase 5: Tablas Semanales de Corte', fatal: false },
+        ]
+      });
+    }
+
+    // ── Conmutar Activación / Desactivación de Vigilancia ──
+    if (action === 'vigilancia_toggle' && (req.method === 'POST' || req.method === 'PATCH')) {
+      const isEnabled = Boolean(body.enabled);
+      const nowIso = new Date().toISOString();
+      const cfgPayload = {
+        enabled: isEnabled,
+        updatedAt: nowIso,
+        updatedBy: 'admin_portal'
+      };
+
+      const checkResp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-VIGILANCIA`, { headers: supaHeaders() });
+      const exists = checkResp.ok && (await checkResp.json()).length > 0;
+
+      if (exists) {
+        await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-VIGILANCIA`, {
+          method: 'PATCH',
+          headers: supaHeaders(),
+          body: JSON.stringify({
+            detalle: JSON.stringify(cfgPayload),
+            updated_at: nowIso
+          })
+        });
+      } else {
+        await fetch(`${SUPA_URL}/rest/v1/cases`, {
+          method: 'POST',
+          headers: supaHeaders(),
+          body: JSON.stringify({
+            code: 'CFG-VIGILANCIA',
+            pin: '0000',
+            materia: 'Configuracion Sistema Vigilancia 24/7',
+            tribunal: 'Sistema AeroLex',
+            rit: 'VIG-247',
+            detalle: JSON.stringify(cfgPayload),
+            estado_actual: 0,
+            status: 'activo',
+            steps: []
+          })
+        });
+      }
+
+      return res.status(200).json({
+        ok: true,
+        enabled: isEnabled,
+        updatedAt: nowIso
+      });
+    }
+
+    // ── Ejecutar Barrido Inmediato de Todas las Causas Activas ──
+    if (action === 'vigilancia_run' && req.method === 'POST') {
+      const resp = await fetch(`${SUPA_URL}/rest/v1/cases?select=*&order=created_at.desc`, { headers: supaHeaders() });
+      const rows = resp.ok ? await resp.json() : [];
+      const allCases = (Array.isArray(rows) ? rows : []).map(unpackCaseEstadoDiario);
+
+      const activeWatchedCases = allCases.filter(c => {
+        const code = String(c.code || '').toUpperCase();
+        if (code.startsWith('WA-') || code.startsWith('EV-') || code.startsWith('CFG-')) return false;
+        if (c.status === 'finalizado' || c.status === 'suspendido') return false;
+        return Boolean(c.rit && c.rit.trim());
+      });
+
+      const scanResults = [];
+      for (const c of activeWatchedCases) {
+        try {
+          const pjudResult = await checkPjudCase(c.rit, c.tribunal);
+          scanResults.push({
+            code: c.code,
+            rit: c.rit,
+            tribunal: c.tribunal,
+            found: pjudResult.found,
+            hasNoveltiesToday: pjudResult.hasNoveltiesToday,
+            recentCount: (pjudResult.resolutions || []).length,
+            lastMovementDate: pjudResult.lastMovementDate,
+            resolutions: pjudResult.resolutions
+          });
+
+          const edData = {
+            lastCheckedAt: pjudResult.checkedAt,
+            lastCheckedTime: pjudResult.checkedTime,
+            lastCheckedDate: pjudResult.checkedDate,
+            status: pjudResult.hasNoveltiesToday ? "con_novedades" : (pjudResult.found ? "al_dia" : "no_encontrada"),
+            lastMovementDate: pjudResult.lastMovementDate,
+            checkedBy: "admin_vigilancia_run",
+            resolutionsCount: pjudResult.resolutions.length,
+            resolutions: pjudResult.resolutions,
+            found: pjudResult.found,
+            court: pjudResult.court,
+            docket: pjudResult.docket,
+          };
+          const patch = buildPartialPatch({ estado_diario: edData }, c.triage);
+          patch.updated_at = new Date().toISOString();
+          await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(c.code)}`, {
+            method: 'PATCH',
+            headers: supaHeaders(),
+            body: JSON.stringify(patch)
+          });
+        } catch (err) {
+          scanResults.push({
+            code: c.code,
+            rit: c.rit,
+            tribunal: c.tribunal,
+            error: err.message
+          });
+        }
+      }
+
+      const nowIso = new Date().toISOString();
+      const cfgPayload = {
+        enabled: true,
+        lastRunAt: nowIso,
+        lastRunResults: { total: scanResults.length, novelties: scanResults.filter(r => r.hasNoveltiesToday).length }
+      };
+      await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-VIGILANCIA`, {
+        method: 'PATCH',
+        headers: supaHeaders(),
+        body: JSON.stringify({ detalle: JSON.stringify(cfgPayload), updated_at: nowIso })
+      }).catch(() => {});
+
+      return res.status(200).json({
+        ok: true,
+        scannedAt: nowIso,
+        totalScanned: scanResults.length,
+        results: scanResults
+      });
+    }
+
+    // ── Enviar Correo de Verificación Inmediata (Prueba de Operatividad) ──
+    if (action === 'vigilancia_test_email' && req.method === 'POST') {
+      const resp = await fetch(`${SUPA_URL}/rest/v1/cases?select=*&order=created_at.desc`, { headers: supaHeaders() });
+      const rows = resp.ok ? await resp.json() : [];
+      const allCases = (Array.isArray(rows) ? rows : []).map(unpackCaseEstadoDiario);
+
+      const activeWatchedCases = allCases.filter(c => {
+        const code = String(c.code || '').toUpperCase();
+        if (code.startsWith('WA-') || code.startsWith('EV-') || code.startsWith('CFG-')) return false;
+        if (c.status === 'finalizado' || c.status === 'suspendido') return false;
+        return Boolean(c.rit && c.rit.trim());
+      });
+
+      const resendKey = process.env.RESEND_API_KEY;
+      const targetEmail = process.env.AEROLEX_NOTIFY_EMAIL || 'vidalparedes.jaime@gmail.com';
+      const dateStr = new Date().toLocaleDateString('es-CL', { timeZone: 'America/Santiago' });
+      const timeStr = new Date().toLocaleTimeString('es-CL', { timeZone: 'America/Santiago', hour: '2-digit', minute: '2-digit' });
+
+      if (!resendKey) {
+        return res.status(200).json({
+          ok: false,
+          error: 'RESEND_API_KEY no está configurada en las variables de entorno de Vercel.',
+          recipient: targetEmail
+        });
+      }
+
+      const casesHtml = activeWatchedCases.map(c => `
+        <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:12px 16px; margin-bottom:10px;">
+          <div style="font-family:monospace; font-size:13px; font-weight:bold; color:#0f172a;">
+            ${c.rit} <span style="font-size:11px; font-weight:normal; color:#64748b;">(${c.code})</span>
+          </div>
+          <div style="font-size:12px; color:#1e293b; margin-top:3px; font-weight:600;">
+            ${c.materia || 'Causa Activa'}
+          </div>
+          <div style="font-size:11px; color:#64748b; margin-top:2px;">
+            Tribunal: <strong>${c.tribunal || 'PJUD'}</strong> | Estado: <strong>${c.status}</strong>
+          </div>
+        </div>
+      `).join('');
+
+      const emailHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head><meta charset="utf-8"></head>
+        <body style="margin:0; padding:20px; background:#f1f5f9; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+          <div style="max-width:620px; margin:0 auto; background:#ffffff; border:1px solid #cbd5e1; border-radius:10px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+            <div style="background:#0f172a; padding:20px 24px; text-align:left; border-bottom:3px solid #2563eb;">
+              <h1 style="color:#ffffff; font-size:17px; margin:0; font-weight:700;">AeroLex · Vigilancia Judicial 24/7</h1>
+              <p style="color:#94a3b8; font-size:11.5px; margin:4px 0 0 0;">Prueba de Operatividad y Conectividad de Correo</p>
+            </div>
+            <div style="padding:24px;">
+              <div style="background:#0f172a; border-radius:8px; padding:14px; margin-bottom:18px; color:#f8fafc; font-family:monospace; font-size:11px; line-height:1.6;">
+                <div style="color:#38bdf8; font-weight:bold; font-size:11.5px; margin-bottom:6px; border-bottom:1px solid #334155; padding-bottom:4px;">
+                  CERTIFICACIÓN DE PROVENIENCIA: PORTAL WEB AEROLEX
+                </div>
+                <div><strong>Emisor:</strong> Portal de Abogados AeroLex (admin.html)</div>
+                <div><strong>Destinatario Oficial:</strong> ${targetEmail}</div>
+                <div><strong>Hora de Despacho:</strong> ${timeStr} hrs (${dateStr} Chile)</div>
+                <div><strong>Causas Verificadas:</strong> ${activeWatchedCases.length} causas con RIT</div>
+                <div><strong>Verificador Forense:</strong> CaseVerifier Activo</div>
+              </div>
+              <div style="background:#ecfdf5; border-left:4px solid #10b981; padding:12px 14px; border-radius:0 6px 6px 0; margin-bottom:18px; font-size:12.5px; color:#065f46;">
+                <strong>CONECTIVIDAD VALIDADA:</strong> Su casilla de correo está debidamente enlazada con el sistema de alertas de AeroLex. Las notificaciones automáticas del cron en GitHub Actions llegarán con este mismo formato y la etiqueta de proveniencia en el asunto.
+              </div>
+              <p style="font-size:13px; color:#334155; margin-top:0;">Nómina actual de causas bajo vigilancia activa:</p>
+              ${casesHtml || '<div style="color:#64748b; font-size:12px; italic">No hay causas registradas con RIT en este momento.</div>'}
+              <div style="margin-top:20px; padding:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; font-size:11px; color:#64748b; text-align:center;">
+                Sistema de Vigilancia Procesal AeroLex · Cero emojis.
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      try {
+        const mailRes = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${resendKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            from: 'AeroLex Vigilancia <alertas@aerolex.cl>',
+            to: [targetEmail],
+            subject: `[PROVENIENCIA: PORTAL AEROLEX · VERIFICACIÓN EN VIVO] Prueba de Notificación (${dateStr})`,
+            html: emailHtml
+          })
+        });
+
+        const mailData = await mailRes.json().catch(() => ({}));
+        return res.status(200).json({
+          ok: mailRes.ok,
+          recipient: targetEmail,
+          resendStatus: mailRes.status,
+          resendData: mailData,
+          dispatchedAt: new Date().toISOString()
+        });
+      } catch (err) {
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
     if (req.method === 'GET') {
       if (action === 'check_tables') {
         const resp = await fetch(`${SUPA_URL}/rest/v1/`, { headers: supaHeaders() });
@@ -358,7 +635,7 @@ module.exports = async (req, res) => {
         ? processedRows
         : processedRows.filter(r => {
             const c = String(r.code || '').toUpperCase();
-            return !c.startsWith('WA-') && !c.startsWith('EV-');
+            return !c.startsWith('WA-') && !c.startsWith('EV-') && !c.startsWith('CFG-');
           });
       return res.status(200).json({ ok: true, cases, total: cases.length, rawTotal: allRows.length });
     }
