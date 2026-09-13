@@ -2,24 +2,23 @@ name: Vigilancia Judicial 24/7 AeroLex (OJV y Estados Diarios)
 
 on:
   schedule:
-    # Pases de prueba inmediatos programados para hoy (05:36, 05:38, 05:40, 05:45 AM Chile / 08:36, 08:38, 08:40, 08:45 UTC)
-    - cron: '36 8 * * *'
-    - cron: '38 8 * * *'
-    - cron: '40 8 * * *'
-    - cron: '45 8 * * *'
-    # 1. Primer barrido matutino oficial (07:45 AM Chile Continental / 10:45 UTC)
+    # 1. Primer barrido matutino oficial (07:45 AM Chile Continental / 10:45 UTC Lun-Vie)
     - cron: '45 10 * * 1-5'
+    # 2. Hora crítica de Estados Diarios y Anuncio de Alegatos (08:30 AM Chile Continental / 11:30 UTC Lun-Vie)
     - cron: '30 11 * * 1-5'
+    # 3. Barrido de confirmación y rezagos (09:15 AM Chile Continental / 12:15 UTC Lun-Vie)
     - cron: '15 12 * * 1-5'
+    # 4. Barrido de mediodía y decretos de jornada (13:30 PM Chile Continental / 16:30 UTC Lun-Vie)
     - cron: '30 16 * * 1-5'
+    # 5. Viernes por la tarde - Publicación de Tablas Semanales de Corte (18:30 PM Chile Continental / 21:30 UTC Vie)
     - cron: '30 21 * * 5'
   workflow_dispatch:
     inputs:
       modo_prueba:
-        description: 'Forzar envío de correo de prueba para verificar funcionamiento inmediato'
+        description: 'Forzar envío de correo de prueba (auditoría completa aunque no existan novedades)'
         required: false
         type: boolean
-        default: true
+        default: false
 
 jobs:
   vigilancia-autonoma:
@@ -53,8 +52,8 @@ jobs:
           AEROLEX_SMTP_USER: ${{ secrets.GMAIL_USER }}
           AEROLEX_SMTP_PASS: ${{ secrets.GMAIL_APP_PASS }}
         run: |
-          if [ "${{ github.event.inputs.modo_prueba }}" = "false" ]; then
-            node scripts/vigia-nube-cron.mjs
-          else
+          if [ "${{ github.event.inputs.modo_prueba }}" = "true" ]; then
             node scripts/vigia-nube-cron.mjs --test
+          else
+            node scripts/vigia-nube-cron.mjs
           fi
