@@ -199,6 +199,23 @@ function unpackCaseEstadoDiario(c) {
       } catch (_) {}
       c.triage = c.triage.filter(item => typeof item !== 'string' || !item.startsWith('__ESTADO_DIARIO__:'));
     }
+    const abItem = c.triage.find(item => typeof item === 'string' && item.startsWith('__ABOGADO__:'));
+    if (abItem) {
+      c.abogado = abItem.replace('__ABOGADO__:', '').trim();
+      c.triage = c.triage.filter(item => typeof item !== 'string' || !item.startsWith('__ABOGADO__:'));
+    }
+  }
+  if (!c.abogado) {
+    const txt = `${c.code || ''} ${c.rit || ''} ${c.detalle || ''} ${c.materia || ''}`.toLowerCase();
+    if (txt.includes('cfg-') || txt.includes('bot jurídico') || txt.includes('sistema aerolex')) {
+      c.abogado = 'Bot Jurídico AeroLex';
+    } else if (['1360-2026', '1324-2026', '1071-2026', '1452-2026'].includes(String(c.rit || '').trim()) || txt.includes('marta') || txt.includes('sanchez') || txt.includes('sánchez')) {
+      c.abogado = 'Marta Elizabeth Sánchez Andrade';
+    } else if (['z-789-2020', 'z789-2020'].includes(String(c.rit || '').trim()) || txt.includes('nitschke') || txt.includes('jaime vidal')) {
+      c.abogado = 'Jaime Vidal Paredes';
+    } else {
+      c.abogado = 'Jaime Vidal Paredes';
+    }
   }
   return c;
 }
@@ -235,6 +252,16 @@ function buildPartialPatch(body, currentTriage = null) {
     const clean = base.filter(item => typeof item !== 'string' || !item.startsWith('__ESTADO_DIARIO__:'));
     if (body.estado_diario && typeof body.estado_diario === 'object') {
       clean.push('__ESTADO_DIARIO__:' + JSON.stringify(body.estado_diario));
+    }
+    patch.triage = clean;
+  }
+  if (body.abogado !== undefined) {
+    const base = Array.isArray(patch.triage)
+      ? [...patch.triage]
+      : (Array.isArray(currentTriage) ? [...currentTriage] : []);
+    const clean = base.filter(item => typeof item !== 'string' || !item.startsWith('__ABOGADO__:'));
+    if (body.abogado && String(body.abogado).trim()) {
+      clean.push('__ABOGADO__:' + String(body.abogado).trim().slice(0, 200));
     }
     patch.triage = clean;
   }
@@ -358,6 +385,7 @@ module.exports = async (req, res) => {
         tribunal: c.tribunal,
         materia: c.materia,
         status: c.status,
+        abogado: c.abogado || 'Jaime Vidal Paredes',
         estado_diario: c.estado_diario || null,
         updated_at: c.updated_at
       }));
@@ -659,6 +687,9 @@ module.exports = async (req, res) => {
       const triage = [];
       if (body.estado_diario) {
         triage.push('__ESTADO_DIARIO__:' + JSON.stringify(body.estado_diario));
+      }
+      if (body.abogado) {
+        triage.push('__ABOGADO__:' + String(body.abogado).trim().slice(0, 200));
       }
 
       const row = {

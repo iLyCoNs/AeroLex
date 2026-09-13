@@ -61,6 +61,7 @@ const PARTNER_CAUSES = [
     tribunal: "Corte de Apelaciones de Puerto Montt",
     materia: "Recurso de Protección - Migración (-/-)",
     detalle: "Causa reservada en materia migratoria por disposición legal del Acta N° 44-2022 de la Corte Suprema.",
+    abogado: "Marta Elizabeth Sánchez Andrade",
     status: "activo"
   },
   {
@@ -69,6 +70,7 @@ const PARTNER_CAUSES = [
     tribunal: "Corte de Apelaciones de Puerto Montt",
     materia: "Contrato, nulidad de - MANSILLA / ZURITA",
     detalle: "Apelación sentencia definitiva (C-25-2025 Letras Achao). Patrocinado: Edith del Carmen Mansilla Ojeda. Contraparte: Arturo Zurita Pereira.",
+    abogado: "Marta Elizabeth Sánchez Andrade",
     status: "activo"
   },
   {
@@ -77,6 +79,7 @@ const PARTNER_CAUSES = [
     tribunal: "Corte de Apelaciones de Puerto Montt",
     materia: "Recurso de Protección - ALVARADO / PERANCHIGUAY",
     detalle: "Recurso de Protección. Abogada socia patrocinante: Marta Elizabeth Sánchez Andrade. Cliente: Diego Armando Alvarado Paredes.",
+    abogado: "Marta Elizabeth Sánchez Andrade",
     status: "activo"
   },
   {
@@ -85,6 +88,7 @@ const PARTNER_CAUSES = [
     tribunal: "Corte de Apelaciones de Puerto Montt",
     materia: "Recurso de Protección - Migración (-/-)",
     detalle: "Causa reservada en materia migratoria por disposición legal del Acta N° 44-2022 de la Corte Suprema.",
+    abogado: "Marta Elizabeth Sánchez Andrade",
     status: "activo"
   },
   {
@@ -93,6 +97,7 @@ const PARTNER_CAUSES = [
     tribunal: "4 Juzgado de Familia Santiago",
     materia: "Alimentos - MUÑOZ / NITSCHKE",
     detalle: "Juicio de alimentos. Cliente: Daniel Alejandro Nitschke Aliaga. Contraparte: Pamela Muñoz Vásquez.",
+    abogado: "Jaime Vidal Paredes",
     status: "activo"
   }
 ];
@@ -124,7 +129,7 @@ async function syncPartnerCausesToSupabase() {
 
   for (const pc of PARTNER_CAUSES) {
     if (!existingRits.has(pc.rit.toUpperCase())) {
-      console.log(`  · Registrando nueva causa de socio en Supabase: ${pc.rit} (${pc.code} - ${pc.materia})`);
+      console.log(`  · Registrando nueva causa de socio en Supabase: ${pc.rit} (${pc.code} - ${pc.materia} - ${pc.abogado})`);
       const row = {
         code: pc.code,
         pin: '0000',
@@ -133,7 +138,9 @@ async function syncPartnerCausesToSupabase() {
         rit: pc.rit,
         detalle: pc.detalle,
         estado_actual: 1,
-        triage: [],
+        triage: [
+          '__ABOGADO__:' + (pc.abogado || 'Jaime Vidal Paredes')
+        ],
         steps: [
           { title: 'Expediente recibido por AeroLex', date: '13-sep-2026', done: true },
           { title: 'Vigilancia procesal activa en OJV', date: 'En curso', done: false }

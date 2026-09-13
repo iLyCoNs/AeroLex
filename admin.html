@@ -798,6 +798,22 @@
                         <button type="button" onclick="setAdminSort('az')" id="sort-btn-az" class="admin-sort-btn px-1.5 py-0.5 rounded text-[10.5px] font-medium text-slate-400 hover:text-white transition">A-Z</button>
                     </div>
                 </div>
+                <!-- FILTRO POR ABOGADO Y CONTROLES DE ACORDEÓN -->
+                <div class="flex items-center justify-between pt-1 border-t border-[--border]/40 text-[10.5px]">
+                    <div class="flex items-center gap-1.5 min-w-0">
+                        <i class="fas fa-user-tie text-[9.5px] text-purple-400 shrink-0"></i>
+                        <select id="sidebar-lawyer-filter" onchange="setLawyerFilter(this.value)" class="bg-[--panel-inset] border border-[--border] text-slate-300 rounded px-1.5 py-0.5 text-[10px] outline-none font-medium max-w-[170px] truncate" title="Filtrar causas por abogado asignado">
+                            <option value="all">Todos los Abogados</option>
+                            <option value="Marta Elizabeth Sánchez Andrade">Marta Sánchez (Socia)</option>
+                            <option value="Jaime Vidal Paredes">Jaime Vidal (Titular)</option>
+                            <option value="Bot Jurídico AeroLex">Bot Jurídico (Internas)</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-1 text-slate-400">
+                        <button type="button" onclick="expandAllLawyerGroups()" class="hover:text-blue-400 px-1 py-0.5 rounded transition text-[9.5px]" title="Expandir todos los grupos"><i class="fas fa-angles-down"></i></button>
+                        <button type="button" onclick="collapseAllLawyerGroups()" class="hover:text-blue-400 px-1 py-0.5 rounded transition text-[9.5px]" title="Contraer todos los grupos"><i class="fas fa-angles-up"></i></button>
+                    </div>
+                </div>
             </div>
 
             <div id="cases-list" class="flex-1 overflow-y-auto pb-16 md:pb-2"></div>
@@ -940,6 +956,21 @@
                                     <div>
                                         <label class="field-label">Carátula / Materia Específica</label>
                                         <input type="text" id="case-matter" class="input-base" placeholder="Ej: Barraza con López" oninput="markUnsaved(); updateForensicBrief();">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="field-label">Abogado(a) Patrocinante / Asignado(a)</label>
+                                    <div class="flex gap-2">
+                                        <select id="case-lawyer" class="input-base font-medium flex-1" onchange="markUnsaved(); updateForensicBrief();">
+                                            <option value="Marta Elizabeth Sánchez Andrade">Marta Elizabeth Sánchez Andrade (Abogada Socia)</option>
+                                            <option value="Jaime Vidal Paredes">Jaime Vidal Paredes (Abogado Titular)</option>
+                                            <option value="Bot Jurídico AeroLex">Bot Jurídico AeroLex (Causa Interna / Sistema)</option>
+                                            <option value="Cartera General / Por Asignar">Cartera General / Por Asignar</option>
+                                        </select>
+                                        <button type="button" onclick="promptNewLawyer()" class="btn btn-secondary !px-3 !py-1 shrink-0 text-xs" title="Registrar nuevo abogado socio">
+                                            <i class="fas fa-user-plus text-xs text-blue-400 mr-1"></i> Asignar Otro
+                                        </button>
                                     </div>
                                 </div>
 
@@ -1439,6 +1470,7 @@
                     tribunal: c.tribunal,
                     rit: c.rit,
                     detalle: c.detalle,
+                    abogado: c.abogado,
                     estado_actual: c.estado_actual,
                     steps: c.steps,
                     status: c.status
@@ -1472,6 +1504,7 @@
             rit: document.getElementById('case-rit').value.trim(),
             detalle: document.getElementById('case-detail').value.trim(),
             status: document.getElementById('case-status').value,
+            abogado: document.getElementById('case-lawyer')?.value.trim() || c.abogado || '',
             estado_actual: typeof c.estado_actual === 'number' ? c.estado_actual : 0,
             steps: Array.isArray(c.steps) ? c.steps : []
         };
@@ -1766,6 +1799,161 @@
         renderSidebar(txt);
     }
 
+    const LAWYER_CATALOG = {
+        "Marta Elizabeth Sánchez Andrade": {
+            id: "marta-sanchez",
+            name: "Marta Elizabeth Sánchez Andrade",
+            shortName: "Marta Sánchez",
+            role: "Abogada Socia",
+            icon: "fa-user-tie",
+            iconColor: "text-purple-400",
+            badgeCls: "bg-purple-500/15 text-purple-300 border border-purple-500/30",
+            defaultCollapsed: false
+        },
+        "Jaime Vidal Paredes": {
+            id: "jaime-vidal",
+            name: "Jaime Vidal Paredes",
+            shortName: "Jaime Vidal",
+            role: "Abogado Titular",
+            icon: "fa-scale-balanced",
+            iconColor: "text-blue-400",
+            badgeCls: "bg-blue-500/15 text-blue-300 border border-blue-500/30",
+            defaultCollapsed: false
+        },
+        "Bot Jurídico AeroLex": {
+            id: "bot-juridico",
+            name: "Bot Jurídico AeroLex",
+            shortName: "Bot Jurídico",
+            role: "Causas Internas / Sistema",
+            icon: "fa-robot",
+            iconColor: "text-slate-400",
+            badgeCls: "bg-slate-500/15 text-slate-300 border border-slate-500/30",
+            defaultCollapsed: true
+        }
+    };
+
+    let lawyerFilter = 'all';
+    let collapsedLawyerGroups = new Set();
+    try {
+        const saved = localStorage.getItem('alx_collapsed_lawyers');
+        if (saved) {
+            collapsedLawyerGroups = new Set(JSON.parse(saved));
+        } else {
+            collapsedLawyerGroups = new Set(['bot-juridico']);
+        }
+    } catch (_) {
+        collapsedLawyerGroups = new Set(['bot-juridico']);
+    }
+
+    function resolveCaseLawyer(c) {
+        if (!c) return "Cartera General / Por Asignar";
+        if (c.abogado && c.abogado.trim()) {
+            const ab = c.abogado.trim();
+            if (/marta|s[aá]nchez|elizabeth/i.test(ab)) return "Marta Elizabeth Sánchez Andrade";
+            if (/jaime|vidal/i.test(ab)) return "Jaime Vidal Paredes";
+            if (/bot|sistema|interno/i.test(ab)) return "Bot Jurídico AeroLex";
+            return ab;
+        }
+        const code = String(c.code || '').toUpperCase();
+        const rit = String(c.rit || '').toUpperCase().trim();
+        const allText = `${code} ${rit} ${c.detalle || ''} ${c.materia || ''}`.toLowerCase();
+
+        if (code.startsWith('CFG-') || code.startsWith('EV-') || allText.includes('bot jurídico') || allText.includes('sistema aerolex')) {
+            return "Bot Jurídico AeroLex";
+        }
+        if (["1360-2026", "1324-2026", "1071-2026", "1452-2026"].includes(rit) || allText.includes('marta') || allText.includes('sanchez') || allText.includes('sánchez')) {
+            return "Marta Elizabeth Sánchez Andrade";
+        }
+        if (["Z-789-2020", "Z789-2020"].includes(rit) || allText.includes('nitschke') || allText.includes('jaime vidal')) {
+            return "Jaime Vidal Paredes";
+        }
+        return "Jaime Vidal Paredes";
+    }
+
+    function getLawyerMeta(name) {
+        if (LAWYER_CATALOG[name]) return LAWYER_CATALOG[name];
+        const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30) || 'abogado-general';
+        return {
+            id: slug,
+            name: name,
+            shortName: name.split(' ').slice(0, 2).join(' '),
+            role: "Abogado(a) Litigante",
+            icon: "fa-user-tie",
+            iconColor: "text-emerald-400",
+            badgeCls: "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30",
+            defaultCollapsed: false
+        };
+    }
+
+    function toggleLawyerGroup(groupId) {
+        if (collapsedLawyerGroups.has(groupId)) {
+            collapsedLawyerGroups.delete(groupId);
+        } else {
+            collapsedLawyerGroups.add(groupId);
+        }
+        try {
+            localStorage.setItem('alx_collapsed_lawyers', JSON.stringify([...collapsedLawyerGroups]));
+        } catch (_) {}
+        const content = document.getElementById(`lawyer-group-content-${groupId}`);
+        const chevron = document.getElementById(`lawyer-chevron-${groupId}`);
+        if (content) {
+            const isHidden = collapsedLawyerGroups.has(groupId);
+            content.classList.toggle('hidden', isHidden);
+            if (chevron) {
+                chevron.style.transform = isHidden ? 'rotate(-90deg)' : 'rotate(0deg)';
+            }
+        }
+    }
+
+    function expandAllLawyerGroups() {
+        collapsedLawyerGroups.clear();
+        try {
+            localStorage.setItem('alx_collapsed_lawyers', JSON.stringify([]));
+        } catch (_) {}
+        renderSidebar(document.getElementById('search-case')?.value || '');
+    }
+
+    function collapseAllLawyerGroups() {
+        Object.values(LAWYER_CATALOG).forEach(l => collapsedLawyerGroups.add(l.id));
+        try {
+            localStorage.setItem('alx_collapsed_lawyers', JSON.stringify([...collapsedLawyerGroups]));
+        } catch (_) {}
+        renderSidebar(document.getElementById('search-case')?.value || '');
+    }
+
+    function setLawyerFilter(val) {
+        lawyerFilter = val;
+        renderSidebar(document.getElementById('search-case')?.value || '');
+    }
+
+    function promptNewLawyer() {
+        const name = prompt("Ingrese el nombre completo del nuevo abogado(a) socio(a) o litigante:");
+        if (!name || !name.trim()) return;
+        const clean = name.trim();
+        const sel = document.getElementById('case-lawyer');
+        if (sel) {
+            let exists = false;
+            for (let i = 0; i < sel.options.length; i++) {
+                if (sel.options[i].value.toLowerCase() === clean.toLowerCase()) {
+                    sel.selectedIndex = i;
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                const opt = document.createElement('option');
+                opt.value = clean;
+                opt.textContent = `${clean} (Abogado/a Litigante)`;
+                sel.appendChild(opt);
+                sel.value = clean;
+            }
+            markUnsaved();
+            updateForensicBrief();
+            renderSidebar();
+            toast(`Abogado(a) ${clean} asignado(a) a la causa.`, 'ok');
+        }
+    }
+
     function renderSidebar(filterText = "") {
         const list = document.getElementById('cases-list');
         list.innerHTML = '';
@@ -1779,7 +1967,8 @@
             caseIds = caseIds.filter(id =>
                 id.toLowerCase().includes(t) ||
                 (casesDB[id].rit || '').toLowerCase().includes(t) ||
-                (casesDB[id].materia || '').toLowerCase().includes(t)
+                (casesDB[id].materia || '').toLowerCase().includes(t) ||
+                (casesDB[id].abogado || '').toLowerCase().includes(t)
             );
         }
 
@@ -1825,36 +2014,100 @@
         });
 
         if (caseIds.length === 0) {
-            list.innerHTML = `<div class="p-6 text-center text-xs text-slate-500"><i class="fas fa-inbox text-xl mb-2 block opacity-30"></i>No se encontraron expedientes.</div>`;
+            list.innerHTML = `<div class="p-6 text-center text-xs text-slate-500"><i class="fas fa-inbox text-xl mb-2 block opacity-30"></i>No se encontraron expedientes con los filtros aplicados.</div>`;
             return;
         }
 
+        // Agrupar causas por abogado asignado
+        const groups = {};
         caseIds.forEach(id => {
             const c = casesDB[id];
-            const status = c.status || 'activo';
-            const isActive = id === currentEditingId;
-            const meta = STATUS_META[status] || STATUS_META.activo;
-            const stage = typeof c.estado_actual === 'number' ? c.estado_actual : 0;
-            const pct = Math.round((stage / 5) * 100);
+            const lawyerName = resolveCaseLawyer(c);
+            if (lawyerFilter !== 'all' && lawyerName !== lawyerFilter) {
+                return;
+            }
+            if (!groups[lawyerName]) {
+                groups[lawyerName] = [];
+            }
+            groups[lawyerName].push(id);
+        });
 
-            const item = document.createElement('div');
-            item.className = `case-item ${isActive ? 'active' : ''} ${status === 'urgente' ? 'urgente' : ''}`;
-            item.onclick = () => loadCase(id);
-            item.innerHTML = `
-                <div class="flex justify-between items-center mb-1 gap-2">
-                    <span class="font-mono font-bold text-xs ${isActive ? 'text-white' : 'text-slate-200'}">${id}</span>
-                    <span class="chip ${meta.cls}">${meta.label}</span>
+        const groupNames = Object.keys(groups);
+        groupNames.sort((a, b) => {
+            if (a === 'Bot Jurídico AeroLex') return 1;
+            if (b === 'Bot Jurídico AeroLex') return -1;
+            if (a.includes('Marta')) return -1;
+            if (b.includes('Marta')) return 1;
+            return a.localeCompare(b, 'es');
+        });
+
+        if (groupNames.length === 0) {
+            list.innerHTML = `<div class="p-6 text-center text-xs text-slate-500"><i class="fas fa-filter text-xl mb-2 block opacity-30"></i>No hay causas asignadas a este abogado con el filtro actual.</div>`;
+            return;
+        }
+
+        groupNames.forEach(lawyerName => {
+            const meta = getLawyerMeta(lawyerName);
+            const ids = groups[lawyerName];
+            const isCollapsed = filterText ? false : collapsedLawyerGroups.has(meta.id);
+
+            const groupCard = document.createElement('div');
+            groupCard.className = 'lawyer-accordion-group mb-2.5';
+
+            const header = document.createElement('div');
+            header.className = 'flex items-center justify-between p-2 rounded-lg bg-[--panel-raised] border border-[--border] cursor-pointer select-none hover:border-blue-500/40 transition mb-1 shadow-sm';
+            header.onclick = () => toggleLawyerGroup(meta.id);
+            header.innerHTML = `
+                <div class="flex items-center gap-2 min-w-0">
+                    <div class="w-6 h-6 rounded-md bg-[--panel-inset] border border-[--border] flex items-center justify-center shrink-0">
+                        <i class="fas ${meta.icon} ${meta.iconColor} text-xs"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="text-[11.5px] font-bold text-white truncate leading-tight">${escapeHtml(meta.name)}</div>
+                        <div class="text-[9.5px] text-slate-400 font-medium truncate">${escapeHtml(meta.role)}</div>
+                    </div>
                 </div>
-                <div class="text-xs text-slate-300 font-medium truncate mb-1">${escapeHtml(c.materia || 'Sin materia asignada')}</div>
-                <div class="flex items-center justify-between text-[10px] text-slate-500 mb-1.5">
-                    <span>${c.rit ? 'RIT ' + escapeHtml(c.rit) : 'Sin RIT'}</span>
-                    <span>Paso ${stage} de 5</span>
-                </div>
-                <div class="h-1 w-full rounded-full bg-[--panel-subtle] overflow-hidden">
-                    <div class="h-full rounded-full ${status === 'urgente' ? 'bg-red-500' : 'bg-blue-500'}" style="width: ${pct}%;"></div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <span class="px-1.5 py-0.5 rounded text-[9.5px] font-mono font-bold ${meta.badgeCls}">${ids.length} causa${ids.length !== 1 ? 's' : ''}</span>
+                    <i class="fas fa-chevron-down text-[10px] text-slate-400 transition-transform duration-200" id="lawyer-chevron-${meta.id}" style="transform: ${isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)'};"></i>
                 </div>
             `;
-            list.appendChild(item);
+
+            const container = document.createElement('div');
+            container.id = `lawyer-group-content-${meta.id}`;
+            container.className = `space-y-1.5 pl-1.5 border-l-2 border-[--border] ml-3 mt-1 ${isCollapsed ? 'hidden' : ''}`;
+
+            ids.forEach(id => {
+                const c = casesDB[id];
+                const status = c.status || 'activo';
+                const isActive = id === currentEditingId;
+                const metaStatus = STATUS_META[status] || STATUS_META.activo;
+                const stage = typeof c.estado_actual === 'number' ? c.estado_actual : 0;
+                const pct = Math.round((stage / 5) * 100);
+
+                const item = document.createElement('div');
+                item.className = `case-item ${isActive ? 'active' : ''} ${status === 'urgente' ? 'urgente' : ''}`;
+                item.onclick = (e) => { e.stopPropagation(); loadCase(id); };
+                item.innerHTML = `
+                    <div class="flex justify-between items-center mb-1 gap-2">
+                        <span class="font-mono font-bold text-xs ${isActive ? 'text-white' : 'text-slate-200'}">${id}</span>
+                        <span class="chip ${metaStatus.cls}">${metaStatus.label}</span>
+                    </div>
+                    <div class="text-xs text-slate-300 font-medium truncate mb-1">${escapeHtml(c.materia || 'Sin materia asignada')}</div>
+                    <div class="flex items-center justify-between text-[10px] text-slate-500 mb-1.5">
+                        <span class="font-mono">${c.rit ? 'RIT ' + escapeHtml(c.rit) : 'Sin RIT'}</span>
+                        <span>Paso ${stage} de 5</span>
+                    </div>
+                    <div class="h-1 w-full rounded-full bg-[--panel-subtle] overflow-hidden">
+                        <div class="h-full rounded-full ${status === 'urgente' ? 'bg-red-500' : 'bg-blue-500'}" style="width: ${pct}%;"></div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+
+            groupCard.appendChild(header);
+            groupCard.appendChild(container);
+            list.appendChild(groupCard);
         });
     }
 
@@ -1919,6 +2172,25 @@
         document.getElementById('case-tribunal').value = c.tribunal || '';
         document.getElementById('case-matter').value = c.materia || '';
         document.getElementById('case-detail').value = c.detalle || '';
+
+        const lawyerSelect = document.getElementById('case-lawyer');
+        if (lawyerSelect) {
+            const canonicalLawyer = c.abogado || resolveCaseLawyer(c);
+            let exists = false;
+            for (let i = 0; i < lawyerSelect.options.length; i++) {
+                if (lawyerSelect.options[i].value === canonicalLawyer) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists && canonicalLawyer) {
+                const opt = document.createElement('option');
+                opt.value = canonicalLawyer;
+                opt.textContent = `${canonicalLawyer} (Abogado/a Registrado/a)`;
+                lawyerSelect.appendChild(opt);
+            }
+            lawyerSelect.value = canonicalLawyer;
+        }
 
         let foundCat = "Derecho Civil";
         for (let cat in MATERIAS) {
@@ -3123,47 +3395,102 @@
             return;
         }
 
-        const rows = causes.map(c => {
-            const isCorte = /corte|apelaciones/i.test(c.tribunal || '');
-            const ed = c.estado_diario;
-            let statusBadge = '';
-            if (ed && ed.status === 'con_novedades') {
-                statusBadge = '<span class="px-1.5 py-0.5 rounded text-[9.5px] font-semibold bg-amber-500/15 text-amber-400 border border-amber-500/25">Con Novedades</span>';
-            } else if (ed && ed.found) {
-                statusBadge = '<span class="px-1.5 py-0.5 rounded text-[9.5px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">Al Día</span>';
-            } else {
-                statusBadge = '<span class="px-1.5 py-0.5 rounded text-[9.5px] font-semibold bg-blue-500/15 text-blue-400 border border-blue-500/25">Inspeccionando</span>';
-            }
+        // Agrupar causas bajo vigilancia por abogado asignado
+        const groups = {};
+        causes.forEach(c => {
+            const lawyerName = resolveCaseLawyer(c);
+            if (!groups[lawyerName]) groups[lawyerName] = [];
+            groups[lawyerName].push(c);
+        });
 
-            const sphereBadge = isCorte
-                ? '<span class="px-1.5 py-0.2 rounded text-[9px] font-mono font-semibold bg-purple-500/20 text-purple-300">Corte</span>'
-                : '<span class="px-1.5 py-0.2 rounded text-[9px] font-mono font-semibold bg-blue-500/20 text-blue-300">1ª Instancia</span>';
+        const groupNames = Object.keys(groups);
+        groupNames.sort((a, b) => {
+            if (a === 'Bot Jurídico AeroLex') return 1;
+            if (b === 'Bot Jurídico AeroLex') return -1;
+            if (a.includes('Marta')) return -1;
+            if (b.includes('Marta')) return 1;
+            return a.localeCompare(b, 'es');
+        });
 
-            return `
-                <div class="p-2.5 rounded-lg border border-[--border] bg-[--panel-inset] hover:bg-[--panel-raised] transition flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-                    <div class="space-y-0.5 min-w-0">
-                        <div class="flex items-center gap-2">
-                            <span class="font-mono font-bold text-white text-[12px]">${escapeHtml(c.rit)}</span>
-                            ${sphereBadge}
-                            <span class="text-[10.5px] font-mono text-slate-400">${escapeHtml(c.code)}</span>
+        let html = '';
+        groupNames.forEach((lawyerName) => {
+            const meta = getLawyerMeta(lawyerName);
+            const lawyerCauses = groups[lawyerName];
+            const isBot = lawyerName.includes('Bot Jurídico');
+            const isCollapsed = isBot; // Causas internas del sistema retraídas por defecto
+
+            const rows = lawyerCauses.map(c => {
+                const isCorte = /corte|apelaciones/i.test(c.tribunal || '');
+                const ed = c.estado_diario;
+                let statusBadge = '';
+                if (ed && ed.status === 'con_novedades') {
+                    statusBadge = '<span class="px-1.5 py-0.5 rounded text-[9.5px] font-semibold bg-amber-500/15 text-amber-400 border border-amber-500/25">Con Novedades</span>';
+                } else if (ed && ed.found) {
+                    statusBadge = '<span class="px-1.5 py-0.5 rounded text-[9.5px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">Al Día</span>';
+                } else {
+                    statusBadge = '<span class="px-1.5 py-0.5 rounded text-[9.5px] font-semibold bg-blue-500/15 text-blue-400 border border-blue-500/25">Inspeccionando</span>';
+                }
+
+                const sphereBadge = isCorte
+                    ? '<span class="px-1.5 py-0.2 rounded text-[9px] font-mono font-semibold bg-purple-500/20 text-purple-300">Corte</span>'
+                    : '<span class="px-1.5 py-0.2 rounded text-[9px] font-mono font-semibold bg-blue-500/20 text-blue-300">1ª Instancia</span>';
+
+                return `
+                    <div class="p-2.5 rounded-lg border border-[--border] bg-[--panel-inset] hover:bg-[--panel-raised] transition flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                        <div class="space-y-0.5 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="font-mono font-bold text-white text-[12px]">${escapeHtml(c.rit)}</span>
+                                ${sphereBadge}
+                                <span class="text-[10.5px] font-mono text-slate-400">${escapeHtml(c.code)}</span>
+                            </div>
+                            <div class="text-[11px] text-slate-300 truncate max-w-md" title="${escapeHtml(c.materia)}">
+                                ${escapeHtml(c.materia || 'Sin carátula especificada')}
+                            </div>
+                            <div class="text-[10px] text-slate-500">
+                                ${escapeHtml(c.tribunal || 'Tribunal no especificado')}
+                            </div>
                         </div>
-                        <div class="text-[11px] text-slate-300 truncate max-w-md" title="${escapeHtml(c.materia)}">
-                            ${escapeHtml(c.materia || 'Sin carátula especificada')}
+                        <div class="flex items-center gap-2 shrink-0 self-start sm:self-center">
+                            ${statusBadge}
+                            <button type="button" onclick="loadCase('${c.code}'); closeModal();" class="btn btn-secondary !py-1 !px-2 !text-[10.5px]" title="Abrir expediente">
+                                <i class="fas fa-folder-open text-blue-400"></i>
+                            </button>
                         </div>
-                        <div class="text-[10px] text-slate-500">
-                            ${escapeHtml(c.tribunal || 'Tribunal no especificado')}
+                    </div>`;
+            }).join('');
+
+            html += `
+                <div class="panel-card overflow-hidden border border-[--border] mb-2 shadow-sm">
+                    <div class="px-3 py-2 bg-[--panel-raised] border-b border-[--border] flex items-center justify-between cursor-pointer select-none hover:bg-[--panel-subtle] transition" onclick="toggleWatchedLawyerAccordion('watched-lawyer-${meta.id}')">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <i class="fas ${meta.icon} ${meta.iconColor} text-xs"></i>
+                            <span class="font-bold text-xs text-white truncate">${escapeHtml(meta.name)}</span>
+                            <span class="text-[10px] text-slate-400 hidden sm:inline">(${escapeHtml(meta.role)})</span>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span class="px-1.5 py-0.5 rounded text-[9.5px] font-mono font-bold ${meta.badgeCls}">${lawyerCauses.length} causa${lawyerCauses.length !== 1 ? 's' : ''}</span>
+                            <i class="fas fa-chevron-down text-[10px] text-slate-400 transition-transform duration-200" id="watched-chevron-${meta.id}" style="transform: ${isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)'};"></i>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2 shrink-0 self-start sm:self-center">
-                        ${statusBadge}
-                        <button type="button" onclick="loadCase('${c.code}'); closeModal();" class="btn btn-secondary !py-1 !px-2 !text-[10.5px]" title="Abrir expediente">
-                            <i class="fas fa-folder-open text-blue-400"></i>
-                        </button>
+                    <div id="watched-lawyer-${meta.id}" class="p-2 space-y-1.5 bg-[--panel] ${isCollapsed ? 'hidden' : ''}">
+                        ${rows}
                     </div>
-                </div>`;
-        }).join('');
+                </div>
+            `;
+        });
 
-        zone.innerHTML = `<div class="space-y-1.5">${rows}</div>`;
+        zone.innerHTML = html;
+    }
+
+    function toggleWatchedLawyerAccordion(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const isHidden = el.classList.toggle('hidden');
+        const chevronId = id.replace('watched-lawyer-', 'watched-chevron-');
+        const chevron = document.getElementById(chevronId);
+        if (chevron) {
+            chevron.style.transform = isHidden ? 'rotate(-90deg)' : 'rotate(0deg)';
+        }
     }
 
     async function toggleVigilanciaWorkflow() {
