@@ -4,21 +4,28 @@
  * Motor Autónomo de Vigilancia Judicial 24/7 en la Nube para AeroLex (GitHub Actions).
  * 
  * Opera con el computador del abogado totalmente apagado.
+ * Sincroniza la cartera completa de causas de los abogados socios (5 causas).
  * Lee la activación de la vigilancia desde Supabase (CFG-VIGILANCIA).
- * Si está pausada desde admin.html, se silencia sin enviar alertas.
- * Si está habilitada, escanea las causas activas en OJV / PJUD,
- * detecta proveídos y despacha correos oficiales con sello de proveniencia.
+ * Escanea las causas en OJV / PJUD y Cortes de Apelaciones.
+ * Despacha alertas por correo vía Gmail SMTP SSL o Resend.
  * 
- * Soporta flag --test para forzar el despacho de verificación operativa inmediata.
  * Regla de diseño: Cero emojis.
  */
 
 import crypto from 'node:crypto';
+import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const SUPA_URL = process.env.SUPABASE_URL;
 const SUPA_KEY = process.env.SUPABASE_SERVICE_KEY;
 const NOTIFY_EMAIL = process.env.AEROLEX_NOTIFY_EMAIL || 'vidalparedes.jaime@gmail.com';
 const RESEND_KEY = process.env.RESEND_API_KEY;
+const GMAIL_USER = process.env.GMAIL_USER || process.env.AEROLEX_SMTP_USER;
+const GMAIL_PASS = process.env.GMAIL_APP_PASS || process.env.AEROLEX_SMTP_PASS;
 const isTestMode = process.argv.includes('--test');
 
 function supaHeaders(extra = {}) {
@@ -43,7 +50,52 @@ const KNOWN_COURTS = {
   "los_muermos": { corte: "56", tribunal: "659", name: "Juzgado de Letras y Gar. de Los Muermos" },
   "quellon": { corte: "56", tribunal: "662", name: "Juzgado de Letras y Gar. de Quellón" },
   "hualaihue": { corte: "56", tribunal: "1013", name: "Juzgado de Letras y Gar. de Hualaihue" },
+  "4_familia_santiago": { corte: "90", tribunal: "683", name: "4° Juzgado de Familia de Santiago" },
 };
+
+// Cartera oficial activa de expedientes de los abogados socios
+const PARTNER_CAUSES = [
+  {
+    code: "ALX-2026-71",
+    rit: "1071-2026",
+    tribunal: "Corte de Apelaciones de Puerto Montt",
+    materia: "Recurso de Protección - Migración (-/-)",
+    detalle: "Causa reservada en materia migratoria por disposición legal del Acta N° 44-2022 de la Corte Suprema.",
+    status: "activo"
+  },
+  {
+    code: "ALX-2026-72",
+    rit: "1324-2026",
+    tribunal: "Corte de Apelaciones de Puerto Montt",
+    materia: "Contrato, nulidad de - MANSILLA / ZURITA",
+    detalle: "Apelación sentencia definitiva (C-25-2025 Letras Achao). Patrocinado: Edith del Carmen Mansilla Ojeda. Contraparte: Arturo Zurita Pereira.",
+    status: "activo"
+  },
+  {
+    code: "ALX-2026-73",
+    rit: "1360-2026",
+    tribunal: "Corte de Apelaciones de Puerto Montt",
+    materia: "Recurso de Protección - ALVARADO / PERANCHIGUAY",
+    detalle: "Recurso de Protección. Abogada socia patrocinante: Marta Elizabeth Sánchez Andrade. Cliente: Diego Armando Alvarado Paredes.",
+    status: "activo"
+  },
+  {
+    code: "ALX-2026-74",
+    rit: "1452-2026",
+    tribunal: "Corte de Apelaciones de Puerto Montt",
+    materia: "Recurso de Protección - Migración (-/-)",
+    detalle: "Causa reservada en materia migratoria por disposición legal del Acta N° 44-2022 de la Corte Suprema.",
+    status: "activo"
+  },
+  {
+    code: "ALX-2026-75",
+    rit: "Z-789-2020",
+    tribunal: "4 Juzgado de Familia Santiago",
+    materia: "Alimentos - MUÑOZ / NITSCHKE",
+    detalle: "Juicio de alimentos. Cliente: Daniel Alejandro Nitschke Aliaga. Contraparte: Pamela Muñoz Vásquez.",
+    status: "activo"
+  }
+];
 
 function parseRit(ritString) {
   if (!ritString) return null;
@@ -62,6 +114,36 @@ function resolveCourt(courtId) {
     if (lower.includes(key) || val.name.toLowerCase().includes(lower)) return val;
   }
   return KNOWN_COURTS["1_civil_puerto_montt"];
+}
+
+async function syncPartnerCausesToSupabase() {
+  console.log('[Vigilancia Nube] Sincronizando nómina completa de causas de abogados socios en Supabase...');
+  const resp = await fetch(`${SUPA_URL}/rest/v1/cases?select=code,rit`, { headers: supaHeaders() });
+  const existing = resp.ok ? await resp.json() : [];
+  const existingRits = new Set((existing || []).map(c => String(c.rit || '').trim().toUpperCase()));
+
+  for (const pc of PARTNER_CAUSES) {
+    if (!existingRits.has(pc.rit.toUpperCase())) {
+      console.log(`  · Registrando nueva causa de socio en Supabase: ${pc.rit} (${pc.code} - ${pc.materia})`);
+      const row = {
+        code: pc.code,
+        pin: '0000',
+        materia: pc.materia,
+        tribunal: pc.tribunal,
+        rit: pc.rit,
+        detalle: JSON.stringify({ description: pc.detalle, syncedBy: 'github_actions_vigia' }),
+        estado_actual: 1,
+        steps: [],
+        status: pc.status,
+        created_at: new Date().toISOString()
+      };
+      await fetch(`${SUPA_URL}/rest/v1/cases`, {
+        method: 'POST',
+        headers: supaHeaders(),
+        body: JSON.stringify(row)
+      }).catch(() => {});
+    }
+  }
 }
 
 async function checkPjudCase(rit, courtId) {
@@ -160,12 +242,58 @@ async function checkPjudCase(rit, courtId) {
   }
 }
 
-async function sendEmailAlert(novelties, isTest = false, allWatched = []) {
-  if (!RESEND_KEY) {
-    console.log('[Vigilancia Nube] RESEND_API_KEY no configurado en entorno. Omitiendo despacho por email.');
-    return;
-  }
+function sendViaSmtpScript(subject, text, html) {
+  return new Promise((resolve) => {
+    const pythonScript = join(__dirname, 'send-email-smtp.py');
+    const payload = JSON.stringify({
+      recipient: NOTIFY_EMAIL,
+      subject,
+      text,
+      html
+    });
 
+    const env = {
+      ...process.env,
+      GMAIL_USER: GMAIL_USER,
+      GMAIL_APP_PASS: GMAIL_PASS,
+      AEROLEX_SMTP_USER: GMAIL_USER,
+      AEROLEX_SMTP_PASS: GMAIL_PASS
+    };
+
+    const proc = spawn('python3', [pythonScript], { env });
+    let stdout = '';
+    let stderr = '';
+
+    proc.stdout.on('data', (d) => { stdout += d; });
+    proc.stderr.on('data', (d) => { stderr += d; });
+
+    proc.on('close', (code) => {
+      if (code === 0 && stdout.includes('"success": true')) {
+        console.log(`[Vigilancia Nube] Correo despachado exitosamente vía Gmail SMTP a ${NOTIFY_EMAIL}`);
+        resolve(true);
+      } else {
+        // Reintentar con 'python' si python3 falló
+        const proc2 = spawn('python', [pythonScript], { env });
+        let out2 = '';
+        proc2.stdout.on('data', d => { out2 += d; });
+        proc2.on('close', c2 => {
+          if (c2 === 0 && out2.includes('"success": true')) {
+            console.log(`[Vigilancia Nube] Correo despachado exitosamente vía Gmail SMTP a ${NOTIFY_EMAIL}`);
+            resolve(true);
+          } else {
+            console.warn(`[Vigilancia Nube] Error SMTP: ${stderr || out2 || stdout}`);
+            resolve(false);
+          }
+        });
+      }
+    });
+
+    proc.stdin.write(payload);
+    proc.stdin.end();
+  });
+}
+
+async function sendEmailAlert(novelties, isTest = false, allWatched = []) {
   const dateStr = new Date().toLocaleDateString('es-CL', { timeZone: 'America/Santiago' });
   const timeStr = new Date().toLocaleTimeString('es-CL', { timeZone: 'America/Santiago', hour: '2-digit', minute: '2-digit' });
 
@@ -185,26 +313,31 @@ async function sendEmailAlert(novelties, isTest = false, allWatched = []) {
   }
 
   const casesToRender = isTest ? allWatched : novelties;
-  const casesHtml = casesToRender.map(n => `
+  const casesHtml = casesToRender.map((n, idx) => `
     <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:14px; margin-bottom:12px;">
-      <div style="font-family:monospace; font-size:13.5px; font-weight:bold; color:#0f172a;">
-        ${n.rit} <span style="font-size:11px; font-weight:normal; color:#64748b;">(${n.code})</span>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-family:monospace; font-size:13.5px; font-weight:bold; color:#0f172a;">
+          ${n.rit} <span style="font-size:11px; font-weight:normal; color:#64748b;">(${n.code})</span>
+        </span>
+        <span style="font-size:10px; font-family:monospace; background:#e2e8f0; color:#334155; padding:2px 6px; border-radius:4px;">
+          Expediente ${idx + 1} de ${casesToRender.length}
+        </span>
       </div>
-      <div style="font-size:12.5px; color:#1e293b; margin-top:4px; font-weight:600;">
+      <div style="font-size:12.5px; color:#1e293b; margin-top:5px; font-weight:600;">
         ${n.materia || n.caratula || 'Causa Activa'}
       </div>
-      <div style="font-size:11.5px; color:#64748b; margin-top:2px;">
-        Tribunal: <strong>${n.court || n.tribunal || 'PJUD'}</strong> | Último Registro: <strong>${n.lastMovementDate || dateStr}</strong>
+      <div style="font-size:11.5px; color:#64748b; margin-top:3px;">
+        Tribunal: <strong>${n.court || n.tribunal || 'Poder Judicial'}</strong> | Último Registro: <strong>${n.lastMovementDate || dateStr}</strong>
       </div>
       <div style="margin-top:8px; font-size:11.5px; background:#eff6ff; border-left:3px solid #2563eb; padding:6px 10px; color:#1e3a8a;">
-        Estado: <strong>${n.hasNoveltiesToday ? 'Novedad Detectada Hoy' : 'Inspeccionada en OJV (Al Día)'}</strong>
+        Estado: <strong>${n.hasNoveltiesToday ? 'Novedad Detectada Hoy en OJV' : 'Inspeccionada en OJV (Al Día)'}</strong>
       </div>
     </div>
   `).join('');
 
   const testBanner = isTest ? `
     <div style="background:#ecfdf5; border-left:4px solid #10b981; padding:12px 14px; border-radius:0 6px 6px 0; margin-bottom:20px; font-size:12.5px; color:#065f46; line-height:1.5;">
-      <strong>PRUEBA DE OPERATIVIDAD EN LÍNEA:</strong> Este correo certifica que el workflow desatendido en GitHub Actions se encuentra plenamente operativo, consultando con éxito la Oficina Judicial Virtual y despachando alertas con el computador del abogado totalmente apagado.
+      <strong>PRUEBA DE OPERATIVIDAD EN LÍNEA:</strong> Este correo certifica que el workflow desatendido en GitHub Actions se encuentra plenamente operativo, consultando con éxito la Oficina Judicial Virtual e inspeccionando todas las causas de la cartera activa de los abogados socios con el computador del abogado totalmente apagado.
     </div>
   ` : '';
 
@@ -237,6 +370,7 @@ async function sendEmailAlert(novelties, isTest = false, allWatched = []) {
             <div><strong>Ejecución (Run):</strong> #${runNumber} (ID: ${runId})</div>
             <div><strong>Disparador:</strong> ${eventName === 'schedule' ? 'Cron Programado (Pase OJV)' : eventName}</div>
             <div><strong>Hora del Pase:</strong> ${timeStr} hrs (${dateStr} Chile)</div>
+            <div><strong>Causas Auditadas:</strong> ${casesToRender.length} expedientes de abogados socios</div>
             <div><strong>Protección Forense:</strong> CaseVerifier (4 Compuertas de Integridad)</div>
             <div style="margin-top:8px; padding-top:6px; border-top:1px dashed #334155;">
               <a href="${runUrl}" style="color:#60a5fa; text-decoration:underline;">Ver Bitácora de Ejecución en Vivo en GitHub &rarr;</a>
@@ -261,28 +395,38 @@ async function sendEmailAlert(novelties, isTest = false, allWatched = []) {
     </html>
   `;
 
-  try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        from: 'AeroLex Vigilancia <alertas@aerolex.cl>',
-        to: [NOTIFY_EMAIL],
-        subject,
-        html
-      })
-    });
-    if (res.ok) {
-      console.log(`[Vigilancia Nube] Correo despachado exitosamente a ${NOTIFY_EMAIL} con proveniencia certificada.`);
-    } else {
-      console.warn(`[Vigilancia Nube] Error al despachar correo Resend: ${res.status} ${await res.text()}`);
-    }
-  } catch (err) {
-    console.warn('[Vigilancia Nube] Error de red al enviar correo:', err.message);
+  const plainText = `AeroLex Vigilancia Judicial 24/7 - ${subject}\nHora: ${timeStr} (${dateStr})\nDestinatario: ${NOTIFY_EMAIL}\nTotal causas: ${casesToRender.length}`;
+
+  // Intentar despacho vía Resend si la clave existe
+  if (RESEND_KEY) {
+    try {
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: 'AeroLex Vigilancia <alertas@aerolex.cl>',
+          to: [NOTIFY_EMAIL],
+          subject,
+          html
+        })
+      });
+      if (res.ok) {
+        console.log(`[Vigilancia Nube] Correo despachado exitosamente vía Resend a ${NOTIFY_EMAIL}`);
+        return;
+      }
+    } catch (_) {}
   }
+
+  // Despacho vía Gmail SMTP si las credenciales están configuradas
+  if (GMAIL_USER && GMAIL_PASS) {
+    const ok = await sendViaSmtpScript(subject, plainText, html);
+    if (ok) return;
+  }
+
+  console.log('[Vigilancia Nube] Ni RESEND_API_KEY ni GMAIL_USER/GMAIL_APP_PASS configurados. Omitiendo despacho por email.');
 }
 
 async function main() {
@@ -299,7 +443,10 @@ async function main() {
     process.exit(1);
   }
 
-  // 1. Verificar si el interruptor maestro está habilitado (salvo en forzado con --test)
+  // 1. Sincronizar nómina completa de los abogados socios
+  await syncPartnerCausesToSupabase();
+
+  // 2. Verificar si el interruptor maestro está habilitado (salvo en forzado con --test)
   const cfgResp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-VIGILANCIA`, { headers: supaHeaders() });
   const cfgRows = cfgResp.ok ? await cfgResp.json() : [];
   let isEnabled = true;
@@ -319,7 +466,7 @@ async function main() {
 
   console.log(`[Vigilancia Nube] INTERRUPTOR MAESTRO: ${isEnabled ? 'HABILITADO' : 'PAUSADO (pero forzado por flag --test)'}. Procediendo al escaneo...`);
 
-  // 2. Obtener todas las causas activas con RIT
+  // 3. Obtener todas las causas activas con RIT
   const casesResp = await fetch(`${SUPA_URL}/rest/v1/cases?select=*`, { headers: supaHeaders() });
   const allRows = casesResp.ok ? await casesResp.json() : [];
 
@@ -330,7 +477,7 @@ async function main() {
     return Boolean(c.rit && c.rit.trim());
   });
 
-  console.log(`[Vigilancia Nube] Causas activas bajo inspección: ${watchedCases.length}`);
+  console.log(`[Vigilancia Nube] Total causas activas bajo inspección: ${watchedCases.length}`);
 
   const noveltiesFound = [];
   const scannedSummary = [];
@@ -399,13 +546,12 @@ async function main() {
       body: JSON.stringify(patch)
     }).catch(e => console.warn(`  [Aviso] Error al actualizar estado_diario de ${c.code}:`, e.message));
 
-    // Pausa preventiva de 1.2 segundos entre causas para cuidar la conexión OJV
     if (i < watchedCases.length - 1) {
       await new Promise(r => setTimeout(r, 1200));
     }
   }
 
-  // 3. Despachar alertas por correo si se detectaron novedades o si se solicitó modo prueba
+  // 4. Despachar alertas por correo si se detectaron novedades o si se solicitó modo prueba
   if (isTestMode) {
     console.log(`[Vigilancia Nube] Modo prueba activo: Despachando correo de verificación con las ${scannedSummary.length} causas inspeccionadas...`);
     await sendEmailAlert(noveltiesFound, true, scannedSummary);
@@ -416,7 +562,7 @@ async function main() {
     console.log('[Vigilancia Nube] Barrido completado sin novedades urgentes del día.');
   }
 
-  // 4. Actualizar CFG-VIGILANCIA con la bitácora del último pase
+  // 5. Actualizar CFG-VIGILANCIA con la bitácora del último pase
   const nowIso = new Date().toISOString();
   const cfgUpdate = {
     enabled: isEnabled,
