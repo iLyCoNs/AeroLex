@@ -2,19 +2,16 @@ name: Vigilancia Judicial 24/7 AeroLex (OJV y Estados Diarios)
 
 on:
   schedule:
-    # Pases de prueba programados para hoy
-    - cron: '28 8 * * *'
-    - cron: '30 8 * * *'
-    - cron: '35 8 * * *'
+    # Pases de prueba inmediatos programados para hoy (05:36, 05:38, 05:40, 05:45 AM Chile / 08:36, 08:38, 08:40, 08:45 UTC)
+    - cron: '36 8 * * *'
+    - cron: '38 8 * * *'
+    - cron: '40 8 * * *'
+    - cron: '45 8 * * *'
     # 1. Primer barrido matutino oficial (07:45 AM Chile Continental / 10:45 UTC)
     - cron: '45 10 * * 1-5'
-    # 2. Hora crítica de Estados Diarios y Anuncio de Alegatos (08:30 AM Chile Continental / 11:30 UTC)
     - cron: '30 11 * * 1-5'
-    # 3. Barrido de confirmación y rezagos (09:15 AM Chile Continental / 12:15 UTC)
     - cron: '15 12 * * 1-5'
-    # 4. Barrido de mediodía y decretos de jornada (13:30 PM Chile Continental / 16:30 UTC)
     - cron: '30 16 * * 1-5'
-    # 5. Viernes por la tarde - Publicación de Tablas Semanales de Corte (18:30 PM Chile Continental / 21:30 UTC)
     - cron: '30 21 * * 5'
   workflow_dispatch:
     inputs:
@@ -46,15 +43,15 @@ jobs:
 
       - name: Ejecutar Vigilancia Nube 24/7 (PC Apagado)
         env:
-          SUPABASE_URL: \${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_KEY: \${{ secrets.SUPABASE_SERVICE_KEY }}
-          AEROLEX_NOTIFY_EMAIL: \${{ secrets.AEROLEX_NOTIFY_EMAIL || 'vidalparedes.jaime@gmail.com' }}
-          RESEND_API_KEY: \${{ secrets.RESEND_API_KEY }}
-          ADMIN_KEY: \${{ secrets.ADMIN_KEY }}
-          GMAIL_USER: \${{ secrets.GMAIL_USER }}
-          GMAIL_APP_PASS: \${{ secrets.GMAIL_APP_PASS }}
-          AEROLEX_SMTP_USER: \${{ secrets.GMAIL_USER }}
-          AEROLEX_SMTP_PASS: \${{ secrets.GMAIL_APP_PASS }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          AEROLEX_NOTIFY_EMAIL: ${{ secrets.AEROLEX_NOTIFY_EMAIL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASS: ${{ secrets.GMAIL_APP_PASS }}
+          AEROLEX_SMTP_USER: ${{ secrets.GMAIL_USER }}
+          AEROLEX_SMTP_PASS: ${{ secrets.GMAIL_APP_PASS }}
         run: |
           if [ "${{ github.event.inputs.modo_prueba }}" = "false" ]; then
             node scripts/vigia-nube-cron.mjs
