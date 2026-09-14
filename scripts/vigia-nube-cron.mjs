@@ -104,10 +104,44 @@ const PARTNER_CAUSES = [
 
 function parseRit(ritString) {
   if (!ritString) return null;
-  const clean = ritString.trim().toUpperCase();
-  const m = clean.match(/^([A-Z]{1,3})[- ]?(\d+)[- ]?(\d{4})$/);
-  if (!m) return null;
-  return { tipo: m[1], rol: m[2], era: m[3] };
+  const clean = ritString.trim();
+
+  // 1. Con prefijo alfanumérico (ej: "Protección 1071-2026", "Civil-1324-2026", "C-1234-2024", "Z-789-2020")
+  const matchWithLetters = clean.match(/^([a-zA-ZáéíóúÁÉÍÓÚñÑ]+)[-\s]*(\d+)[-\s]*(\d{4})$/);
+  if (matchWithLetters) {
+    return {
+      tipo: matchWithLetters[1].toUpperCase(),
+      rol: matchWithLetters[2],
+      era: matchWithLetters[3],
+    };
+  }
+
+  // 2. Formato puramente numérico (ej: "1071-2026", "1324-2026", "1360-2026", "1452-2026")
+  const matchBare = clean.match(/^(\d+)[-\s]*(\d{4})$/);
+  if (matchBare) {
+    return {
+      tipo: "ROL",
+      rol: matchBare[1],
+      era: matchBare[2],
+    };
+  }
+
+  // 3. Fallback flexible
+  const matchLoose = clean.match(/([a-zA-ZáéíóúÁÉÍÓÚñÑ]*)[-\s]*(\d+)[-\s]*(\d{4})/);
+  if (matchLoose && matchLoose[2] && matchLoose[3]) {
+    return {
+      tipo: matchLoose[1] ? matchLoose[1].toUpperCase() : "ROL",
+      rol: matchLoose[2],
+      era: matchLoose[3],
+    };
+  }
+
+  return null;
+}
+
+function isAppellateCourt(court) {
+  if (!court) return false;
+  return /corte.*apelaciones|c\.?a\.?\s*|corte\s*de\s*apelaciones/i.test(court);
 }
 
 function resolveCourt(courtId) {
@@ -160,7 +194,6 @@ async function syncPartnerCausesToSupabase() {
 async function checkPjudCase(rit, courtId) {
   const parsed = parseRit(rit);
   if (!parsed) return { found: false, error: "Formato de RIT inválido" };
-  const courtInfo = resolveCourt(courtId);
 
   const checkedAt = new Date().toISOString();
   const checkedDate = new Date().toLocaleDateString("es-CL", { timeZone: "America/Santiago" });
@@ -173,6 +206,118 @@ async function checkPjudCase(rit, courtId) {
     const setCookie = sessionRes.headers.get("set-cookie") || "";
     const cookies = setCookie.split(",").map(c => c.split(";")[0].trim()).join("; ");
 
+    // Rama 1: Corte de Apelaciones
+    if (isAppellateCourt(courtId)) {
+      const corteCode = /santiago/i.test(courtId) ? "90" : /san miguel/i.test(courtId) ? "91" : /valparaiso/i.test(courtId) ? "30" : /concepcion/i.test(courtId) ? "50" : "56"; // Puerto Montt default
+      const queryBody = new URLSearchParams({
+        competencia: "2",
+        conCorte: corteCode,
+        conTribunal: "0",
+        conTipoBus: "0",
+        conTipoBusApe: "0",
+        "radio-groupPenal": "1",
+        conTipoCausa: "0",
+        "radio-group": "1",
+        conRolCausa: parsed.rol,
+        conEraCausa: parsed.era,
+        ruc1: "",
+        ruc2: "",
+        rucPen1: "",
+        rucPen2: "",
+        conCaratulado: "",
+        "g-recaptcha-response-rit": "",
+        action: "validate_captcha_rit",
+      });
+
+      const queryRes = await fetch("https://oficinajudicialvirtual.pjud.cl/ADIR_871/apelaciones/consultaRitApelaciones.php", {
+        method: "POST",
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Referer": "https://oficinajudicialvirtual.pjud.cl/indexN.php",
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Cookie": cookies,
+        },
+        body: queryBody.toString(),
+      });
+
+      if (!queryRes.ok) throw new Error(`PJUD Corte HTTP ${queryRes.status}`);
+      const html = await queryRes.text();
+      const isNotFound = html.includes("No se han encontrado resultados") || !html.includes("tr-hover");
+
+      if (isNotFound) {
+        return {
+          found: false,
+          docket: `${parsed.tipo}-${parsed.rol}-${parsed.era}`,
+          court: courtId || "Corte de Apelaciones de Puerto Montt",
+          checkedAt, checkedTime, checkedDate,
+          resolutions: [],
+          hasNoveltiesToday: false,
+        };
+      }
+
+      // Extraer causas del listado de Corte
+      const trs = html.match(/<tr[\s\S]*?<\/tr>/gi) || [];
+      let matchedRow = null;
+      for (const tr of trs) {
+        if (!tr.includes("<td")) continue;
+        const tds = [...tr.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map(m => m[1].replace(/<[^>]+>/g, "").trim());
+        if (tds.length >= 6) {
+          const rowRol = tds[1] || "";
+          const rowCaratula = tds[3] || "";
+          const rowFecha = tds[4] || "";
+          const rowEstado = tds[5] || "";
+          const rowLibro = rowRol.split("-")[0] || "";
+
+          // Si parsed.tipo no es "ROL", preferir coincidencia de libro
+          if (parsed.tipo !== "ROL" && rowLibro.toUpperCase().includes(parsed.tipo)) {
+            matchedRow = { rolCompleto: rowRol, caratula: rowCaratula, fecha: rowFecha, estado: rowEstado, libro: rowLibro };
+            break;
+          }
+          if (!matchedRow) {
+            matchedRow = { rolCompleto: rowRol, caratula: rowCaratula, fecha: rowFecha, estado: rowEstado, libro: rowLibro };
+          }
+        }
+      }
+
+      if (!matchedRow) {
+        return {
+          found: false,
+          docket: `${parsed.tipo}-${parsed.rol}-${parsed.era}`,
+          court: courtId || "Corte de Apelaciones de Puerto Montt",
+          checkedAt, checkedTime, checkedDate,
+          resolutions: [],
+          hasNoveltiesToday: false,
+        };
+      }
+
+      const hasNoveltiesToday = (matchedRow.fecha === checkedDate);
+      const resolutions = [{
+        id: `res-${crypto.randomUUID().slice(0, 8)}`,
+        date: matchedRow.fecha || checkedDate,
+        time: checkedTime,
+        court: courtId || "Corte de Apelaciones de Puerto Montt",
+        docket: matchedRow.rolCompleto,
+        caratula: matchedRow.caratula || "Causa en Corte",
+        type: "Trámite / Estado de Alzada",
+        summary: `Causa radicada en ${courtId}. Libro: ${matchedRow.libro}. Estado: ${matchedRow.estado}. Carátula: ${matchedRow.caratula}.`,
+        checkedAt,
+      }];
+
+      return {
+        found: true,
+        docket: matchedRow.rolCompleto,
+        court: courtId || "Corte de Apelaciones de Puerto Montt",
+        caratula: matchedRow.caratula,
+        entryDate: matchedRow.fecha,
+        checkedAt, checkedTime, checkedDate,
+        resolutions,
+        hasNoveltiesToday,
+        lastMovementDate: matchedRow.fecha || checkedDate,
+      };
+    }
+
+    // Rama 2: Tribunales de Primera Instancia (Civil, Familia, Laboral)
+    const courtInfo = resolveCourt(courtId);
     const queryBody = new URLSearchParams({
       conTipoCausa: parsed.tipo,
       conRolCausa: parsed.rol,
