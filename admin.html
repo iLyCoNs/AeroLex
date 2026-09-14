@@ -757,6 +757,11 @@
                 <span class="text-xs hidden sm:inline text-slate-300 font-medium">Google</span>
                 <span id="telemetry-gads-badge" class="px-1.5 py-0.2 rounded text-[9.5px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">0 Ads</span>
                 <span id="telemetry-wa-badge" class="hidden md:inline px-1.5 py-0.2 rounded text-[9.5px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">0 WA</span>
+            <!-- Botón Directorio de Abogados Aliados -->
+            <button onclick="openLawyersModal()" class="btn btn-secondary !p-1.5 !px-2.5 relative flex items-center gap-1.5" title="Directorio Oficial de Abogados Aliados Sincronizados" id="btn-lawyers-modal">
+                <i class="fas fa-user-tie text-purple-400 text-xs"></i>
+                <span class="text-xs hidden sm:inline text-slate-300 font-medium">Abogados</span>
+                <span id="lawyers-header-badge" class="px-1.5 py-0.2 rounded text-[9.5px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">0</span>
             </button>
 
             <button onclick="openWaLog()" class="btn btn-secondary !p-1.5 !px-2.5 relative" title="Registro de contactos WhatsApp" id="btn-wa-log">
@@ -1394,6 +1399,9 @@
             const data = await resp.json();
             casesDB = {};
             (data.cases || []).forEach(c => { casesDB[c.code] = c; });
+            if (Array.isArray(data.lawyers)) {
+                syncLawyersCatalog(data.lawyers);
+            }
             sessionStorage.setItem('aerolex_admin_key', ADMIN_KEY);
             initDashboard();
             toast('Bóveda desbloqueada con éxito.', 'ok');
@@ -1416,6 +1424,9 @@
             const data = await resp.json();
             casesDB = {};
             (data.cases || []).forEach(c => { casesDB[c.code] = c; });
+            if (Array.isArray(data.lawyers)) {
+                syncLawyersCatalog(data.lawyers);
+            }
             initDashboard();
         } catch (e) { /* sin conexión */ }
     })();
@@ -1436,6 +1447,8 @@
         renderSidebar();
         renderStats();
         renderStepperUI(0);
+        updateLawyerSelectors();
+        updateLawyersModalBadge();
         if (typeof updateTelemetryBadges === 'function') {
             updateTelemetryBadges();
             setInterval(updateTelemetryBadges, 45000);
@@ -1799,17 +1812,7 @@
         renderSidebar(txt);
     }
 
-    const LAWYER_CATALOG = {
-        "Marta Elizabeth Sánchez Andrade": {
-            id: "marta-sanchez",
-            name: "Marta Elizabeth Sánchez Andrade",
-            shortName: "Marta Sánchez",
-            role: "Abogada Socia",
-            icon: "fa-user-tie",
-            iconColor: "text-purple-400",
-            badgeCls: "bg-purple-500/15 text-purple-300 border border-purple-500/30",
-            defaultCollapsed: false
-        },
+    const DEFAULT_LAWYER_CATALOG = {
         "Jaime Vidal Paredes": {
             id: "jaime-vidal",
             name: "Jaime Vidal Paredes",
@@ -1818,6 +1821,16 @@
             icon: "fa-scale-balanced",
             iconColor: "text-blue-400",
             badgeCls: "bg-blue-500/15 text-blue-300 border border-blue-500/30",
+            defaultCollapsed: false
+        },
+        "Marta Elizabeth Sánchez Andrade": {
+            id: "marta-sanchez",
+            name: "Marta Elizabeth Sánchez Andrade",
+            shortName: "Marta Sánchez",
+            role: "Abogada Socia",
+            icon: "fa-user-tie",
+            iconColor: "text-purple-400",
+            badgeCls: "bg-purple-500/15 text-purple-300 border border-purple-500/30",
             defaultCollapsed: false
         },
         "Bot Jurídico AeroLex": {
@@ -1831,6 +1844,240 @@
             defaultCollapsed: true
         }
     };
+
+    let LAWYER_CATALOG = { ...DEFAULT_LAWYER_CATALOG };
+    let syncedLawyersRaw = [];
+
+    function syncLawyersCatalog(lawyersList) {
+        if (!Array.isArray(lawyersList)) return;
+        syncedLawyersRaw = lawyersList;
+        LAWYER_CATALOG = { ...DEFAULT_LAWYER_CATALOG };
+
+        const palette = [
+            { icon: "fa-user-tie", iconColor: "text-emerald-400", badgeCls: "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30" },
+            { icon: "fa-user-graduate", iconColor: "text-amber-400", badgeCls: "bg-amber-500/15 text-amber-300 border border-amber-500/30" },
+            { icon: "fa-scale-unbalanced", iconColor: "text-cyan-400", badgeCls: "bg-cyan-500/15 text-cyan-300 border border-cyan-500/30" },
+            { icon: "fa-briefcase", iconColor: "text-indigo-400", badgeCls: "bg-indigo-500/15 text-indigo-300 border border-indigo-500/30" },
+            { icon: "fa-user-shield", iconColor: "text-teal-400", badgeCls: "bg-teal-500/15 text-teal-300 border border-teal-500/30" },
+        ];
+
+        lawyersList.forEach((lawyer, idx) => {
+            if (!lawyer || !lawyer.name) return;
+            const cleanName = lawyer.name.trim();
+            if (!cleanName) return;
+
+            if (/jaime|vidal/i.test(cleanName)) {
+                if (lawyer.email) LAWYER_CATALOG["Jaime Vidal Paredes"].email = lawyer.email;
+                if (lawyer.phone) LAWYER_CATALOG["Jaime Vidal Paredes"].phone = lawyer.phone;
+                if (lawyer.rut) LAWYER_CATALOG["Jaime Vidal Paredes"].rut = lawyer.rut;
+                if (lawyer.studio) LAWYER_CATALOG["Jaime Vidal Paredes"].studio = lawyer.studio;
+                return;
+            }
+            if (/marta|s[aá]nchez|elizabeth/i.test(cleanName)) {
+                if (lawyer.email) LAWYER_CATALOG["Marta Elizabeth Sánchez Andrade"].email = lawyer.email;
+                if (lawyer.phone) LAWYER_CATALOG["Marta Elizabeth Sánchez Andrade"].phone = lawyer.phone;
+                if (lawyer.rut) LAWYER_CATALOG["Marta Elizabeth Sánchez Andrade"].rut = lawyer.rut;
+                if (lawyer.studio) LAWYER_CATALOG["Marta Elizabeth Sánchez Andrade"].studio = lawyer.studio;
+                return;
+            }
+
+            const pal = palette[idx % palette.length];
+            const slug = lawyer.id || cleanName.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30) || `abogado-${idx}`;
+            const parts = cleanName.split(' ');
+            const shortName = parts.length > 2 ? `${parts[0]} ${parts[1]}` : cleanName;
+            const role = lawyer.studio || (cleanName.toLowerCase().includes('socio') ? 'Abogado Socio' : 'Abogado Aliado');
+
+            LAWYER_CATALOG[cleanName] = {
+                id: slug,
+                name: cleanName,
+                shortName,
+                role,
+                email: lawyer.email || '',
+                phone: lawyer.phone || '',
+                rut: lawyer.rut || '',
+                studio: lawyer.studio || '',
+                icon: pal.icon,
+                iconColor: pal.iconColor,
+                badgeCls: pal.badgeCls,
+                defaultCollapsed: false
+            };
+        });
+
+        updateLawyerSelectors();
+        updateLawyersModalBadge();
+        if (typeof renderSidebar === 'function') {
+            renderSidebar(document.getElementById('search-case')?.value || '');
+        }
+    }
+
+    function updateLawyerSelectors() {
+        const filterSel = document.getElementById('sidebar-lawyer-filter');
+        if (filterSel) {
+            const currentVal = filterSel.value;
+            let html = '<option value="all">Todos los Abogados</option>';
+            const names = Object.keys(LAWYER_CATALOG);
+            names.sort((a, b) => {
+                if (a === 'Bot Jurídico AeroLex') return 1;
+                if (b === 'Bot Jurídico AeroLex') return -1;
+                if (a.includes('Jaime')) return -1;
+                if (b.includes('Jaime')) return 1;
+                if (a.includes('Marta')) return -1;
+                if (b.includes('Marta')) return 1;
+                return a.localeCompare(b, 'es');
+            });
+
+            names.forEach(name => {
+                const meta = LAWYER_CATALOG[name];
+                const optLabel = name === 'Bot Jurídico AeroLex' 
+                    ? 'Bot Jurídico (Internas)' 
+                    : `${meta.shortName || name} (${meta.role || 'Colega'})`;
+                html += `<option value="${escapeHtml(name)}">${escapeHtml(optLabel)}</option>`;
+            });
+            filterSel.innerHTML = html;
+            if (currentVal && [...filterSel.options].some(o => o.value === currentVal)) {
+                filterSel.value = currentVal;
+            } else {
+                filterSel.value = 'all';
+            }
+        }
+
+        const caseLawyerSel = document.getElementById('case-lawyer');
+        if (caseLawyerSel) {
+            const currentVal = caseLawyerSel.value;
+            let html = '';
+            const names = Object.keys(LAWYER_CATALOG).filter(n => n !== 'Bot Jurídico AeroLex');
+            names.sort((a, b) => {
+                if (a.includes('Jaime')) return -1;
+                if (b.includes('Jaime')) return 1;
+                if (a.includes('Marta')) return -1;
+                if (b.includes('Marta')) return 1;
+                return a.localeCompare(b, 'es');
+            });
+
+            names.forEach(name => {
+                const meta = LAWYER_CATALOG[name];
+                html += `<option value="${escapeHtml(name)}">${escapeHtml(name)} (${escapeHtml(meta.role || 'Abogado')})</option>`;
+            });
+            caseLawyerSel.innerHTML = html;
+            if (currentVal && [...caseLawyerSel.options].some(o => o.value === currentVal)) {
+                caseLawyerSel.value = currentVal;
+            }
+        }
+    }
+
+    function updateLawyersModalBadge() {
+        const badge = document.getElementById('lawyers-header-badge');
+        if (badge) {
+            const count = Object.keys(LAWYER_CATALOG).filter(n => n !== 'Bot Jurídico AeroLex').length;
+            badge.textContent = String(count);
+        }
+    }
+
+    function openLawyersModal() {
+        const zone = document.getElementById('modal-zone');
+        if (!zone) return;
+
+        const lawyerCaseCounts = {};
+        Object.values(casesDB || {}).forEach(c => {
+            if (String(c.code || '').startsWith('WA-') || String(c.code || '').startsWith('CFG-')) return;
+            const law = resolveCaseLawyer(c);
+            lawyerCaseCounts[law] = (lawyerCaseCounts[law] || 0) + 1;
+        });
+
+        const names = Object.keys(LAWYER_CATALOG);
+        names.sort((a, b) => {
+            if (a === 'Bot Jurídico AeroLex') return 1;
+            if (b === 'Bot Jurídico AeroLex') return -1;
+            if (a.includes('Jaime')) return -1;
+            if (b.includes('Jaime')) return 1;
+            if (a.includes('Marta')) return -1;
+            if (b.includes('Marta')) return 1;
+            return a.localeCompare(b, 'es');
+        });
+
+        const cardsHtml = names.map(name => {
+            const meta = LAWYER_CATALOG[name];
+            const count = lawyerCaseCounts[name] || 0;
+            return `
+                <div class="p-3.5 rounded-xl bg-[--panel-raised] border border-[--border] hover:border-blue-500/40 transition shadow-sm space-y-2.5">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <div class="w-9 h-9 rounded-lg bg-[--panel-inset] border border-[--border] flex items-center justify-center shrink-0">
+                                <i class="fas ${meta.icon || 'fa-user-tie'} ${meta.iconColor || 'text-purple-400'} text-sm"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-xs font-bold text-white truncate leading-tight">${escapeHtml(name)}</div>
+                                <div class="text-[10.5px] text-slate-400 font-medium truncate mt-0.5">${escapeHtml(meta.role || 'Abogado')}</div>
+                            </div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${meta.badgeCls || 'bg-slate-500/15 text-slate-300 border border-slate-500/30'} shrink-0">
+                            ${count} ${count === 1 ? 'causa' : 'causas'}
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[10.5px] text-slate-400 pt-1 border-t border-[--border]/50">
+                        ${meta.email ? `<div class="truncate"><i class="fas fa-envelope text-[9.5px] text-slate-500 mr-1.5"></i>${escapeHtml(meta.email)}</div>` : ''}
+                        ${meta.phone ? `<div class="truncate"><i class="fas fa-phone text-[9.5px] text-slate-500 mr-1.5"></i>${escapeHtml(meta.phone)}</div>` : ''}
+                        ${meta.studio ? `<div class="truncate col-span-full"><i class="fas fa-building-columns text-[9.5px] text-slate-500 mr-1.5"></i>${escapeHtml(meta.studio)}</div>` : ''}
+                        ${meta.rut ? `<div class="truncate"><i class="fas fa-id-card text-[9.5px] text-slate-500 mr-1.5"></i>RUT: ${escapeHtml(meta.rut)}</div>` : ''}
+                    </div>
+                    <div class="flex items-center justify-between pt-1">
+                        <span class="text-[9.5px] text-slate-500 font-mono">ID: ${escapeHtml(meta.id)}</span>
+                        <button onclick="filterByLawyerAndClose('${escapeHtml(name)}')" class="btn btn-secondary !py-1 !px-2.5 text-[10.5px] text-blue-400 hover:text-blue-300">
+                            <i class="fas fa-filter text-[9.5px] mr-1"></i> Filtrar Causas
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        const totalActive = names.filter(n => n !== 'Bot Jurídico AeroLex').length;
+
+        zone.innerHTML = `
+            <div class="fixed inset-0 modal-backdrop backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeModal()">
+                <div class="panel-card max-w-2xl w-full p-5 shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
+                    <div class="flex items-center justify-between pb-2 border-b border-[--border]">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-lg bg-purple-500/10 border border-purple-500/25 flex items-center justify-center shrink-0">
+                                <i class="fas fa-users-viewfinder text-purple-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-white">Directorio Oficial de Abogados · AeroLex</h3>
+                                <p class="text-[10.5px] text-slate-400">Sincronizado automáticamente desde el sistema central AeroLex</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                                ${totalActive} ${totalActive === 1 ? 'Abogado' : 'Abogados'}
+                            </span>
+                            <button onclick="closeModal()" class="text-slate-400 hover:text-white text-sm p-1"><i class="fas fa-xmark"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-y-auto space-y-2.5 pr-1 flex-1">
+                        ${cardsHtml || '<div class="text-xs text-slate-500 text-center py-6">No hay abogados registrados.</div>'}
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2 border-t border-[--border] text-[10.5px] text-slate-400">
+                        <div class="flex items-center gap-1.5">
+                            <i class="fas fa-shield-halved text-emerald-400 text-xs"></i>
+                            <span>Catálogo protegido y sincronizado en tiempo real</span>
+                        </div>
+                        <button onclick="closeModal()" class="btn btn-secondary !py-1 !px-3 text-xs">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function filterByLawyerAndClose(lawyerName) {
+        closeModal();
+        const sel = document.getElementById('sidebar-lawyer-filter');
+        if (sel) {
+            sel.value = lawyerName;
+        }
+        setLawyerFilter(lawyerName);
+        toast(`Filtrando causas de ${lawyerName}`, 'ok');
+    }
 
     let lawyerFilter = 'all';
     let collapsedLawyerGroups = new Set();
@@ -1852,6 +2099,9 @@
             if (/marta|s[aá]nchez|elizabeth/i.test(ab)) return "Marta Elizabeth Sánchez Andrade";
             if (/jaime|vidal/i.test(ab)) return "Jaime Vidal Paredes";
             if (/bot|sistema|interno/i.test(ab)) return "Bot Jurídico AeroLex";
+            for (const key of Object.keys(LAWYER_CATALOG)) {
+                if (key.toLowerCase() === ab.toLowerCase()) return key;
+            }
             return ab;
         }
         const code = String(c.code || '').toUpperCase();
@@ -1872,7 +2122,10 @@
 
     function getLawyerMeta(name) {
         if (LAWYER_CATALOG[name]) return LAWYER_CATALOG[name];
-        const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30) || 'abogado-general';
+        for (const key of Object.keys(LAWYER_CATALOG)) {
+            if (key.toLowerCase() === (name || '').toLowerCase()) return LAWYER_CATALOG[key];
+        }
+        const slug = (name || '').toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30) || 'abogado-general';
         return {
             id: slug,
             name: name,

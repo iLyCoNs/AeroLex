@@ -309,6 +309,69 @@ module.exports = async (req, res) => {
       });
     }
 
+    // Sincronización del catálogo de abogados aliados desde AeroLex SaaS
+    if (action === 'lawyers_sync' && req.method === 'POST') {
+      const lawyersList = Array.isArray(body.lawyers) ? body.lawyers : [];
+      const nowIso = new Date().toISOString();
+      const cfgPayload = {
+        lawyers: lawyersList,
+        updatedAt: nowIso,
+        updatedBy: 'saas_desktop'
+      };
+
+      const checkResp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-LAWYERS`, { headers: supaHeaders() });
+      const exists = checkResp.ok && (await checkResp.json()).length > 0;
+
+      if (exists) {
+        await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-LAWYERS`, {
+          method: 'PATCH',
+          headers: supaHeaders(),
+          body: JSON.stringify({
+            detalle: JSON.stringify(cfgPayload),
+            updated_at: nowIso
+          })
+        });
+      } else {
+        await fetch(`${SUPA_URL}/rest/v1/cases`, {
+          method: 'POST',
+          headers: supaHeaders(),
+          body: JSON.stringify({
+            code: 'CFG-LAWYERS',
+            pin: '0000',
+            materia: 'Catalogo de Abogados Aliados',
+            tribunal: 'AeroLex SaaS',
+            rit: 'CFG-LAW',
+            detalle: JSON.stringify(cfgPayload),
+            estado_actual: 0,
+            status: 'activo',
+            steps: []
+          })
+        });
+      }
+
+      return res.status(200).json({
+        ok: true,
+        count: lawyersList.length,
+        lawyers: lawyersList,
+        updatedAt: nowIso
+      });
+    }
+
+    // Consulta del catálogo de abogados aliados
+    if (action === 'lawyers_get') {
+      const getResp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-LAWYERS`, { headers: supaHeaders() });
+      if (getResp.ok) {
+        const rows = await getResp.json();
+        if (Array.isArray(rows) && rows.length && rows[0].detalle) {
+          try {
+            const parsed = JSON.parse(rows[0].detalle);
+            return res.status(200).json({ ok: true, lawyers: parsed.lawyers || [], updatedAt: parsed.updatedAt });
+          } catch (_) {}
+        }
+      }
+      return res.status(200).json({ ok: true, lawyers: [] });
+    }
+
     // Consulta en vivo de Estado Diario en PJUD (OJV)
     if (action === 'check_pjud') {
       const code = String(url.searchParams.get('code') || body.code || '').toUpperCase().trim();
@@ -665,7 +728,18 @@ module.exports = async (req, res) => {
             const c = String(r.code || '').toUpperCase();
             return !c.startsWith('WA-') && !c.startsWith('EV-') && !c.startsWith('CFG-');
           });
-      return res.status(200).json({ ok: true, cases, total: cases.length, rawTotal: allRows.length });
+
+      // Extraer catálogo de abogados aliados sincronizados si existe
+      let lawyersCatalog = [];
+      const cfgLawyersRow = allRows.find(r => String(r.code || '').toUpperCase() === 'CFG-LAWYERS');
+      if (cfgLawyersRow && cfgLawyersRow.detalle) {
+        try {
+          const parsed = JSON.parse(cfgLawyersRow.detalle);
+          if (Array.isArray(parsed.lawyers)) lawyersCatalog = parsed.lawyers;
+        } catch (_) {}
+      }
+
+      return res.status(200).json({ ok: true, cases, lawyers: lawyersCatalog, total: cases.length, rawTotal: allRows.length });
     }
 
     if (req.method === 'POST') {
