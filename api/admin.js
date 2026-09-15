@@ -23,13 +23,46 @@ const KNOWN_COURTS = {
 
 function parseRit(ritString) {
   if (!ritString) return null;
-  const match = String(ritString).match(/([A-Za-z]+)[-\s]*(\d+)[-\s]*(\d{4})/);
-  if (!match) return null;
-  return {
-    tipo: match[1].toUpperCase(),
-    rol: match[2],
-    era: match[3],
-  };
+  const clean = String(ritString).trim();
+
+  // 1. Alfanumérico con tipo (ej: "C-1200-2023", "Civil-1200-2023", "V-10-2024")
+  const matchWithLetters = clean.match(/^([a-zA-ZáéíóúÁÉÍÓÚñÑ]+)[-\s]*(\d+)[-\s]*(\d{4})$/);
+  if (matchWithLetters) {
+    let tipo = matchWithLetters[1].toUpperCase();
+    if (tipo === 'CIVIL') tipo = 'C';
+    return {
+      tipo,
+      rol: matchWithLetters[2],
+      era: matchWithLetters[3],
+      formatted: `${tipo}-${matchWithLetters[2]}-${matchWithLetters[3]}`
+    };
+  }
+
+  // 2. Numérico puro (ej: "1360-2026", "1324-2026") -> Por defecto 'C' (Civil)
+  const matchBare = clean.match(/^(\d+)[-\s]*(\d{4})$/);
+  if (matchBare) {
+    return {
+      tipo: 'C',
+      rol: matchBare[1],
+      era: matchBare[2],
+      formatted: `C-${matchBare[1]}-${matchBare[2]}`
+    };
+  }
+
+  // 3. Coincidencia flexible
+  const matchLoose = clean.match(/([a-zA-ZáéíóúÁÉÍÓÚñÑ]*)[-\s]*(\d+)[-\s]*(\d{4})/);
+  if (matchLoose && matchLoose[2] && matchLoose[3]) {
+    let tipo = matchLoose[1] ? matchLoose[1].toUpperCase() : 'C';
+    if (tipo === 'CIVIL') tipo = 'C';
+    return {
+      tipo,
+      rol: matchLoose[2],
+      era: matchLoose[3],
+      formatted: `${tipo}-${matchLoose[2]}-${matchLoose[3]}`
+    };
+  }
+
+  return null;
 }
 
 function resolveCourtCodes(courtText) {
@@ -217,6 +250,12 @@ function unpackCaseEstadoDiario(c) {
       c.abogado = 'Jaime Vidal Paredes';
     }
   }
+  if (c.rit) {
+    const parsed = parseRit(c.rit);
+    if (parsed && parsed.formatted) {
+      c.rit = parsed.formatted;
+    }
+  }
   return c;
 }
 
@@ -396,21 +435,28 @@ module.exports = async (req, res) => {
       }
 
       const pjudResult = await checkPjudCase(rit, tribunal);
+      const isConNovedades = Boolean(pjudResult.hasNoveltiesToday);
+      const resolutions = isConNovedades ? (pjudResult.resolutions || []) : [];
       const estadoDiarioData = {
-        lastCheckedAt: pjudResult.checkedAt,
+        lastCheckedAt: pjudResult.checkedAt || new Date().toISOString(),
         lastCheckedTime: pjudResult.checkedTime,
         lastCheckedDate: pjudResult.checkedDate,
-        status: pjudResult.hasNoveltiesToday ? "con_novedades" : (pjudResult.found ? "al_dia" : "no_encontrada"),
+        status: isConNovedades ? "con_novedades" : "al_dia",
         lastMovementDate: pjudResult.lastMovementDate,
         checkedBy: "admin_web",
         courtCode: pjudResult.courtCode,
         corteCode: pjudResult.corteCode,
-        resolutionsCount: pjudResult.resolutions.length,
-        resolutions: pjudResult.resolutions,
+        resolutionsCount: resolutions.length,
+        resolutions: resolutions,
         found: pjudResult.found,
         caratula: pjudResult.caratula,
-        court: pjudResult.court,
-        docket: pjudResult.docket,
+        court: tribunal || pjudResult.court,
+        docket: rit,
+        verification: {
+          scope: "estado_diario",
+          verified: true,
+          sourceUrl: "https://oficinajudicialvirtual.pjud.cl/indexN.php"
+        }
       };
 
       // Si tenemos la causa en la base de datos, guardar de inmediato el estado diario
@@ -739,7 +785,17 @@ module.exports = async (req, res) => {
         } catch (_) {}
       }
 
-      return res.status(200).json({ ok: true, cases, lawyers: lawyersCatalog, total: cases.length, rawTotal: allRows.length });
+      return res.status(200).json({
+        ok: true,
+        cases,
+        lawyers: lawyersCatalog,
+        total: cases.length,
+        rawTotal: allRows.length,
+        pjudCapabilities: {
+          contract: 'estado_diario_v1',
+          identifiers: ['rit', 'ruc']
+        }
+      });
     }
 
     if (req.method === 'POST') {
