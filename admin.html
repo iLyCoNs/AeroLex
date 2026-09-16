@@ -769,6 +769,7 @@
                 <span class="text-xs ml-1 hidden sm:inline text-slate-300">Consultas</span>
                 <span id="wa-badge" class="hidden absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center leading-none">0</span>
             </button>
+            <button onclick="openDesktopLicenses()" class="btn btn-secondary !p-2" title="Administrar licencias de escritorio">Licencias de escritorio</button>
             <button onclick="openSettings()" class="btn btn-secondary !p-2" title="Configuración WhatsApp"><i class="fas fa-gear text-xs"></i></button>
             <button id="btn-theme-toggle" onclick="toggleTheme()" class="btn btn-secondary !p-2 transition-transform duration-200 hover:scale-105 active:scale-95" title="Cambiar a modo claro (Día)" aria-label="Cambiar tema día/noche">
                 <i id="theme-toggle-icon" class="fas fa-sun text-amber-400 text-xs"></i>
@@ -3867,5 +3868,6 @@
         }
     });
 </script>
+<script src="/desktop-licenses-admin.js"></script>
 </body>
 </html>
