@@ -35,19 +35,76 @@ const isDigestNow = process.argv.includes('--digest-now');
 // respaldo en AEROLEX_NOTIFY_EMAIL.
 let NOTIFY_RECIPIENTS = [NOTIFY_EMAIL];
 
-// Pases oficiales (hora UTC) y su hora referencial en Chile continental.
-const PASS_SCHEDULE = [
-  { hour: 10, minute: 45, label: '07:45' },
-  { hour: 11, minute: 30, label: '08:30' },
-  { hour: 12, minute: 15, label: '09:15' },
-  { hour: 16, minute: 30, label: '13:30' },
-  { hour: 21, minute: 30, label: '18:30 (viernes)' },
+// Horario de pases (hora de Chile continental), configurable desde AeroLex
+// SaaS (CFG-PASES). Respaldo: los 5 pases históricos.
+const DEFAULT_PASSES = [
+  { time: '07:45', days: [1, 2, 3, 4, 5] },
+  { time: '08:30', days: [1, 2, 3, 4, 5] },
+  { time: '09:15', days: [1, 2, 3, 4, 5] },
+  { time: '13:30', days: [1, 2, 3, 4, 5] },
+  { time: '18:30', days: [5] },
 ];
+let PASSES = DEFAULT_PASSES;
 
-function expectedPassesFor(dayKey) {
-  const day = new Date(`${dayKey}T12:00:00Z`).getUTCDay();
-  if (day === 0 || day === 6) return [];
-  return day === 5 ? PASS_SCHEDULE : PASS_SCHEDULE.slice(0, 4);
+function santiagoOffsetMinutes(date) {
+  const dtf = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Santiago', hour12: false,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
+  });
+  const parts = Object.fromEntries(dtf.formatToParts(date).map(p => [p.type, p.value]));
+  const asUtc = Date.UTC(+parts.year, +parts.month - 1, +parts.day, +parts.hour % 24, +parts.minute, +parts.second);
+  return Math.round((asUtc - date.getTime()) / 60000);
+}
+
+function chileInstant(y, mo, d, hh, mm) {
+  const guess = Date.UTC(y, mo - 1, d, hh, mm);
+  return guess - santiagoOffsetMinutes(new Date(guess)) * 60000;
+}
+
+function passesForChileDay(dayKey) {
+  const [y, mo, d] = dayKey.split('-').map(Number);
+  const weekday = new Date(Date.UTC(y, mo - 1, d, 12)).getUTCDay();
+  return PASSES.filter(p => p.days.includes(weekday)).map(p => {
+    const [hh, mm] = p.time.split(':').map(Number);
+    return { label: p.time, msUtc: chileInstant(y, mo, d, hh, mm) };
+  });
+}
+
+function scheduledPassFor(dateObj) {
+  for (const offset of [-1, 0, 1]) {
+    const dayKey = chileDayKey(new Date(dateObj.getTime() + offset * 86400000));
+    for (const p of passesForChileDay(dayKey)) {
+      if (Math.abs(dateObj.getTime() - p.msUtc) <= 5 * 60 * 1000) return p;
+    }
+  }
+  return null;
+}
+
+async function loadPassesConfig() {
+  try {
+    const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-PASES`, { headers: supaHeaders() });
+    const rows = resp.ok ? await resp.json() : [];
+    if (rows.length > 0 && rows[0].detalle) {
+      const cfg = JSON.parse(rows[0].detalle);
+      const passes = Array.isArray(cfg.passes)
+        ? cfg.passes
+            .map(p => ({
+              time: String(p && p.time ? p.time : '').trim(),
+              days: Array.isArray(p && p.days) && p.days.length
+                ? [...new Set(p.days.map(Number).filter(d => d >= 1 && d <= 5))].sort()
+                : [1, 2, 3, 4, 5]
+            }))
+            .filter(p => /^([01]\d|2[0-3]):[0-5]\d$/.test(p.time) && p.days.length > 0)
+            .sort((a, b) => a.time.localeCompare(b.time))
+            .slice(0, 6)
+        : [];
+      if (passes.length > 0) return passes;
+    }
+  } catch (err) {
+    console.warn('[Vigilancia Nube] CFG-PASES no disponible; se usa el horario por defecto:', err.message);
+  }
+  return DEFAULT_PASSES;
 }
 
 function chileDayKey(dateObj = new Date()) {
@@ -654,13 +711,6 @@ async function saveDiario(state) {
   }).catch(e => console.warn('  [Aviso] No se pudo guardar CFG-DIARIO:', e.message));
 }
 
-function scheduledPassFor(dateObj) {
-  const h = dateObj.getUTCHours();
-  const m = dateObj.getUTCMinutes();
-  const day = dateObj.getUTCDay();
-  return PASS_SCHEDULE.find(p => p.hour === h && Math.abs(p.minute - m) <= 5 && (p.hour !== 21 || day === 5)) || null;
-}
-
 async function sendMail(subject, plainText, html, to = NOTIFY_RECIPIENTS) {
   if (RESEND_KEY) {
     try {
@@ -682,12 +732,13 @@ async function sendMail(subject, plainText, html, to = NOTIFY_RECIPIENTS) {
 
 function buildDigest(state, options = {}) {
   const dayKey = state.date;
-  const expected = expectedPassesFor(dayKey);
+  const expected = passesForChileDay(dayKey);
   const passes = Array.isArray(state.passes) ? state.passes : [];
   const dateStr = new Date(`${dayKey}T12:00:00Z`).toLocaleDateString('es-CL', { timeZone: 'America/Santiago', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
+  const utcLabel = (ms) => new Date(ms).toISOString().slice(11, 16);
   const rows = expected.map((p) => {
-    const rec = passes.find(s => s.utc === `${String(p.hour).padStart(2, '0')}:${String(p.minute).padStart(2, '0')}`);
+    const rec = passes.find(s => s.label === p.label);
     return { pass: p, rec };
   });
   const executed = rows.filter(r => r.rec).length;
@@ -698,14 +749,14 @@ function buildDigest(state, options = {}) {
   // Último registro conocido por causa (el pase más reciente que la incluyó).
   const caseMap = new Map();
   for (const pass of passes) {
-    for (const c of pass.cases || []) if (!caseMap.has(c.code)) caseMap.set(c.code, { ...c, passLabel: pass.label, passUtc: pass.utc });
+    for (const c of pass.cases || []) if (!caseMap.has(c.code)) caseMap.set(c.code, { ...c, passLabel: pass.label });
   }
   const cases = [...caseMap.values()].sort((a, b) => String(a.rit).localeCompare(String(b.rit)));
 
   const passRowsHtml = rows.map(({ pass, rec }) => `
     <tr>
       <td style="padding:6px 8px; border-bottom:1px solid #e2e8f0; font-family:monospace; font-size:11.5px;">${pass.label} Chile</td>
-      <td style="padding:6px 8px; border-bottom:1px solid #e2e8f0; font-family:monospace; font-size:11.5px;">${String(pass.hour).padStart(2, '0')}:${String(pass.minute).padStart(2, '0')} UTC</td>
+      <td style="padding:6px 8px; border-bottom:1px solid #e2e8f0; font-family:monospace; font-size:11.5px;">${utcLabel(pass.msUtc)} UTC</td>
       <td style="padding:6px 8px; border-bottom:1px solid #e2e8f0; font-size:11.5px; color:${rec ? '#065f46' : '#991b1b'}; font-weight:600;">${rec ? 'EJECUTADO' : 'NO EJECUTADO'}</td>
       <td style="padding:6px 8px; border-bottom:1px solid #e2e8f0; font-size:11.5px;">${rec ? `${rec.total} causa(s)` : '-'}</td>
       <td style="padding:6px 8px; border-bottom:1px solid #e2e8f0; font-size:11.5px;">${rec ? `${rec.novelties} novedad(es)` : '-'}</td>
@@ -777,7 +828,7 @@ function buildDigest(state, options = {}) {
       </div>
     </body></html>`;
 
-  const plainText = `AeroLex — Parte Diario de Vigilancia Judicial\n${dateStr}\n${summaryLine}\nDestinatarios: ${NOTIFY_RECIPIENTS.join(', ')}\n\nPASES:\n${rows.map(r => `- ${r.pass.label} Chile (${String(r.pass.hour).padStart(2, '0')}:${String(r.pass.minute).padStart(2, '0')} UTC): ${r.rec ? `ejecutado, ${r.rec.total} causas, ${r.rec.novelties} novedades` : 'NO EJECUTADO'}`).join('\n')}\n\nEXPEDIENTES:\n${cases.map(c => `- ${c.rit} (${c.code}) | ${c.caratula || c.materia || ''} | ${c.court || ''} | Abogado: ${c.abogado || 'Sin asignar'} | ${c.error ? `sin verificar: ${c.error}` : (c.hasNoveltiesToday ? 'CON NOVEDADES' : 'sin novedades')} | último movimiento: ${c.lastMovementDate || 's/f'}`).join('\n')}\n\nVerifique siempre en la OJV antes de presentaciones.`;
+  const plainText = `AeroLex — Parte Diario de Vigilancia Judicial\n${dateStr}\n${summaryLine}\nDestinatarios: ${NOTIFY_RECIPIENTS.join(', ')}\n\nPASES:\n${rows.map(r => `- ${r.pass.label} Chile (${new Date(r.pass.msUtc).toISOString().slice(11, 16)} UTC): ${r.rec ? `ejecutado, ${r.rec.total} causas, ${r.rec.novelties} novedades` : 'NO EJECUTADO'}`).join('\n')}\n\nEXPEDIENTES:\n${cases.map(c => `- ${c.rit} (${c.code}) | ${c.caratula || c.materia || ''} | ${c.court || ''} | Abogado: ${c.abogado || 'Sin asignar'} | ${c.error ? `sin verificar: ${c.error}` : (c.hasNoveltiesToday ? 'CON NOVEDADES' : 'sin novedades')} | último movimiento: ${c.lastMovementDate || 's/f'}`).join('\n')}\n\nVerifique siempre en la OJV antes de presentaciones.`;
 
   return { subject, plainText, html };
 }
@@ -799,7 +850,7 @@ async function processDiario({ watchedCases, scannedSummary, noveltiesFound, pas
 
   // Envío tardío del parte del día anterior si quedó pendiente.
   if (state.previous && state.previous.date !== today && !state.previous.digestSentAt && !isTestRun) {
-    const prevExpected = expectedPassesFor(state.previous.date);
+    const prevExpected = passesForChileDay(state.previous.date);
     if (prevExpected.length > 0) {
       console.log(`[Vigilancia Nube] Parte diario pendiente del ${state.previous.date}: enviando envío tardío...`);
       const prevDigest = buildDigest(state.previous, { late: true });
@@ -808,14 +859,12 @@ async function processDiario({ watchedCases, scannedSummary, noveltiesFound, pas
     }
   }
 
-  // Registrar el pase solo si corresponde a un pase oficial y no es prueba.
+  // Registrar el pase solo si corresponde a un pase configurado y no es prueba.
   const scheduled = scheduledPassFor(now);
   if (scheduled && !isTestRun) {
-    const utc = `${String(scheduled.hour).padStart(2, '0')}:${String(scheduled.minute).padStart(2, '0')}`;
-    state.passes = (state.passes || []).filter(p => p.utc !== utc); // reemplaza si se repite
+    state.passes = (state.passes || []).filter(p => p.label !== scheduled.label); // reemplaza si se repite
     state.passes.push({
       at: now.toISOString(),
-      utc,
       label: scheduled.label,
       total: watchedCases.length,
       novelties: noveltiesFound.length,
@@ -826,9 +875,9 @@ async function processDiario({ watchedCases, scannedSummary, noveltiesFound, pas
   }
 
   // Envío del parte al cierre del último pase del día (o forzado manual).
-  const expected = expectedPassesFor(today);
+  const expected = passesForChileDay(today);
   const last = expected[expected.length - 1];
-  const lastMs = last ? Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), last.hour, last.minute) : 0;
+  const lastMs = last ? last.msUtc : 0;
   const due = expected.length > 0 && now.getTime() >= lastMs && !state.digestSentAt;
 
   if (isDigestNow && !isTestRun) {
@@ -871,9 +920,9 @@ function printDigestPreview() {
     date: chileDayKey(new Date()),
     digestSentAt: null,
     passes: [
-      { at: new Date().toISOString(), utc: '10:45', label: '07:45', total: 6, novelties: 0, errors: [], cases: [{ code: 'ALX-2026-72', rit: '1324-2026', court: 'C.A. de Puerto Montt', caratula: 'MANSILLA / ZURITA', abogado: 'Marta Elizabeth Sánchez Andrade', hasNoveltiesToday: false, lastMovementDate: '15/09/2026', movements: [] }] },
-      { at: new Date().toISOString(), utc: '11:30', label: '08:30', total: 6, novelties: 1, errors: [], cases: [{ code: 'ALX-2026-75', rit: 'Z-789-2020', court: '4º Juzgado de Familia de Santiago', caratula: 'MUÑOZ / NITSCHKE', abogado: 'Jaime Vidal Paredes', hasNoveltiesToday: true, lastMovementDate: '17/09/2026', movements: [{ date: '17/09/2026', type: 'Resolución', summary: 'Téngase presente allanamiento y liquidación para pago con fondos AFP.' }] }] },
-      { at: new Date().toISOString(), utc: '16:30', label: '13:30', total: 6, novelties: 0, errors: [{ code: 'ALX-2026-71', rit: '1071-2026', message: 'Sin resultados públicos (causa reservada)' }], cases: [{ code: 'ALX-2026-71', rit: '1071-2026', court: 'C.A. de Puerto Montt', caratula: '-/-', abogado: 'Marta Elizabeth Sánchez Andrade', hasNoveltiesToday: false, lastMovementDate: '14/09/2026', movements: [] }] },
+      { at: new Date().toISOString(), label: '07:45', total: 6, novelties: 0, errors: [], cases: [{ code: 'ALX-2026-72', rit: '1324-2026', court: 'C.A. de Puerto Montt', caratula: 'MANSILLA / ZURITA', abogado: 'Marta Elizabeth Sánchez Andrade', hasNoveltiesToday: false, lastMovementDate: '15/09/2026', movements: [] }] },
+      { at: new Date().toISOString(), label: '08:30', total: 6, novelties: 1, errors: [], cases: [{ code: 'ALX-2026-75', rit: 'Z-789-2020', court: '4º Juzgado de Familia de Santiago', caratula: 'MUÑOZ / NITSCHKE', abogado: 'Jaime Vidal Paredes', hasNoveltiesToday: true, lastMovementDate: '17/09/2026', movements: [{ date: '17/09/2026', type: 'Resolución', summary: 'Téngase presente allanamiento y liquidación para pago con fondos AFP.' }] }] },
+      { at: new Date().toISOString(), label: '13:30', total: 6, novelties: 0, errors: [{ code: 'ALX-2026-71', rit: '1071-2026', message: 'Sin resultados públicos (causa reservada)' }], cases: [{ code: 'ALX-2026-71', rit: '1071-2026', court: 'C.A. de Puerto Montt', caratula: '-/-', abogado: 'Marta Elizabeth Sánchez Andrade', hasNoveltiesToday: false, lastMovementDate: '14/09/2026', movements: [] }] },
     ]
   };
   const digest = buildDigest(sample, { preview: true });
@@ -907,6 +956,12 @@ async function main() {
   // 0. Destinatarios vigentes (CFG-CORREO, editable en AeroLex SaaS / admin.html)
   NOTIFY_RECIPIENTS = await resolveRecipients();
   console.log(`[Vigilancia Nube] Destinatarios del parte y alertas: ${NOTIFY_RECIPIENTS.join(', ')}`);
+
+  // 0b. Horario de pases configurado (CFG-PASES, editable en AeroLex SaaS)
+  PASSES = await loadPassesConfig();
+  console.log(
+    `[Vigilancia Nube] Horario de pases (Chile): ${PASSES.map(p => `${p.time}${p.days.length === 1 && p.days[0] === 5 ? ' (viernes)' : ''}`).join(', ')}`,
+  );
 
   // 1. Sincronizar nómina completa de los abogados socios
   await syncPartnerCausesToSupabase();

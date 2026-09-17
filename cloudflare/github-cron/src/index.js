@@ -2,58 +2,146 @@
  * AeroLex · Disparador puntual de la vigilancia judicial en la nube.
  *
  * GitHub Actions entrega los eventos `schedule` con retrasos de horas
- * (best-effort bajo carga; actions/runner#4468). Este Worker dispara
- * `workflow_dispatch` a la hora exacta de los 5 pases oficiales (UTC):
+ * (actions/runner#4468). Este Worker dispara `workflow_dispatch` a la hora
+ * exacta de cada pase configurado.
  *
- *   Lun-Vie 10:45 · 11:30 · 12:15 · 16:30  (07:45/08:30/09:15/13:30 Chile)
- *   Viernes 21:30                          (18:30 Chile, tablas de Corte)
+ * El horario es configurable desde AeroLex SaaS (Configuración de Correo y
+ * Alertas → Horario de pases). Se guarda en Supabase (CFG-PASES) y se lee
+ * aqui via el endpoint publico `action=pases_get` (solo horas, sin datos) con
+ * respaldo en los 5 pases por defecto. Las horas se expresan en horario de
+ * Chile continental y se convierten a UTC en cada armado (soporta DST).
  *
- * El temporizador es un Durable Object con alarmas que se reprograma solo
+ * El temporizador es un Durable Object con alarmas autorreprogramadas
  * (Cloudflare recomienda DO + alarms porque los Cron Triggers pueden no
  * disparar en cuentas nuevas o detenerse en silencio). Cada peticion HTTP
- * vuelve a asegurar la alarma, de modo que el ciclo se repara solo.
+ * vuelve a asegurar la alarma: el ciclo se repara solo.
  *
  * Secreto requerido: GITHUB_TOKEN (fine-grained, Actions: Read and write
- * sobre el repositorio iLyCoNs/AeroLex). Secreto opcional para pruebas:
- * CRON_TEST_KEY (permite forzar un disparo por HTTP en cualquier momento).
+ * sobre iLyCoNs/AeroLex). Secreto opcional: CRON_TEST_KEY (forzar por HTTP).
  *
- * Barrido puntual manual: activar la variable DISPATCH_ONCE ("1") y
- * desplegar; el proximo tick del scheduled o el siguiente HTTP la disparan.
+ * Atajos de prueba por HTTP (con `x-cron-test`):
+ *   /?dispatch=1             dispara el workflow ahora
+ *   /?dispatch=1&digest=1    dispara el workflow en modo parte diario
  */
 
 import { DurableObject } from "cloudflare:workers";
 
-const OWNER = "iLyCoNs";const REPO = "AeroLex";
+const OWNER = "iLyCoNs";
+const REPO = "AeroLex";
 const WORKFLOW = "vigilancia-judicial-aerolex.yml";
 const REF = "main";
 const DAY_MS = 86_400_000;
+const PORTAL_URL = "https://aerolex.cl";
+const PASSES_TTL_MS = 5 * 60 * 1000;
 
-// Días UTC: 0 = domingo … 6 = sábado. 1-5 = lunes a viernes.
-export const PASSES = [
-  { hour: 10, minute: 45, days: [1, 2, 3, 4, 5], label: "07:45 Chile" },
-  { hour: 11, minute: 30, days: [1, 2, 3, 4, 5], label: "08:30 Chile" },
-  { hour: 12, minute: 15, days: [1, 2, 3, 4, 5], label: "09:15 Chile" },
-  { hour: 16, minute: 30, days: [1, 2, 3, 4, 5], label: "13:30 Chile" },
-  { hour: 21, minute: 30, days: [5], label: "18:30 Chile (viernes)" },
+// Pases por defecto (hora de Chile continental), compatibles con el horario
+// histórico de 5 pases. Se usan si CFG-PASES no responde.
+export const DEFAULT_PASSES = [
+  { time: "07:45", days: [1, 2, 3, 4, 5] },
+  { time: "08:30", days: [1, 2, 3, 4, 5] },
+  { time: "09:15", days: [1, 2, 3, 4, 5] },
+  { time: "13:30", days: [1, 2, 3, 4, 5] },
+  { time: "18:30", days: [5] },
 ];
 
-export function passFor(date) {
-  const day = date.getUTCDay();
-  return PASSES.find(
-    (pass) => pass.days.includes(day) && pass.hour === date.getUTCHours() && pass.minute === date.getUTCMinutes(),
-  );
+let passesCache = { at: 0, passes: DEFAULT_PASSES };
+
+// ── Conversión horario de Chile → UTC (con DST) ─────────────────────────────
+function santiagoOffsetMinutes(date) {
+  const dtf = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Santiago",
+    hour12: false,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+  const parts = Object.fromEntries(dtf.formatToParts(date).map((p) => [p.type, p.value]));
+  const asUtc = Date.UTC(+parts.year, +parts.month - 1, +parts.day, +parts.hour % 24, +parts.minute, +parts.second);
+  return Math.round((asUtc - date.getTime()) / 60000);
 }
 
-export function nextPassAt(fromMs) {
-  for (let i = 0; i < 15; i++) {
-    const day = new Date(fromMs + i * DAY_MS);
-    for (const pass of PASSES) {
-      const candidate = Date.UTC(day.getUTCFullYear(), day.getUTCMonth(), day.getUTCDate(), pass.hour, pass.minute);
-      if (!pass.days.includes(new Date(candidate).getUTCDay())) continue;
-      if (candidate > fromMs) return candidate;
+function chileInstant(y, mo, d, hh, mm) {
+  const guess = Date.UTC(y, mo - 1, d, hh, mm);
+  return guess - santiagoOffsetMinutes(new Date(guess)) * 60000;
+}
+
+function chileDateParts(date) {
+  const p = Object.fromEntries(
+    new Intl.DateTimeFormat("en-CA", { timeZone: "America/Santiago", year: "numeric", month: "2-digit", day: "2-digit" })
+      .formatToParts(date)
+      .map((x) => [x.type, x.value]),
+  );
+  return { y: +p.year, m: +p.month, d: +p.day };
+}
+
+function sanitizePasses(raw) {
+  if (!Array.isArray(raw)) return null;
+  const passes = raw
+    .map((p) => ({
+      time: String(p && p.time ? p.time : "").trim(),
+      days: Array.isArray(p && p.days) ? [...new Set(p.days.map(Number).filter((d) => d >= 1 && d <= 5))].sort() : [1, 2, 3, 4, 5],
+    }))
+    .filter((p) => /^([01]\d|2[0-3]):[0-5]\d$/.test(p.time) && p.days.length > 0)
+    .sort((a, b) => a.time.localeCompare(b.time))
+    .slice(0, 6);
+  return passes.length ? passes : null;
+}
+
+export async function loadPasses(env, fetchImpl = fetch) {
+  if (Date.now() - passesCache.at < PASSES_TTL_MS) return passesCache.passes;
+  try {
+    const portal = (env && env.PORTAL_URL) || PORTAL_URL;
+    const res = await fetchImpl(`${portal}/api/admin?action=pases_get`, { headers: { "user-agent": "aerolex-github-cron" } });
+    if (res.ok) {
+      const data = await res.json();
+      const passes = sanitizePasses(data.passes);
+      if (passes) {
+        passesCache = { at: Date.now(), passes };
+        return passes;
+      }
+    }
+  } catch (_) {}
+  passesCache = { at: Date.now(), passes: DEFAULT_PASSES };
+  return DEFAULT_PASSES;
+}
+
+// Instantes UTC del día Chile (y,m,d) para cada pase configurado.
+export function passInstantsForChileDate(passes, y, mo, d) {
+  const weekday = new Date(Date.UTC(y, mo - 1, d, 12)).getUTCDay();
+  const out = [];
+  for (const pass of passes) {
+    if (!pass.days.includes(weekday)) continue;
+    const [hh, mm] = pass.time.split(":").map(Number);
+    out.push({ ms: chileInstant(y, mo, d, hh, mm), label: pass.time, time: pass.time });
+  }
+  return out;
+}
+
+export function passFor(date, passes) {
+  const { y, m, d } = chileDateParts(date);
+  for (const offset of [-1, 0, 1]) {
+    const base = new Date(Date.UTC(y, m - 1, d, 12) + offset * DAY_MS);
+    const parts = chileDateParts(base);
+    for (const candidate of passInstantsForChileDate(passes, parts.y, parts.m, parts.d)) {
+      if (Math.abs(date.getTime() - candidate.ms) <= 120_000) return candidate;
     }
   }
-  return fromMs + DAY_MS; // no debería ocurrir: siempre hay un pase en 14 días
+  return undefined;
+}
+
+export function nextPassAt(fromMs, passes) {
+  const start = chileDateParts(new Date(fromMs));
+  for (let i = 0; i < 15; i++) {
+    const base = new Date(Date.UTC(start.y, start.m - 1, start.d, 12) + i * DAY_MS);
+    const parts = chileDateParts(base);
+    for (const candidate of passInstantsForChileDate(passes, parts.y, parts.m, parts.d)) {
+      if (candidate.ms > fromMs) return candidate.ms;
+    }
+  }
+  return fromMs + DAY_MS;
 }
 
 async function dispatch(env, origin, inputs) {
@@ -83,7 +171,7 @@ async function dispatch(env, origin, inputs) {
 /**
  * Temporizador persistente: una alarma por pase, reprogramada al terminar.
  * ALARM_DEBUG_SECONDS (variable, solo pruebas) acorta el ciclo para verificar
- * que las alarmas disparan; se quita al terminar y el ciclo vuelve solo.
+ * que las alarmas disparan; al quitarla el ciclo vuelve solo al horario real.
  */
 export class PassScheduler extends DurableObject {
   debugSeconds() {
@@ -107,18 +195,19 @@ export class PassScheduler extends DurableObject {
       console.log(`[alarma] modo debug: proxima en ${this.debugSeconds()}s (${new Date(at).toISOString()})`);
       return;
     }
-    const next = nextPassAt(Date.now());
+    const passes = await loadPasses(this.env);
+    const next = nextPassAt(Date.now(), passes);
     await this.ctx.storage.setAlarm(next);
-    console.log(`[alarma] proximo pase: ${new Date(next).toISOString()}`);
+    console.log(`[alarma] proximo pase: ${new Date(next).toISOString()} (${passes.length} pases configurados)`);
   }
 
   async alarm() {
     const at = new Date();
-    const pass = passFor(at);
-    // ALARM_FORCE_DISPATCH (variable, solo pruebas) fuerza un disparo en el
-    // siguiente tick; se quita al terminar.
-    if (pass || this.env.ALARM_FORCE_DISPATCH) {
-      const origin = pass ? `alarma ${pass.label}` : "alarma forzada";
+    const passes = await loadPasses(this.env);
+    const pass = passFor(at, passes);
+    const forced = Boolean(this.env.ALARM_FORCE_DISPATCH);
+    if (pass || forced) {
+      const origin = pass ? `alarma ${pass.label} Chile` : "alarma forzada";
       console.log(`[alarma] ${origin} a las ${at.toISOString()} - disparando workflow`);
       await dispatch(this.env, origin);
     } else {
@@ -131,11 +220,12 @@ export class PassScheduler extends DurableObject {
 export default {
   async scheduled(controller, env, ctx) {
     const at = new Date(controller.scheduledTime);
-    const pass = passFor(at);
+    const passes = await loadPasses(env);
+    const pass = passFor(at, passes);
     const forced = Boolean(env.DISPATCH_ONCE);
     console.log(`[tick] ${at.toISOString()} pass=${pass ? pass.label : "no"} forced=${forced}`);
     if (!pass && !forced) return; // minuto de relleno del cron
-    const origin = pass ? `cron ${pass.label}` : "forzado por DISPATCH_ONCE";
+    const origin = pass ? `cron ${pass.label} Chile` : "forzado por DISPATCH_ONCE";
     console.log(`[cron] ${origin} a las ${at.toISOString()} - disparando workflow`);
     ctx.waitUntil(dispatch(env, origin));
   },
@@ -148,7 +238,8 @@ export default {
     }
     const url = new URL(req.url);
     const now = new Date();
-    const pass = passFor(now);
+    const passes = await loadPasses(env);
+    const pass = passFor(now, passes);
     const authorized =
       Boolean(env.CRON_TEST_KEY) &&
       url.searchParams.get("dispatch") === "1" &&
@@ -161,7 +252,7 @@ export default {
       });
     }
     if (pass || authorized) {
-      const res = await dispatch(env, pass ? `http ${pass.label}` : "prueba manual");
+      const res = await dispatch(env, pass ? `http ${pass.label} Chile` : "prueba manual");
       return new Response(res.ok ? "disparo enviado\n" : `GitHub respondio ${res.status}\n`, {
         status: res.ok ? 200 : 502,
       });

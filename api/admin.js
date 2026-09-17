@@ -330,11 +330,28 @@ module.exports = async (req, res) => {
     if (!SUPA_URL || !SUPA_KEY) return fail(res, 500, 'not_configured');
 
     const key = req.headers['x-admin-key'] || '';
+    const url = new URL(req.url, 'http://localhost');
+    const urlAction = url.searchParams.get('action') || '';
+
+    // Lectura pública del horario de pases (solo horas, sin datos de clientes):
+    // la usa el disparador en la nube para programar las alarmas exactas.
+    if (urlAction === 'pases_get' && req.method === 'GET') {
+      const pasesResp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-PASES`, { headers: supaHeaders() });
+      const pasesRows = pasesResp.ok ? await pasesResp.json() : [];
+      let passes = [];
+      if (pasesRows.length > 0 && pasesRows[0].detalle) {
+        try {
+          const cfg = JSON.parse(pasesRows[0].detalle);
+          if (Array.isArray(cfg.passes)) passes = cfg.passes;
+        } catch (_) {}
+      }
+      return res.status(200).json({ ok: true, passes });
+    }
+
     if (!key || key !== process.env.ADMIN_KEY) return fail(res, 401, 'unauthorized');
 
     const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
-    const url = new URL(req.url, 'http://localhost');
-    const action = url.searchParams.get('action') || body.action || '';
+    const action = urlAction || body.action || '';
 
     // Consultar cuota de GitHub Actions
     if (action === 'quota') {
@@ -572,6 +589,59 @@ module.exports = async (req, res) => {
         enabled: isEnabled,
         updatedAt: nowIso
       });
+    }
+
+    // ── Horario de pases de vigilancia (editable desde AeroLex SaaS) ──
+    if (action === 'pases_set' && (req.method === 'POST' || req.method === 'PATCH')) {
+      const raw = Array.isArray(body.passes) ? body.passes : [];
+      const passes = raw
+        .map((p) => ({
+          time: String(p.time || '').trim(),
+          days: Array.isArray(p.days) && p.days.length
+            ? [...new Set(p.days.map(Number).filter((d) => d >= 1 && d <= 5))].sort()
+            : [1, 2, 3, 4, 5]
+        }))
+        .filter((p) => /^([01]\d|2[0-3]):[0-5]\d$/.test(p.time) && p.days.length > 0)
+        .sort((a, b) => a.time.localeCompare(b.time))
+        .slice(0, 6);
+      if (passes.length === 0) return fail(res, 400, 'missing_valid_passes');
+
+      const nowIso = new Date().toISOString();
+      const cfgPayload = {
+        passes,
+        timezone: 'America/Santiago',
+        updatedAt: nowIso,
+        updatedBy: body.updatedBy || 'aerolex_saas'
+      };
+
+      const checkResp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-PASES`, { headers: supaHeaders() });
+      const exists = checkResp.ok && (await checkResp.json()).length > 0;
+
+      if (exists) {
+        await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-PASES`, {
+          method: 'PATCH',
+          headers: supaHeaders(),
+          body: JSON.stringify({ detalle: JSON.stringify(cfgPayload), updated_at: nowIso })
+        });
+      } else {
+        await fetch(`${SUPA_URL}/rest/v1/cases`, {
+          method: 'POST',
+          headers: supaHeaders(),
+          body: JSON.stringify({
+            code: 'CFG-PASES',
+            pin: '0000',
+            materia: 'Horario de pases de vigilancia',
+            tribunal: 'Sistema AeroLex',
+            rit: 'PASES',
+            detalle: JSON.stringify(cfgPayload),
+            estado_actual: 0,
+            status: 'activo',
+            steps: []
+          })
+        });
+      }
+
+      return res.status(200).json({ ok: true, passes, updatedAt: nowIso });
     }
 
     // ── Configuración del correo de reportes (editable desde AeroLex SaaS) ──
