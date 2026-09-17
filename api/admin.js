@@ -574,6 +574,64 @@ module.exports = async (req, res) => {
       });
     }
 
+    // ── Configuración del correo de reportes (editable desde AeroLex SaaS) ──
+    if (action === 'alerts_config_get') {
+      const r = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-CORREO`, { headers: supaHeaders() });
+      const rows = r.ok ? await r.json() : [];
+      let recipients = [];
+      if (rows.length > 0 && rows[0].detalle) {
+        try {
+          const cfg = JSON.parse(rows[0].detalle);
+          if (Array.isArray(cfg.recipients)) recipients = cfg.recipients;
+        } catch (_) {}
+      }
+      return res.status(200).json({ ok: true, recipients });
+    }
+
+    if (action === 'alerts_config_set' && (req.method === 'POST' || req.method === 'PATCH')) {
+      const incoming = Array.isArray(body.recipients) ? body.recipients : [body.recipientEmail];
+      const recipients = incoming
+        .map((r) => String(r || '').trim())
+        .filter((r) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r));
+      if (recipients.length === 0) return fail(res, 400, 'missing_valid_recipient');
+
+      const nowIso = new Date().toISOString();
+      const cfgPayload = {
+        recipients,
+        updatedAt: nowIso,
+        updatedBy: body.updatedBy || 'aerolex_saas'
+      };
+
+      const checkResp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-CORREO`, { headers: supaHeaders() });
+      const exists = checkResp.ok && (await checkResp.json()).length > 0;
+
+      if (exists) {
+        await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-CORREO`, {
+          method: 'PATCH',
+          headers: supaHeaders(),
+          body: JSON.stringify({ detalle: JSON.stringify(cfgPayload), updated_at: nowIso })
+        });
+      } else {
+        await fetch(`${SUPA_URL}/rest/v1/cases`, {
+          method: 'POST',
+          headers: supaHeaders(),
+          body: JSON.stringify({
+            code: 'CFG-CORREO',
+            pin: '0000',
+            materia: 'Correo de reportes de vigilancia',
+            tribunal: 'Sistema AeroLex',
+            rit: 'CORREO',
+            detalle: JSON.stringify(cfgPayload),
+            estado_actual: 0,
+            status: 'activo',
+            steps: []
+          })
+        });
+      }
+
+      return res.status(200).json({ ok: true, recipients, updatedAt: nowIso });
+    }
+
     // ── Ejecutar Barrido Inmediato de Todas las Causas Activas ──
     if (action === 'vigilancia_run' && req.method === 'POST') {
       const resp = await fetch(`${SUPA_URL}/rest/v1/cases?select=*&order=created_at.desc`, { headers: supaHeaders() });

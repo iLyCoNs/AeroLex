@@ -19,6 +19,11 @@ on:
         required: false
         type: boolean
         default: false
+      digest_now:
+        description: 'Enviar ahora el parte diario de prueba (sin marcar el envío oficial del día)'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   vigilancia-autonoma:
@@ -54,6 +59,8 @@ jobs:
         run: |
           if [ "${{ github.event.inputs.modo_prueba }}" = "true" ]; then
             node scripts/vigia-nube-cron.mjs --test
+          elif [ "${{ github.event.inputs.digest_now }}" = "true" ]; then
+            node scripts/vigia-nube-cron.mjs --digest-now
           else
             node scripts/vigia-nube-cron.mjs
           fi

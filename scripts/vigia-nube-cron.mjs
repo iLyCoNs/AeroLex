@@ -27,6 +27,33 @@ const RESEND_KEY = process.env.RESEND_API_KEY;
 const GMAIL_USER = process.env.GMAIL_USER || process.env.AEROLEX_SMTP_USER;
 const GMAIL_PASS = process.env.GMAIL_APP_PASS || process.env.AEROLEX_SMTP_PASS;
 const isTestMode = process.argv.includes('--test');
+const isDigestPreview = process.argv.includes('--digest-preview');
+const isDigestNow = process.argv.includes('--digest-now');
+
+// Destinatarios vigentes del parte diario y alertas. Se resuelven en main()
+// desde Supabase (CFG-CORREO, editable en AeroLex SaaS / admin.html) con
+// respaldo en AEROLEX_NOTIFY_EMAIL.
+let NOTIFY_RECIPIENTS = [NOTIFY_EMAIL];
+
+// Pases oficiales (hora UTC) y su hora referencial en Chile continental.
+const PASS_SCHEDULE = [
+  { hour: 10, minute: 45, label: '07:45' },
+  { hour: 11, minute: 30, label: '08:30' },
+  { hour: 12, minute: 15, label: '09:15' },
+  { hour: 16, minute: 30, label: '13:30' },
+  { hour: 21, minute: 30, label: '18:30 (viernes)' },
+];
+
+function expectedPassesFor(dayKey) {
+  const day = new Date(`${dayKey}T12:00:00Z`).getUTCDay();
+  if (day === 0 || day === 6) return [];
+  return day === 5 ? PASS_SCHEDULE : PASS_SCHEDULE.slice(0, 4);
+}
+
+function chileDayKey(dateObj = new Date()) {
+  // YYYY-MM-DD en horario de Chile (el parte corresponde al día del letrado).
+  return dateObj.toLocaleDateString('en-CA', { timeZone: 'America/Santiago' });
+}
 
 function supaHeaders(extra = {}) {
   return {
@@ -398,11 +425,11 @@ async function checkPjudCase(rit, courtId) {
   }
 }
 
-function sendViaSmtpScript(subject, text, html) {
+function sendViaSmtpScript(subject, text, html, to = NOTIFY_RECIPIENTS) {
   return new Promise((resolve) => {
     const pythonScript = join(__dirname, 'send-email-smtp.py');
     const payload = JSON.stringify({
-      recipient: NOTIFY_EMAIL,
+      recipient: to,
       subject,
       text,
       html
@@ -551,7 +578,7 @@ async function sendEmailAlert(novelties, isTest = false, allWatched = []) {
     </html>
   `;
 
-  const plainText = `AeroLex Vigilancia Judicial 24/7 - ${subject}\nHora: ${timeStr} (${dateStr})\nDestinatario: ${NOTIFY_EMAIL}\nTotal causas: ${casesToRender.length}`;
+  const plainText = `AeroLex Vigilancia Judicial 24/7 - ${subject}\nHora: ${timeStr} (${dateStr})\nDestinatario: ${NOTIFY_RECIPIENTS.join(', ')}\nTotal causas: ${casesToRender.length}`;
 
   // Intentar despacho vía Resend si la clave existe
   if (RESEND_KEY) {
@@ -564,13 +591,13 @@ async function sendEmailAlert(novelties, isTest = false, allWatched = []) {
         },
         body: JSON.stringify({
           from: 'AeroLex Vigilancia <alertas@aerolex.cl>',
-          to: [NOTIFY_EMAIL],
+          to: NOTIFY_RECIPIENTS,
           subject,
           html
         })
       });
       if (res.ok) {
-        console.log(`[Vigilancia Nube] Correo despachado exitosamente vía Resend a ${NOTIFY_EMAIL}`);
+        console.log(`[Vigilancia Nube] Correo despachado exitosamente vía Resend a ${NOTIFY_RECIPIENTS.join(', ')}`);
         return;
       }
     } catch (_) {}
@@ -585,6 +612,279 @@ async function sendEmailAlert(novelties, isTest = false, allWatched = []) {
   console.log('[Vigilancia Nube] Ni RESEND_API_KEY ni GMAIL_USER/GMAIL_APP_PASS configurados. Omitiendo despacho por email.');
 }
 
+async function resolveRecipients() {
+  try {
+    const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-CORREO`, { headers: supaHeaders() });
+    const rows = resp.ok ? await resp.json() : [];
+    if (rows.length > 0 && rows[0].detalle) {
+      const cfg = JSON.parse(rows[0].detalle);
+      const list = Array.isArray(cfg.recipients) ? cfg.recipients : [];
+      const valid = list.map(r => String(r).trim()).filter(r => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r));
+      if (valid.length > 0) return valid;
+    }
+  } catch (err) {
+    console.warn('[Vigilancia Nube] No se pudo leer CFG-CORREO; se usa el destinatario por defecto:', err.message);
+  }
+  return [NOTIFY_EMAIL];
+}
+
+// ── Parte diario: registro de pases y digest ────────────────────────────────
+const DIARIO_CODE = 'CFG-DIARIO';
+
+async function loadDiario() {
+  const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${DIARIO_CODE}`, { headers: supaHeaders() });
+  const rows = resp.ok ? await resp.json() : [];
+  if (rows.length > 0 && rows[0].detalle) {
+    try { return JSON.parse(rows[0].detalle); } catch (_) {}
+  }
+  return null;
+}
+
+async function saveDiario(state) {
+  const nowIso = new Date().toISOString();
+  const body = { detalle: JSON.stringify(state), updated_at: nowIso };
+  const patch = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${DIARIO_CODE}`, {
+    method: 'PATCH', headers: supaHeaders(), body: JSON.stringify(body)
+  }).catch(() => null);
+  if (patch && patch.ok) return;
+  await fetch(`${SUPA_URL}/rest/v1/cases`, {
+    method: 'POST',
+    headers: supaHeaders({ 'Prefer': 'resolution=merge-duplicates' }),
+    body: JSON.stringify({ code: DIARIO_CODE, rit: 'CFG-DIA', tribunal: 'Sistema', status: 'activo', detalle: body.detalle, updated_at: nowIso })
+  }).catch(e => console.warn('  [Aviso] No se pudo guardar CFG-DIARIO:', e.message));
+}
+
+function scheduledPassFor(dateObj) {
+  const h = dateObj.getUTCHours();
+  const m = dateObj.getUTCMinutes();
+  const day = dateObj.getUTCDay();
+  return PASS_SCHEDULE.find(p => p.hour === h && Math.abs(p.minute - m) <= 5 && (p.hour !== 21 || day === 5)) || null;
+}
+
+async function sendMail(subject, plainText, html, to = NOTIFY_RECIPIENTS) {
+  if (RESEND_KEY) {
+    try {
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: 'AeroLex Vigilancia <alertas@aerolex.cl>', to, subject, html })
+      });
+      if (res.ok) { console.log(`[Vigilancia Nube] Correo despachado vía Resend a ${to.join(', ')}`); return true; }
+    } catch (_) {}
+  }
+  if (GMAIL_USER && GMAIL_PASS) {
+    const ok = await sendViaSmtpScript(subject, plainText, html, to);
+    if (ok) return true;
+  }
+  console.log('[Vigilancia Nube] Sin proveedor de correo configurado. Despacho omitido.');
+  return false;
+}
+
+function buildDigest(state, options = {}) {
+  const dayKey = state.date;
+  const expected = expectedPassesFor(dayKey);
+  const passes = Array.isArray(state.passes) ? state.passes : [];
+  const dateStr = new Date(`${dayKey}T12:00:00Z`).toLocaleDateString('es-CL', { timeZone: 'America/Santiago', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+  const rows = expected.map((p) => {
+    const rec = passes.find(s => s.utc === `${String(p.hour).padStart(2, '0')}:${String(p.minute).padStart(2, '0')}`);
+    return { pass: p, rec };
+  });
+  const executed = rows.filter(r => r.rec).length;
+  const missing = rows.filter(r => !r.rec);
+  const totalNovelties = passes.reduce((acc, s) => acc + (s.novelties || 0), 0);
+  const allErrors = passes.flatMap(s => s.errors || []);
+
+  // Último registro conocido por causa (el pase más reciente que la incluyó).
+  const caseMap = new Map();
+  for (const pass of passes) {
+    for (const c of pass.cases || []) if (!caseMap.has(c.code)) caseMap.set(c.code, { ...c, passLabel: pass.label, passUtc: pass.utc });
+  }
+  const cases = [...caseMap.values()].sort((a, b) => String(a.rit).localeCompare(String(b.rit)));
+
+  const passRowsHtml = rows.map(({ pass, rec }) => `
+    <tr>
+      <td style="padding:6px 8px; border-bottom:1px solid #e2e8f0; font-family:monospace; font-size:11.5px;">${pass.label} Chile</td>
+      <td style="padding:6px 8px; border-bottom:1px solid #e2e8f0; font-family:monospace; font-size:11.5px;">${String(pass.hour).padStart(2, '0')}:${String(pass.minute).padStart(2, '0')} UTC</td>
+      <td style="padding:6px 8px; border-bottom:1px solid #e2e8f0; font-size:11.5px; color:${rec ? '#065f46' : '#991b1b'}; font-weight:600;">${rec ? 'EJECUTADO' : 'NO EJECUTADO'}</td>
+      <td style="padding:6px 8px; border-bottom:1px solid #e2e8f0; font-size:11.5px;">${rec ? `${rec.total} causa(s)` : '-'}</td>
+      <td style="padding:6px 8px; border-bottom:1px solid #e2e8f0; font-size:11.5px;">${rec ? `${rec.novelties} novedad(es)` : '-'}</td>
+    </tr>`).join('');
+
+  const casesHtml = cases.map((c) => {
+    const stateText = c.error
+      ? `Sin verificar: ${c.error}`
+      : (c.hasNoveltiesToday ? 'CON NOVEDADES HOY (verificado en OJV)' : 'Sin novedades hoy (verificado en OJV)');
+    const stateColor = c.error ? '#991b1b' : (c.hasNoveltiesToday ? '#1d4ed8' : '#065f46');
+    const movements = Array.isArray(c.movements) ? c.movements : [];
+    const movementsHtml = movements.length
+      ? movements.map(m => `<li style="margin-bottom:3px;"><strong>${m.date || 's/f'}</strong> — ${m.type || 'Actuación'}: ${m.summary || ''}</li>`).join('')
+      : '<li>Sin movimientos registrados en las últimas actuaciones consultadas.</li>';
+    return `
+    <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:12px; margin-bottom:10px;">
+      <div style="font-family:monospace; font-size:13px; font-weight:bold; color:#0f172a;">
+        ${c.rit} <span style="font-size:11px; font-weight:normal; color:#64748b;">(${c.code})</span>
+      </div>
+      <div style="font-size:12px; color:#1e293b; margin-top:3px; font-weight:600;">${c.caratula || c.materia || 'Causa registrada'}</div>
+      <div style="font-size:11.5px; color:#64748b; margin-top:3px;">
+        Tribunal: <strong>${c.court || 'Poder Judicial'}</strong> | Abogado(a): <strong>${c.abogado || 'Sin asignar'}</strong> | Último movimiento: <strong>${c.lastMovementDate || 's/f'}</strong>
+      </div>
+      <div style="margin-top:6px; font-size:11.5px; color:${stateColor}; font-weight:600;">${stateText}</div>
+      <ul style="margin:6px 0 0 16px; padding:0; font-size:11.5px; color:#334155; line-height:1.5;">${movementsHtml}</ul>
+    </div>`;
+  }).join('');
+
+  const errorsHtml = allErrors.length
+    ? `<div style="margin-top:14px; padding:10px 12px; background:#fef2f2; border-left:3px solid #dc2626; font-size:11.5px; color:#7f1d1d;">
+        <strong>Incidencias del día:</strong>
+        <ul style="margin:6px 0 0 16px; padding:0;">${allErrors.map(e => `<li>${e.rit} (${e.code}): ${e.message}</li>`).join('')}</ul>
+      </div>`
+    : '';
+
+  const titlePrefix = options.late ? 'PARTE DIARIO (ENVÍO TARDÍO)' : (options.preview ? 'PARTE DIARIO (PRUEBA)' : 'PARTE DIARIO');
+  const summaryLine = `${options.preview ? 'VISTA DE PRUEBA (los pases oficiales se registran desde el próximo ciclo). ' : ''}${executed} de ${expected.length} pase(s) ejecutado(s); ${totalNovelties} novedad(es); ${cases.length} expediente(s) auditado(s).`;
+  const subject = `[AEROLEX] ${titlePrefix} Vigilancia Judicial ${dayKey} — ${executed}/${expected.length} pases — ${totalNovelties > 0 ? 'CON NOVEDADES' : 'SIN NOVEDADES'}`;
+
+  const html = `
+    <!DOCTYPE html><html><head><meta charset="utf-8"></head>
+    <body style="margin:0; padding:20px; background:#f1f5f9; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+      <div style="max-width:660px; margin:0 auto; background:#ffffff; border:1px solid #cbd5e1; border-radius:10px; overflow:hidden;">
+        <div style="background:#0f172a; padding:18px 22px; border-bottom:3px solid #2563eb;">
+          <h1 style="color:#ffffff; font-size:16px; margin:0; font-weight:700;">AeroLex — Parte Diario de Vigilancia Judicial</h1>
+          <p style="color:#94a3b8; font-size:11px; margin:4px 0 0 0;">${dateStr} | Generado automáticamente al cierre del último pase | PC apagado</p>
+        </div>
+        <div style="padding:20px 22px;">
+          <p style="font-size:12.5px; color:#334155; margin:0 0 12px 0;">${summaryLine}${missing.length ? ` Pases no registrados: ${missing.map(r => r.pass.label + ' Chile').join(', ')}.` : ''}</p>
+          <table style="border-collapse:collapse; width:100%; margin-bottom:16px;">
+            <thead><tr style="background:#f1f5f9; text-align:left;">
+              <th style="padding:6px 8px; font-size:11px; color:#475569;">Pase</th>
+              <th style="padding:6px 8px; font-size:11px; color:#475569;">UTC</th>
+              <th style="padding:6px 8px; font-size:11px; color:#475569;">Estado</th>
+              <th style="padding:6px 8px; font-size:11px; color:#475569;">Cobertura</th>
+              <th style="padding:6px 8px; font-size:11px; color:#475569;">Novedades</th>
+            </tr></thead>
+            <tbody>${passRowsHtml}</tbody>
+          </table>
+          <h2 style="font-size:13px; color:#0f172a; margin:0 0 8px 0;">Expedientes y movimientos verificados en OJV</h2>
+          ${casesHtml}
+          ${errorsHtml}
+          <div style="margin-top:18px; padding:10px 12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; font-size:11px; color:#64748b; line-height:1.45;">
+            Reporte automático elaborado por el sistema de vigilancia de AeroLex a partir de la consulta a la Oficina Judicial Virtual.
+            Es un borrador informativo: toda providencia y plazo debe verificarse en el expediente oficial antes de presentaciones o decisiones.
+            Regla de diseño: cero emojis.
+          </div>
+        </div>
+      </div>
+    </body></html>`;
+
+  const plainText = `AeroLex — Parte Diario de Vigilancia Judicial\n${dateStr}\n${summaryLine}\nDestinatarios: ${NOTIFY_RECIPIENTS.join(', ')}\n\nPASES:\n${rows.map(r => `- ${r.pass.label} Chile (${String(r.pass.hour).padStart(2, '0')}:${String(r.pass.minute).padStart(2, '0')} UTC): ${r.rec ? `ejecutado, ${r.rec.total} causas, ${r.rec.novelties} novedades` : 'NO EJECUTADO'}`).join('\n')}\n\nEXPEDIENTES:\n${cases.map(c => `- ${c.rit} (${c.code}) | ${c.caratula || c.materia || ''} | ${c.court || ''} | Abogado: ${c.abogado || 'Sin asignar'} | ${c.error ? `sin verificar: ${c.error}` : (c.hasNoveltiesToday ? 'CON NOVEDADES' : 'sin novedades')} | último movimiento: ${c.lastMovementDate || 's/f'}`).join('\n')}\n\nVerifique siempre en la OJV antes de presentaciones.`;
+
+  return { subject, plainText, html };
+}
+
+async function processDiario({ watchedCases, scannedSummary, noveltiesFound, passErrors, isTestRun }) {
+  const now = new Date();
+  const today = chileDayKey(now);
+  let state = await loadDiario();
+  if (!state || typeof state === 'object' === false) state = null;
+  if (!state) state = { date: today, passes: [], digestSentAt: null, previous: null };
+
+  // Rotación: al cambiar el día, conservar el día anterior para el envío tardío.
+  if (state.date !== today) {
+    const pendingPrevious = (state.passes || []).length > 0 && !state.digestSentAt
+      ? { date: state.date, passes: state.passes, digestSentAt: state.digestSentAt }
+      : state.previous;
+    state = { date: today, passes: [], digestSentAt: null, previous: pendingPrevious };
+  }
+
+  // Envío tardío del parte del día anterior si quedó pendiente.
+  if (state.previous && state.previous.date !== today && !state.previous.digestSentAt && !isTestRun) {
+    const prevExpected = expectedPassesFor(state.previous.date);
+    if (prevExpected.length > 0) {
+      console.log(`[Vigilancia Nube] Parte diario pendiente del ${state.previous.date}: enviando envío tardío...`);
+      const prevDigest = buildDigest(state.previous, { late: true });
+      const sentLate = await sendMail(prevDigest.subject, prevDigest.plainText, prevDigest.html);
+      if (sentLate) state.previous.digestSentAt = new Date().toISOString();
+    }
+  }
+
+  // Registrar el pase solo si corresponde a un pase oficial y no es prueba.
+  const scheduled = scheduledPassFor(now);
+  if (scheduled && !isTestRun) {
+    const utc = `${String(scheduled.hour).padStart(2, '0')}:${String(scheduled.minute).padStart(2, '0')}`;
+    state.passes = (state.passes || []).filter(p => p.utc !== utc); // reemplaza si se repite
+    state.passes.push({
+      at: now.toISOString(),
+      utc,
+      label: scheduled.label,
+      total: watchedCases.length,
+      novelties: noveltiesFound.length,
+      errors: passErrors,
+      cases: scannedSummary
+    });
+    console.log(`[Vigilancia Nube] Pase ${scheduled.label} Chile registrado en el parte diario.`);
+  }
+
+  // Envío del parte al cierre del último pase del día (o forzado manual).
+  const expected = expectedPassesFor(today);
+  const last = expected[expected.length - 1];
+  const lastMs = last ? Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), last.hour, last.minute) : 0;
+  const due = expected.length > 0 && now.getTime() >= lastMs && !state.digestSentAt;
+
+  if (isDigestNow && !isTestRun) {
+    // Vista de prueba con los datos del escaneo recién realizado; no altera
+    // el registro oficial de pases.
+    const previewState = {
+      ...state,
+      passes: [
+        ...(state.passes || []),
+        {
+          at: now.toISOString(),
+          utc: 'manual',
+          label: 'prueba manual',
+          total: watchedCases.length,
+          novelties: noveltiesFound.length,
+          errors: passErrors,
+          cases: scannedSummary
+        }
+      ]
+    };
+    const digest = buildDigest(previewState, { preview: true });
+    const sent = await sendMail(digest.subject, digest.plainText, digest.html);
+    console.log(`[Vigilancia Nube] Parte diario forzado (--digest-now): ${sent ? 'despachado' : 'no despachado'}.`);
+  } else if (due) {
+    const digest = buildDigest(state);
+    const sent = await sendMail(digest.subject, digest.plainText, digest.html);
+    if (sent) {
+      state.digestSentAt = new Date().toISOString();
+      console.log('[Vigilancia Nube] Parte diario enviado al cierre del día.');
+    }
+  } else if (expected.length > 0) {
+    console.log(`[Vigilancia Nube] Parte diario pendiente: se enviará al cierre del último pase (${expected.length}/${expected.length} programados).`);
+  }
+
+  await saveDiario(state);
+}
+
+function printDigestPreview() {
+  const sample = {
+    date: chileDayKey(new Date()),
+    digestSentAt: null,
+    passes: [
+      { at: new Date().toISOString(), utc: '10:45', label: '07:45', total: 6, novelties: 0, errors: [], cases: [{ code: 'ALX-2026-72', rit: '1324-2026', court: 'C.A. de Puerto Montt', caratula: 'MANSILLA / ZURITA', abogado: 'Marta Elizabeth Sánchez Andrade', hasNoveltiesToday: false, lastMovementDate: '15/09/2026', movements: [] }] },
+      { at: new Date().toISOString(), utc: '11:30', label: '08:30', total: 6, novelties: 1, errors: [], cases: [{ code: 'ALX-2026-75', rit: 'Z-789-2020', court: '4º Juzgado de Familia de Santiago', caratula: 'MUÑOZ / NITSCHKE', abogado: 'Jaime Vidal Paredes', hasNoveltiesToday: true, lastMovementDate: '17/09/2026', movements: [{ date: '17/09/2026', type: 'Resolución', summary: 'Téngase presente allanamiento y liquidación para pago con fondos AFP.' }] }] },
+      { at: new Date().toISOString(), utc: '16:30', label: '13:30', total: 6, novelties: 0, errors: [{ code: 'ALX-2026-71', rit: '1071-2026', message: 'Sin resultados públicos (causa reservada)' }], cases: [{ code: 'ALX-2026-71', rit: '1071-2026', court: 'C.A. de Puerto Montt', caratula: '-/-', abogado: 'Marta Elizabeth Sánchez Andrade', hasNoveltiesToday: false, lastMovementDate: '14/09/2026', movements: [] }] },
+    ]
+  };
+  const digest = buildDigest(sample, { preview: true });
+  console.log('===========================================================');
+  console.log('VISTA PREVIA DEL PARTE DIARIO (no se envía correo)');
+  console.log('Asunto:', digest.subject);
+  console.log('-----------------------------------------------------------');
+  console.log(digest.plainText);
+  console.log('===========================================================');
+}
+
 async function main() {
   console.log('===========================================================');
   console.log('AEROLEX · VIGILANCIA JUDICIAL 24/7 (CRON NUBE GITHUB ACTIONS)');
@@ -594,10 +894,19 @@ async function main() {
   console.log('Run ID:', process.env.GITHUB_RUN_ID || 'local');
   console.log('===========================================================');
 
+  if (isDigestPreview) {
+    printDigestPreview();
+    return;
+  }
+
   if (!SUPA_URL || !SUPA_KEY) {
     console.error('[Vigilancia Nube] Error: SUPABASE_URL o SUPABASE_SERVICE_KEY no configurados.');
     process.exit(1);
   }
+
+  // 0. Destinatarios vigentes (CFG-CORREO, editable en AeroLex SaaS / admin.html)
+  NOTIFY_RECIPIENTS = await resolveRecipients();
+  console.log(`[Vigilancia Nube] Destinatarios del parte y alertas: ${NOTIFY_RECIPIENTS.join(', ')}`);
 
   // 1. Sincronizar nómina completa de los abogados socios
   await syncPartnerCausesToSupabase();
@@ -637,6 +946,7 @@ async function main() {
 
   const noveltiesFound = [];
   const scannedSummary = [];
+  const passErrors = [];
 
   for (let i = 0; i < watchedCases.length; i++) {
     const c = watchedCases[i];
@@ -644,6 +954,10 @@ async function main() {
 
     const result = await checkPjudCase(c.rit, c.tribunal);
     console.log(`  · Resultado: ${result.found ? 'Encontrada' : 'No encontrada'} | Novedades hoy: ${result.hasNoveltiesToday ? 'SI' : 'NO'}`);
+
+    if (result.found === false) {
+      passErrors.push({ code: c.code, rit: c.rit, message: result.error || 'Sin resultados en OJV' });
+    }
 
     let caseLawyer = "Jaime Vidal Paredes";
     if (Array.isArray(c.triage)) {
@@ -663,6 +977,8 @@ async function main() {
       lastMovementDate: result.lastMovementDate,
       hasNoveltiesToday: result.hasNoveltiesToday,
       caratula: result.caratula,
+      error: result.found === false ? (result.error || 'Sin resultados en OJV') : null,
+      movements: (result.resolutions || []).slice(0, 3).map(r => ({ date: r.date, type: r.type, summary: r.summary })),
     });
 
     if (result.hasNoveltiesToday) {
@@ -742,6 +1058,15 @@ async function main() {
     headers: supaHeaders(),
     body: JSON.stringify({ detalle: JSON.stringify(cfgUpdate), updated_at: nowIso })
   }).catch(() => {});
+
+  // 6. Parte diario: registrar el pase y enviar el digest al cierre del día
+  await processDiario({
+    watchedCases,
+    scannedSummary,
+    noveltiesFound,
+    passErrors,
+    isTestRun: isTestMode,
+  }).catch(err => console.warn('[Vigilancia Nube] Aviso: no se pudo procesar el parte diario:', err.message));
 
   console.log('===========================================================');
   console.log('VIGILANCIA FINALIZADA CON EXITO');
