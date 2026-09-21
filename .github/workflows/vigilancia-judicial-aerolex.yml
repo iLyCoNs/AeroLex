@@ -24,6 +24,11 @@ on:
         required: false
         type: boolean
         default: false
+      pase_utc:
+        description: 'Instante UTC del pase disparado por el Worker (ISO 8601). Vacío en respaldos de GitHub.'
+        required: false
+        type: string
+        default: ''
 
 jobs:
   vigilancia-autonoma:
@@ -56,6 +61,7 @@ jobs:
           GMAIL_APP_PASS: ${{ secrets.GMAIL_APP_PASS }}
           AEROLEX_SMTP_USER: ${{ secrets.GMAIL_USER }}
           AEROLEX_SMTP_PASS: ${{ secrets.GMAIL_APP_PASS }}
+          PASE_UTC: ${{ github.event.inputs.pase_utc }}
         run: |
           if [ "${{ github.event.inputs.modo_prueba }}" = "true" ]; then
             node scripts/vigia-nube-cron.mjs --test

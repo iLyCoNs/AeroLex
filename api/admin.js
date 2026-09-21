@@ -336,15 +336,29 @@ module.exports = async (req, res) => {
     // Lectura pública del horario de pases (solo horas, sin datos de clientes):
     // la usa el disparador en la nube para programar las alarmas exactas.
     if (urlAction === 'pases_get' && req.method === 'GET') {
-      const pasesResp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-PASES`, { headers: supaHeaders() });
+      // Horario publico: union de todos los horarios (general + por abogado).
+      // Solo horas y dias; nunca datos personales.
+      const pasesResp = await fetch(`${SUPA_URL}/rest/v1/cases?code=like.CFG-PASES*&select=code,detalle`, { headers: supaHeaders() });
       const pasesRows = pasesResp.ok ? await pasesResp.json() : [];
-      let passes = [];
-      if (pasesRows.length > 0 && pasesRows[0].detalle) {
+      const union = new Map();
+      for (const row of Array.isArray(pasesRows) ? pasesRows : []) {
+        if (!row || !row.detalle) continue;
         try {
-          const cfg = JSON.parse(pasesRows[0].detalle);
-          if (Array.isArray(cfg.passes)) passes = cfg.passes;
+          const cfg = JSON.parse(row.detalle);
+          if (!Array.isArray(cfg.passes)) continue;
+          for (const p of cfg.passes) {
+            const time = String(p && p.time || '').trim();
+            if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) continue;
+            const days = Array.isArray(p.days) ? p.days.map(Number).filter((d) => d >= 1 && d <= 5) : [1, 2, 3, 4, 5];
+            const prev = union.get(time) || new Set();
+            for (const d of days) prev.add(d);
+            union.set(time, prev);
+          }
         } catch (_) {}
       }
+      const passes = [...union.entries()]
+        .map(([time, days]) => ({ time, days: [...days].sort() }))
+        .sort((a, b) => a.time.localeCompare(b.time));
       return res.status(200).json({ ok: true, passes });
     }
 
@@ -592,6 +606,30 @@ module.exports = async (req, res) => {
     }
 
     // ── Horario de pases de vigilancia (editable desde AeroLex SaaS) ──
+    if (action === 'pases_get_lawyers') {
+      // Horarios completos por abogado (solo para el script de la nube, con admin key).
+      const r = await fetch(`${SUPA_URL}/rest/v1/cases?code=like.CFG-PASES*&select=code,detalle,updated_at`, { headers: supaHeaders() });
+      const rows = r.ok ? await r.json() : [];
+      const lawyers = [];
+      for (const row of Array.isArray(rows) ? rows : []) {
+        if (!row || !row.detalle) continue;
+        const isGeneral = row.code === 'CFG-PASES';
+        try {
+          const cfg = JSON.parse(row.detalle);
+          if (!Array.isArray(cfg.passes)) continue;
+          lawyers.push({
+            slug: isGeneral ? '' : String(row.code).replace(/^CFG-PASES-/, ''),
+            general: isGeneral,
+            name: cfg.lawyer && cfg.lawyer.name ? String(cfg.lawyer.name) : (isGeneral ? 'Direccion del despacho' : ''),
+            email: cfg.lawyer && cfg.lawyer.email ? String(cfg.lawyer.email) : '',
+            passes: cfg.passes,
+            updatedAt: cfg.updatedAt || row.updated_at || null
+          });
+        } catch (_) {}
+      }
+      return res.status(200).json({ ok: true, lawyers });
+    }
+
     if (action === 'pases_set' && (req.method === 'POST' || req.method === 'PATCH')) {
       const raw = Array.isArray(body.passes) ? body.passes : [];
       const passes = raw
@@ -606,19 +644,27 @@ module.exports = async (req, res) => {
         .slice(0, 6);
       if (passes.length === 0) return fail(res, 400, 'missing_valid_passes');
 
+      // Horario por abogado: el socio guarda SU fila (CFG-PASES-<slug>) sin tocar la general.
+      const rawSlug = body.lawyer && body.lawyer.slug ? String(body.lawyer.slug) : '';
+      const slug = rawSlug.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
+      const lawyerName = body.lawyer && body.lawyer.name ? String(body.lawyer.name).trim().slice(0, 120) : '';
+      const lawyerEmail = body.lawyer && body.lawyer.email ? String(body.lawyer.email).trim().slice(0, 160) : '';
+      const rowCode = slug ? `CFG-PASES-${slug}` : 'CFG-PASES';
+
       const nowIso = new Date().toISOString();
       const cfgPayload = {
         passes,
         timezone: 'America/Santiago',
         updatedAt: nowIso,
-        updatedBy: body.updatedBy || 'aerolex_saas'
+        updatedBy: body.updatedBy || 'aerolex_saas',
+        ...(slug ? { lawyer: { name: lawyerName, email: lawyerEmail } } : {})
       };
 
-      const checkResp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-PASES`, { headers: supaHeaders() });
+      const checkResp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(rowCode)}`, { headers: supaHeaders() });
       const exists = checkResp.ok && (await checkResp.json()).length > 0;
 
       if (exists) {
-        await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-PASES`, {
+        await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(rowCode)}`, {
           method: 'PATCH',
           headers: supaHeaders(),
           body: JSON.stringify({ detalle: JSON.stringify(cfgPayload), updated_at: nowIso })
@@ -628,9 +674,9 @@ module.exports = async (req, res) => {
           method: 'POST',
           headers: supaHeaders(),
           body: JSON.stringify({
-            code: 'CFG-PASES',
+            code: rowCode,
             pin: '0000',
-            materia: 'Horario de pases de vigilancia',
+            materia: slug ? `Horario de pases del abogado ${lawyerName || slug}` : 'Horario de pases de vigilancia',
             tribunal: 'Sistema AeroLex',
             rit: 'PASES',
             detalle: JSON.stringify(cfgPayload),
@@ -641,7 +687,7 @@ module.exports = async (req, res) => {
         });
       }
 
-      return res.status(200).json({ ok: true, passes, updatedAt: nowIso });
+      return res.status(200).json({ ok: true, passes, code: rowCode, lawyerSlug: slug || null, updatedAt: nowIso });
     }
 
     // ── Configuración del correo de reportes (editable desde AeroLex SaaS) ──

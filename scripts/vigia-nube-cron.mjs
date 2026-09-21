@@ -63,12 +63,7 @@ function chileInstant(y, mo, d, hh, mm) {
 }
 
 function passesForChileDay(dayKey) {
-  const [y, mo, d] = dayKey.split('-').map(Number);
-  const weekday = new Date(Date.UTC(y, mo - 1, d, 12)).getUTCDay();
-  return PASSES.filter(p => p.days.includes(weekday)).map(p => {
-    const [hh, mm] = p.time.split(':').map(Number);
-    return { label: p.time, msUtc: chileInstant(y, mo, d, hh, mm) };
-  });
+  return passesForChileDayList(PASSES, dayKey);
 }
 
 function scheduledPassFor(dateObj) {
@@ -81,30 +76,111 @@ function scheduledPassFor(dateObj) {
   return null;
 }
 
+function sanitizePassesList(raw) {
+  return Array.isArray(raw)
+    ? raw
+        .map(p => ({
+          time: String(p && p.time ? p.time : '').trim(),
+          days: Array.isArray(p && p.days) && p.days.length
+            ? [...new Set(p.days.map(Number).filter(d => d >= 1 && d <= 5))].sort()
+            : [1, 2, 3, 4, 5]
+        }))
+        .filter(p => /^([01]\d|2[0-3]):[0-5]\d$/.test(p.time) && p.days.length > 0)
+        .sort((a, b) => a.time.localeCompare(b.time))
+        .slice(0, 6)
+    : [];
+}
+
 async function loadPassesConfig() {
   try {
     const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-PASES`, { headers: supaHeaders() });
     const rows = resp.ok ? await resp.json() : [];
     if (rows.length > 0 && rows[0].detalle) {
       const cfg = JSON.parse(rows[0].detalle);
-      const passes = Array.isArray(cfg.passes)
-        ? cfg.passes
-            .map(p => ({
-              time: String(p && p.time ? p.time : '').trim(),
-              days: Array.isArray(p && p.days) && p.days.length
-                ? [...new Set(p.days.map(Number).filter(d => d >= 1 && d <= 5))].sort()
-                : [1, 2, 3, 4, 5]
-            }))
-            .filter(p => /^([01]\d|2[0-3]):[0-5]\d$/.test(p.time) && p.days.length > 0)
-            .sort((a, b) => a.time.localeCompare(b.time))
-            .slice(0, 6)
-        : [];
+      const passes = sanitizePassesList(cfg.passes);
       if (passes.length > 0) return passes;
     }
   } catch (err) {
     console.warn('[Vigilancia Nube] CFG-PASES no disponible; se usa el horario por defecto:', err.message);
   }
   return DEFAULT_PASSES;
+}
+
+// Horarios por abogado: fila general (CFG-PASES) + una por socio (CFG-PASES-<slug>).
+async function loadLawyerSchedules() {
+  const schedules = [];
+  try {
+    const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=like.CFG-PASES*&select=code,detalle`, { headers: supaHeaders() });
+    const rows = resp.ok ? await resp.json() : [];
+    for (const row of Array.isArray(rows) ? rows : []) {
+      if (!row || !row.detalle) continue;
+      try {
+        const cfg = JSON.parse(row.detalle);
+        const passes = sanitizePassesList(cfg.passes);
+        if (!passes.length) continue;
+        const isGeneral = row.code === 'CFG-PASES';
+        schedules.push({
+          slug: isGeneral ? '' : String(row.code).replace(/^CFG-PASES-/, ''),
+          general: isGeneral,
+          name: cfg.lawyer && cfg.lawyer.name ? String(cfg.lawyer.name) : '',
+          email: cfg.lawyer && cfg.lawyer.email ? String(cfg.lawyer.email).trim().toLowerCase() : '',
+          passes
+        });
+      } catch (_) {}
+    }
+  } catch (err) {
+    console.warn('[Vigilancia Nube] No se pudieron leer los horarios por abogado:', err.message);
+  }
+  if (!schedules.some(s => s.general)) {
+    schedules.unshift({ slug: '', general: true, name: '', email: '', passes: PASSES });
+  }
+  return schedules;
+}
+
+function lawyerKey(value) {
+  return String(value || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function caseLawyerName(c) {
+  if (Array.isArray(c && c.triage)) {
+    const tag = c.triage.find(t => typeof t === 'string' && t.startsWith('__ABOGADO__:'));
+    if (tag) return tag.replace('__ABOGADO__:', '').trim();
+  }
+  return c && c.abogado ? String(c.abogado) : '';
+}
+
+function caseMatchesSchedule(c, schedule) {
+  const nameKey = lawyerKey(schedule.name);
+  if (!nameKey) return false;
+  const key = lawyerKey(caseLawyerName(c));
+  if (!key) return false;
+  return key === nameKey || key.includes(nameKey) || nameKey.includes(key);
+}
+
+function passesForChileDayList(passList, dayKey) {
+  const [y, mo, d] = dayKey.split('-').map(Number);
+  const weekday = new Date(Date.UTC(y, mo - 1, d, 12)).getUTCDay();
+  return passList.filter(p => p.days.includes(weekday)).map(p => {
+    const [hh, mm] = p.time.split(':').map(Number);
+    return { label: p.time, msUtc: chileInstant(y, mo, d, hh, mm) };
+  });
+}
+
+function schedulesDueAt(dateObj, schedules) {
+  const due = [];
+  for (const schedule of schedules) {
+    for (const offset of [-1, 0, 1]) {
+      const dayKey = chileDayKey(new Date(dateObj.getTime() + offset * 86400000));
+      for (const p of passesForChileDayList(schedule.passes, dayKey)) {
+        if (Math.abs(dateObj.getTime() - p.msUtc) <= 5 * 60 * 1000) {
+          due.push({ schedule, label: p.label, msUtc: p.msUtc });
+        }
+      }
+    }
+  }
+  return due;
 }
 
 function chileDayKey(dateObj = new Date()) {
@@ -533,7 +609,7 @@ function sendViaSmtpScript(subject, text, html, to = NOTIFY_RECIPIENTS) {
   });
 }
 
-async function sendEmailAlert(novelties, isTest = false, allWatched = []) {
+async function sendEmailAlert(novelties, isTest = false, allWatched = [], recipients = NOTIFY_RECIPIENTS) {
   const dateStr = new Date().toLocaleDateString('es-CL', { timeZone: 'America/Santiago' });
   const timeStr = new Date().toLocaleTimeString('es-CL', { timeZone: 'America/Santiago', hour: '2-digit', minute: '2-digit' });
 
@@ -635,7 +711,7 @@ async function sendEmailAlert(novelties, isTest = false, allWatched = []) {
     </html>
   `;
 
-  const plainText = `AeroLex Vigilancia Judicial 24/7 - ${subject}\nHora: ${timeStr} (${dateStr})\nDestinatario: ${NOTIFY_RECIPIENTS.join(', ')}\nTotal causas: ${casesToRender.length}`;
+  const plainText = `AeroLex Vigilancia Judicial 24/7 - ${subject}\nHora: ${timeStr} (${dateStr})\nDestinatario: ${recipients.join(', ')}\nTotal causas: ${casesToRender.length}`;
 
   // Intentar despacho vía Resend si la clave existe
   if (RESEND_KEY) {
@@ -648,13 +724,13 @@ async function sendEmailAlert(novelties, isTest = false, allWatched = []) {
         },
         body: JSON.stringify({
           from: 'AeroLex Vigilancia <alertas@aerolex.cl>',
-          to: NOTIFY_RECIPIENTS,
+          to: recipients,
           subject,
           html
         })
       });
       if (res.ok) {
-        console.log(`[Vigilancia Nube] Correo despachado exitosamente vía Resend a ${NOTIFY_RECIPIENTS.join(', ')}`);
+        console.log(`[Vigilancia Nube] Correo despachado exitosamente vía Resend a ${recipients.join(', ')}`);
         return;
       }
     } catch (_) {}
@@ -662,7 +738,7 @@ async function sendEmailAlert(novelties, isTest = false, allWatched = []) {
 
   // Despacho vía Gmail SMTP si las credenciales están configuradas
   if (GMAIL_USER && GMAIL_PASS) {
-    const ok = await sendViaSmtpScript(subject, plainText, html);
+    const ok = await sendViaSmtpScript(subject, plainText, html, recipients);
     if (ok) return;
   }
 
@@ -732,7 +808,7 @@ async function sendMail(subject, plainText, html, to = NOTIFY_RECIPIENTS) {
 
 function buildDigest(state, options = {}) {
   const dayKey = state.date;
-  const expected = passesForChileDay(dayKey);
+  const expected = Array.isArray(options.passList) ? options.passList : passesForChileDay(dayKey);
   const passes = Array.isArray(state.passes) ? state.passes : [];
   const dateStr = new Date(`${dayKey}T12:00:00Z`).toLocaleDateString('es-CL', { timeZone: 'America/Santiago', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -794,7 +870,7 @@ function buildDigest(state, options = {}) {
 
   const titlePrefix = options.late ? 'PARTE DIARIO (ENVÍO TARDÍO)' : (options.preview ? 'PARTE DIARIO (PRUEBA)' : 'PARTE DIARIO');
   const summaryLine = `${options.preview ? 'VISTA DE PRUEBA (los pases oficiales se registran desde el próximo ciclo). ' : ''}${executed} de ${expected.length} pase(s) ejecutado(s); ${totalNovelties} novedad(es); ${cases.length} expediente(s) auditado(s).`;
-  const subject = `[AEROLEX] ${titlePrefix} Vigilancia Judicial ${dayKey} — ${executed}/${expected.length} pases — ${totalNovelties > 0 ? 'CON NOVEDADES' : 'SIN NOVEDADES'}`;
+  const subject = `[AEROLEX] ${titlePrefix} Vigilancia Judicial ${dayKey}${options.label ? ` · ${options.label}` : ''} — ${executed}/${expected.length} pases — ${totalNovelties > 0 ? 'CON NOVEDADES' : 'SIN NOVEDADES'}`;
 
   const html = `
     <!DOCTYPE html><html><head><meta charset="utf-8"></head>
@@ -833,23 +909,26 @@ function buildDigest(state, options = {}) {
   return { subject, plainText, html };
 }
 
-async function processDiario({ watchedCases, scannedSummary, noveltiesFound, passErrors, isTestRun }) {
+async function processDiario({ schedule = null, passLabel = null, watchedCases, scannedSummary, noveltiesFound, passErrors, isTestRun }) {
   const now = new Date();
   const today = chileDayKey(now);
+  const isLawyer = Boolean(schedule && schedule.slug);
+  const recipients = isLawyer ? (schedule.email ? [schedule.email] : []) : NOTIFY_RECIPIENTS;
   let state = await loadDiario();
   if (!state || typeof state === 'object' === false) state = null;
-  if (!state) state = { date: today, passes: [], digestSentAt: null, previous: null };
+  if (!state) state = { date: today, passes: [], digestSentAt: null, previous: null, lawyers: {} };
 
   // Rotación: al cambiar el día, conservar el día anterior para el envío tardío.
   if (state.date !== today) {
     const pendingPrevious = (state.passes || []).length > 0 && !state.digestSentAt
       ? { date: state.date, passes: state.passes, digestSentAt: state.digestSentAt }
       : state.previous;
-    state = { date: today, passes: [], digestSentAt: null, previous: pendingPrevious };
+    state = { date: today, passes: [], digestSentAt: null, previous: pendingPrevious, lawyers: {} };
   }
+  if (!state.lawyers || typeof state.lawyers !== 'object') state.lawyers = {};
 
-  // Envío tardío del parte del día anterior si quedó pendiente.
-  if (state.previous && state.previous.date !== today && !state.previous.digestSentAt && !isTestRun) {
+  // Envío tardío del parte del día anterior si quedó pendiente (solo dirección).
+  if (!isLawyer && state.previous && state.previous.date !== today && !state.previous.digestSentAt && !isTestRun) {
     const prevExpected = passesForChileDay(state.previous.date);
     if (prevExpected.length > 0) {
       console.log(`[Vigilancia Nube] Parte diario pendiente del ${state.previous.date}: enviando envío tardío...`);
@@ -859,28 +938,37 @@ async function processDiario({ watchedCases, scannedSummary, noveltiesFound, pas
     }
   }
 
-  // Registrar el pase solo si corresponde a un pase configurado y no es prueba.
-  const scheduled = scheduledPassFor(now);
-  if (scheduled && !isTestRun) {
-    state.passes = (state.passes || []).filter(p => p.label !== scheduled.label); // reemplaza si se repite
-    state.passes.push({
+  // Registro del pase: general en state.passes; por abogado en state.lawyers[slug].
+  const slot = isLawyer
+    ? (state.lawyers[schedule.slug] = {
+        name: schedule.name,
+        email: schedule.email,
+        passes: [],
+        digestSentAt: null,
+        ...(state.lawyers[schedule.slug] || {})
+      })
+    : state;
+  const label = passLabel || (scheduledPassFor(now) ? scheduledPassFor(now).label : null);
+  if (label && !isTestRun) {
+    slot.passes = (slot.passes || []).filter(p => p.label !== label); // reemplaza si se repite
+    slot.passes.push({
       at: now.toISOString(),
-      label: scheduled.label,
+      label,
       total: watchedCases.length,
       novelties: noveltiesFound.length,
       errors: passErrors,
       cases: scannedSummary
     });
-    console.log(`[Vigilancia Nube] Pase ${scheduled.label} Chile registrado en el parte diario.`);
+    console.log(`[Vigilancia Nube] Pase ${label} Chile registrado${isLawyer ? ` para ${schedule.name || schedule.slug}` : ''} en el parte diario.`);
   }
 
-  // Envío del parte al cierre del último pase del día (o forzado manual).
-  const expected = passesForChileDay(today);
+  // Envío del parte al cierre del último pase del día de este horario.
+  const expected = passesForChileDayList(schedule ? schedule.passes : PASSES, today);
   const last = expected[expected.length - 1];
   const lastMs = last ? last.msUtc : 0;
-  const due = expected.length > 0 && now.getTime() >= lastMs && !state.digestSentAt;
+  const due = expected.length > 0 && now.getTime() >= lastMs && !slot.digestSentAt;
 
-  if (isDigestNow && !isTestRun) {
+  if (isDigestNow && !isTestRun && !isLawyer) {
     // Vista de prueba con los datos del escaneo recién realizado; no altera
     // el registro oficial de pases.
     const previewState = {
@@ -902,14 +990,22 @@ async function processDiario({ watchedCases, scannedSummary, noveltiesFound, pas
     const sent = await sendMail(digest.subject, digest.plainText, digest.html);
     console.log(`[Vigilancia Nube] Parte diario forzado (--digest-now): ${sent ? 'despachado' : 'no despachado'}.`);
   } else if (due) {
-    const digest = buildDigest(state);
-    const sent = await sendMail(digest.subject, digest.plainText, digest.html);
-    if (sent) {
-      state.digestSentAt = new Date().toISOString();
-      console.log('[Vigilancia Nube] Parte diario enviado al cierre del día.');
+    if (isLawyer && recipients.length === 0) {
+      console.log(`[Vigilancia Nube] ${schedule.name || schedule.slug} no tiene correo registrado: parte diario individual omitido.`);
+    } else {
+      const digestState = isLawyer ? { date: today, passes: slot.passes || [], digestSentAt: slot.digestSentAt } : state;
+      const digest = buildDigest(digestState, {
+        passList: expected,
+        label: isLawyer ? (schedule.name || schedule.slug) : '',
+      });
+      const sent = await sendMail(digest.subject, digest.plainText, digest.html, recipients);
+      if (sent) {
+        slot.digestSentAt = new Date().toISOString();
+        console.log(`[Vigilancia Nube] Parte diario enviado al cierre del día${isLawyer ? ` a ${schedule.name || schedule.slug}` : ''}.`);
+      }
     }
   } else if (expected.length > 0) {
-    console.log(`[Vigilancia Nube] Parte diario pendiente: se enviará al cierre del último pase (${expected.length}/${expected.length} programados).`);
+    console.log(`[Vigilancia Nube] Parte diario pendiente: se enviará al cierre del último pase (${expected.length}/${expected.length} programados)${isLawyer ? ` para ${schedule.name || schedule.slug}` : ''}.`);
   }
 
   await saveDiario(state);
@@ -932,6 +1028,84 @@ function printDigestPreview() {
   console.log('-----------------------------------------------------------');
   console.log(digest.plainText);
   console.log('===========================================================');
+}
+
+async function scanCases(casesToScan) {
+  const noveltiesFound = [];
+  const scannedSummary = [];
+  const passErrors = [];
+
+  for (let i = 0; i < casesToScan.length; i++) {
+    const c = casesToScan[i];
+    console.log(`[${i + 1}/${casesToScan.length}] Inspeccionando ${c.rit} en ${c.tribunal || 'Tribunal Civil'} (${c.code})...`);
+
+    const result = await checkPjudCase(c.rit, c.tribunal);
+    console.log(`  · Resultado: ${result.found ? 'Encontrada' : 'No encontrada'} | Novedades hoy: ${result.hasNoveltiesToday ? 'SI' : 'NO'}`);
+
+    if (result.found === false) {
+      passErrors.push({ code: c.code, rit: c.rit, message: result.error || 'Sin resultados en OJV' });
+    }
+
+    const caseLawyer = caseLawyerName(c) || 'Jaime Vidal Paredes';
+
+    scannedSummary.push({
+      code: c.code,
+      rit: c.rit,
+      tribunal: c.tribunal,
+      materia: c.materia,
+      court: result.court,
+      abogado: caseLawyer,
+      lastMovementDate: result.lastMovementDate,
+      hasNoveltiesToday: result.hasNoveltiesToday,
+      caratula: result.caratula,
+      error: result.found === false ? (result.error || 'Sin resultados en OJV') : null,
+      movements: (result.resolutions || []).slice(0, 3).map(r => ({ date: r.date, type: r.type, summary: r.summary })),
+    });
+
+    if (result.hasNoveltiesToday) {
+      noveltiesFound.push({
+        code: c.code,
+        rit: c.rit,
+        tribunal: c.tribunal,
+        materia: c.materia,
+        court: result.court,
+        abogado: caseLawyer,
+        lastMovementDate: result.lastMovementDate,
+        caratula: result.caratula,
+      });
+    }
+
+    // Actualizar estado_diario en Supabase
+    const edData = {
+      lastCheckedAt: result.checkedAt,
+      lastCheckedTime: result.checkedTime,
+      lastCheckedDate: result.checkedDate,
+      status: result.hasNoveltiesToday ? "con_novedades" : (result.found ? "al_dia" : "no_encontrada"),
+      lastMovementDate: result.lastMovementDate,
+      checkedBy: "github_actions_vigia_247",
+      resolutionsCount: (result.resolutions || []).length,
+      resolutions: result.resolutions,
+      found: result.found,
+      court: result.court,
+      docket: result.docket,
+    };
+
+    let triageArray = Array.isArray(c.triage) ? [...c.triage] : [];
+    triageArray = triageArray.filter(item => typeof item !== 'string' || !item.startsWith('__ESTADO_DIARIO__:'));
+    triageArray.push('__ESTADO_DIARIO__:' + JSON.stringify(edData));
+
+    await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(c.code)}`, {
+      method: 'PATCH',
+      headers: supaHeaders(),
+      body: JSON.stringify({ triage: triageArray, updated_at: new Date().toISOString() })
+    }).catch(e => console.warn(`  [Aviso] Error al actualizar estado_diario de ${c.code}:`, e.message));
+
+    if (i < casesToScan.length - 1) {
+      await new Promise(r => setTimeout(r, 1200));
+    }
+  }
+
+  return { scannedSummary, noveltiesFound, passErrors };
 }
 
 async function main() {
@@ -999,110 +1173,87 @@ async function main() {
 
   console.log(`[Vigilancia Nube] Total causas activas bajo inspección: ${watchedCases.length}`);
 
-  const noveltiesFound = [];
-  const scannedSummary = [];
-  const passErrors = [];
+  // 3b. Horarios configurados: general (CFG-PASES) + uno por abogado (CFG-PASES-<slug>)
+  const schedules = await loadLawyerSchedules();
+  const lawyerSchedules = schedules.filter(s => !s.general);
+  console.log(
+    `[Vigilancia Nube] Horarios: 1 general + ${lawyerSchedules.length} por abogado${lawyerSchedules.length ? ` (${lawyerSchedules.map(s => s.name || s.slug).join(', ')})` : ''}`,
+  );
 
-  for (let i = 0; i < watchedCases.length; i++) {
-    const c = watchedCases[i];
-    console.log(`[${i + 1}/${watchedCases.length}] Inspeccionando ${c.rit} en ${c.tribunal || 'Tribunal Civil'} (${c.code})...`);
-
-    const result = await checkPjudCase(c.rit, c.tribunal);
-    console.log(`  · Resultado: ${result.found ? 'Encontrada' : 'No encontrada'} | Novedades hoy: ${result.hasNoveltiesToday ? 'SI' : 'NO'}`);
-
-    if (result.found === false) {
-      passErrors.push({ code: c.code, rit: c.rit, message: result.error || 'Sin resultados en OJV' });
-    }
-
-    let caseLawyer = "Jaime Vidal Paredes";
-    if (Array.isArray(c.triage)) {
-      const ab = c.triage.find(t => typeof t === 'string' && t.startsWith('__ABOGADO__:'));
-      if (ab) caseLawyer = ab.replace('__ABOGADO__:', '').trim();
-    } else if (c.abogado) {
-      caseLawyer = c.abogado;
-    }
-
-    scannedSummary.push({
-      code: c.code,
-      rit: c.rit,
-      tribunal: c.tribunal,
-      materia: c.materia,
-      court: result.court,
-      abogado: caseLawyer,
-      lastMovementDate: result.lastMovementDate,
-      hasNoveltiesToday: result.hasNoveltiesToday,
-      caratula: result.caratula,
-      error: result.found === false ? (result.error || 'Sin resultados en OJV') : null,
-      movements: (result.resolutions || []).slice(0, 3).map(r => ({ date: r.date, type: r.type, summary: r.summary })),
-    });
-
-    if (result.hasNoveltiesToday) {
-      noveltiesFound.push({
-        code: c.code,
-        rit: c.rit,
-        tribunal: c.tribunal,
-        materia: c.materia,
-        court: result.court,
-        abogado: caseLawyer,
-        lastMovementDate: result.lastMovementDate,
-        caratula: result.caratula,
-      });
-    }
-
-    // Actualizar estado_diario en Supabase
-    const edData = {
-      lastCheckedAt: result.checkedAt,
-      lastCheckedTime: result.checkedTime,
-      lastCheckedDate: result.checkedDate,
-      status: result.hasNoveltiesToday ? "con_novedades" : (result.found ? "al_dia" : "no_encontrada"),
-      lastMovementDate: result.lastMovementDate,
-      checkedBy: "github_actions_vigia_247",
-      resolutionsCount: (result.resolutions || []).length,
-      resolutions: result.resolutions,
-      found: result.found,
-      court: result.court,
-      docket: result.docket,
-    };
-
-    let triageArray = Array.isArray(c.triage) ? [...c.triage] : [];
-    triageArray = triageArray.filter(item => typeof item !== 'string' || !item.startsWith('__ESTADO_DIARIO__:'));
-    triageArray.push('__ESTADO_DIARIO__:' + JSON.stringify(edData));
-
-    const patch = {
-      triage: triageArray,
-      updated_at: new Date().toISOString()
-    };
-
-    await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(c.code)}`, {
-      method: 'PATCH',
-      headers: supaHeaders(),
-      body: JSON.stringify(patch)
-    }).catch(e => console.warn(`  [Aviso] Error al actualizar estado_diario de ${c.code}:`, e.message));
-
-    if (i < watchedCases.length - 1) {
-      await new Promise(r => setTimeout(r, 1200));
+  // Pases que corresponden a este disparo: instante enviado por el Worker (PASE_UTC)
+  // o coincidencia con la hora actual (respaldos de GitHub).
+  const paseUtcEnv = process.env.PASE_UTC ? new Date(process.env.PASE_UTC) : null;
+  let due = paseUtcEnv && !Number.isNaN(paseUtcEnv.getTime()) ? schedulesDueAt(paseUtcEnv, schedules) : [];
+  if (due.length === 0) {
+    const unionPass = scheduledPassFor(new Date());
+    if (unionPass) {
+      due = schedules
+        .filter(s => s.passes.some(p => p.time === unionPass.label))
+        .map(s => ({ schedule: s, label: unionPass.label, msUtc: unionPass.msUtc }));
     }
   }
-
-  // 4. Despachar alertas por correo si se detectaron novedades o si se solicitó modo prueba
-  if (isTestMode) {
-    console.log(`[Vigilancia Nube] Modo prueba activo: Despachando correo de verificación con las ${scannedSummary.length} causas inspeccionadas...`);
-    await sendEmailAlert(noveltiesFound, true, scannedSummary);
-  } else if (noveltiesFound.length > 0) {
-    console.log(`[Vigilancia Nube] Se detectaron novedades en ${noveltiesFound.length} causa(s). Despachando notificación con proveniencia...`);
-    await sendEmailAlert(noveltiesFound, false, scannedSummary);
-  } else {
-    console.log('[Vigilancia Nube] Barrido completado sin novedades urgentes del día.');
+  const lateFallback = due.length === 0;
+  if (lateFallback) {
+    console.log('[Vigilancia Nube] Sin pase exacto para este disparo (respaldo tardío): se escanea sin registrar pase oficial.');
+    due = [{ schedule: schedules.find(s => s.general), label: null, msUtc: null }];
   }
 
-  // 5. Actualizar CFG-VIGILANCIA con la bitácora del último pase
+  // Reparto de causas: el horario general cubre lo que no tenga socio con horario propio.
+  const plan = due.map(entry => {
+    const schedule = entry.schedule || schedules.find(s => s.general);
+    const cases = schedule.general
+      ? watchedCases.filter(c => !lawyerSchedules.some(s => caseMatchesSchedule(c, s)))
+      : watchedCases.filter(c => caseMatchesSchedule(c, schedule));
+    const recipients = schedule.general ? NOTIFY_RECIPIENTS : (schedule.email ? [schedule.email] : []);
+    return { ...entry, schedule, cases, recipients };
+  });
+
+  let totalScanned = 0;
+  let totalNovelties = 0;
+
+  for (const step of plan) {
+    const label = step.schedule.general ? 'dirección del despacho' : (step.schedule.name || step.schedule.slug);
+    console.log('-----------------------------------------------------------');
+    console.log(`[Vigilancia Nube] Pase ${step.label || 'respaldo'} · horario ${label} · ${step.cases.length} causa(s)`);
+    const { scannedSummary, noveltiesFound, passErrors } = await scanCases(step.cases);
+    totalScanned += step.cases.length;
+    totalNovelties += noveltiesFound.length;
+
+    // 4. Despacho de alertas para este horario (socio: su correo; general: dirección)
+    if (isTestMode) {
+      console.log(`[Vigilancia Nube] Modo prueba: correo de verificación con las ${scannedSummary.length} causas de ${label}...`);
+      await sendEmailAlert(noveltiesFound, true, scannedSummary, NOTIFY_RECIPIENTS);
+    } else if (noveltiesFound.length > 0) {
+      if (step.recipients.length === 0) {
+        console.log(`[Vigilancia Nube] ${label} sin correo registrado: alerta omitida (la novedad queda registrada en el portal).`);
+      } else {
+        console.log(`[Vigilancia Nube] Novedades en ${noveltiesFound.length} causa(s) de ${label}. Despachando notificación...`);
+        await sendEmailAlert(noveltiesFound, false, scannedSummary, step.recipients);
+      }
+    } else {
+      console.log(`[Vigilancia Nube] ${label}: barrido completado sin novedades urgentes del día.`);
+    }
+
+    // 5. Parte diario por horario (registro del pase y envío al cierre del último pase propio)
+    await processDiario({
+      schedule: step.schedule,
+      passLabel: lateFallback ? null : step.label,
+      watchedCases: step.cases,
+      scannedSummary,
+      noveltiesFound,
+      passErrors,
+      isTestRun: isTestMode || lateFallback,
+    }).catch(err => console.warn('[Vigilancia Nube] Aviso: no se pudo procesar el parte diario:', err.message));
+  }
+
+  // 6. Actualizar CFG-VIGILANCIA con la bitácora del último pase
   const nowIso = new Date().toISOString();
   const cfgUpdate = {
     enabled: isEnabled,
     lastRunAt: nowIso,
     lastRunResults: {
-      total: watchedCases.length,
-      novelties: noveltiesFound.length,
+      total: totalScanned,
+      novelties: totalNovelties,
       timestamp: nowIso,
       runner: 'github-actions'
     }
@@ -1113,15 +1264,6 @@ async function main() {
     headers: supaHeaders(),
     body: JSON.stringify({ detalle: JSON.stringify(cfgUpdate), updated_at: nowIso })
   }).catch(() => {});
-
-  // 6. Parte diario: registrar el pase y enviar el digest al cierre del día
-  await processDiario({
-    watchedCases,
-    scannedSummary,
-    noveltiesFound,
-    passErrors,
-    isTestRun: isTestMode,
-  }).catch(err => console.warn('[Vigilancia Nube] Aviso: no se pudo procesar el parte diario:', err.message));
 
   console.log('===========================================================');
   console.log('VIGILANCIA FINALIZADA CON EXITO');

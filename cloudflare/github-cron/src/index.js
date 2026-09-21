@@ -209,7 +209,7 @@ export class PassScheduler extends DurableObject {
     if (pass || forced) {
       const origin = pass ? `alarma ${pass.label} Chile` : "alarma forzada";
       console.log(`[alarma] ${origin} a las ${at.toISOString()} - disparando workflow`);
-      await dispatch(this.env, origin);
+      await dispatch(this.env, origin, pass ? { pase_utc: new Date(pass.ms).toISOString() } : undefined);
     } else {
       console.log(`[alarma] tick sin pase a las ${at.toISOString()}`);
     }
@@ -227,7 +227,7 @@ export default {
     if (!pass && !forced) return; // minuto de relleno del cron
     const origin = pass ? `cron ${pass.label} Chile` : "forzado por DISPATCH_ONCE";
     console.log(`[cron] ${origin} a las ${at.toISOString()} - disparando workflow`);
-    ctx.waitUntil(dispatch(env, origin));
+    ctx.waitUntil(dispatch(env, origin, pass ? { pase_utc: new Date(pass.ms).toISOString() } : undefined));
   },
 
   async fetch(req, env, ctx) {
@@ -252,7 +252,11 @@ export default {
       });
     }
     if (pass || authorized) {
-      const res = await dispatch(env, pass ? `http ${pass.label} Chile` : "prueba manual");
+      const res = await dispatch(
+        env,
+        pass ? `http ${pass.label} Chile` : "prueba manual",
+        pass ? { pase_utc: new Date(pass.ms).toISOString() } : undefined,
+      );
       return new Response(res.ok ? "disparo enviado\n" : `GitHub respondio ${res.status}\n`, {
         status: res.ok ? 200 : 502,
       });

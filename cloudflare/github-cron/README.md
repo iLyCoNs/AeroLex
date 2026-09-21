@@ -14,6 +14,19 @@ tarde. Este Worker dispara el workflow por API **a la hora exacta**:
 
 ## Cómo funciona
 
+- **Horario configurable**: los pases se editan en AeroLex SaaS (Vigilancia
+  Procesal OJV → Configuración → Horario de Pases) en **hora de Chile**; se
+  guardan en Supabase (`CFG-PASES`) y este Worker los lee por el endpoint
+  público `action=pases_get` (solo horas, sin datos). La conversión a UTC se
+  hace en cada armado, por lo que el horario se mantiene correcto con el
+  cambio de hora. Respaldo: los 5 pases históricos.
+- **Horarios por abogado**: cada socio guarda su propio horario en
+  `CFG-PASES-<slug>` (el administrador conserva `CFG-PASES` general).
+  `pases_get` entrega la unión de horarios para programar las alarmas; el
+  Worker despacha cada pase con el input `pase_utc` y el script de la nube
+  escanea solo las causas de ese socio, con su alerta y su Parte Diario
+  propios. El horario general cubre las causas que no tengan socio con
+  horario propio.
 - **Temporizador propio**: un Durable Object (`PassScheduler`) mantiene una
   alarma que se reprograma sola para el próximo pase. Los Cron Triggers de
   Cloudflare pueden no disparar en cuentas nuevas o detenerse en silencio
