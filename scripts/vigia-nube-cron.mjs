@@ -14,7 +14,7 @@
 
 import crypto from 'node:crypto';
 import { spawn } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -157,6 +157,44 @@ function caseMatchesSchedule(c, schedule) {
   const key = lawyerKey(caseLawyerName(c));
   if (!key) return false;
   return key === nameKey || key.includes(nameKey) || nameKey.includes(key);
+}
+
+// Preferencias del correo único diario por usuario (CFG-DIGEST-<slug>),
+// editables desde AeroLex SaaS con un botón en la sesión del propio usuario.
+async function loadDigestConfigs() {
+  const configs = [];
+  try {
+    const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=like.CFG-DIGEST*&select=code,detalle`, { headers: supaHeaders() });
+    const rows = resp.ok ? await resp.json() : [];
+    for (const row of Array.isArray(rows) ? rows : []) {
+      if (!row || !row.detalle) continue;
+      try {
+        const cfg = JSON.parse(row.detalle);
+        const email = String(cfg.email || '').trim().toLowerCase();
+        if (!email) continue;
+        configs.push({
+          slug: String(row.code || '').replace(/^CFG-DIGEST-?/, ''),
+          name: String(cfg.name || '').trim(),
+          email,
+          enabled: cfg.enabled !== false,
+        });
+      } catch (_) {}
+    }
+  } catch (err) {
+    console.warn('[Vigilancia Nube] No se pudieron leer las preferencias de correo por usuario:', err.message);
+  }
+  return configs;
+}
+
+/** Recorta el estado del día a las causas de un abogado (sin nombre = todas). */
+function filterStateForRecipient(state, lawyerName) {
+  const key = lawyerKey(lawyerName);
+  if (!key) return state;
+  const passes = (state.passes || []).map(p => {
+    const mine = (p.cases || []).filter(c => caseMatchesSchedule(c, { name: lawyerName }));
+    return { ...p, total: mine.length, novelties: mine.filter(c => c.hasNoveltiesToday).length, cases: mine };
+  });
+  return { ...state, passes };
 }
 
 function passesForChileDayList(passList, dayKey) {
@@ -362,6 +400,7 @@ async function checkPjudCase(rit, courtId) {
   try {
     const sessionRes = await fetch("https://oficinajudicialvirtual.pjud.cl/indexN.php", {
       headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" },
+      signal: AbortSignal.timeout(20000),
     });
     const setCookie = sessionRes.headers.get("set-cookie") || "";
     const cookies = setCookie.split(",").map(c => c.split(";")[0].trim()).join("; ");
@@ -398,6 +437,7 @@ async function checkPjudCase(rit, courtId) {
           "Cookie": cookies,
         },
         body: queryBody.toString(),
+        signal: AbortSignal.timeout(20000),
       });
 
       if (!queryRes.ok) throw new Error(`PJUD Corte HTTP ${queryRes.status}`);
@@ -495,6 +535,7 @@ async function checkPjudCase(rit, courtId) {
         "Cookie": cookies,
       },
       body: queryBody.toString(),
+      signal: AbortSignal.timeout(20000),
     });
 
     if (!queryRes.ok) throw new Error(`PJUD HTTP ${queryRes.status}`);
@@ -765,26 +806,89 @@ async function resolveRecipients() {
 const DIARIO_CODE = 'CFG-DIARIO';
 
 async function loadDiario() {
-  const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${DIARIO_CODE}`, { headers: supaHeaders() });
-  const rows = resp.ok ? await resp.json() : [];
-  if (rows.length > 0 && rows[0].detalle) {
+  const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${DIARIO_CODE}&select=detalle&order=updated_at.desc&limit=1`, { headers: supaHeaders() });
+  if (!resp.ok) throw new Error(`No se pudo leer el parte diario (HTTP ${resp.status})`);
+  const rows = await resp.json();
+  if (Array.isArray(rows) && rows.length > 0 && rows[0].detalle) {
     try { return JSON.parse(rows[0].detalle); } catch (_) {}
   }
   return null;
 }
 
-async function saveDiario(state) {
+/**
+ * Crea o actualiza una fila CFG-* del portal.
+ *
+ * El PATCH de PostgREST responde 204 aunque no coincida ninguna fila, por lo
+ * que confiar solo en `patch.ok` dejaba a CFG-DIARIO sin crear nunca. Aquí se
+ * exige `return=representation` para saber si realmente actualizó una fila; si
+ * no actualizó ninguna, se inserta.
+ */
+async function upsertCaseRow(code, detalle, extra = {}) {
   const nowIso = new Date().toISOString();
-  const body = { detalle: JSON.stringify(state), updated_at: nowIso };
-  const patch = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${DIARIO_CODE}`, {
-    method: 'PATCH', headers: supaHeaders(), body: JSON.stringify(body)
+  const patch = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(code)}`, {
+    method: 'PATCH',
+    headers: supaHeaders({ 'Prefer': 'return=representation' }),
+    body: JSON.stringify({ detalle, updated_at: nowIso })
   }).catch(() => null);
-  if (patch && patch.ok) return;
-  await fetch(`${SUPA_URL}/rest/v1/cases`, {
+  if (patch && patch.ok) {
+    const updated = await patch.json().catch(() => []);
+    if (Array.isArray(updated) && updated.length > 0) return true;
+  }
+  const insert = await fetch(`${SUPA_URL}/rest/v1/cases`, {
     method: 'POST',
-    headers: supaHeaders({ 'Prefer': 'resolution=merge-duplicates' }),
-    body: JSON.stringify({ code: DIARIO_CODE, rit: 'CFG-DIA', tribunal: 'Sistema', status: 'activo', detalle: body.detalle, updated_at: nowIso })
-  }).catch(e => console.warn('  [Aviso] No se pudo guardar CFG-DIARIO:', e.message));
+    headers: supaHeaders({ 'Prefer': 'return=minimal' }),
+    body: JSON.stringify({
+      code,
+      rit: extra.rit || 'CFG-DIA',
+      tribunal: extra.tribunal || 'Sistema',
+      status: 'activo',
+      detalle,
+      updated_at: nowIso
+    })
+  }).catch(() => null);
+  if (insert && insert.ok) return true;
+  console.warn(`  [Aviso] No se pudo guardar ${code} en el portal.`);
+  return false;
+}
+
+async function saveDiario(state) {
+  return upsertCaseRow(DIARIO_CODE, JSON.stringify(state));
+}
+
+/** Guarda releyendo lo último para no perder pases que otro disparo haya
+ * registrado entre la lectura y el guardado (respaldos de GitHub). */
+async function saveDiarioMerged(state) {
+  try {
+    const current = await loadDiario();
+    if (current && current.date === state.date) {
+      const byLabel = new Set((state.passes || []).map(p => p.label));
+      for (const p of current.passes || []) {
+        if (p && !byLabel.has(p.label)) (state.passes = state.passes || []).push(p);
+      }
+      if (current.digestSentAt && !state.digestSentAt) state.digestSentAt = current.digestSentAt;
+      if (current.lawyers && typeof current.lawyers === 'object') {
+        state.lawyers = state.lawyers || {};
+        for (const [slug, slot] of Object.entries(current.lawyers)) {
+          if (!slot) continue;
+          if (!state.lawyers[slug]) { state.lawyers[slug] = slot; continue; }
+          const mine = state.lawyers[slug];
+          const labels = new Set((mine.passes || []).map(p => p.label));
+          for (const p of slot.passes || []) {
+            if (p && !labels.has(p.label)) (mine.passes = mine.passes || []).push(p);
+          }
+          if (slot.digestSentAt && !mine.digestSentAt) mine.digestSentAt = slot.digestSentAt;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn(`[Vigilancia Nube] Parte diario: no se pudo releer el registro antes de guardar (${err.message}); se guarda el estado en memoria.`);
+  }
+  await saveDiario(state);
+}
+
+/** Errores de red/servidor de la OJV que justifican un reintento. */
+function isTransientOjvError(message) {
+  return /fetch failed|timeout|timed out|ETIMEDOUT|ECONNRESET|ECONNREFUSED|EAI_AGAIN|ENOTFOUND|socket hang up|HTTP 5\d\d|aborted/i.test(String(message || ''));
 }
 
 async function sendMail(subject, plainText, html, to = NOTIFY_RECIPIENTS) {
@@ -828,6 +932,14 @@ function buildDigest(state, options = {}) {
     for (const c of pass.cases || []) if (!caseMap.has(c.code)) caseMap.set(c.code, { ...c, passLabel: pass.label });
   }
   const cases = [...caseMap.values()].sort((a, b) => String(a.rit).localeCompare(String(b.rit)));
+  const noveltyCases = cases.filter(c => c.hasNoveltiesToday);
+  const noveltyHtmlList = noveltyCases.map((c) => {
+    const movement = Array.isArray(c.movements) && c.movements[0] ? c.movements[0] : null;
+    const detail = movement
+      ? ` — <strong>${movement.date || 's/f'}</strong>: ${movement.type || 'Actuación'}${movement.summary ? `, ${movement.summary}` : ''}`
+      : '';
+    return `<li style="margin-bottom:4px;"><strong>${c.rit}</strong> (${c.code}) — ${c.caratula || c.materia || 'Causa'} · ${c.court || 'Poder Judicial'}${detail}</li>`;
+  }).join('');
 
   const passRowsHtml = rows.map(({ pass, rec }) => `
     <tr>
@@ -869,8 +981,18 @@ function buildDigest(state, options = {}) {
     : '';
 
   const titlePrefix = options.late ? 'PARTE DIARIO (ENVÍO TARDÍO)' : (options.preview ? 'PARTE DIARIO (PRUEBA)' : 'PARTE DIARIO');
-  const summaryLine = `${options.preview ? 'VISTA DE PRUEBA (los pases oficiales se registran desde el próximo ciclo). ' : ''}${executed} de ${expected.length} pase(s) ejecutado(s); ${totalNovelties} novedad(es); ${cases.length} expediente(s) auditado(s).`;
-  const subject = `[AEROLEX] ${titlePrefix} Vigilancia Judicial ${dayKey}${options.label ? ` · ${options.label}` : ''} — ${executed}/${expected.length} pases — ${totalNovelties > 0 ? 'CON NOVEDADES' : 'SIN NOVEDADES'}`;
+  const summaryLine = `${options.preview ? 'VISTA DE PRUEBA (los pases oficiales se registran desde el próximo ciclo). ' : ''}${executed} de ${expected.length} pase(s) ejecutados correctamente; ${noveltyCases.length} causa(s) con novedad de ${cases.length} auditada(s).`;
+  const subject = `[AEROLEX] ${titlePrefix} Vigilancia Judicial ${dayKey}${options.label ? ` · ${options.label}` : ''} — ${executed}/${expected.length} pases — ${noveltyCases.length > 0 ? `CON ${noveltyCases.length} NOVEDAD(ES)` : 'SIN NOVEDADES'}`;
+
+  const noveltyBlock = `
+          <div style="margin:0 0 14px 0; padding:12px 14px; background:${noveltyCases.length ? '#eff6ff' : '#f0fdf4'}; border-left:3px solid ${noveltyCases.length ? '#2563eb' : '#16a34a'}; border-radius:6px;">
+            <div style="font-size:12.5px; font-weight:700; color:${noveltyCases.length ? '#1e40af' : '#166534'}; margin-bottom:6px;">
+              ${noveltyCases.length ? `CAUSAS CON NOVEDAD HOY (${noveltyCases.length})` : 'SIN NOVEDADES EN LAS CAUSAS AUDITADAS'}
+            </div>
+            ${noveltyCases.length
+              ? `<ul style="margin:0 0 0 16px; padding:0; font-size:11.5px; color:#1e293b; line-height:1.6;">${noveltyHtmlList}</ul>`
+              : '<div style="font-size:11.5px; color:#166534;">Los pases se ejecutaron correctamente y no se registraron novedades en las causas de esta cartera.</div>'}
+          </div>`;
 
   const html = `
     <!DOCTYPE html><html><head><meta charset="utf-8"></head>
@@ -882,6 +1004,7 @@ function buildDigest(state, options = {}) {
         </div>
         <div style="padding:20px 22px;">
           <p style="font-size:12.5px; color:#334155; margin:0 0 12px 0;">${summaryLine}${missing.length ? ` Pases no registrados: ${missing.map(r => r.pass.label + ' Chile').join(', ')}.` : ''}</p>
+          ${noveltyBlock}
           <table style="border-collapse:collapse; width:100%; margin-bottom:16px;">
             <thead><tr style="background:#f1f5f9; text-align:left;">
               <th style="padding:6px 8px; font-size:11px; color:#475569;">Pase</th>
@@ -909,14 +1032,21 @@ function buildDigest(state, options = {}) {
   return { subject, plainText, html };
 }
 
-async function processDiario({ schedule = null, passLabel = null, watchedCases, scannedSummary, noveltiesFound, passErrors, isTestRun }) {
+async function processDiario({ schedule = null, passLabel = null, watchedCases, scannedSummary, noveltiesFound, passErrors, isTestRun, sendDigest = true }) {
   const now = new Date();
   const today = chileDayKey(now);
   const isLawyer = Boolean(schedule && schedule.slug);
   const recipients = isLawyer ? (schedule.email ? [schedule.email] : []) : NOTIFY_RECIPIENTS;
-  let state = await loadDiario();
-  if (!state || typeof state === 'object' === false) state = null;
-  if (!state) state = { date: today, passes: [], digestSentAt: null, previous: null, lawyers: {} };
+  let state;
+  try {
+    state = await loadDiario();
+  } catch (err) {
+    // Sin lectura confiable no se registra ni se guarda: sobrescribir el parte
+    // con un estado nuevo borraría los pases ya registrados del día.
+    console.warn(`[Vigilancia Nube] Parte diario: no se pudo leer el registro (${err.message}); este pase no se registra.`);
+    return;
+  }
+  if (!state || typeof state !== 'object') state = { date: today, passes: [], digestSentAt: null, previous: null, lawyers: {} };
 
   // Rotación: al cambiar el día, conservar el día anterior para el envío tardío.
   if (state.date !== today) {
@@ -989,7 +1119,7 @@ async function processDiario({ schedule = null, passLabel = null, watchedCases, 
     const digest = buildDigest(previewState, { preview: true });
     const sent = await sendMail(digest.subject, digest.plainText, digest.html);
     console.log(`[Vigilancia Nube] Parte diario forzado (--digest-now): ${sent ? 'despachado' : 'no despachado'}.`);
-  } else if (due) {
+  } else if (sendDigest !== false && due) {
     if (isLawyer && recipients.length === 0) {
       console.log(`[Vigilancia Nube] ${schedule.name || schedule.slug} no tiene correo registrado: parte diario individual omitido.`);
     } else {
@@ -1008,7 +1138,66 @@ async function processDiario({ schedule = null, passLabel = null, watchedCases, 
     console.log(`[Vigilancia Nube] Parte diario pendiente: se enviará al cierre del último pase (${expected.length}/${expected.length} programados)${isLawyer ? ` para ${schedule.name || schedule.slug}` : ''}.`);
   }
 
-  await saveDiario(state);
+  await saveDiarioMerged(state);
+}
+
+/**
+ * Correo único diario: al cierre del último pase del día se envía UN solo
+ * correo por destinatario (dirección del despacho + usuarios que activaron el
+ * parte en AeroLex SaaS), informando los pases ejecutados correctamente y las
+ * causas con novedad de su cartera. Sin correos intermedios por pase.
+ */
+async function sendDailyDigests(lawyerSchedules = []) {
+  if (isTestMode) return;
+  const now = new Date();
+  const today = chileDayKey(now);
+  let state;
+  try {
+    state = await loadDiario();
+  } catch (err) {
+    console.warn(`[Vigilancia Nube] Correo diario: no se pudo leer el registro (${err.message}).`);
+    return;
+  }
+  if (!state || state.date !== today) return;
+  const expected = passesForChileDayList(PASSES, today);
+  const last = expected[expected.length - 1];
+  if (!last || now.getTime() < last.msUtc || state.digestSentAt) return;
+
+  const digestConfigs = await loadDigestConfigs();
+  const recipients = [];
+  const seen = new Set();
+  const addRecipient = (email, name, causesFor) => {
+    const key = String(email || '').trim().toLowerCase();
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    recipients.push({ email: key, name: name || '', causesFor: causesFor || null });
+  };
+  for (const email of NOTIFY_RECIPIENTS) addRecipient(email, 'Dirección del despacho', null);
+  for (const cfg of digestConfigs.filter(c => c.enabled)) addRecipient(cfg.email, cfg.name, cfg.name || null);
+  for (const sched of lawyerSchedules) {
+    if (!sched.email || sched.general) continue;
+    if (digestConfigs.some(c => c.slug === sched.slug)) continue; // su correo lo controla el botón de la app
+    addRecipient(sched.email, sched.name, sched.name || null);
+  }
+  if (!recipients.length) {
+    console.log('[Vigilancia Nube] Correo diario: sin destinatarios configurados.');
+    return;
+  }
+
+  let sent = 0;
+  for (const recipient of recipients) {
+    const filtered = filterStateForRecipient(state, recipient.causesFor);
+    const digest = buildDigest(filtered, { passList: expected });
+    const ok = await sendMail(digest.subject, digest.plainText, digest.html, [recipient.email]);
+    if (ok) {
+      sent += 1;
+      console.log(`[Vigilancia Nube] Correo diario enviado a ${recipient.email}${recipient.name ? ` (${recipient.name})` : ''}.`);
+    }
+  }
+  if (sent > 0) {
+    state.digestSentAt = new Date().toISOString();
+    await saveDiarioMerged(state);
+  }
 }
 
 function printDigestPreview() {
@@ -1039,7 +1228,17 @@ async function scanCases(casesToScan) {
     const c = casesToScan[i];
     console.log(`[${i + 1}/${casesToScan.length}] Inspeccionando ${c.rit} en ${c.tribunal || 'Tribunal Civil'} (${c.code})...`);
 
-    const result = await checkPjudCase(c.rit, c.tribunal);
+    let result = await checkPjudCase(c.rit, c.tribunal);
+    // Fallo transitorio de red/servidor de la OJV: reintentar antes de darlo por no encontrado.
+    if (result.found === false && result.error && isTransientOjvError(result.error)) {
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        console.log(`  · Fallo transitorio de OJV (${result.error}); reintento ${attempt}/2...`);
+        await new Promise(r => setTimeout(r, 2500 * attempt));
+        const retry = await checkPjudCase(c.rit, c.tribunal);
+        if (retry.found || !retry.error) { result = retry; break; }
+        result = retry;
+      }
+    }
     console.log(`  · Resultado: ${result.found ? 'Encontrada' : 'No encontrada'} | Novedades hoy: ${result.hasNoveltiesToday ? 'SI' : 'NO'}`);
 
     if (result.found === false) {
@@ -1219,22 +1418,18 @@ async function main() {
     totalScanned += step.cases.length;
     totalNovelties += noveltiesFound.length;
 
-    // 4. Despacho de alertas para este horario (socio: su correo; general: dirección)
+    // 4. Sin correos intermedios: las novedades del pase se informan en el
+    // correo único diario que se despacha al cierre del último pase.
     if (isTestMode) {
       console.log(`[Vigilancia Nube] Modo prueba: correo de verificación con las ${scannedSummary.length} causas de ${label}...`);
       await sendEmailAlert(noveltiesFound, true, scannedSummary, NOTIFY_RECIPIENTS);
     } else if (noveltiesFound.length > 0) {
-      if (step.recipients.length === 0) {
-        console.log(`[Vigilancia Nube] ${label} sin correo registrado: alerta omitida (la novedad queda registrada en el portal).`);
-      } else {
-        console.log(`[Vigilancia Nube] Novedades en ${noveltiesFound.length} causa(s) de ${label}. Despachando notificación...`);
-        await sendEmailAlert(noveltiesFound, false, scannedSummary, step.recipients);
-      }
+      console.log(`[Vigilancia Nube] ${label}: ${noveltiesFound.length} novedad(es) del día; se informarán en el correo único diario.`);
     } else {
-      console.log(`[Vigilancia Nube] ${label}: barrido completado sin novedades urgentes del día.`);
+      console.log(`[Vigilancia Nube] ${label}: barrido completado sin novedades del día.`);
     }
 
-    // 5. Parte diario por horario (registro del pase y envío al cierre del último pase propio)
+    // 5. Registro del pase (el correo diario se envía una sola vez al cierre)
     await processDiario({
       schedule: step.schedule,
       passLabel: lateFallback ? null : step.label,
@@ -1243,8 +1438,13 @@ async function main() {
       noveltiesFound,
       passErrors,
       isTestRun: isTestMode || lateFallback,
+      sendDigest: false,
     }).catch(err => console.warn('[Vigilancia Nube] Aviso: no se pudo procesar el parte diario:', err.message));
   }
+
+  // 5b. Correo único diario (una vez al día, al cierre del último pase):
+  // pases ejecutados correctamente + causas con novedad de cada cartera.
+  await sendDailyDigests(schedules).catch(err => console.warn('[Vigilancia Nube] Aviso: no se pudo enviar el correo diario:', err.message));
 
   // 6. Actualizar CFG-VIGILANCIA con la bitácora del último pase
   const nowIso = new Date().toISOString();
@@ -1259,18 +1459,22 @@ async function main() {
     }
   };
 
-  await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-VIGILANCIA`, {
-    method: 'PATCH',
-    headers: supaHeaders(),
-    body: JSON.stringify({ detalle: JSON.stringify(cfgUpdate), updated_at: nowIso })
-  }).catch(() => {});
+  await upsertCaseRow('CFG-VIGILANCIA', JSON.stringify(cfgUpdate), { rit: 'CFG-VIG', tribunal: 'Sistema' });
 
   console.log('===========================================================');
   console.log('VIGILANCIA FINALIZADA CON EXITO');
   console.log('===========================================================');
 }
 
-main().catch(err => {
-  console.error('[Vigilancia Nube] Error fatal no capturado:', err);
-  process.exit(1);
-});
+// Solo ejecuta el ciclo completo cuando se invoca como script; permite
+// importar las utilidades del parte diario desde las pruebas sin disparar
+// escaneos ni correos.
+const isDirectRun = Boolean(process.argv[1]) && import.meta.url === pathToFileURL(process.argv[1]).href;
+if (isDirectRun) {
+  main().catch(err => {
+    console.error('[Vigilancia Nube] Error fatal no capturado:', err);
+    process.exit(1);
+  });
+}
+
+export { loadDiario, saveDiario, saveDiarioMerged, upsertCaseRow, DIARIO_CODE, isTransientOjvError, loadDigestConfigs, filterStateForRecipient };

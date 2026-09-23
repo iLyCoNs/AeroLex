@@ -748,6 +748,72 @@ module.exports = async (req, res) => {
       return res.status(200).json({ ok: true, recipients, updatedAt: nowIso });
     }
 
+    // ── Parte diario por usuario (CFG-DIGEST-<slug>) ──
+    // Activar/desactivar el correo único diario y elegir el destinatario
+    // desde AeroLex SaaS, en la sesión del propio usuario.
+    if (action === 'digest_config_get') {
+      const slug = String(url.searchParams.get('slug') || '').trim().toLowerCase();
+      const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=like.CFG-DIGEST*&select=code,detalle`, { headers: supaHeaders() });
+      const rows = resp.ok ? await resp.json() : [];
+      const configs = (Array.isArray(rows) ? rows : []).map((row) => {
+        let cfg = {};
+        try { cfg = JSON.parse(row.detalle || '{}'); } catch (_) {}
+        return { slug: String(row.code || '').replace(/^CFG-DIGEST-?/, ''), ...cfg };
+      });
+      if (slug) {
+        const mine = configs.find((c) => c.slug === slug) || null;
+        return res.status(200).json({ ok: true, config: mine });
+      }
+      return res.status(200).json({ ok: true, configs });
+    }
+
+    if (action === 'digest_config_set' && (req.method === 'POST' || req.method === 'PATCH')) {
+      const user = body.user || {};
+      const email = String(body.recipient || user.email || '').trim().toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail(res, 400, 'missing_valid_recipient');
+      const slug = String(user.slug || '').trim().toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
+      if (!slug) return fail(res, 400, 'missing_user_slug');
+
+      const code = `CFG-DIGEST-${slug}`;
+      const nowIso = new Date().toISOString();
+      const payload = {
+        enabled: body.enabled !== false,
+        email,
+        name: String(user.name || '').trim().slice(0, 120),
+        updatedAt: nowIso,
+        updatedBy: body.updatedBy || 'aerolex_saas'
+      };
+
+      const checkResp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(code)}`, { headers: supaHeaders() });
+      const exists = checkResp.ok && (await checkResp.json()).length > 0;
+      if (exists) {
+        await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(code)}`, {
+          method: 'PATCH',
+          headers: supaHeaders(),
+          body: JSON.stringify({ detalle: JSON.stringify(payload), updated_at: nowIso })
+        });
+      } else {
+        await fetch(`${SUPA_URL}/rest/v1/cases`, {
+          method: 'POST',
+          headers: supaHeaders(),
+          body: JSON.stringify({
+            code,
+            pin: '0000',
+            materia: 'Parte diario por usuario',
+            tribunal: 'Sistema AeroLex',
+            rit: 'DIGEST',
+            detalle: JSON.stringify(payload),
+            estado_actual: 0,
+            status: 'activo',
+            steps: []
+          })
+        });
+      }
+
+      return res.status(200).json({ ok: true, slug, enabled: payload.enabled, email, updatedAt: nowIso });
+    }
+
     // ── Ejecutar Barrido Inmediato de Todas las Causas Activas ──
     if (action === 'vigilancia_run' && req.method === 'POST') {
       const resp = await fetch(`${SUPA_URL}/rest/v1/cases?select=*&order=created_at.desc`, { headers: supaHeaders() });
