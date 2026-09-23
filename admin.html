@@ -716,11 +716,13 @@
             </div>
             <div>
                 <div class="font-semibold text-white text-[13px] leading-tight flex items-center gap-2">
-                    <span>Bóveda AeroLex</span>
+                    <span id="header-study-name">Bóveda AeroLex</span>
                     <span class="text-[9.5px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-300 font-mono font-semibold">PORTAL WEB</span>
                 </div>
                 <div class="text-[9.5px] text-slate-400 uppercase tracking-wider font-medium">Sincronización en Vivo con Bot Jurídico</div>
             </div>
+            <!-- Selector de estudio: cada estudio sincroniza sus causas con sus propias siglas -->
+            <div class="flex items-center gap-1 ml-1" id="study-selector" role="tablist" aria-label="Estudio jurídico"></div>
         </div>
 
         <!-- Estadísticas en vivo -->
@@ -1354,6 +1356,49 @@
     let currentEditingId = null;
     let hasUnsavedChanges = false;
     let statusFilter = 'all';
+
+// ── Estudios en la bóveda: cada uno con sus siglas de causa ──────────────
+const STUDIES = [
+    { prefix: 'ALX', name: 'AeroLex SaaS', label: 'AeroLex' },
+    { prefix: 'PS', name: 'Puentes & Sanchez', label: 'Puentes & Sanchez' },
+];
+let activeStudy = (localStorage.getItem('aerolex_study_prefix') || 'ALX').toUpperCase();
+let lastVigilanciaCauses = [];
+function refreshWatchedCausesForStudy() {
+    renderWatchedCausesTable(lastVigilanciaCauses);
+}
+function studyByPrefix(prefix) {
+    return STUDIES.find(s => s.prefix === prefix) || { prefix, name: prefix, label: prefix };
+}
+/** Siglas del código de una causa ('' para filas de sistema: WA/EV/CFG). */
+function codeStudy(code) {
+    const m = String(code || '').toUpperCase().match(/^([A-Z]{2,4})-/);
+    if (!m) return 'ALX';
+    const prefix = m[1];
+    if (prefix === 'WA' || prefix === 'EV' || prefix === 'CFG') return '';
+    return prefix;
+}
+function renderStudySelector() {
+    const host = document.getElementById('study-selector');
+    const header = document.getElementById('header-study-name');
+    if (header) header.textContent = `Bóveda ${studyByPrefix(activeStudy).name}`;
+    if (!host) return;
+    const present = new Set(Object.keys(casesDB).map(codeStudy).filter(Boolean));
+    const studies = STUDIES.filter(s => s.prefix === 'ALX' || present.has(s.prefix) || s.prefix === activeStudy);
+    host.innerHTML = studies.map(s => {
+        const active = s.prefix === activeStudy;
+        const count = Object.keys(casesDB).filter(id => codeStudy(id) === s.prefix).length;
+        return `<button type="button" role="tab" aria-selected="${active}" onclick="setActiveStudy('${s.prefix}')" title="${escapeHtml(s.name)}" class="px-2.5 py-1 rounded-full text-[10.5px] font-semibold border transition ${active ? 'bg-blue-600 text-white border-blue-500' : 'bg-[--panel-raised] text-slate-300 border-[--border] hover:border-blue-500/40'}">${escapeHtml(s.label)} <span class="font-mono opacity-80">${count}</span></button>`;
+    }).join('');
+}
+function setActiveStudy(prefix) {
+    activeStudy = String(prefix || 'ALX').toUpperCase();
+    localStorage.setItem('aerolex_study_prefix', activeStudy);
+    renderStudySelector();
+    renderSidebar();
+    renderStats();
+    if (typeof refreshWatchedCausesForStudy === 'function') refreshWatchedCausesForStudy();
+}
     let currentTab = 'resumen';
 
     function escapeHtml(str) {
@@ -2211,7 +2256,7 @@
     function renderSidebar(filterText = "") {
         const list = document.getElementById('cases-list');
         list.innerHTML = '';
-        let caseIds = Object.keys(casesDB).filter(id => !id.startsWith('WA-'));
+        let caseIds = Object.keys(casesDB).filter(id => !id.startsWith('WA-') && codeStudy(id) === activeStudy);
 
         if (statusFilter !== 'all') {
             caseIds = caseIds.filter(id => (casesDB[id].status || 'activo') === statusFilter);
@@ -2235,9 +2280,9 @@
         };
 
         function getCaseCorrelative(code) {
-            const m = String(code || '').match(/^ALX-(\d{4})-(\d+)$/i);
+            const m = String(code || '').match(/^([A-Z]{2,4})-(\d{4})-(\d+)$/i);
             if (m) {
-                return parseInt(m[1], 10) * 100000 + parseInt(m[2], 10);
+                return parseInt(m[2], 10) * 100000 + parseInt(m[3], 10);
             }
             return 0;
         }
@@ -2368,7 +2413,7 @@
     function renderStats() {
         const legalCases = Object.values(casesDB).filter(c => {
             const code = String(c.code || '').toUpperCase();
-            return !code.startsWith('WA-') && !code.startsWith('EV-');
+            return !code.startsWith('WA-') && !code.startsWith('EV-') && codeStudy(code) === activeStudy;
         });
         const waContacts = Object.values(casesDB).filter(c => String(c.code || '').toUpperCase().startsWith('WA-'));
         const n = s => legalCases.filter(c => (c.status || 'activo') === s).length;
@@ -2392,6 +2437,7 @@
             waBadge.innerText = waContacts.length;
             waBadge.classList.toggle('hidden', waContacts.length === 0);
         }
+        renderStudySelector();
     }
 
     function loadCase(id) {
@@ -2883,7 +2929,7 @@
                         <button onclick="closeModal()" class="btn btn-secondary !p-1.5"><i class="fas fa-xmark text-xs"></i></button>
                     </div>
                     <div class="px-4 py-2.5 border-b border-[--border] flex flex-wrap gap-2 items-center shrink-0">
-                        <input type="text" id="wa-filter-code" value="${filter}" placeholder="Filtrar por código ALX..." class="input-base !py-1 !text-xs !w-44">
+                        <input type="text" id="wa-filter-code" value="${filter}" placeholder="Filtrar por código..." class="input-base !py-1 !text-xs !w-44">
                         <button onclick="refreshWaLog()" class="btn btn-secondary !py-1 !px-2.5 !text-xs"><i class="fas fa-rotate-right"></i> Actualizar</button>
                         <button onclick="exportWaCsv(_waContacts)" class="btn btn-secondary !py-1 !px-2.5 !text-xs"><i class="fas fa-file-csv text-emerald-400"></i> Exportar CSV</button>
                         <span id="wa-count-label" class="text-[10.5px] text-slate-400 ml-auto"></span>
@@ -3630,7 +3676,8 @@
                 if (chip) { chip.textContent = 'PAUSADO (WORKFLOW DETENIDO)'; chip.className = 'px-1.5 py-0.5 rounded text-[9.5px] font-mono font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/25'; }
             }
 
-            renderWatchedCausesTable(data.causes || []);
+            lastVigilanciaCauses = data.causes || [];
+            renderWatchedCausesTable(lastVigilanciaCauses);
             updateVigilanciaBadge();
         } finally {
             if (spin) spin.classList.remove('fa-spin');
@@ -3640,6 +3687,8 @@
     function renderWatchedCausesTable(causes) {
         const zone = document.getElementById('watched-causes-table-zone');
         if (!zone) return;
+        // Solo las causas del estudio activo (cada estudio con sus siglas)
+        causes = (causes || []).filter(c => codeStudy(c.code) === activeStudy);
 
         if (!causes || causes.length === 0) {
             zone.innerHTML = `

@@ -36,7 +36,8 @@ function pinEqual(stored, supplied) {
   return crypto.timingSafeEqual(a, b);
 }
 
-const CASE_CODE_RE = /^ALX-\d{4}-\d{2,}$/i;
+// Cada estudio usa sus propias siglas (ALX, PS, etc.); el portal resuelve por código.
+const CASE_CODE_RE = /^[A-Z]{2,4}-\d{4}-\d{2,}$/i;
 
 function supaHeaders(extra = {}) {
   return {
