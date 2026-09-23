@@ -1384,7 +1384,7 @@ function renderStudySelector() {
     if (header) header.textContent = `Bóveda ${studyByPrefix(activeStudy).name}`;
     if (!host) return;
     const present = new Set(Object.keys(casesDB).map(codeStudy).filter(Boolean));
-    const studies = STUDIES.filter(s => s.prefix === 'ALX' || present.has(s.prefix) || s.prefix === activeStudy);
+    const studies = STUDIES;
     host.innerHTML = studies.map(s => {
         const active = s.prefix === activeStudy;
         const count = Object.keys(casesDB).filter(id => codeStudy(id) === s.prefix).length;
