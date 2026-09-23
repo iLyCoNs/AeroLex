@@ -9,7 +9,10 @@ function authorized(value, expected) {
 }
 function view(row) {
   const now = Date.now();
-  return { id: row.id, email: row.email, name: row.display_name, status: row.status, expiresAt: row.expires_at,
+  // Las apps validan con un esquema ISO estricto que solo acepta el sufijo Z;
+  // Supabase devuelve "…+00:00" con microsegundos y la activación fallaba al
+  // leer la respuesta. Se normaliza a UTC con toISOString().
+  return { id: row.id, email: row.email, name: row.display_name, status: row.status, expiresAt: new Date(row.expires_at).toISOString(),
     revision: Number(row.revision), serverTime: new Date(now).toISOString(),
     offlineUntil: new Date(Math.min(now + 86400000, Date.parse(row.expires_at))).toISOString() };
 }
