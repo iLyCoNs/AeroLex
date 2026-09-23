@@ -1160,8 +1160,14 @@ async function sendDailyDigests(lawyerSchedules = []) {
   }
   if (!state || state.date !== today) return;
   const expected = passesForChileDayList(PASSES, today);
-  const last = expected[expected.length - 1];
-  if (!last || now.getTime() < last.msUtc || state.digestSentAt) return;
+  // Se espera al último pase real del día entre el horario general y los
+  // horarios personales, para que ninguna cartera quede fuera del correo.
+  const lastMs = Math.max(
+    0,
+    ...expected.map(p => p.msUtc),
+    ...lawyerSchedules.flatMap(s => passesForChileDayList(s.passes || [], today).map(p => p.msUtc)),
+  );
+  if (!lastMs || now.getTime() < lastMs || state.digestSentAt) return;
 
   const digestConfigs = await loadDigestConfigs();
   const recipients = [];
