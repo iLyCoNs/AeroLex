@@ -128,6 +128,12 @@ check(
 const all = filterStateForRecipient(dayState, '');
 check('filterStateForRecipient sin nombre devuelve toda la cartera', all.passes[0].cases.length === 2);
 
+// 11. Filtro por siglas del estudio (cada estudio con sus propias causas).
+const onlyPs = filterStateForRecipient(dayState, null, 'PS');
+check('filtro por siglas deja fuera causas de otro estudio', onlyPs.passes[0].cases.length === 0);
+const onlyAlx = filterStateForRecipient(dayState, null, 'ALX');
+check('filtro por siglas conserva las causas del estudio', onlyAlx.passes[0].cases.length === 2);
+
 const failed = results.filter(r => !r.ok);
 console.log(`\n${results.length - failed.length}/${results.length} pruebas del parte diario en verde.`);
 process.exit(failed.length ? 1 : 0);

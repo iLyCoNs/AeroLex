@@ -692,7 +692,9 @@ module.exports = async (req, res) => {
 
     // ── Configuración del correo de reportes (editable desde AeroLex SaaS) ──
     if (action === 'alerts_config_get') {
-      const r = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-CORREO`, { headers: supaHeaders() });
+      const study = String(body.study || url.searchParams.get('study') || '').trim().toUpperCase();
+      const code = /^[A-Z]{2,4}$/.test(study) ? `CFG-CORREO-${study}` : 'CFG-CORREO';
+      const r = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(code)}`, { headers: supaHeaders() });
       const rows = r.ok ? await r.json() : [];
       let recipients = [];
       if (rows.length > 0 && rows[0].detalle) {
@@ -701,7 +703,7 @@ module.exports = async (req, res) => {
           if (Array.isArray(cfg.recipients)) recipients = cfg.recipients;
         } catch (_) {}
       }
-      return res.status(200).json({ ok: true, recipients });
+      return res.status(200).json({ ok: true, study: study || null, recipients });
     }
 
     if (action === 'alerts_config_set' && (req.method === 'POST' || req.method === 'PATCH')) {
@@ -711,18 +713,22 @@ module.exports = async (req, res) => {
         .filter((r) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r));
       if (recipients.length === 0) return fail(res, 400, 'missing_valid_recipient');
 
+      // Cada estudio guarda sus propios destinatarios: CFG-CORREO-<SIGLAS>.
+      const study = String(body.study || '').trim().toUpperCase();
+      const code = /^[A-Z]{2,4}$/.test(study) ? `CFG-CORREO-${study}` : 'CFG-CORREO';
       const nowIso = new Date().toISOString();
       const cfgPayload = {
         recipients,
+        study: study || null,
         updatedAt: nowIso,
         updatedBy: body.updatedBy || 'aerolex_saas'
       };
 
-      const checkResp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-CORREO`, { headers: supaHeaders() });
+      const checkResp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(code)}`, { headers: supaHeaders() });
       const exists = checkResp.ok && (await checkResp.json()).length > 0;
 
       if (exists) {
-        await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-CORREO`, {
+        await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(code)}`, {
           method: 'PATCH',
           headers: supaHeaders(),
           body: JSON.stringify({ detalle: JSON.stringify(cfgPayload), updated_at: nowIso })
@@ -732,7 +738,7 @@ module.exports = async (req, res) => {
           method: 'POST',
           headers: supaHeaders(),
           body: JSON.stringify({
-            code: 'CFG-CORREO',
+            code,
             pin: '0000',
             materia: 'Correo de reportes de vigilancia',
             tribunal: 'Sistema AeroLex',
@@ -745,7 +751,7 @@ module.exports = async (req, res) => {
         });
       }
 
-      return res.status(200).json({ ok: true, recipients, updatedAt: nowIso });
+      return res.status(200).json({ ok: true, study: study || null, recipients, updatedAt: nowIso });
     }
 
     // ── Parte diario por usuario (CFG-DIGEST-<slug>) ──

@@ -186,15 +186,43 @@ async function loadDigestConfigs() {
   return configs;
 }
 
-/** Recorta el estado del día a las causas de un abogado (sin nombre = todas). */
-function filterStateForRecipient(state, lawyerName) {
+/** Recorta el estado del día a las causas de un abogado y/o de un estudio
+ * (sin nombre ni siglas = todas). Cada estudio usa sus propias siglas. */
+function filterStateForRecipient(state, lawyerName, studyPrefix) {
   const key = lawyerKey(lawyerName);
-  if (!key) return state;
+  const prefix = String(studyPrefix || '').trim().toUpperCase();
+  if (!key && !prefix) return state;
   const passes = (state.passes || []).map(p => {
-    const mine = (p.cases || []).filter(c => caseMatchesSchedule(c, { name: lawyerName }));
+    let mine = p.cases || [];
+    if (prefix) mine = mine.filter(c => String(c.code || '').toUpperCase().startsWith(`${prefix}-`));
+    if (key) mine = mine.filter(c => caseMatchesSchedule(c, { name: lawyerName }));
     return { ...p, total: mine.length, novelties: mine.filter(c => c.hasNoveltiesToday).length, cases: mine };
   });
   return { ...state, passes };
+}
+
+// Destinatarios por estudio: filas CFG-CORREO-<SIGLAS> (editables desde cada
+// app). El CFG-CORREO general queda para el estudio del portal (AeroLex).
+async function loadStudyRecipients() {
+  const map = new Map();
+  try {
+    const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=like.CFG-CORREO-*&select=code,detalle`, { headers: supaHeaders() });
+    const rows = resp.ok ? await resp.json() : [];
+    for (const row of Array.isArray(rows) ? rows : []) {
+      const prefix = String(row.code || '').replace(/^CFG-CORREO-/, '').toUpperCase();
+      if (!/^[A-Z]{2,4}$/.test(prefix)) continue;
+      try {
+        const cfg = JSON.parse(row.detalle || '{}');
+        const emails = (Array.isArray(cfg.recipients) ? cfg.recipients : [])
+          .map(e => String(e || '').trim().toLowerCase())
+          .filter(e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
+        if (emails.length) map.set(prefix, emails);
+      } catch (_) {}
+    }
+  } catch (err) {
+    console.warn('[Vigilancia Nube] No se pudieron leer los destinatarios por estudio:', err.message);
+  }
+  return map;
 }
 
 function passesForChileDayList(passList, dayKey) {
@@ -1170,20 +1198,26 @@ async function sendDailyDigests(lawyerSchedules = []) {
   if (!lastMs || now.getTime() < lastMs || state.digestSentAt) return;
 
   const digestConfigs = await loadDigestConfigs();
+  const studyRecipients = await loadStudyRecipients();
   const recipients = [];
   const seen = new Set();
-  const addRecipient = (email, name, causesFor) => {
+  const addRecipient = (email, name, causesFor, studyPrefix) => {
     const key = String(email || '').trim().toLowerCase();
     if (!key || seen.has(key)) return;
     seen.add(key);
-    recipients.push({ email: key, name: name || '', causesFor: causesFor || null });
+    recipients.push({ email: key, name: name || '', causesFor: causesFor || null, studyPrefix: studyPrefix || null });
   };
-  for (const email of NOTIFY_RECIPIENTS) addRecipient(email, 'Dirección del despacho', null);
-  for (const cfg of digestConfigs.filter(c => c.enabled)) addRecipient(cfg.email, cfg.name, cfg.name || null);
+  // El correo general (CFG-CORREO) cubre el estudio del portal (AeroLex);
+  // cada otro estudio define sus destinatarios en CFG-CORREO-<SIGLAS>.
+  for (const email of NOTIFY_RECIPIENTS) addRecipient(email, 'Dirección del despacho', null, 'ALX');
+  for (const [prefix, emails] of studyRecipients) {
+    for (const email of emails) addRecipient(email, `Estudio ${prefix}`, null, prefix);
+  }
+  for (const cfg of digestConfigs.filter(c => c.enabled)) addRecipient(cfg.email, cfg.name, cfg.name || null, null);
   for (const sched of lawyerSchedules) {
     if (!sched.email || sched.general) continue;
     if (digestConfigs.some(c => c.slug === sched.slug)) continue; // su correo lo controla el botón de la app
-    addRecipient(sched.email, sched.name, sched.name || null);
+    addRecipient(sched.email, sched.name, sched.name || null, null);
   }
   if (!recipients.length) {
     console.log('[Vigilancia Nube] Correo diario: sin destinatarios configurados.');
@@ -1192,7 +1226,7 @@ async function sendDailyDigests(lawyerSchedules = []) {
 
   let sent = 0;
   for (const recipient of recipients) {
-    const filtered = filterStateForRecipient(state, recipient.causesFor);
+    const filtered = filterStateForRecipient(state, recipient.causesFor, recipient.studyPrefix);
     const digest = buildDigest(filtered, { passList: expected });
     const ok = await sendMail(digest.subject, digest.plainText, digest.html, [recipient.email]);
     if (ok) {
