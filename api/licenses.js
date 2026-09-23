@@ -2,7 +2,10 @@ const { createHash, randomBytes, timingSafeEqual } = require('node:crypto');
 const hash = value => createHash('sha256').update(value).digest('hex');
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 function authorized(value, expected) {
-  return typeof value === 'string' && typeof expected === 'string' && expected.length > 15 && timingSafeEqual(Buffer.from(hash(value)), Buffer.from(hash(expected)));
+  // La llave configurada en la app y usada en /api/admin tiene 15 caracteres;
+  // exigir "más de 15" dejaba este panel inaccesible mientras /api/admin sí
+  // aceptaba la misma llave. Se mantiene un piso mínimo de 12.
+  return typeof value === 'string' && typeof expected === 'string' && expected.length >= 12 && timingSafeEqual(Buffer.from(hash(value)), Buffer.from(hash(expected)));
 }
 function view(row) {
   const now = Date.now();
