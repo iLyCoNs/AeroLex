@@ -833,6 +833,15 @@ async function resolveRecipients() {
 // ── Parte diario: registro de pases y digest ────────────────────────────────
 const DIARIO_CODE = 'CFG-DIARIO';
 
+/** Columnas minimas que exige el portal para crear una fila CFG-*. */
+const CFG_ROW_DEFAULTS = {
+  'CFG-DIARIO': { rit: 'CFG-DIA', materia: 'Parte diario de vigilancia', tribunal: 'Sistema' },
+  'CFG-VIGILANCIA': { rit: 'VIG-247', materia: 'Configuracion Sistema Vigilancia 24/7', tribunal: 'Sistema AeroLex' }
+};
+
+/** Escrituras fallidas al portal en esta corrida (si hay >0, la corrida falla). */
+let portalWriteFailures = 0;
+
 async function loadDiario() {
   const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${DIARIO_CODE}&select=detalle&order=updated_at.desc&limit=1`, { headers: supaHeaders() });
   if (!resp.ok) throw new Error(`No se pudo leer el parte diario (HTTP ${resp.status})`);
@@ -853,29 +862,47 @@ async function loadDiario() {
  */
 async function upsertCaseRow(code, detalle, extra = {}) {
   const nowIso = new Date().toISOString();
-  const patch = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(code)}`, {
-    method: 'PATCH',
-    headers: supaHeaders({ 'Prefer': 'return=representation' }),
-    body: JSON.stringify({ detalle, updated_at: nowIso })
-  }).catch(() => null);
-  if (patch && patch.ok) {
-    const updated = await patch.json().catch(() => []);
-    if (Array.isArray(updated) && updated.length > 0) return true;
+  const defaults = CFG_ROW_DEFAULTS[code] || { rit: 'CFG-DIA', materia: 'Configuracion AeroLex', tribunal: 'Sistema' };
+  let lastError = '';
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const patch = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(code)}`, {
+      method: 'PATCH',
+      headers: supaHeaders({ 'Prefer': 'return=representation' }),
+      body: JSON.stringify({ detalle, updated_at: nowIso })
+    }).catch((err) => ({ ok: false, status: 0, text: async () => String(err && err.message || err) }));
+    if (patch.ok) {
+      const updated = await patch.json().catch(() => []);
+      if (Array.isArray(updated) && updated.length > 0) return true;
+    } else {
+      lastError = `PATCH HTTP ${patch.status} ${String(await patch.text().catch(() => '')).slice(0, 200)}`;
+    }
+    // La fila no existia (o el PATCH no la alcanzo): se inserta con TODAS las
+    // columnas que usa el portal; sin ellas PostgREST rechaza el INSERT por
+    // columnas NOT NULL y la fila nunca se creaba (parte diario sin enviar).
+    const insert = await fetch(`${SUPA_URL}/rest/v1/cases`, {
+      method: 'POST',
+      headers: supaHeaders({ 'Prefer': 'return=minimal' }),
+      body: JSON.stringify({
+        code,
+        pin: '0000',
+        materia: defaults.materia,
+        tribunal: extra.tribunal || defaults.tribunal,
+        rit: extra.rit || defaults.rit,
+        detalle,
+        estado_actual: 0,
+        status: 'activo',
+        steps: [],
+        triage: [],
+        created_at: nowIso,
+        updated_at: nowIso
+      })
+    }).catch((err) => ({ ok: false, status: 0, text: async () => String(err && err.message || err) }));
+    if (insert.ok) return true;
+    lastError = `INSERT HTTP ${insert.status} ${String(await insert.text().catch(() => '')).slice(0, 200)}`;
+    if (attempt < 3) await new Promise((resolve) => setTimeout(resolve, attempt * 1500));
   }
-  const insert = await fetch(`${SUPA_URL}/rest/v1/cases`, {
-    method: 'POST',
-    headers: supaHeaders({ 'Prefer': 'return=minimal' }),
-    body: JSON.stringify({
-      code,
-      rit: extra.rit || 'CFG-DIA',
-      tribunal: extra.tribunal || 'Sistema',
-      status: 'activo',
-      detalle,
-      updated_at: nowIso
-    })
-  }).catch(() => null);
-  if (insert && insert.ok) return true;
-  console.warn(`  [Aviso] No se pudo guardar ${code} en el portal.`);
+  portalWriteFailures += 1;
+  console.warn(`  [Aviso] No se pudo guardar ${code} en el portal${lastError ? ` (${lastError})` : ''}.`);
   return false;
 }
 
@@ -1126,7 +1153,7 @@ async function processDiario({ schedule = null, passLabel = null, watchedCases, 
   const lastMs = last ? last.msUtc : 0;
   const due = expected.length > 0 && now.getTime() >= lastMs && !slot.digestSentAt;
 
-  if (isDigestNow && !isTestRun && !isLawyer) {
+  if (isDigestNow && !isLawyer) {
     // Vista de prueba con los datos del escaneo recién realizado; no altera
     // el registro oficial de pases.
     const previewState = {
@@ -1186,7 +1213,10 @@ async function sendDailyDigests(lawyerSchedules = []) {
     console.warn(`[Vigilancia Nube] Correo diario: no se pudo leer el registro (${err.message}).`);
     return;
   }
-  if (!state || state.date !== today) return;
+  if (!state || state.date !== today) {
+    console.warn('[Vigilancia Nube] Correo diario: sin registro CFG-DIARIO del dia en el portal; no hay nada que consolidar en esta corrida.');
+    return;
+  }
   const expected = passesForChileDayList(PASSES, today);
   // Se espera al último pase real del día entre el horario general y los
   // horarios personales, para que ninguna cartera quede fuera del correo.
@@ -1237,6 +1267,9 @@ async function sendDailyDigests(lawyerSchedules = []) {
   if (sent > 0) {
     state.digestSentAt = new Date().toISOString();
     await saveDiarioMerged(state);
+  } else {
+    console.log(`::error::El parte diario no se pudo despachar: 0 de ${recipients.length} correo(s) enviados. Revisa GMAIL_APP_PASS / RESEND_API_KEY en los secretos del repositorio.`);
+    process.exitCode = 1;
   }
 }
 
@@ -1500,6 +1533,11 @@ async function main() {
   };
 
   await upsertCaseRow('CFG-VIGILANCIA', JSON.stringify(cfgUpdate), { rit: 'CFG-VIG', tribunal: 'Sistema' });
+
+  if (portalWriteFailures > 0) {
+    console.log(`::error::No se pudieron guardar ${portalWriteFailures} registro(s) CFG-* en el portal; el parte diario puede no enviarse. Revisa el detalle en las lineas [Aviso] de esta corrida.`);
+    process.exitCode = 1;
+  }
 
   console.log('===========================================================');
   console.log('VIGILANCIA FINALIZADA CON EXITO');
