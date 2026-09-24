@@ -370,15 +370,35 @@ function isAppellateCourt(court) {
   return /corte.*apelaciones|c\.?a\.?\s*|corte\s*de\s*apelaciones/i.test(court);
 }
 
+function normalizeCourtText(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[º°]/g, "")
+    .replace(/\bde\b/g, " ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
 function resolveCourt(courtId) {
-  if (!courtId) return KNOWN_COURTS["1_civil_puerto_montt"];
+  if (!courtId) return null;
   const direct = KNOWN_COURTS[courtId];
   if (direct) return direct;
   const lower = courtId.toLowerCase();
-  for (const [key, val] of Object.entries(KNOWN_COURTS)) {
-    if (lower.includes(key) || val.name.toLowerCase().includes(lower)) return val;
+  for (const [, val] of Object.entries(KNOWN_COURTS)) {
+    if (lower.includes(val.name.toLowerCase()) || val.name.toLowerCase().includes(lower)) return val;
   }
-  return KNOWN_COURTS["1_civil_puerto_montt"];
+  // Emparejamiento normalizado: "4 Juzgado de Familia Santiago" calza con
+  // "4º Juzgado de Familia de Santiago" (ordinales, "de" y puntuacion aparte).
+  const target = normalizeCourtText(courtId);
+  for (const [, val] of Object.entries(KNOWN_COURTS)) {
+    const candidate = normalizeCourtText(val.name);
+    if (!target || !candidate) continue;
+    if (candidate.includes(target) || target.includes(candidate)) return val;
+  }
+  // Sin fallback silencioso: un tribunal no reconocido se informa como tal en
+  // vez de consultar en un tribunal equivocado (homonimia de ROL).
+  return null;
 }
 
 async function syncPartnerCausesToSupabase() {
@@ -417,6 +437,68 @@ async function syncPartnerCausesToSupabase() {
   }
 }
 
+const OJV_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36";
+
+/** Sesion de invitado oficial de la OJV (misma via que usa la aplicacion). */
+async function getOjvGuestSession(timeoutMs = 20000) {
+  try {
+    const res = await fetch("https://oficinajudicialvirtual.pjud.cl/includes/sesion-invitado.php", {
+      method: "POST",
+      headers: { "User-Agent": OJV_USER_AGENT, "Content-Type": "application/x-www-form-urlencoded" },
+      body: "nombreAcceso=CC",
+      signal: AbortSignal.timeout(timeoutMs),
+      redirect: "manual",
+    });
+    const raw = typeof res.headers.getSetCookie === "function"
+      ? res.headers.getSetCookie()
+      : [res.headers.get("set-cookie") || ""];
+    return raw.map((c) => String(c).split(";")[0]).filter(Boolean).join("; ");
+  } catch (_) {
+    return "";
+  }
+}
+
+/** Filas del listado de Corte de Apelaciones (libro, caratula, estado). */
+function parseAppealRows(html) {
+  const rows = [];
+  const trs = html.match(/<tr[\s\S]*?<\/tr>/gi) || [];
+  for (const tr of trs) {
+    const tds = (tr.match(/<td[\s\S]*?<\/td>/gi) || []).map((t) =>
+      t.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim()
+    );
+    if (tds.length < 5) continue;
+    const rolCompleto = tds[1] || "";
+    if (!/\d+-\d{4}/.test(rolCompleto)) continue;
+    const dash = rolCompleto.indexOf("-");
+    rows.push({
+      rolCompleto,
+      libro: dash !== -1 ? rolCompleto.slice(0, dash).trim() : "General",
+      corte: tds[2] || "",
+      caratula: tds[3] || "",
+      fechaIngreso: tds[4] || "",
+      estado: tds[5] || "",
+      ubicacion: tds[7] || tds[6] || "",
+    });
+  }
+  return rows;
+}
+
+/** El libro del listado de Corte debe calzar con el tipo del RIT (C=Civil,
+ * P=Proteccion, F/Z=Familia, L/T=Laboral, S=Sumario). */
+function bookMatchesTipo(libro, tipo) {
+  const l = String(libro || "").toLowerCase();
+  switch (String(tipo || "").toUpperCase()) {
+    case "C": return /civil/.test(l);
+    case "P": return /protecc/.test(l);
+    case "F": case "Z": return /famil/.test(l);
+    case "L": case "T": return /laboral/.test(l);
+    case "S": return /sumar/.test(l) || /civil/.test(l);
+    case "M": return /menor/.test(l);
+    case "O": return /laboral/.test(l) || /cobranza/.test(l);
+    default: return false;
+  }
+}
+
 async function checkPjudCase(rit, courtId) {
   const parsed = parseRit(rit);
   if (!parsed) return { found: false, error: "Formato de RIT inválido" };
@@ -426,14 +508,10 @@ async function checkPjudCase(rit, courtId) {
   const checkedTime = new Date().toLocaleTimeString("es-CL", { timeZone: "America/Santiago", hour: "2-digit", minute: "2-digit" });
 
   try {
-    const sessionRes = await fetch("https://oficinajudicialvirtual.pjud.cl/indexN.php", {
-      headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" },
-      signal: AbortSignal.timeout(20000),
-    });
-    const setCookie = sessionRes.headers.get("set-cookie") || "";
-    const cookies = setCookie.split(",").map(c => c.split(";")[0].trim()).join("; ");
+    // Sesion de invitado oficial: sin ella la OJV responde listados vacios.
+    const cookies = await getOjvGuestSession();
 
-    // Rama 1: Corte de Apelaciones
+    // Rama 1: Corte de Apelaciones (listado oficial de la Corte)
     if (isAppellateCourt(courtId)) {
       const corteCode = /santiago/i.test(courtId) ? "90" : /san miguel/i.test(courtId) ? "91" : /valparaiso/i.test(courtId) ? "30" : /concepcion/i.test(courtId) ? "50" : "56"; // Puerto Montt default
       const queryBody = new URLSearchParams({
@@ -459,7 +537,7 @@ async function checkPjudCase(rit, courtId) {
       const queryRes = await fetch("https://oficinajudicialvirtual.pjud.cl/ADIR_871/apelaciones/consultaRitApelaciones.php", {
         method: "POST",
         headers: {
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "User-Agent": OJV_USER_AGENT,
           "Referer": "https://oficinajudicialvirtual.pjud.cl/indexN.php",
           "Content-Type": "application/x-www-form-urlencoded",
           "Cookie": cookies,
@@ -470,9 +548,10 @@ async function checkPjudCase(rit, courtId) {
 
       if (!queryRes.ok) throw new Error(`PJUD Corte HTTP ${queryRes.status}`);
       const html = await queryRes.text();
-      const isNotFound = html.includes("No se han encontrado resultados") || !html.includes("tr-hover");
+      const rows = parseAppealRows(html);
 
-      if (isNotFound) {
+      if (rows.length === 0) {
+        const reserved = /reservad/i.test(html);
         return {
           found: false,
           docket: `${parsed.tipo}-${parsed.rol}-${parsed.era}`,
@@ -480,84 +559,64 @@ async function checkPjudCase(rit, courtId) {
           checkedAt, checkedTime, checkedDate,
           resolutions: [],
           hasNoveltiesToday: false,
+          reserved,
+          error: reserved ? "Reserva judicial (no se muestra en la consulta unificada)" : "Sin resultados en OJV",
         };
       }
 
-      // Extraer causas del listado de Corte
-      const trs = html.match(/<tr[\s\S]*?<\/tr>/gi) || [];
-      let matchedRow = null;
-      for (const tr of trs) {
-        if (!tr.includes("<td")) continue;
-        const tds = [...tr.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map(m => m[1].replace(/<[^>]+>/g, "").trim());
-        if (tds.length >= 6) {
-          const rowRol = tds[1] || "";
-          const rowCaratula = tds[3] || "";
-          const rowFecha = tds[4] || "";
-          const rowEstado = tds[5] || "";
-          const rowLibro = rowRol.split("-")[0] || "";
-
-          // Si parsed.tipo no es "ROL", preferir coincidencia de libro
-          if (parsed.tipo !== "ROL" && rowLibro.toUpperCase().includes(parsed.tipo)) {
-            matchedRow = { rolCompleto: rowRol, caratula: rowCaratula, fecha: rowFecha, estado: rowEstado, libro: rowLibro };
-            break;
-          }
-          if (!matchedRow) {
-            matchedRow = { rolCompleto: rowRol, caratula: rowCaratula, fecha: rowFecha, estado: rowEstado, libro: rowLibro };
-          }
-        }
-      }
-
-      if (!matchedRow) {
-        return {
-          found: false,
-          docket: `${parsed.tipo}-${parsed.rol}-${parsed.era}`,
-          court: courtId || "Corte de Apelaciones de Puerto Montt",
-          checkedAt, checkedTime, checkedDate,
-          resolutions: [],
-          hasNoveltiesToday: false,
-        };
-      }
-
-      const hasNoveltiesToday = (matchedRow.fecha === checkedDate);
-      const resolutions = [{
-        id: `res-${crypto.randomUUID().slice(0, 8)}`,
-        date: matchedRow.fecha || checkedDate,
-        time: checkedTime,
-        court: courtId || "Corte de Apelaciones de Puerto Montt",
-        docket: matchedRow.rolCompleto,
-        caratula: matchedRow.caratula || "Causa en Corte",
-        type: "Trámite / Estado de Alzada",
-        summary: `Causa radicada en ${courtId}. Libro: ${matchedRow.libro}. Estado: ${matchedRow.estado}. Carátula: ${matchedRow.caratula}.`,
-        checkedAt,
-      }];
+      // Seleccion: preferir el libro que calza con el tipo del RIT; si no, la
+      // primera fila con caratula visible; si todas estan censuradas, la primera.
+      const row = rows.find((r) => bookMatchesTipo(r.libro, parsed.tipo))
+        || rows.find((r) => r.caratula && r.caratula !== "-/-")
+        || rows[0];
+      const censored = !row.caratula || row.caratula === "-/-";
 
       return {
         found: true,
-        docket: matchedRow.rolCompleto,
-        court: courtId || "Corte de Apelaciones de Puerto Montt",
-        caratula: matchedRow.caratula,
-        entryDate: matchedRow.fecha,
+        docket: row.rolCompleto,
+        court: `Corte de Apelaciones de Puerto Montt (Libro ${row.libro})`,
+        caratula: censored ? "-/-" : row.caratula,
+        estado: row.estado,
+        ubicacion: row.ubicacion,
+        entryDate: row.fechaIngreso,
         checkedAt, checkedTime, checkedDate,
-        resolutions,
-        hasNoveltiesToday,
-        lastMovementDate: matchedRow.fecha || checkedDate,
+        // Sin movimientos fabricados: el listado de Corte no trae la bitacora;
+        // se informa solo lo que la OJV muestra (libro, caratula, estado, fecha).
+        resolutions: [],
+        hasNoveltiesToday: false,
+        lastMovementDate: row.fechaIngreso || checkedDate,
+        reserved: censored,
+        error: censored ? "Reserva judicial (Acta 44-2022): datos censurados en la consulta publica" : null,
+        alternatives: rows.filter((r) => r !== row).map((r) => `${r.libro} ${r.caratula || "-/-"}`),
       };
     }
 
-    // Rama 2: Tribunales de Primera Instancia (Civil, Familia, Laboral)
+    // Rama 2: Primera instancia (consulta unificada oficial civil)
     const courtInfo = resolveCourt(courtId);
+    if (!courtInfo) {
+      return {
+        found: false,
+        docket: `${parsed.tipo}-${parsed.rol}-${parsed.era}`,
+        court: courtId || "(sin tribunal)",
+        checkedAt, checkedTime, checkedDate,
+        resolutions: [],
+        hasNoveltiesToday: false,
+        error: "Tribunal no reconocido en el catálogo — revisa el tribunal de la ficha de la causa",
+      };
+    }
+    const tipoCausa = parsed.tipo === "ROL" ? "C" : parsed.tipo;
     const queryBody = new URLSearchParams({
-      conTipoCausa: parsed.tipo,
+      conTipoCausa: tipoCausa,
       conRolCausa: parsed.rol,
       conEraCausa: parsed.era,
       conTribunal: courtInfo.tribunal,
       conCorte: courtInfo.corte,
     });
 
-    const queryRes = await fetch("https://oficinajudicialvirtual.pjud.cl/ADIR_871/tribunales/consultaRitTribunales.php", {
+    const queryRes = await fetch("https://oficinajudicialvirtual.pjud.cl/ADIR_871/civil/consultaRitCivil.php", {
       method: "POST",
       headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "User-Agent": OJV_USER_AGENT,
         "Referer": "https://oficinajudicialvirtual.pjud.cl/indexN.php",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": cookies,
@@ -568,9 +627,9 @@ async function checkPjudCase(rit, courtId) {
 
     if (!queryRes.ok) throw new Error(`PJUD HTTP ${queryRes.status}`);
     const html = await queryRes.text();
-    const isNotFound = html.includes("No se han encontrado resultados");
 
-    if (isNotFound) {
+    if (html.includes("No se han encontrado resultados")) {
+      const reserved = /reservad/i.test(html);
       return {
         found: false,
         docket: `${parsed.tipo}-${parsed.rol}-${parsed.era}`,
@@ -578,11 +637,15 @@ async function checkPjudCase(rit, courtId) {
         checkedAt, checkedTime, checkedDate,
         resolutions: [],
         hasNoveltiesToday: false,
+        reserved,
+        error: reserved ? "Reserva judicial (no se muestra en la consulta unificada)" : "Sin resultados en OJV",
       };
     }
 
-    const tdMatches = [...html.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map(m => m[1].replace(/<[^>]+>/g, "").trim());
-    let rolEncontrado = `${parsed.tipo}-${parsed.rol}-${parsed.era}`;
+    const tdMatches = [...html.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map(m =>
+      m[1].replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim()
+    );
+    let rolEncontrado = "";
     let fechaIngreso = "";
     let caratula = "";
     let tribunalOficial = courtInfo.name;
@@ -598,19 +661,23 @@ async function checkPjudCase(rit, courtId) {
       }
     }
 
-    const hasNoveltiesToday = (fechaIngreso === checkedDate);
-    const resolutions = [{
-      id: `res-${crypto.randomUUID().slice(0, 8)}`,
-      date: fechaIngreso || checkedDate,
-      time: checkedTime,
-      court: tribunalOficial,
-      docket: rolEncontrado,
-      caratula: caratula || "Causa Activa PJUD",
-      type: "Resolución Judicial / Ingreso",
-      summary: `Causa radicada en ${tribunalOficial}. Carátula: ${caratula || "En trámite"}.`,
-      checkedAt,
-    }];
+    // Verificacion de identidad: la OJV debe devolver el mismo ROL consultado.
+    // Sin coincidencia no se informa la causa (los ROL se repiten entre
+    // tribunales: homonimia).
+    const esperado = `${parsed.rol}-${parsed.era}`;
+    if (!rolEncontrado || !rolEncontrado.includes(esperado)) {
+      return {
+        found: false,
+        docket: `${parsed.tipo}-${parsed.rol}-${parsed.era}`,
+        court: courtInfo.name,
+        checkedAt, checkedTime, checkedDate,
+        resolutions: [],
+        hasNoveltiesToday: false,
+        error: "Sin coincidencia verificada en la OJV (revisar el ROL en la ficha de la causa)",
+      };
+    }
 
+    const hasNoveltiesToday = (fechaIngreso === checkedDate);
     return {
       found: true,
       docket: rolEncontrado,
@@ -618,7 +685,8 @@ async function checkPjudCase(rit, courtId) {
       caratula,
       entryDate: fechaIngreso,
       checkedAt, checkedTime, checkedDate,
-      resolutions,
+      // Sin "resoluciones" fabricadas: se informa solo el registro real de la causa.
+      resolutions: [],
       hasNoveltiesToday,
       lastMovementDate: fechaIngreso || checkedDate,
     };
@@ -1314,7 +1382,7 @@ async function scanCases(casesToScan) {
     }
     console.log(`  · Resultado: ${result.found ? 'Encontrada' : 'No encontrada'} | Novedades hoy: ${result.hasNoveltiesToday ? 'SI' : 'NO'}`);
 
-    if (result.found === false) {
+    if (result.found === false && !result.reserved) {
       passErrors.push({ code: c.code, rit: c.rit, message: result.error || 'Sin resultados en OJV' });
     }
 
@@ -1330,7 +1398,7 @@ async function scanCases(casesToScan) {
       lastMovementDate: result.lastMovementDate,
       hasNoveltiesToday: result.hasNoveltiesToday,
       caratula: result.caratula,
-      error: result.found === false ? (result.error || 'Sin resultados en OJV') : null,
+      error: result.error || (result.found === false ? 'Sin resultados en OJV' : null),
       movements: (result.resolutions || []).slice(0, 3).map(r => ({ date: r.date, type: r.type, summary: r.summary })),
     });
 
@@ -1555,4 +1623,4 @@ if (isDirectRun) {
   });
 }
 
-export { loadDiario, saveDiario, saveDiarioMerged, upsertCaseRow, DIARIO_CODE, isTransientOjvError, loadDigestConfigs, filterStateForRecipient };
+export { loadDiario, saveDiario, saveDiarioMerged, upsertCaseRow, DIARIO_CODE, isTransientOjvError, loadDigestConfigs, filterStateForRecipient, checkPjudCase };
