@@ -135,5 +135,9 @@ const onlyAlx = filterStateForRecipient(dayState, null, 'ALX');
 check('filtro por siglas conserva las causas del estudio', onlyAlx.passes[0].cases.length === 2);
 
 const failed = results.filter(r => !r.ok);
+// --- Vigilancia por causa: la marca __VIGILANCIA__:off saca la causa del barrido ---
+const { isCaseWatchPaused } = await import('./vigia-nube-cron.mjs');
+check('vigilancia pausada omite la causa del barrido', isCaseWatchPaused({ code: 'ALX-2026-99', rit: 'C-99-2026', triage: ['__ABOGADO__:Marta', '__VIGILANCIA__:off'] }) === true);
+check('causa sin marca sigue vigilada', isCaseWatchPaused({ code: 'ALX-2026-98', rit: 'C-98-2026', triage: ['__ABOGADO__:Marta'] }) === false);
 console.log(`\n${results.length - failed.length}/${results.length} pruebas del parte diario en verde.`);
 process.exit(failed.length ? 1 : 0);

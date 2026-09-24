@@ -1448,6 +1448,14 @@ async function scanCases(casesToScan) {
   return { scannedSummary, noveltiesFound, passErrors };
 }
 
+/** Una causa con la marca __VIGILANCIA__:off del triage queda fuera del
+ *  barrido comun (la app la enciende/apaga desde la ficha). */
+function isCaseWatchPaused(c) {
+  const triage = Array.isArray(c && c.triage) ? c.triage : [];
+  const marker = triage.find((item) => typeof item === 'string' && item.startsWith('__VIGILANCIA__:'));
+  return Boolean(marker) && /off|pausad/i.test(String(marker));
+}
+
 async function main() {
   console.log('===========================================================');
   console.log('AEROLEX · VIGILANCIA JUDICIAL 24/7 (CRON NUBE GITHUB ACTIONS)');
@@ -1504,12 +1512,18 @@ async function main() {
   const casesResp = await fetch(`${SUPA_URL}/rest/v1/cases?select=*`, { headers: supaHeaders() });
   const allRows = casesResp.ok ? await casesResp.json() : [];
 
+  const pausedCount = allRows.filter((c) => isCaseWatchPaused(c)).length;
   const watchedCases = allRows.filter(c => {
     const code = String(c.code || '').toUpperCase();
     if (code.startsWith('WA-') || code.startsWith('EV-') || code.startsWith('CFG-')) return false;
     if (c.status === 'finalizado' || c.status === 'suspendido') return false;
+    // Vigilancia pausada por el estudio desde la app (marca en triage).
+    if (isCaseWatchPaused(c)) return false;
     return Boolean(c.rit && c.rit.trim());
   });
+  if (pausedCount > 0) {
+    console.log(`[Vigilancia Nube] ${pausedCount} causa(s) con vigilancia pausada por el estudio: omitidas del barrido.`);
+  }
 
   console.log(`[Vigilancia Nube] Total causas activas bajo inspección: ${watchedCases.length}`);
 
@@ -1623,4 +1637,4 @@ if (isDirectRun) {
   });
 }
 
-export { loadDiario, saveDiario, saveDiarioMerged, upsertCaseRow, DIARIO_CODE, isTransientOjvError, loadDigestConfigs, filterStateForRecipient, checkPjudCase };
+export { loadDiario, saveDiario, saveDiarioMerged, upsertCaseRow, DIARIO_CODE, isTransientOjvError, loadDigestConfigs, filterStateForRecipient, checkPjudCase, isCaseWatchPaused };

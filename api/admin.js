@@ -237,6 +237,12 @@ function unpackCaseEstadoDiario(c) {
       c.abogado = abItem.replace('__ABOGADO__:', '').trim();
       c.triage = c.triage.filter(item => typeof item !== 'string' || !item.startsWith('__ABOGADO__:'));
     }
+    // Vigilancia por causa (la app la enciende/apaga): off = excluida del barrido.
+    const vigItem = c.triage.find(item => typeof item === 'string' && item.startsWith('__VIGILANCIA__:'));
+    if (vigItem) {
+      c.vigilancia = vigItem.replace('__VIGILANCIA__:', '').trim().toLowerCase();
+      c.triage = c.triage.filter(item => typeof item !== 'string' || !item.startsWith('__VIGILANCIA__:'));
+    }
   }
   if (!c.abogado) {
     const txt = `${c.code || ''} ${c.rit || ''} ${c.detalle || ''} ${c.materia || ''}`.toLowerCase();
@@ -301,6 +307,19 @@ function buildPartialPatch(body, currentTriage = null) {
     const clean = base.filter(item => typeof item !== 'string' || !item.startsWith('__ABOGADO__:'));
     if (body.abogado && String(body.abogado).trim()) {
       clean.push('__ABOGADO__:' + String(body.abogado).trim().slice(0, 200));
+    }
+    patch.triage = clean;
+  }
+  // Vigilancia por causa: marca __VIGILANCIA__:off en el triage para que el
+  // barrido comun y el parte diario omitan la causa (la app la enciende/apaga).
+  if (body.vigilancia !== undefined) {
+    const base = Array.isArray(patch.triage)
+      ? [...patch.triage]
+      : (Array.isArray(currentTriage) ? [...currentTriage] : []);
+    const clean = base.filter(item => typeof item !== 'string' || !item.startsWith('__VIGILANCIA__:'));
+    const value = String(body.vigilancia || '').trim().toLowerCase();
+    if (value === 'off' || value === 'pausada' || value === 'pausado' || value === 'false') {
+      clean.push('__VIGILANCIA__:off');
     }
     patch.triage = clean;
   }
@@ -518,6 +537,7 @@ module.exports = async (req, res) => {
         const code = String(c.code || '').toUpperCase();
         if (code.startsWith('WA-') || code.startsWith('EV-') || code.startsWith('CFG-')) return false;
         if (c.status === 'finalizado' || c.status === 'suspendido') return false;
+        if (c.vigilancia === 'off' || c.vigilancia === 'pausada' || c.vigilancia === 'pausado') return false;
         return Boolean(c.rit && c.rit.trim());
       }).map(c => ({
         code: c.code,
@@ -830,6 +850,7 @@ module.exports = async (req, res) => {
         const code = String(c.code || '').toUpperCase();
         if (code.startsWith('WA-') || code.startsWith('EV-') || code.startsWith('CFG-')) return false;
         if (c.status === 'finalizado' || c.status === 'suspendido') return false;
+        if (c.vigilancia === 'off' || c.vigilancia === 'pausada' || c.vigilancia === 'pausado') return false;
         return Boolean(c.rit && c.rit.trim());
       });
 
@@ -908,6 +929,7 @@ module.exports = async (req, res) => {
         const code = String(c.code || '').toUpperCase();
         if (code.startsWith('WA-') || code.startsWith('EV-') || code.startsWith('CFG-')) return false;
         if (c.status === 'finalizado' || c.status === 'suspendido') return false;
+        if (c.vigilancia === 'off' || c.vigilancia === 'pausada' || c.vigilancia === 'pausado') return false;
         return Boolean(c.rit && c.rit.trim());
       });
 
