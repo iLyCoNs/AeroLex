@@ -534,20 +534,31 @@ async function checkPjudCase(rit, courtId) {
         action: "validate_captcha_rit",
       });
 
-      const queryRes = await fetch("https://oficinajudicialvirtual.pjud.cl/ADIR_871/apelaciones/consultaRitApelaciones.php", {
-        method: "POST",
-        headers: {
-          "User-Agent": OJV_USER_AGENT,
-          "Referer": "https://oficinajudicialvirtual.pjud.cl/indexN.php",
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Cookie": cookies,
-        },
-        body: queryBody.toString(),
-        signal: AbortSignal.timeout(20000),
-      });
+      let html = "";
+      for (let intento = 1; intento <= 2; intento += 1) {
+        const queryRes = await fetch("https://oficinajudicialvirtual.pjud.cl/ADIR_871/apelaciones/consultaRitApelaciones.php", {
+          method: "POST",
+          headers: {
+            "User-Agent": OJV_USER_AGENT,
+            "Referer": "https://oficinajudicialvirtual.pjud.cl/indexN.php",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Cookie": cookies,
+          },
+          body: queryBody.toString(),
+          signal: AbortSignal.timeout(20000),
+        });
+        if (!queryRes.ok) {
+          if (intento === 2) throw new Error(`PJUD Corte HTTP ${queryRes.status}`);
+          await new Promise((r) => setTimeout(r, 1500));
+          continue;
+        }
+        html = await queryRes.text();
+        // Respuesta vacia o truncada: la OJV no entrego el listado; se reintenta.
+        if (html.length >= 500 || html.includes("No se han encontrado resultados") || /reservad/i.test(html)) break;
+        if (intento === 2) throw new Error("La OJV no entrego el listado de la Corte (respuesta vacia)");
+        await new Promise((r) => setTimeout(r, 1500));
+      }
 
-      if (!queryRes.ok) throw new Error(`PJUD Corte HTTP ${queryRes.status}`);
-      const html = await queryRes.text();
       const rows = parseAppealRows(html);
 
       if (rows.length === 0) {
@@ -560,7 +571,9 @@ async function checkPjudCase(rit, courtId) {
           resolutions: [],
           hasNoveltiesToday: false,
           reserved,
-          error: reserved ? "Reserva judicial (no se muestra en la consulta unificada)" : "Sin resultados en OJV",
+          error: reserved
+            ? "Reserva judicial (no se muestra en la consulta unificada)"
+            : "La OJV no entrego el listado de la Corte en este pase (se reintenta en el proximo)",
         };
       }
 
@@ -613,23 +626,33 @@ async function checkPjudCase(rit, courtId) {
       conCorte: courtInfo.corte,
     });
 
-    const queryRes = await fetch("https://oficinajudicialvirtual.pjud.cl/ADIR_871/civil/consultaRitCivil.php", {
-      method: "POST",
-      headers: {
-        "User-Agent": OJV_USER_AGENT,
-        "Referer": "https://oficinajudicialvirtual.pjud.cl/indexN.php",
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": cookies,
-      },
-      body: queryBody.toString(),
-      signal: AbortSignal.timeout(20000),
-    });
-
-    if (!queryRes.ok) throw new Error(`PJUD HTTP ${queryRes.status}`);
-    const html = await queryRes.text();
+    let html = "";
+    for (let intento = 1; intento <= 2; intento += 1) {
+      const queryRes = await fetch("https://oficinajudicialvirtual.pjud.cl/ADIR_871/civil/consultaRitCivil.php", {
+        method: "POST",
+        headers: {
+          "User-Agent": OJV_USER_AGENT,
+          "Referer": "https://oficinajudicialvirtual.pjud.cl/indexN.php",
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Cookie": cookies,
+        },
+        body: queryBody.toString(),
+        signal: AbortSignal.timeout(20000),
+      });
+      if (!queryRes.ok) {
+        if (intento === 2) throw new Error(`PJUD HTTP ${queryRes.status}`);
+        await new Promise((r) => setTimeout(r, 1500));
+        continue;
+      }
+      html = await queryRes.text();
+      if (html.length >= 500 || html.includes("No se han encontrado resultados")) break;
+      if (intento === 2) throw new Error("La OJV no entrego respuesta para esta causa (respuesta vacia)");
+      await new Promise((r) => setTimeout(r, 1500));
+    }
 
     if (html.includes("No se han encontrado resultados")) {
       const reserved = /reservad/i.test(html);
+      const esFamilia = /familia/i.test(courtInfo.name || "");
       return {
         found: false,
         docket: `${parsed.tipo}-${parsed.rol}-${parsed.era}`,
@@ -638,7 +661,11 @@ async function checkPjudCase(rit, courtId) {
         resolutions: [],
         hasNoveltiesToday: false,
         reserved,
-        error: reserved ? "Reserva judicial (no se muestra en la consulta unificada)" : "Sin resultados en OJV",
+        error: reserved
+          ? "Reserva judicial (no se muestra en la consulta unificada)"
+          : esFamilia
+            ? "Causa de Familia: la consulta publica unificada no la muestra (revisar en la OJV con Clave Unica)"
+            : "Sin resultados en OJV",
       };
     }
 
@@ -1047,7 +1074,18 @@ function buildDigest(state, options = {}) {
   const executed = rows.filter(r => r.rec).length;
   const missing = rows.filter(r => !r.rec);
   const totalNovelties = passes.reduce((acc, s) => acc + (s.novelties || 0), 0);
-  const allErrors = passes.flatMap(s => s.errors || []);
+  // Incidencias del dia: se deduplican (una linea por causa y motivo) y se
+  // resume cuantos pases la vieron, en vez de repetir la misma linea por pase.
+  const allErrors = (() => {
+    const unicos = new Map();
+    for (const e of passes.flatMap(s => s.errors || [])) {
+      const clave = `${e.code || ""}|${e.rit || ""}|${String(e.message || "").trim()}`;
+      const previo = unicos.get(clave);
+      if (previo) previo.pases += 1;
+      else unicos.set(clave, { ...e, pases: 1 });
+    }
+    return [...unicos.values()];
+  })();
 
   // Último registro conocido por causa (el pase más reciente que la incluyó).
   const caseMap = new Map();
@@ -1098,8 +1136,8 @@ function buildDigest(state, options = {}) {
 
   const errorsHtml = allErrors.length
     ? `<div style="margin-top:14px; padding:10px 12px; background:#fef2f2; border-left:3px solid #dc2626; font-size:11.5px; color:#7f1d1d;">
-        <strong>Incidencias del día:</strong>
-        <ul style="margin:6px 0 0 16px; padding:0;">${allErrors.map(e => `<li>${e.rit} (${e.code}): ${e.message}</li>`).join('')}</ul>
+        <strong>Incidencias del día (${allErrors.length} causa${allErrors.length === 1 ? "" : "s"}):</strong>
+        <ul style="margin:6px 0 0 16px; padding:0;">${allErrors.slice(0, 12).map(e => `<li>${e.rit} (${e.code}): ${e.message}${e.pases > 1 ? ` · repetido en ${e.pases} pases` : ""}</li>`).join("")}${allErrors.length > 12 ? `<li>… y ${allErrors.length - 12} causa(s) más con el mismo detalle.</li>` : ""}</ul>
       </div>`
     : '';
 
