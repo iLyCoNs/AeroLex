@@ -60,9 +60,21 @@ module.exports = async (req, res) => {
         const { rows, plan } = await listar('order=created_at.desc&limit=1000');
         return res.status(200).json({ licenses: rows, planColumn: plan });
       }
-      const operaciones = ['create', 'extend', 'suspend', 'resume', 'activation', 'revoke', 'delete'];
+      const operaciones = ['create', 'extend', 'suspend', 'resume', 'activation', 'revoke', 'delete', 'set-expiry'];
       if (!uuid.test(body.id || '') || !uuid.test(body.requestId || '') || !operaciones.includes(body.operation)) return fail(400, 'Operación inválida.');
       if (body.plan !== undefined && body.plan !== '' && !PLANES.includes(String(body.plan))) return fail(400, 'Plan no reconocido.');
+      if (body.operation === 'set-expiry') {
+        // Corrige el vencimiento a una fecha exacta (el RPC solo suma días).
+        if (typeof body.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(body.date)) return fail(400, 'Fecha inválida (usa AAAA-MM-DD).');
+        const objetivo = new Date(`${body.date}T23:59:59.000Z`);
+        if (!Number.isFinite(objetivo.getTime())) return fail(400, 'Fecha inválida.');
+        const [actual] = await db(`desktop_licenses?id=eq.${encodeURIComponent(body.id)}&select=id,email,expires_at,revision`);
+        if (!actual) return fail(404, 'Licencia no encontrada.');
+        const dias = Math.round((objetivo.getTime() - Date.now()) / 86400000);
+        await db(`desktop_licenses?id=eq.${encodeURIComponent(body.id)}`, { expires_at: objetivo.toISOString(), revision: Number(actual.revision) + 1 }, 'PATCH');
+        try { await db('desktop_license_audit', { request_id: body.requestId, license_id: body.id, operation: 'set-expiry', days: dias }); } catch { /* auditoría informativa */ }
+        return res.status(200).json({ ok: true, expiresAt: objetivo.toISOString(), days: dias });
+      }
       if (body.operation === 'delete') {
         const [actual] = await db(`desktop_licenses?id=eq.${encodeURIComponent(body.id)}&select=id,email`);
         if (!actual) return fail(404, 'Licencia no encontrada.');

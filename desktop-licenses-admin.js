@@ -1,13 +1,13 @@
 /* Panel de licencias de escritorio. Solo licencias: nunca expedientes ni contraseñas. */
 (() => {
   const PLANES = {
-    aerolex_inicial_gratis: { nombre: 'Inicial (gratis)', corto: 'Inicial', dias: 3650, nota: '1 abogado · 2 causas · sin nube' },
-    aerolex_litigante_mensual: { nombre: 'Litigante', corto: 'Litigante', dias: 30, nota: '1 abogado · 30 causas · nube 5 pases' },
-    aerolex_litigante_anual: { nombre: 'Litigante anual', corto: 'Litigante anual', dias: 365, nota: '2 meses gratis · 30 causas' },
-    aerolex_estudio_mensual: { nombre: 'Estudio', corto: 'Estudio', dias: 30, nota: '3 abogados · 100 causas · nube 24/7' },
-    aerolex_bufete_mensual: { nombre: 'Bufete', corto: 'Bufete', dias: 30, nota: '8 abogados · ilimitadas · nube 24/7' },
-    aerolex_causas_3: { nombre: 'Pack 3 causas', corto: 'Pack 3', dias: 30, nota: '$2.990 por causa' },
-    aerolex_causas_10: { nombre: 'Pack 10 causas', corto: 'Pack 10', dias: 30, nota: '$2.990 por causa' },
+    aerolex_inicial_gratis: { nombre: 'Inicial (gratis)', corto: 'Inicial', dias: 3650, precio: 'Gratis', nota: '1 abogado · 2 causas · sin nube', detalle: 'Para partir sin costo: ficha, Estado Diario OJV, escritos con plantillas y biblioteca. No incluye vigilancia automática en la nube ni portal de clientes.' },
+    aerolex_litigante_mensual: { nombre: 'Litigante', corto: 'Litigante', dias: 30, precio: '$19.990/mes', nota: '1 abogado · 30 causas · nube 5 pases', detalle: 'Abogado independiente: 1 titular, hasta 30 causas activas, vigilancia en la nube (5 pases diarios con el PC apagado), portal de clientes con PIN, escritos con formato real y verificación de vigencia BCN.' },
+    aerolex_litigante_anual: { nombre: 'Litigante anual', corto: 'Litigante anual', dias: 365, precio: '$199.900/año', nota: '2 meses gratis · 30 causas', detalle: 'El mismo Plan Litigante con dos meses de regalo (equivale a $16.658 al mes). Ideal para asegurar el año completo.' },
+    aerolex_estudio_mensual: { nombre: 'Estudio', corto: 'Estudio', dias: 30, precio: '$39.990/mes', nota: '3 abogados · 100 causas · nube 24/7', detalle: 'Estudio pequeño: hasta 3 abogados con carteras independientes, 100 causas, vigilancia 24/7 cada 45 minutos, tablas de la Corte de Apelaciones, bóveda multi-abogado y CRM/WhatsApp unificado.' },
+    aerolex_bufete_mensual: { nombre: 'Bufete', corto: 'Bufete', dias: 30, precio: '$79.990/mes', nota: '8 abogados · ilimitadas · nube 24/7', detalle: 'Firma consolidada: hasta 8 abogados y causas ilimitadas, todo lo del Plan Estudio más atención directa y prioritaria del equipo AeroLex.' },
+    aerolex_causas_3: { nombre: 'Pack 3 causas', corto: 'Pack 3', dias: 30, precio: '$8.970/mes', nota: '$2.990 por causa', detalle: 'Pago por uso: 3 causas activas a $2.990 cada una, con vigilancia en la nube y portal de clientes. Sin permanencia.' },
+    aerolex_causas_10: { nombre: 'Pack 10 causas', corto: 'Pack 10', dias: 30, precio: '$29.900/mes', nota: '$2.990 por causa', detalle: 'Pago por uso: 10 causas activas a $2.990 cada una, con vigilancia en la nube y portal de clientes. Sin permanencia.' },
   };
 
   let dialog;
@@ -150,10 +150,17 @@
     elemento('span', 'Plan', planLabel);
     const plan = elemento('select', '', planLabel);
     plan.style.cssText = 'background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:9px 11px;border-radius:9px;font-size:13px;outline:none';
-    for (const [id, info] of Object.entries(PLANES)) { const opcion = elemento('option', `${info.nombre} — ${info.nota}`, plan); opcion.value = id; }
+    for (const [id, info] of Object.entries(PLANES)) { const opcion = elemento('option', `${info.nombre} — ${info.precio} · ${info.nota}`, plan); opcion.value = id; }
     plan.value = 'aerolex_litigante_mensual';
     const dias = campo(form, 'Días', 'number', '30'); dias.min = '1'; dias.max = '3650';
-    plan.onchange = () => { dias.value = String(PLANES[plan.value]?.dias ?? 30); };
+    const planInfo = elemento('p', '', crear);
+    planInfo.style.cssText = 'margin-top:11px;padding:10px 12px;border-radius:10px;background:var(--panel-inset);border:1px solid var(--border);font-size:12px;line-height:1.6;color:var(--text-secondary)';
+    function pintarPlan() {
+      const info = PLANES[plan.value];
+      planInfo.innerHTML = `<strong style="color:var(--text)">${info.nombre}</strong> · ${info.precio} — ${info.detalle}`;
+    }
+    plan.onchange = () => { dias.value = String(PLANES[plan.value]?.dias ?? 30); pintarPlan(); };
+    pintarPlan();
     const crearBoton = boton('Crear y generar código', form, 'btn btn-primary', 'fa-solid fa-key');
     crearBoton.style.gridColumn = '1 / -1';
     crearBoton.style.justifySelf = 'start';
@@ -265,6 +272,10 @@
       const vence = elemento('p', '', datos);
       vence.style.cssText = 'font-size:11.5px;color:var(--text-faint);margin-top:3px';
       vence.textContent = `Vence ${fechaCorta(row.expires_at)} · ${dias < 0 ? `hace ${-dias} día(s)` : dias === 0 ? 'hoy' : `en ${dias} día(s)`} · revisión ${row.revision}`;
+      if (infoPlan) {
+        const planLinea = elemento('p', `Plan: ${infoPlan.nombre} (${infoPlan.precio}) · ${infoPlan.nota}`, datos);
+        planLinea.style.cssText = 'font-size:11.5px;color:var(--text-faint);margin-top:3px';
+      }
       if (row.activation_expires_at) {
         const codigoPendiente = elemento('p', `Código sin usar (vence ${fechaLarga(row.activation_expires_at)})`, datos);
         codigoPendiente.style.cssText = 'font-size:11px;color:' + color.accent + ';margin-top:3px;font-weight:600';
@@ -285,6 +296,15 @@
         b.style.padding = '7px 10px';
         b.onclick = () => void mutar('extend', row.id, { days: atajo, plan: row.plan || undefined });
       }
+      const fecha = elemento('input', '', acciones); fecha.type = 'date'; fecha.value = String(row.expires_at).slice(0, 10);
+      fecha.setAttribute('aria-label', `Fijar vencimiento de ${row.display_name}`);
+      fecha.style.cssText = 'background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:6px 8px;border-radius:8px;font-size:12px';
+      fecha.style.colorScheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+      const fijar = boton('Fijar vencimiento', acciones, 'btn btn-secondary', 'fa-solid fa-calendar-day');
+      fijar.onclick = () => {
+        if (!fecha.value) { mostrarAviso('Elige una fecha para fijar el vencimiento.', 'error'); return; }
+        void mutar('set-expiry', row.id, { date: fecha.value });
+      };
       const alternar = boton(row.status === 'suspended' ? 'Reactivar' : 'Suspender', acciones, 'btn btn-secondary', row.status === 'suspended' ? 'fa-solid fa-play' : 'fa-solid fa-pause');
       alternar.onclick = () => void mutar(row.status === 'suspended' ? 'resume' : 'suspend', row.id);
       const nuevoCodigo = boton('Nuevo código', acciones, 'btn btn-secondary', 'fa-solid fa-key');

@@ -65,6 +65,16 @@ function llamar(method, query, body) {
   const planMalo = await llamar('POST', '', { operation: 'create', id: ID, requestId: REQ, name: 'X', email: 'x@y.cl', days: 30, plan: 'plan_inventado' });
   check('POST rechaza plan desconocido (400)', planMalo.status === 400);
 
+  const fechaMala = await llamar('POST', '', { operation: 'set-expiry', id: ID, requestId: REQ, date: '2030-13-40' });
+  check('POST fijar vencimiento rechaza fecha inválida (400)', fechaMala.status === 400 || /Fecha inválida/.test(String(fechaMala.body?.error)));
+
+  llamadas.length = 0;
+  const fijada = await llamar('POST', '', { operation: 'set-expiry', id: ID, requestId: REQ, date: '2026-12-31' });
+  const patchFecha = llamadas.find((l) => l.startsWith('PATCH') && l.includes('expires_at'));
+  const auditoria = llamadas.find((l) => l.startsWith('POST desktop_license_audit') && l.includes('set-expiry'));
+  check('POST fijar vencimiento actualiza fecha y revisión', fijada.status === 200 && Boolean(patchFecha) && patchFecha.includes('revision'), String(patchFecha || '').slice(0, 120));
+  check('POST fijar vencimiento deja auditoría', Boolean(auditoria));
+
   const extendida = await llamar('POST', '', { operation: 'extend', id: ID, requestId: REQ, days: 365, plan: 'aerolex_litigante_anual' });
   check('POST extender con cambio de plan', extendida.status === 200 && llamadas.some((l) => l.includes('PATCH')));
 

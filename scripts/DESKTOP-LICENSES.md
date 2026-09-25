@@ -26,11 +26,15 @@ ni claves de proveedores IA. La clave ADMIN_KEY nunca se incluye en la app.
 - Crear licencia eligiendo **plan** (Inicial gratis, Litigante, Litigante anual,
   Estudio, Bufete, Pack 3 Causas, Pack 10 Causas): el formulario propone los días
   del plan y el código se muestra en un panel destacado con botón «Copiar».
-- Por licencia: ampliar con atajos +30/+90/+365 o días exactos, suspender o
-  reactivar, emitir nuevo código, ver **equipos vinculados** (alta, último
-  contacto, revocado) e **historial de operaciones**, revocar equipos, copiar el
-  correo y **eliminar** (exige escribir el correo exacto; borra equipos e
-  historial antes que la licencia).
+- Por licencia: ampliar con atajos +30/+90/+365 o días exactos, **fijar un
+  vencimiento exacto** (corrige extensiones largas; el servidor actualiza la
+  fecha, sube la revisión y deja auditoría), suspender o reactivar, emitir nuevo
+  código, ver **equipos vinculados** (alta, último contacto, revocado) e
+  **historial de operaciones**, revocar equipos, copiar el correo y **eliminar**
+  (exige escribir el correo exacto; borra equipos e historial antes que la licencia).
+- El selector de plan muestra precio y alcance, y bajo el formulario aparece la
+  explicación completa del plan elegido (abogados, causas, nube, portal); cada
+  licencia lista su plan con precio y características.
 - Filtros por estado y búsqueda por nombre o correo; temas claro y oscuro.
 
 
