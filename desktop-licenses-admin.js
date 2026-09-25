@@ -104,6 +104,20 @@
       aviso.textContent = texto;
     }
 
+    // ── Aviso de columna "plan" pendiente (un paso de SQL en Supabase) ──
+    const SQL_PLAN = 'alter table public.desktop_licenses add column if not exists plan text;';
+    const avisoPlan = elemento('section', '', cuerpo);
+    avisoPlan.style.cssText = 'display:none;border:1px solid ' + color.accent + '55;background:' + color.accent + '0f;border-radius:13px;padding:14px 15px';
+    const avisoPlanTexto = elemento('p', '', avisoPlan);
+    avisoPlanTexto.style.cssText = 'font-size:12.5px;line-height:1.6;color:var(--text)';
+    avisoPlanTexto.innerHTML = '<strong>Falta un paso para guardar el plan de cada licencia.</strong> La base todavía no tiene la columna <code>plan</code>. Copia la línea, ejecútala una vez en Supabase → SQL Editor y pulsa Actualizar. Mientras tanto, todo lo demás del panel funciona con normalidad.';
+    const accionPlan = elemento('div', '', avisoPlan);
+    accionPlan.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:9px';
+    const copiarSql = boton('Copiar el SQL', accionPlan, 'btn btn-primary', 'fa-solid fa-copy');
+    copiarSql.onclick = () => copiar(SQL_PLAN, aviso);
+    const verSql = elemento('code', SQL_PLAN, accionPlan);
+    verSql.style.cssText = 'padding:7px 10px;border-radius:8px;background:var(--panel-inset);border:1px dashed ' + color.accent + '55;font-size:11.5px;user-select:all;overflow-wrap:anywhere';
+
     // ── Panel del código de activación ──
     const panelCodigo = elemento('section', '', cuerpo);
     panelCodigo.style.cssText = 'display:none;border:1px solid ' + color.accent + '55;background:' + color.accent + '10;border-radius:14px;padding:16px';
@@ -129,7 +143,7 @@
     const crear = tarjeta(cuerpo);
     const crearTitulo = elemento('p', '', crear); crearTitulo.style.cssText = 'font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary);margin-bottom:12px';
     crearTitulo.innerHTML = '<i class="fa-solid fa-plus" style="color:var(--accent)"></i> &nbsp;Crear licencia';
-    const form = elemento('form', '', crear); form.style.cssText = 'display:grid;grid-template-columns:1.1fr 1.3fr 1.3fr 110px auto;gap:10px;align-items:end';
+    const form = elemento('form', '', crear); form.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:10px;align-items:end';
     const nombre = campo(form, 'Nombre del abogado', 'text'); nombre.maxLength = 160;
     const email = campo(form, 'Correo de su cuenta local', 'email'); email.maxLength = 254;
     const planLabel = elemento('label', '', form); planLabel.style.cssText = 'display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--text-secondary);font-weight:600;letter-spacing:.03em;text-transform:uppercase';
@@ -141,6 +155,9 @@
     const dias = campo(form, 'Días', 'number', '30'); dias.min = '1'; dias.max = '3650';
     plan.onchange = () => { dias.value = String(PLANES[plan.value]?.dias ?? 30); };
     const crearBoton = boton('Crear y generar código', form, 'btn btn-primary', 'fa-solid fa-key');
+    crearBoton.style.gridColumn = '1 / -1';
+    crearBoton.style.justifySelf = 'start';
+    crearBoton.style.padding = '10px 18px';
 
     // ── Filtros ──
     const barra = elemento('div', '', cuerpo); barra.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;align-items:center';
@@ -352,7 +369,7 @@
       try {
         const resultado = await request();
         licencias = resultado.licenses || [];
-        if (resultado.planColumn === false) mostrarAviso('Nota: la columna "plan" aún no existe en la base; ejecuta el SQL actualizado (alter table desktop_licenses add column plan text) para guardar el plan de cada licencia.', 'error');
+        avisoPlan.style.display = resultado.planColumn === false ? 'block' : 'none';
         pintarLista();
       } catch (error) { mostrarAviso(error.message, 'error'); }
     }
