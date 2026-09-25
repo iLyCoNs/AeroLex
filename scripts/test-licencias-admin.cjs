@@ -83,6 +83,15 @@ function llamar(method, query, body) {
     check(`POST ${operacion}`, r.status === 200);
   }
 
+  const estadoInvalido = await llamar('POST', '', { operation: 'set-status', id: ID, requestId: REQ, status: 'raro' });
+  check('POST marcar estado rechaza valor inválido (400)', estadoInvalido.status === 400);
+
+  llamadas.length = 0;
+  const activada = await llamar('POST', '', { operation: 'set-status', id: ID, requestId: REQ, status: 'active' });
+  const patchEstado = llamadas.find((l) => l.startsWith('PATCH') && l.includes('active'));
+  check('POST marcar activa actualiza estado y revisión', activada.status === 200 && Boolean(patchEstado), String(patchEstado || '').slice(0, 110));
+  check('POST marcar activa deja auditoría', llamadas.some((l) => l.startsWith('POST desktop_license_audit') && l.includes('activate-status')));
+
   const borradoMalo = await llamar('POST', '', { operation: 'delete', id: ID, requestId: REQ, confirmEmail: 'otro@correo.cl' });
   check('POST eliminar exige correo correcto (400)', borradoMalo.status === 400);
 

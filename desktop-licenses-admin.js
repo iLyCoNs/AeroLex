@@ -307,6 +307,8 @@
       };
       const alternar = boton(row.status === 'suspended' ? 'Reactivar' : 'Suspender', acciones, 'btn btn-secondary', row.status === 'suspended' ? 'fa-solid fa-play' : 'fa-solid fa-pause');
       alternar.onclick = () => void mutar(row.status === 'suspended' ? 'resume' : 'suspend', row.id);
+      const estadoBoton = boton(row.status === 'active' ? 'Volver a prueba' : 'Marcar activa', acciones, 'btn btn-secondary', row.status === 'active' ? 'fa-solid fa-flask' : 'fa-solid fa-circle-check');
+      estadoBoton.onclick = () => void mutar('set-status', row.id, { status: row.status === 'active' ? 'trial' : 'active' });
       const nuevoCodigo = boton('Nuevo código', acciones, 'btn btn-secondary', 'fa-solid fa-key');
       nuevoCodigo.onclick = () => void mutar('activation', row.id, { name: row.display_name });
       const equipos = boton('Equipos', acciones, 'btn btn-secondary', 'fa-solid fa-desktop');

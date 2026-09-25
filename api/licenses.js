@@ -60,9 +60,18 @@ module.exports = async (req, res) => {
         const { rows, plan } = await listar('order=created_at.desc&limit=1000');
         return res.status(200).json({ licenses: rows, planColumn: plan });
       }
-      const operaciones = ['create', 'extend', 'suspend', 'resume', 'activation', 'revoke', 'delete', 'set-expiry'];
+      const operaciones = ['create', 'extend', 'suspend', 'resume', 'activation', 'revoke', 'delete', 'set-expiry', 'set-status'];
       if (!uuid.test(body.id || '') || !uuid.test(body.requestId || '') || !operaciones.includes(body.operation)) return fail(400, 'Operación inválida.');
       if (body.plan !== undefined && body.plan !== '' && !PLANES.includes(String(body.plan))) return fail(400, 'Plan no reconocido.');
+      if (body.operation === 'set-status') {
+        // Marca la licencia como activa (contratada) o la devuelve a período de prueba.
+        if (!['active', 'trial'].includes(String(body.status))) return fail(400, 'Estado inválido (active o trial).');
+        const [actual] = await db(`desktop_licenses?id=eq.${encodeURIComponent(body.id)}&select=id,email,status,revision`);
+        if (!actual) return fail(404, 'Licencia no encontrada.');
+        await db(`desktop_licenses?id=eq.${encodeURIComponent(body.id)}`, { status: String(body.status), revision: Number(actual.revision) + 1 }, 'PATCH');
+        try { await db('desktop_license_audit', { request_id: body.requestId, license_id: body.id, operation: String(body.status) === 'active' ? 'activate-status' : 'trial-status', days: 0 }); } catch { /* auditoría informativa */ }
+        return res.status(200).json({ ok: true, status: String(body.status) });
+      }
       if (body.operation === 'set-expiry') {
         // Corrige el vencimiento a una fecha exacta (el RPC solo suma días).
         if (typeof body.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(body.date)) return fail(400, 'Fecha inválida (usa AAAA-MM-DD).');
