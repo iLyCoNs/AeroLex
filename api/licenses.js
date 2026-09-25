@@ -1,6 +1,8 @@
 const { createHash, randomBytes, timingSafeEqual } = require('node:crypto');
 const hash = value => createHash('sha256').update(value).digest('hex');
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+// Planes comerciales vigentes (los mismos ids que usa la aplicación).
+const PLANES = ['aerolex_inicial_gratis', 'aerolex_litigante_mensual', 'aerolex_litigante_anual', 'aerolex_estudio_mensual', 'aerolex_bufete_mensual', 'aerolex_causas_3', 'aerolex_causas_10'];
 function authorized(value, expected) {
   // La llave configurada en la app y usada en /api/admin tiene 15 caracteres;
   // exigir "más de 15" dejaba este panel inaccesible mientras /api/admin sí
@@ -28,7 +30,15 @@ module.exports = async (req, res) => {
       headers: { apikey: process.env.SUPABASE_SERVICE_KEY, Authorization: `Bearer ${process.env.SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json', Prefer: 'return=representation' },
       ...(body ? { body: JSON.stringify(body) } : {}), signal: AbortSignal.timeout(8000) });
     if (!response.ok) throw new Error('storage');
+    if (response.status === 204) return [];
     return response.json();
+  };
+  // La columna "plan" es opcional: si aún no existe en la base, el panel sigue funcionando.
+  const conPlan = 'id,email,display_name,status,plan,expires_at,activation_expires_at,revision,created_at';
+  const sinPlan = 'id,email,display_name,status,expires_at,activation_expires_at,revision,created_at';
+  const listar = async filtro => {
+    try { return { rows: await db(`desktop_licenses?${filtro}&select=${conPlan}`), plan: true }; }
+    catch { return { rows: await db(`desktop_licenses?${filtro}&select=${sinPlan}`), plan: false }; }
   };
   try {
     const url = new URL(req.url, 'https://aerolex.cl');
@@ -37,10 +47,33 @@ module.exports = async (req, res) => {
     if (action === 'admin') {
       if (!authorized(req.headers['x-admin-key'], process.env.ADMIN_KEY)) return fail(401, 'Acceso administrativo no autorizado.');
       if (req.method === 'GET') {
-        const licenses = await db('desktop_licenses?select=id,email,display_name,status,expires_at,revision,created_at&order=created_at.desc&limit=1000');
-        return res.status(200).json({ licenses });
+        const id = url.searchParams.get('id');
+        if (id) {
+          if (!uuid.test(id)) return fail(400, 'Identificador inválido.');
+          const { rows, plan } = await listar(`id=eq.${encodeURIComponent(id)}`);
+          const license = rows[0];
+          if (!license) return fail(404, 'Licencia no encontrada.');
+          const devices = await db(`desktop_license_devices?license_id=eq.${encodeURIComponent(id)}&select=created_at,last_seen_at,revoked&order=created_at.desc&limit=50`);
+          const audit = await db(`desktop_license_audit?license_id=eq.${encodeURIComponent(id)}&select=operation,days,created_at&order=created_at.desc&limit=25`);
+          return res.status(200).json({ license, devices, audit, planColumn: plan });
+        }
+        const { rows, plan } = await listar('order=created_at.desc&limit=1000');
+        return res.status(200).json({ licenses: rows, planColumn: plan });
       }
-      if (!uuid.test(body.id || '') || !uuid.test(body.requestId || '') || !['create', 'extend', 'suspend', 'resume', 'activation', 'revoke'].includes(body.operation)) return fail(400, 'Operación inválida.');
+      const operaciones = ['create', 'extend', 'suspend', 'resume', 'activation', 'revoke', 'delete'];
+      if (!uuid.test(body.id || '') || !uuid.test(body.requestId || '') || !operaciones.includes(body.operation)) return fail(400, 'Operación inválida.');
+      if (body.plan !== undefined && body.plan !== '' && !PLANES.includes(String(body.plan))) return fail(400, 'Plan no reconocido.');
+      if (body.operation === 'delete') {
+        const [actual] = await db(`desktop_licenses?id=eq.${encodeURIComponent(body.id)}&select=id,email`);
+        if (!actual) return fail(404, 'Licencia no encontrada.');
+        if (typeof body.confirmEmail !== 'string' || body.confirmEmail.trim().toLowerCase() !== String(actual.email).toLowerCase()) {
+          return fail(400, 'La confirmación no coincide con el correo de la licencia.');
+        }
+        await db(`desktop_license_devices?license_id=eq.${encodeURIComponent(body.id)}`, null, 'DELETE');
+        await db(`desktop_license_audit?license_id=eq.${encodeURIComponent(body.id)}`, null, 'DELETE');
+        await db(`desktop_licenses?id=eq.${encodeURIComponent(body.id)}`, null, 'DELETE');
+        return res.status(200).json({ deleted: true, id: body.id, email: actual.email });
+      }
       if (['create', 'extend'].includes(body.operation) && (!Number.isInteger(body.days) || body.days < 1 || body.days > 3650)) return fail(400, 'Días fuera de rango (1 a 3650).');
       if (body.operation === 'create' && (typeof body.email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email) || body.email.length > 254 || typeof body.name !== 'string' || !body.name.trim() || body.name.length > 160)) return fail(400, 'Nombre o correo inválido.');
       // Deterministic per request: a retry returns the same activation code.
@@ -48,7 +81,12 @@ module.exports = async (req, res) => {
         ? require('node:crypto').createHmac('sha256', process.env.ADMIN_KEY).update(`activation:${body.id}:${body.requestId}`).digest('hex') : null;
       const row = await db('rpc/desktop_license_admin', { p_id: body.id, p_request_id: body.requestId, p_operation: body.operation,
         p_days: body.days || 0, p_email: (body.email || '').trim().toLowerCase(), p_name: (body.name || '').trim(), p_code_hash: code ? hash(code) : null });
-      return res.status(200).json({ license: row, ...(code ? { activationCode: code } : {}) });
+      let planGuardado = null;
+      if (body.plan && ['create', 'extend'].includes(body.operation)) {
+        try { await db(`desktop_licenses?id=eq.${encodeURIComponent(body.id)}`, { plan: String(body.plan) }, 'PATCH'); planGuardado = String(body.plan); }
+        catch { /* columna opcional: el cambio de licencia ya quedó aplicado */ }
+      }
+      return res.status(200).json({ license: row, ...(planGuardado ? { plan: planGuardado } : {}), ...(code ? { activationCode: code } : {}) });
     }
     if (req.method !== 'POST') return fail(405, 'Usa POST.');
     if (action === 'activate') {

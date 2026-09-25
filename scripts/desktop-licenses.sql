@@ -74,3 +74,8 @@ begin
 end $$;
 revoke all on function public.desktop_license_admin(uuid,uuid,text,integer,text,text,text), public.desktop_license_activate(text,text,text), public.desktop_license_sync(text) from public,anon,authenticated;
 grant execute on function public.desktop_license_admin(uuid,uuid,text,integer,text,text,text), public.desktop_license_activate(text,text,text), public.desktop_license_sync(text) to service_role;
+
+-- Plan comercial de la licencia (opcional, informativo para el panel de administración):
+-- aerolex_inicial_gratis, aerolex_litigante_mensual, aerolex_litigante_anual, aerolex_estudio_mensual,
+-- aerolex_bufete_mensual, aerolex_causas_3, aerolex_causas_10
+alter table public.desktop_licenses add column if not exists plan text;
