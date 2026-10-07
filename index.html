@@ -54,8 +54,11 @@
         {
           "@type": ["LegalService", "Attorney", "LocalBusiness"],
           "@id": "https://aerolex.cl/#legalservice",
-          "name": "AeroLex - Abogados & Servicios Jurídicos Puerto Montt",
+          "name": "AeroLex - Abogados Puerto Montt",
+          "legalName": "AeroLex LegalTech & Abogados",
           "alternateName": [
+            "AeroLex Chile",
+            "AeroLex Abogados",
             "AeroLex LegalTech",
             "Abogados AeroLex Puerto Montt",
             "Estudio Jurídico AeroLex",
@@ -66,10 +69,25 @@
             "Abogado Inmobiliario Puerto Montt",
             "Abogado de Turno Puerto Montt"
           ],
+          "brand": {
+            "@type": "Brand",
+            "name": "AeroLex",
+            "alternateName": ["AeroLex Chile", "AeroLex Abogados Puerto Montt"],
+            "url": "https://aerolex.cl/",
+            "logo": "https://aerolex.cl/logo.png"
+          },
           "url": "https://aerolex.cl/",
           "logo": "https://aerolex.cl/logo.png",
           "image": "https://aerolex.cl/logo.png",
-          "description": "Estudio jurídico líder en Puerto Montt, Región de Los Lagos. Asesoría y representación en derecho laboral, despidos, juicios civiles, cobranzas, herencias, derecho inmobiliario, subdivisiones y peritajes aéreos con drones.",
+          "description": "Estudio jurídico y plataforma LegalTech en Puerto Montt, Región de Los Lagos. Representación y litigación encabezada por el abogado socio Víctor Garrido Chávez (habilitado por la Excma. Corte Suprema) y dirección estratégica de Jaime Vidal Paredes. Especialistas en derecho laboral, despidos, juicios civiles, cobranzas, herencias, derecho inmobiliario y peritajes aéreos con drones.",
+          "founder": [
+            { "@id": "https://aerolex.cl/#victor-garrido" },
+            { "@id": "https://aerolex.cl/#jaime-vidal" }
+          ],
+          "employee": [
+            { "@id": "https://aerolex.cl/#victor-garrido" },
+            { "@id": "https://aerolex.cl/#jaime-vidal" }
+          ],
           "address": {
             "@type": "PostalAddress",
             "streetAddress": "Benavente 405, Oficina 305",
@@ -370,6 +388,40 @@
           "publisher": {
             "@id": "https://aerolex.cl/#legalservice"
           }
+        },
+        {
+          "@type": "Person",
+          "@id": "https://aerolex.cl/#victor-garrido",
+          "name": "Víctor Garrido Chávez",
+          "jobTitle": "Abogado Socio Titulado",
+          "worksFor": { "@id": "https://aerolex.cl/#legalservice" },
+          "description": "Abogado socio habilitado por la Excma. Corte Suprema de Chile. Especialista en litigación laboral, civil, inmobiliaria y sucesoria ante los tribunales de Puerto Montt y la Corte de Apelaciones.",
+          "hasCredential": {
+            "@type": "EducationalOccupationalCredential",
+            "credentialCategory": "degree",
+            "name": "Título de Abogado otorgado por la Excma. Corte Suprema de Chile"
+          },
+          "knowsAbout": [
+            "Derecho Laboral y Despido Injustificado",
+            "Derecho Civil e Indemnización de Perjuicios",
+            "Derecho Inmobiliario y Estudio de Títulos",
+            "Litigación en Tribunales de Puerto Montt y Corte de Apelaciones",
+            "Posesión Efectiva y Partición de Herencias"
+          ]
+        },
+        {
+          "@type": "Person",
+          "@id": "https://aerolex.cl/#jaime-vidal",
+          "name": "Jaime Vidal Paredes",
+          "jobTitle": "Socio & Asesor Jurídico",
+          "worksFor": { "@id": "https://aerolex.cl/#legalservice" },
+          "description": "Socio y director de gestión estratégica, peritajes técnicos con drones, fotogrametría judicial y coordinación LegalTech en AeroLex.",
+          "knowsAbout": [
+            "Peritajes Aéreos con Drones",
+            "Fotogrametría y Topografía Judicial",
+            "Asesoría Jurídica y Gestión LegalTech",
+            "Delimitación de Deslindes Territoriales y Servidumbres"
+          ]
         }
       ]
     }
@@ -660,6 +712,7 @@
                 <a href="#inicio" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Inicio</a>
                 <a href="#servicios" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Servicios</a>
                 <a href="#especialidades" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Guías</a>
+                <a href="#equipo" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Equipo</a>
                 <button type="button" onclick="openAssistant()" class="bg-mac-dark text-white px-4 py-1.5 rounded-full text-[13px] font-bold shadow-sm flex items-center gap-2 hover:bg-black transition group" title="Asistente de Ayuda Legal">
                     <span class="relative flex w-2 h-2">
                         <span class="absolute inline-flex w-full h-full rounded-full bg-green-400 opacity-75 animate-ping"></span>
@@ -707,6 +760,7 @@
             <a href="#inicio" onclick="toggleMobileMenu()" class="text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 hover:text-mac-accent transition">Inicio</a>
             <a href="#servicios" onclick="toggleMobileMenu()" class="text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 hover:text-mac-accent transition">Servicios</a>
             <a href="#especialidades" onclick="toggleMobileMenu()" class="text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 hover:text-mac-accent transition">Guías por Materia</a>
+            <a href="#equipo" onclick="toggleMobileMenu()" class="text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 hover:text-mac-accent transition">Equipo Jurídico</a>
             <button onclick="toggleMobileMenu(); openAssistant()" class="text-left text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 flex items-center gap-3 hover:text-mac-accent transition">
                 <span class="relative flex w-3 h-3">
                     <span class="absolute inline-flex w-full h-full rounded-full bg-green-400 opacity-75 animate-ping"></span>
@@ -1411,7 +1465,120 @@
         </div>
     </section>
 
-    
+    <!-- EQUIPO JURÍDICO & DIRECCIÓN (AUTORIDAD E-E-A-T & ABOGADO TITULADO) -->
+    <section id="equipo" class="max-w-7xl mx-auto px-4 pb-12 w-full relative z-10 mt-6">
+        <div class="glass-effect rounded-[2rem] p-6 md:p-10 shadow-xl border border-white/80">
+            <div class="text-center max-w-3xl mx-auto mb-10 px-4">
+                <span class="inline-flex items-center gap-2 text-[11px] font-bold text-mac-accent uppercase tracking-widest mb-3">
+                    <i class="fas fa-user-shield"></i> Dirección Jurídica & Profesional
+                </span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-mac-dark tracking-tight">
+                    Equipo Jurídico & Socios
+                </h2>
+                <p class="text-mac-dark/70 text-[14px] md:text-[15px] mt-2 leading-relaxed">
+                    Litigación presencial en tribunales de Puerto Montt, respaldo técnico y dirección estratégica para defender sus derechos.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                <!-- TARJETA 1: VÍCTOR GARRIDO CHÁVEZ (ABOGADO SOCIO TITULADO) -->
+                <div class="bg-white/90 border border-gray-200/80 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative group">
+                    <div class="absolute top-4 right-4">
+                        <span class="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200/60 text-[10.5px] font-extrabold uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fas fa-certificate text-blue-600 text-[10px]"></i> Corte Suprema
+                        </span>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center gap-4 mb-5">
+                            <!-- Contenedor listo para foto oficial id="foto-victor-garrido" -->
+                            <div id="foto-victor-garrido" class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-blue-700 to-slate-900 text-white flex items-center justify-center font-bold text-xl md:text-2xl shadow-md border-2 border-white shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg md:text-xl font-extrabold text-mac-dark leading-tight">Víctor Garrido Chávez</h3>
+                                <p class="text-blue-600 font-bold text-[13px] mt-0.5">Abogado Socio Titulado</p>
+                                <p class="text-gray-400 text-[11.5px] font-medium flex items-center gap-1 mt-1">
+                                    <i class="fas fa-scale-balanced text-mac-accent"></i> Habilitado por la Excma. Corte Suprema
+                                </p>
+                            </div>
+                        </div>
+
+                        <p class="text-mac-dark/75 text-[13px] leading-relaxed mb-4">
+                            Abogado titular a cargo de la representación judicial y defensa en litigios civiles, laborales, sucesorios e inmobiliarios en la Región de Los Lagos. Litigación activa ante la Corte de Apelaciones y los juzgados de Puerto Montt.
+                        </p>
+
+                        <div class="space-y-2 mb-6 text-[12px] text-gray-600 border-t border-gray-100 pt-3">
+                            <div class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-emerald-500 mt-0.5 text-xs"></i>
+                                <span>Defensa en Juzgado de Letras del Trabajo (Despidos y Tutela)</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-emerald-500 mt-0.5 text-xs"></i>
+                                <span>Litigación en 1° y 2° Juzgados Civiles y Corte de Apelaciones</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-emerald-500 mt-0.5 text-xs"></i>
+                                <span>Herencias, Posesión Efectiva y Estudio de Títulos</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="https://wa.me/56950129843?text=Hola,%20quisiera%20solicitar%20una%20consulta%20con%20el%20abogado%20V%C3%ADctor%20Garrido%20Ch%C3%A1vez%20en%20Puerto%20Montt" target="_blank" rel="noopener" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-mac-dark hover:bg-black text-white text-[12.5px] font-bold shadow-sm transition">
+                        <i class="fab fa-whatsapp text-emerald-400"></i> Consultar con el Abogado
+                    </a>
+                </div>
+
+                <!-- TARJETA 2: JAIME VIDAL PAREDES (SOCIO & ASESOR JURÍDICO) -->
+                <div class="bg-white/90 border border-gray-200/80 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative group">
+                    <div class="absolute top-4 right-4">
+                        <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10.5px] font-extrabold uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fas fa-drone text-sky-600 text-[10px]"></i> Peritajes Técnicos
+                        </span>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center gap-4 mb-5">
+                            <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 text-white flex items-center justify-center font-bold text-xl md:text-2xl shadow-md border-2 border-white shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
+                                <i class="fas fa-compass-drafting"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg md:text-xl font-extrabold text-mac-dark leading-tight">Jaime Vidal Paredes</h3>
+                                <p class="text-mac-accent font-bold text-[13px] mt-0.5">Socio & Asesor Jurídico</p>
+                                <p class="text-gray-400 text-[11.5px] font-medium flex items-center gap-1 mt-1">
+                                    <i class="fas fa-satellite text-sky-500"></i> Dirección Estratégica & LegalTech
+                                </p>
+                            </div>
+                        </div>
+
+                        <p class="text-mac-dark/75 text-[13px] leading-relaxed mb-4">
+                            Socio a cargo de la gestión operativa, coordinación legaltech, análisis documental preparatorio y dirección de la unidad técnica de peritajes aéreos y fotogrametría con drones para causas inmobiliarias y de tierras.
+                        </p>
+
+                        <div class="space-y-2 mb-6 text-[12px] text-gray-600 border-t border-gray-100 pt-3">
+                            <div class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-emerald-500 mt-0.5 text-xs"></i>
+                                <span>Peritajes con drones: deslindes, usurpaciones y servidumbres</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-emerald-500 mt-0.5 text-xs"></i>
+                                <span>Coordinación de causas y análisis de antecedentes documentales</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-emerald-500 mt-0.5 text-xs"></i>
+                                <span>Integración LegalTech para seguimiento transparente al cliente</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="https://wa.me/56950129843?text=Hola,%20quisiera%20consultar%20sobre%20peritajes%20t%C3%A9cnicos%20o%20asesor%C3%ADa%20jur%C3%ADdica%20con%20Jaime%20Vidal%20en%20Puerto%20Montt" target="_blank" rel="noopener" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-gray-300 hover:border-mac-dark text-mac-dark text-[12.5px] font-bold shadow-sm transition">
+                        <i class="fab fa-whatsapp text-emerald-500"></i> Contactar Asesoría & Peritajes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- PREGUNTAS FRECUENTES (FAQ PARA SEO Y ASISTENCIA AL CLIENTE) -->
     <section id="faq" class="max-w-7xl mx-auto px-4 pb-12 w-full relative z-10 mt-6">
         <div class="glass-effect rounded-[2rem] p-6 md:p-10 shadow-xl border border-white/80">
@@ -1628,6 +1795,21 @@
                         <span class="inline-flex items-center gap-1"><i class="fas fa-phone text-mac-accent text-[10px]"></i> Atención Presencial & Online</span>
                     </div>
                 </div>
+            </div>
+
+            <!-- Centro: Enlaces Sitewide a Especialidades Jurídicas (SEO Local & PageRank) -->
+            <div class="w-full lg:w-auto border-t lg:border-t-0 lg:border-l lg:border-r border-gray-200/60 pt-6 lg:pt-0 lg:px-8">
+                <h4 class="text-xs font-extrabold uppercase tracking-widest text-mac-dark/60 mb-3 flex items-center gap-2">
+                    <i class="fas fa-scale-balanced text-mac-accent"></i> Especialidades en Puerto Montt
+                </h4>
+                <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2 text-[12.5px]">
+                    <li><a href="/abogado-laboral-puerto-montt" class="text-mac-dark/80 hover:text-blue-600 font-medium transition flex items-center gap-1.5"><i class="fas fa-chevron-right text-[9px] text-gray-400"></i> Abogado Laboral (Despidos)</a></li>
+                    <li><a href="/abogado-familia-puerto-montt" class="text-mac-dark/80 hover:text-blue-600 font-medium transition flex items-center gap-1.5"><i class="fas fa-chevron-right text-[9px] text-gray-400"></i> Abogado de Familia (Alimentos)</a></li>
+                    <li><a href="/abogado-inmobiliario-puerto-montt" class="text-mac-dark/80 hover:text-blue-600 font-medium transition flex items-center gap-1.5"><i class="fas fa-chevron-right text-[9px] text-gray-400"></i> Abogado Inmobiliario (CBR)</a></li>
+                    <li><a href="/posesion-efectiva-puerto-montt" class="text-mac-dark/80 hover:text-blue-600 font-medium transition flex items-center gap-1.5"><i class="fas fa-chevron-right text-[9px] text-gray-400"></i> Posesión Efectiva & Herencias</a></li>
+                    <li><a href="/abogado-deudas-embargos-puerto-montt" class="text-mac-dark/80 hover:text-blue-600 font-medium transition flex items-center gap-1.5"><i class="fas fa-chevron-right text-[9px] text-gray-400"></i> Deudas, Embargos & Tercerías</a></li>
+                    <li><a href="/peritaje-dron-puerto-montt" class="text-mac-dark/80 hover:text-blue-600 font-medium transition flex items-center gap-1.5"><i class="fas fa-chevron-right text-[9px] text-gray-400"></i> Peritajes con Drones Los Lagos</a></li>
+                </ul>
             </div>
 
             <!-- Derecha: Redes y Firma -->
