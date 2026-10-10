@@ -4,4 +4,27 @@ Disallow: /admin
 Disallow: /admin.html
 Disallow: /api/admin
 
+# AI Search & Large Language Models Crawlers
+User-agent: GPTBot
+Allow: /
+Disallow: /admin
+Disallow: /admin.html
+Disallow: /api/admin
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Sitemap y Documento Semántico para Agentes LLM
 Sitemap: https://aerolex.cl/sitemap.xml

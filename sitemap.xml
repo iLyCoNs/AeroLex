@@ -3,7 +3,7 @@
   <!-- Página principal AeroLex - Abogados Puerto Montt -->
   <url>
     <loc>https://aerolex.cl/</loc>
-    <lastmod>2026-10-07</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -11,48 +11,48 @@
   <!-- Abogado Laboral: despidos, finiquitos y tutela -->
   <url>
     <loc>https://aerolex.cl/abogado-laboral-puerto-montt</loc>
-    <lastmod>2026-09-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-09</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- Abogado de Familia: divorcios, alimentos y cuidado personal -->
   <url>
     <loc>https://aerolex.cl/abogado-familia-puerto-montt</loc>
-    <lastmod>2026-09-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-09</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- Abogado Inmobiliario: títulos, loteos y CBR -->
   <url>
     <loc>https://aerolex.cl/abogado-inmobiliario-puerto-montt</loc>
-    <lastmod>2026-09-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-09</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- Posesión Efectiva y Herencias -->
   <url>
     <loc>https://aerolex.cl/posesion-efectiva-puerto-montt</loc>
-    <lastmod>2026-09-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-09</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- Deudas, Juicios Ejecutivos y Embargos -->
   <url>
     <loc>https://aerolex.cl/abogado-deudas-embargos-puerto-montt</loc>
-    <lastmod>2026-09-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-09</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- Peritajes con Drones y Fotogrametría -->
   <url>
     <loc>https://aerolex.cl/peritaje-dron-puerto-montt</loc>
-    <lastmod>2026-09-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-09</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 </urlset>
