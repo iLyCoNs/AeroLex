@@ -279,55 +279,6 @@ const KNOWN_COURTS = {
   "4_familia_santiago": { corte: "90", tribunal: "683", name: "4° Juzgado de Familia de Santiago" },
 };
 
-// Cartera oficial activa de expedientes de los abogados socios
-const PARTNER_CAUSES = [
-  {
-    code: "ALX-2026-71",
-    rit: "1071-2026",
-    tribunal: "Corte de Apelaciones de Puerto Montt",
-    materia: "Recurso de Protección - Migración (-/-)",
-    detalle: "Causa reservada en materia migratoria por disposición legal del Acta N° 44-2022 de la Corte Suprema.",
-    abogado: "Marta Elizabeth Sánchez Andrade",
-    status: "activo"
-  },
-  {
-    code: "ALX-2026-72",
-    rit: "1324-2026",
-    tribunal: "Corte de Apelaciones de Puerto Montt",
-    materia: "Contrato, nulidad de - MANSILLA / ZURITA",
-    detalle: "Apelación sentencia definitiva (C-25-2025 Letras Achao). Patrocinado: Edith del Carmen Mansilla Ojeda. Contraparte: Arturo Zurita Pereira.",
-    abogado: "Marta Elizabeth Sánchez Andrade",
-    status: "activo"
-  },
-  {
-    code: "ALX-2026-73",
-    rit: "1360-2026",
-    tribunal: "Corte de Apelaciones de Puerto Montt",
-    materia: "Recurso de Protección - ALVARADO / PERANCHIGUAY",
-    detalle: "Recurso de Protección. Abogada socia patrocinante: Marta Elizabeth Sánchez Andrade. Cliente: Diego Armando Alvarado Paredes.",
-    abogado: "Marta Elizabeth Sánchez Andrade",
-    status: "activo"
-  },
-  {
-    code: "ALX-2026-74",
-    rit: "1452-2026",
-    tribunal: "Corte de Apelaciones de Puerto Montt",
-    materia: "Recurso de Protección - Migración (-/-)",
-    detalle: "Causa reservada en materia migratoria por disposición legal del Acta N° 44-2022 de la Corte Suprema.",
-    abogado: "Marta Elizabeth Sánchez Andrade",
-    status: "activo"
-  },
-  {
-    code: "ALX-2026-75",
-    rit: "Z-789-2020",
-    tribunal: "4 Juzgado de Familia Santiago",
-    materia: "Alimentos - MUÑOZ / NITSCHKE",
-    detalle: "Juicio de alimentos. Cliente: Daniel Alejandro Nitschke Aliaga. Contraparte: Pamela Muñoz Vásquez.",
-    abogado: "Jaime Vidal Paredes",
-    status: "activo"
-  }
-];
-
 function parseRit(ritString) {
   if (!ritString) return null;
   const clean = ritString.trim();
@@ -399,42 +350,6 @@ function resolveCourt(courtId) {
   // Sin fallback silencioso: un tribunal no reconocido se informa como tal en
   // vez de consultar en un tribunal equivocado (homonimia de ROL).
   return null;
-}
-
-async function syncPartnerCausesToSupabase() {
-  console.log('[Vigilancia Nube] Sincronizando nómina completa de causas de abogados socios en Supabase...');
-  const resp = await fetch(`${SUPA_URL}/rest/v1/cases?select=code,rit`, { headers: supaHeaders() });
-  const existing = resp.ok ? await resp.json() : [];
-  const existingRits = new Set((existing || []).map(c => String(c.rit || '').trim().toUpperCase()));
-
-  for (const pc of PARTNER_CAUSES) {
-    if (!existingRits.has(pc.rit.toUpperCase())) {
-      console.log(`  · Registrando nueva causa de socio en Supabase: ${pc.rit} (${pc.code} - ${pc.materia} - ${pc.abogado})`);
-      const row = {
-        code: pc.code,
-        pin: '0000',
-        materia: pc.materia,
-        tribunal: pc.tribunal,
-        rit: pc.rit,
-        detalle: pc.detalle,
-        estado_actual: 1,
-        triage: [
-          '__ABOGADO__:' + (pc.abogado || 'Jaime Vidal Paredes')
-        ],
-        steps: [
-          { title: 'Expediente recibido por AeroLex', date: '13-sep-2026', done: true },
-          { title: 'Vigilancia procesal activa en OJV', date: 'En curso', done: false }
-        ],
-        status: pc.status,
-        created_at: new Date().toISOString()
-      };
-      await fetch(`${SUPA_URL}/rest/v1/cases`, {
-        method: 'POST',
-        headers: supaHeaders(),
-        body: JSON.stringify(row)
-      }).catch(() => {});
-    }
-  }
 }
 
 const OJV_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36";
@@ -1523,10 +1438,9 @@ async function main() {
     `[Vigilancia Nube] Horario de pases (Chile): ${PASSES.map(p => `${p.time}${p.days.length === 1 && p.days[0] === 5 ? ' (viernes)' : ''}`).join(', ')}`,
   );
 
-  // 1. Sincronizar nómina completa de los abogados socios
-  await syncPartnerCausesToSupabase();
-
-  // 2. Verificar si el interruptor maestro está habilitado (salvo en forzado con --test)
+  // 1. Verificar si el interruptor maestro está habilitado (salvo en forzado con --test).
+  //    Las causas se administran desde las aplicaciones de escritorio: al eliminarse
+  //    alli se borran del portal y NO deben volver a sembrarse desde la nube.
   const cfgResp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.CFG-VIGILANCIA`, { headers: supaHeaders() });
   const cfgRows = cfgResp.ok ? await cfgResp.json() : [];
   let isEnabled = true;
@@ -1546,7 +1460,7 @@ async function main() {
 
   console.log(`[Vigilancia Nube] INTERRUPTOR MAESTRO: ${isEnabled ? 'HABILITADO' : 'PAUSADO (pero forzado por flag --test)'}. Procediendo al escaneo...`);
 
-  // 3. Obtener todas las causas activas con RIT
+  // 2. Obtener todas las causas activas con RIT
   const casesResp = await fetch(`${SUPA_URL}/rest/v1/cases?select=*`, { headers: supaHeaders() });
   const allRows = casesResp.ok ? await casesResp.json() : [];
 
@@ -1565,7 +1479,7 @@ async function main() {
 
   console.log(`[Vigilancia Nube] Total causas activas bajo inspección: ${watchedCases.length}`);
 
-  // 3b. Horarios configurados: general (CFG-PASES) + uno por abogado (CFG-PASES-<slug>)
+  // 2b. Horarios configurados: general (CFG-PASES) + uno por abogado (CFG-PASES-<slug>)
   const schedules = await loadLawyerSchedules();
   const lawyerSchedules = schedules.filter(s => !s.general);
   console.log(
@@ -1611,7 +1525,7 @@ async function main() {
     totalScanned += step.cases.length;
     totalNovelties += noveltiesFound.length;
 
-    // 4. Sin correos intermedios: las novedades del pase se informan en el
+    // 3. Sin correos intermedios: las novedades del pase se informan en el
     // correo único diario que se despacha al cierre del último pase.
     if (isTestMode) {
       console.log(`[Vigilancia Nube] Modo prueba: correo de verificación con las ${scannedSummary.length} causas de ${label}...`);
@@ -1622,7 +1536,7 @@ async function main() {
       console.log(`[Vigilancia Nube] ${label}: barrido completado sin novedades del día.`);
     }
 
-    // 5. Registro del pase (el correo diario se envía una sola vez al cierre)
+    // 4. Registro del pase (el correo diario se envía una sola vez al cierre)
     await processDiario({
       schedule: step.schedule,
       passLabel: lateFallback ? null : step.label,
@@ -1635,11 +1549,11 @@ async function main() {
     }).catch(err => console.warn('[Vigilancia Nube] Aviso: no se pudo procesar el parte diario:', err.message));
   }
 
-  // 5b. Correo único diario (una vez al día, al cierre del último pase):
+  // 4b. Correo único diario (una vez al día, al cierre del último pase):
   // pases ejecutados correctamente + causas con novedad de cada cartera.
   await sendDailyDigests(schedules).catch(err => console.warn('[Vigilancia Nube] Aviso: no se pudo enviar el correo diario:', err.message));
 
-  // 6. Actualizar CFG-VIGILANCIA con la bitácora del último pase
+  // 5. Actualizar CFG-VIGILANCIA con la bitácora del último pase
   const nowIso = new Date().toISOString();
   const cfgUpdate = {
     enabled: isEnabled,
