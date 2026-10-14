@@ -2864,7 +2864,45 @@ function setActiveStudy(prefix) {
     }
 
     function sourceLabel(src) {
-        return src === 'portal' ? 'Portal' : src === 'admin' ? 'Admin' : 'Chatbot';
+        const map = {
+            'portal': 'Portal',
+            'admin': 'Admin',
+            'google_ads': 'Google Ads',
+            'calculadora': 'Calculadora',
+            'calculadora_pdf': 'Calculadora (PDF)',
+            'chatbot': 'Chatbot',
+            'chatbot_sesion': 'Chatbot'
+        };
+        return map[src] || src || '—';
+    }
+
+    function waEsc(s) {
+        return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+    }
+
+    function attrSummary(a) {
+        if (!a) return '';
+        const firstMap = { google_ads: 'Google Ads', google_organic: 'Búsqueda Google', direct_other: 'Directo/Otro' };
+        const first = firstMap[a.firstSource] || a.firstSource || 'Sin dato';
+        const isAds = !!(a.gclid || a.adsAt);
+        const adsTxt = isAds
+            ? 'Clic Ads: sí' + (a.adsDaysAgo !== null && a.adsDaysAgo !== undefined ? ' (hace ' + a.adsDaysAgo + 'a)' : '')
+            : 'Clic Ads: no';
+        return '1ª visita: ' + first + ' · ' + adsTxt + (a.utmCampaign ? ' · campaña: ' + a.utmCampaign : '');
+    }
+
+    function attrBadge(a) {
+        if (!a) return '';
+        const isAds = !!(a.gclid || a.adsAt);
+        const firstMap = { google_ads: 'Google Ads', google_organic: 'Búsqueda Google', direct_other: 'Directo' };
+        const first = firstMap[a.firstSource] || (a.firstSource || 'Sin dato');
+        const txt = '1ª: ' + first + (isAds ? ' · Ads ✓' : '');
+        const icon = isAds ? 'fa-bullseye' : (a.firstSource === 'google_organic' ? 'fa-magnifying-glass' : 'fa-arrow-right-to-bracket');
+        const detail = attrSummary(a)
+            + (a.gclid ? ' · gclid: ' + a.gclid : '')
+            + (a.firstReferrer ? ' · ref: ' + a.firstReferrer : '')
+            + (a.firstLanding ? ' · entrada: ' + a.firstLanding : '');
+        return `<div class="text-[9.5px] mt-0.5 ${isAds ? 'text-emerald-400' : 'text-slate-500'}" title="${waEsc(detail)}"><i class="fas ${icon} mr-0.5"></i>${txt}</div>`;
     }
 
     function renderWaTable(contacts, filterCode) {
@@ -2877,7 +2915,7 @@ function setActiveStudy(prefix) {
             const msg = (c.message || '').slice(0, 80).replace(/</g,'&lt;');
             return `<tr class="border-b border-[--border] hover:bg-white/[0.02] transition">
                 <td class="px-3 py-2 text-[11px] text-slate-300 whitespace-nowrap">${dt}</td>
-                <td class="px-3 py-2 text-[11px] text-slate-400">${sourceLabel(c.source)}</td>
+                <td class="px-3 py-2 text-[11px] text-slate-400">${sourceLabel(c.source)}${attrBadge(c.attribution)}</td>
                 <td class="px-3 py-2 text-[11px] font-medium text-white">${topicLabel(c.topic)}</td>
                 <td class="px-3 py-2 text-[11px]">${code}</td>
                 <td class="px-3 py-2 text-[11px] text-slate-400 max-w-[220px] truncate" title="${c.message || ''}">${msg || '—'}</td>
@@ -2897,10 +2935,12 @@ function setActiveStudy(prefix) {
     }
 
     function exportWaCsv(contacts) {
-        const header = ['Fecha','Origen','Tipo','Expediente','Mensaje'];
+        const header = ['Fecha','Origen','Tipo','Expediente','Mensaje','Atribucion','GCLID'];
         const rows = contacts.map(c => [
             c.timestamp ? new Date(c.timestamp).toLocaleString('es-CL',{timeZone:'America/Santiago'}) : '',
-            c.source || '', c.topic || '', c.caseCode || '', (c.message || '').replace(/"/g,"'")
+            c.source || '', c.topic || '', c.caseCode || '', (c.message || '').replace(/"/g,"'"),
+            attrSummary(c.attribution || null),
+            (c.attribution && c.attribution.gclid) || ''
         ].map(v => `"${v}"`).join(','));
         const csv = [header.join(','), ...rows].join('\n');
         const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });

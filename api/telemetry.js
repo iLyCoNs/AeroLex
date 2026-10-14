@@ -34,6 +34,9 @@ module.exports = async (req, res) => {
       const detail = String(body.detail || '').slice(0, 1000);
       const referrer = String(body.referrer || '').slice(0, 250);
       const sessionId = String(body.session_id || '').slice(0, 80);
+      const firstSource = String(body.first_source || '').slice(0, 50);
+      const firstSeen = String(body.first_seen || '').slice(0, 40);
+      const adsAt = String(body.ads_at || '').slice(0, 40);
 
       const eventPayload = {
         code,
@@ -46,7 +49,10 @@ module.exports = async (req, res) => {
         path: pathUrl,
         detail,
         referrer,
-        sessionId
+        sessionId,
+        firstSource,
+        firstSeen,
+        adsAt
       };
 
       if (SUPA_URL && SUPA_KEY) {

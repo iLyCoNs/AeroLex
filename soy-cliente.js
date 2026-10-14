@@ -25,6 +25,18 @@
   function track(event, detail) {
     try { if (typeof AeroLexTelemetry !== "undefined" && AeroLexTelemetry.track) AeroLexTelemetry.track(event, detail); } catch (e) { /* telemetry is best-effort */ }
   }
+  function attributionPayload() {
+    try {
+      var a = JSON.parse(localStorage.getItem("alx_attr") || "{}") || {};
+      return {
+        first_source: a.firstSource || "", first_seen: a.firstSeen || "",
+        first_referrer: a.firstReferrer || "", first_landing: a.firstLanding || "",
+        last_source: a.lastSource || "", last_seen: a.lastSeen || "",
+        gclid: a.gclid || "", ads_at: a.adsAt || "", ads_first: a.adsFirst || "",
+        utm_campaign: a.utmCampaign || ""
+      };
+    } catch (e) { return null; }
+  }
   function progress(panel) {
     var fields = panel.querySelectorAll("input, select");
     var filled = 0;
@@ -264,7 +276,7 @@
     fetch("/api/wa-contact", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ source: "calculadora", topic: "Calculadora " + data.tipo, clientName: lead.nombre, phone: lead.fono, message: mensaje })
+      body: JSON.stringify({ source: "calculadora", topic: "Calculadora " + data.tipo, clientName: lead.nombre, phone: lead.fono, message: mensaje, attribution: attributionPayload() })
     }).catch(function () { /* el lead también queda en telemetría */ });
   };
   window.alcDescargarPDF = async function (kind) {
@@ -276,7 +288,7 @@
     fetch("/api/wa-contact", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ source: "calculadora_pdf", topic: "Calculadora " + data.tipo, clientName: lead.nombre, phone: lead.fono, message: data.tipo + " — estimación " + rango + ". " + data.detalle + "." })
+      body: JSON.stringify({ source: "calculadora_pdf", topic: "Calculadora " + data.tipo, clientName: lead.nombre, phone: lead.fono, message: data.tipo + " — estimación " + rango + ". " + data.detalle + ".", attribution: attributionPayload() })
     }).catch(function () { /* best-effort */ });
     try {
       var mod = await ensureJsPDF();

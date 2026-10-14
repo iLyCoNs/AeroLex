@@ -1866,6 +1866,56 @@
         const _WA_LOG_URL = '/api/wa-contact';
         let _waSessionId = 'portal_' + Math.random().toString(36).substring(2, 10) + '_' + Date.now();
 
+        // ── ATRIBUCIÓN PERSISTENTE (Google Ads vs búsqueda orgánica vs directo) ──
+        // Guarda en localStorage la primera visita, el último origen y el último clic
+        // en un anuncio (gclid), de modo que un contacto futuro pueda atribuirse a la
+        // campaña aunque el clic haya ocurrido días antes.
+        const _ALX_ATTR_KEY = 'alx_attr';
+        function _alxLoadAttr() {
+            try { return JSON.parse(localStorage.getItem(_ALX_ATTR_KEY) || '{}') || {}; } catch (_) { return {}; }
+        }
+        function _alxSaveAttr(attr) {
+            try { localStorage.setItem(_ALX_ATTR_KEY, JSON.stringify(attr)); } catch (_) {}
+        }
+        function _alxUpdateAttr(srcInfo) {
+            try {
+                const attr = _alxLoadAttr();
+                const now = new Date().toISOString();
+                if (!attr.firstSource) {
+                    attr.firstSource = srcInfo.source;
+                    attr.firstSeen = now;
+                    attr.firstReferrer = (document.referrer || '').slice(0, 200);
+                    attr.firstLanding = (window.location.pathname + window.location.search + window.location.hash).slice(0, 200);
+                }
+                attr.lastSource = srcInfo.source;
+                attr.lastSeen = now;
+                const gclid = srcInfo.gclid || sessionStorage.getItem('alx_gclid') || '';
+                if (gclid) {
+                    attr.gclid = String(gclid).slice(0, 150);
+                    attr.adsAt = now;
+                    if (!attr.adsFirst) attr.adsFirst = now;
+                }
+                const utm = srcInfo.utmCampaign || sessionStorage.getItem('alx_utm_campaign') || '';
+                if (utm) attr.utmCampaign = String(utm).slice(0, 100);
+                _alxSaveAttr(attr);
+            } catch (_) {}
+        }
+        function _alxAttrPayload() {
+            const a = _alxLoadAttr();
+            return {
+                first_source: a.firstSource || '',
+                first_seen: a.firstSeen || '',
+                first_referrer: a.firstReferrer || '',
+                first_landing: a.firstLanding || '',
+                last_source: a.lastSource || '',
+                last_seen: a.lastSeen || '',
+                gclid: a.gclid || '',
+                ads_at: a.adsAt || '',
+                ads_first: a.adsFirst || '',
+                utm_campaign: a.utmCampaign || ''
+            };
+        }
+
         const AeroLexTelemetry = (function() {
             const ENDPOINT = '/api/telemetry';
             let sessionId = sessionStorage.getItem('alx_telemetry_sid');
@@ -1926,9 +1976,11 @@
             }
 
             const trafficInfo = detectSource();
+            _alxUpdateAttr(trafficInfo);
 
             function track(eventType, detail) {
                 try {
+                    const attr = _alxLoadAttr();
                     const payload = {
                         session_id: sessionId,
                         source: trafficInfo.source,
@@ -1938,7 +1990,10 @@
                         detail: String(detail || '').slice(0, 500),
                         device: getDevice(),
                         path: window.location.pathname + window.location.hash,
-                        referrer: document.referrer ? document.referrer.slice(0, 200) : ''
+                        referrer: document.referrer ? document.referrer.slice(0, 200) : '',
+                        first_source: attr.firstSource || '',
+                        first_seen: attr.firstSeen || '',
+                        ads_at: attr.adsAt || ''
                     };
 
                     // Respaldo en localStorage de los últimos 50 eventos locales
@@ -1969,6 +2024,26 @@
                 track,
                 getSource: () => trafficInfo.source,
                 getGclid: () => trafficInfo.gclid
+            };
+        })();
+
+        // Refuerzo: adjunta la atribución a CUALQUIER POST a /api/wa-contact
+        // (cubre también los envíos del widget externo del chatbot).
+        (function() {
+            const _origFetch = window.fetch.bind(window);
+            window.fetch = function(input, init) {
+                try {
+                    const url = typeof input === 'string' ? input : (input && input.url) || '';
+                    const method = String((init && init.method) || (input && input.method) || 'GET').toUpperCase();
+                    if (url.indexOf('/api/wa-contact') !== -1 && method === 'POST' && init && typeof init.body === 'string') {
+                        const body = JSON.parse(init.body);
+                        if (body && typeof body === 'object' && !body.attribution) {
+                            body.attribution = _alxAttrPayload();
+                            init = Object.assign({}, init, { body: JSON.stringify(body) });
+                        }
+                    }
+                } catch (_) {}
+                return _origFetch(input, init);
             };
         })();
 
@@ -2003,7 +2078,8 @@
                         topic: String(topic || 'contacto_web').slice(0, 200),
                         message: String(message || '').slice(0, 500),
                         caseCode: caseCode || null,
-                        sessionId: _waSessionId
+                        sessionId: _waSessionId,
+                        attribution: _alxAttrPayload()
                     }),
                     keepalive: true
                 }).catch(() => {});
