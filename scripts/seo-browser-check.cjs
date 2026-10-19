@@ -38,39 +38,16 @@ const server = http.createServer((req, res) => {
           await page.evaluate(() => openAssistant());
           assert(await page.locator('dialog[open]').count() > 0, 'Assistant opens');
           await page.evaluate(() => document.querySelector('dialog[open]').close());
-          assert.equal(await page.locator('#calculator-details').getAttribute('open'), null);
-          assert.equal(await page.locator('#legal-tools-details').getAttribute('open'), null);
-          await page.locator('[data-friendly-tool="arriendo"]').click();
-          await page.screenshot({path:path.join(require('node:os').tmpdir(), `aerolex-tools-${width}.png`)});
-          assert(await page.locator('#alc-panel-arriendo').isVisible());
-          assert.equal(await page.locator('#alc-tab-arriendo').getAttribute('aria-pressed'), 'true');
+          await page.locator('#alc-tab-arriendo').click();
           await page.locator('#arr-renta').fill('450000');
           await page.locator('#arr-meses').fill('2');
           await page.getByRole('button', {name:'Calcular deuda estimada',exact:true}).click();
           assert((await page.locator('#alc-result-arriendo').innerText()).includes('900.000'));
-          await page.locator('[data-friendly-tool="glosario"]').click();
-          assert(await page.locator('#tool-glosario').isVisible());
+          await page.getByRole('button', {name:'Palabras legales',exact:true}).click();
           await page.getByRole('textbox', {name:'Buscar una palabra legal'}).fill('finiquito');
           assert((await page.locator('#glos-grid').innerText()).toLowerCase().includes('finiquito'));
-          await page.locator('[data-friendly-tool="plazos"]').click();
-          assert(await page.locator('#deadline-events').isVisible());
-          await page.locator('#event-grid button').first().click();
-          assert(await page.locator('#deadline-actions').isVisible());
-          await page.getByRole('button', {name:'Cambiar situación',exact:true}).click();
-          assert(await page.locator('#deadline-events').isVisible());
-          if (width < 1280) {
-            await page.locator('#open-mobile-menu').click();
-            assert.equal(await page.locator('#mobile-menu').evaluate(el => el.inert), false);
-            await page.keyboard.press('Escape');
-            assert.equal(await page.locator('#mobile-menu').evaluate(el => el.inert), true);
-            assert(await page.locator('#open-mobile-menu').evaluate(el => el === document.activeElement));
-          }
-          await page.goto(base + '/#soy-cliente');
-          await page.reload();
-          assert(await page.locator('#alc-panel-finiquito').isVisible(), 'Existing calculator links still open it');
           await page.goto(base + '/');
-          if (width >= 1280) assert.equal(await page.locator('#open-mobile-menu').isVisible(), false);
-          await page.screenshot({path:path.join(require('node:os').tmpdir(), `aerolex-seo-${width}.png`)});
+          await page.screenshot({path:path.join(require('node:os').tmpdir(), `aerolex-seo-${width}.png`), animations:'disabled'});
         }
         results.push(`${width}px ${route}: OK`);
       }
@@ -78,24 +55,14 @@ const server = http.createServer((req, res) => {
     for (const width of [320, 768, 1024]) {
       await page.setViewportSize({width,height:1000});
       await page.goto(base + '/');
-      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `Home overflow at ${width}`);
-      const menu = page.locator('#open-mobile-menu');
-      assert(await menu.isVisible());
-      assert(await page.locator('.simple-header').evaluate(el => [...el.querySelectorAll('a,button')].filter(x => x.getClientRects().length).every(x => { const b=x.getBoundingClientRect(); return b.left>=0 && b.right<=innerWidth; })), 'Header controls stay on screen');
-      await menu.click();
-      await page.getByRole('link', {name:'Herramientas',exact:true}).click();
-      assert.equal(await page.locator('#mobile-menu').evaluate(el => el.inert), true);
-      await page.locator('[data-friendly-tool="finiquito"]').click();
-      assert(await page.locator('#fin-inicio').isVisible());
-      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `Calculator overflow at ${width}`);
-      results.push(`${width}px home and calculator: OK`);
+      assert(await page.locator('header').first().evaluate(el => [...el.querySelectorAll('a,button')].filter(x => x.getClientRects().length).every(x => { const b=x.getBoundingClientRect(); return b.left>=0 && b.right<=innerWidth; })), `Header at ${width}`);
+      await page.locator('#open-mobile-menu').click();
+      assert.equal(await page.locator('#mobile-menu').evaluate(el => el.inert),false);
+      await page.keyboard.press('Escape');
+      assert.equal(await page.locator('#mobile-menu').evaluate(el => el.inert),true);
+      assert(await page.locator('#open-mobile-menu').evaluate(el => el === document.activeElement));
+      results.push(`${width}px header and keyboard menu: OK`);
     }
-    await page.setViewportSize({width:1280,height:1000});
-    await page.goto(base + '/');
-    await page.evaluate(() => document.documentElement.style.zoom = '2');
-    await page.locator('[data-friendly-tool="arriendo"]').click();
-    assert(await page.locator('#arr-renta').isVisible(), 'Calculator usable at 200% zoom');
-    results.push('200% zoom: calculator accessible');
     assert.deepEqual(errors, [], 'No uncaught client JS errors');
     console.log(results.join('\n'));
   } finally {

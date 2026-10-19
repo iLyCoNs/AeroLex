@@ -679,16 +679,16 @@
     </style>
     <script src="procedures.js"></script>
     <script src="soy-cliente.js" defer></script>
-    <link rel="stylesheet" href="/home-access.css">
-    <script src="/home-access.js" defer></script>
+<link rel="stylesheet" href="/home-refinement.css">
+<script src="/home-refinement.js" defer></script>
 </head>
 <body class="relative flex flex-col min-h-screen">
-    <a href="#inicio" class="skip-content">Ir al contenido principal</a>
+<a href="#inicio" class="skip-content">Ir al contenido principal</a>
 
     <div class="bg-container"></div><div class="mesh-overlay"></div>
 
     <!-- HEADER / DOCK NAV -->
-    <header class="simple-header fixed w-full top-0 z-40 transition-all duration-300 pt-4">
+    <header class="fixed w-full top-0 z-40 transition-all duration-300 pt-4">
         <div class="max-w-7xl mx-auto px-4 md:px-6 flex justify-between items-center">
             
             <!-- Logo Customizado -->
@@ -697,15 +697,33 @@
             </a>
             
             <!-- Nav de Escritorio (Oculto en móviles, visible en pantallas grandes) -->
-            <nav aria-label="Navegación principal" class="hidden xl:flex items-center gap-2 bg-white rounded-full px-4 py-2 mx-auto">
-<a href="#inicio">Inicio</a><a href="#herramientas">Herramientas</a><a href="#especialidades">Servicios</a><a href="#equipo">Equipo</a><a href="#mi-causa">Mi causa</a><a href="/admin">Portal abogados</a></nav>
+            <nav class="hidden xl:flex items-center space-x-1 bg-white/60 backdrop-blur-md border border-white/80 shadow-[0_10px_30px_rgba(0,0,0,0.05)] rounded-full px-4 py-2 mx-auto">
+                <a href="#inicio" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Inicio</a>
+                <a href="#servicios" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Servicios</a>
+                <a href="#especialidades" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Guías</a>
+                <a href="#equipo" class="px-4 py-1.5 rounded-full text-[13px] font-semibold text-mac-dark/80 hover:bg-white/80 transition-all">Equipo</a>
+                <button type="button" onclick="openAssistant()" class="bg-mac-dark text-white px-4 py-1.5 rounded-full text-[13px] font-bold shadow-sm flex items-center gap-2 hover:bg-black transition group" title="Asistente de Ayuda Legal">
+                    <span class="relative flex w-2 h-2">
+                        <span class="absolute inline-flex w-full h-full rounded-full bg-green-400 opacity-75 animate-ping"></span>
+                        <span class="relative inline-flex rounded-full w-2 h-2 bg-green-400"></span>
+                    </span>
+                    Ayuda Legal
+                </button>
+                <a href="#soy-cliente" class="px-4 py-1.5 rounded-full text-[13px] font-bold text-blue-700 hover:bg-white/80 transition-all flex items-center gap-1.5" title="Calculadora legal, informe y seguimiento de su causa">
+                    <i class="fas fa-satellite-dish text-[11px]"></i> Soy Cliente
+                </a>
+                <div class="w-px h-6 bg-gray-300/50 my-auto mx-2"></div> <!-- Separador -->
+                <a href="/admin" class="px-4 py-1.5 rounded-full text-[13px] font-bold text-gray-500 hover:text-mac-dark hover:bg-white/80 transition-all flex items-center gap-2" title="Panel de Administración">
+                    <i class="fas fa-lock text-[11px]"></i> Portal Abogados
+                </a>
+            </nav>
 
             <!-- Botones Derecho (Abogado de Turno + Hamburguesa Móvil) -->
             <div class="flex items-center gap-3">
-                <a href="tel:+56950129843" class="clear-action">Llamar</a>
+                <a href="https://wa.me/56950129843" class="header-contact" title="Contactar al estudio por WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i><span>Consultar</span></a>
                 
                 <!-- Botón Hamburguesa Móvil -->
-                <button id="open-mobile-menu" type="button" onclick="toggleMobileMenu()" class="xl:hidden clear-action clear-secondary" aria-controls="mobile-menu" aria-expanded="false">Menú</button>
+                <button id="open-mobile-menu" type="button" onclick="toggleMobileMenu()" class="menu-toggle xl:hidden bg-white border border-gray-200" aria-controls="mobile-menu" aria-expanded="false">Menú</button>
             </div>
         </div>
     </header>
@@ -717,13 +735,13 @@
             <a href="#inicio" onclick="toggleMobileMenu()" class="flex items-center">
                 <img src="/logo.png" alt="AeroLex - Abogados en Puerto Montt" width="1109" height="381" class="h-12 w-auto object-contain drop-shadow-sm">
             </a>
-            <button type="button" onclick="toggleMobileMenu()" class="clear-action clear-secondary">Cerrar menú</button>
+            <button type="button" onclick="toggleMobileMenu()" class="menu-toggle bg-gray-100">Cerrar</button>
         </div>
         
         <nav class="flex-1 px-8 py-10 flex flex-col gap-6 overflow-y-auto">
             <a href="#inicio" onclick="toggleMobileMenu()" class="text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 hover:text-mac-accent transition">Inicio</a>
             <a href="#servicios" onclick="toggleMobileMenu()" class="text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 hover:text-mac-accent transition">Servicios</a>
-            <a href="#herramientas" onclick="toggleMobileMenu()" class="text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 hover:text-mac-accent transition">Herramientas</a>
+            <a href="#especialidades" onclick="toggleMobileMenu()" class="text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 hover:text-mac-accent transition">Guías por Materia</a>
             <a href="#equipo" onclick="toggleMobileMenu()" class="text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 hover:text-mac-accent transition">Equipo Jurídico</a>
             <button onclick="toggleMobileMenu(); openAssistant()" class="text-left text-2xl font-bold text-mac-dark border-b border-gray-100 pb-4 flex items-center gap-3 hover:text-mac-accent transition">
                 <span class="relative flex w-3 h-3">
@@ -732,8 +750,8 @@
                 </span>
                 Ayuda Legal
             </button>
-            <a href="#mi-causa" onclick="toggleMobileMenu()" class="text-2xl font-bold text-blue-700 border-b border-gray-100 pb-4 flex items-center gap-3 hover:text-blue-900 transition">
-                <i class="fas fa-satellite-dish"></i> Ver mi causa
+            <a href="#soy-cliente" onclick="toggleMobileMenu()" class="text-2xl font-bold text-blue-700 border-b border-gray-100 pb-4 flex items-center gap-3 hover:text-blue-900 transition">
+                <i class="fas fa-satellite-dish"></i> Soy Cliente
             </a>
             <button onclick="toggleMobileMenu(); openAssistant(); setTimeout(contactDirect, 200)" class="text-left text-2xl font-bold text-[#25D366] border-b border-gray-100 pb-4 flex items-center gap-3 hover:text-[#1fa855] transition">
                 <i class="fab fa-whatsapp"></i> Contactar Abogado de Turno
@@ -791,56 +809,96 @@
 
     <!-- HERO SECTION -->
     <section id="inicio" class="pt-36 pb-12 flex flex-col items-center text-center px-4 relative z-10">
-        <div class="text-sm font-bold tracking-wide text-mac-dark mb-5">AeroLex · Atención en Puerto Montt</div>
-        <h1 class="font-extrabold text-mac-dark tracking-tight mb-6">Abogados en Puerto Montt<span>Le ayudamos a entender qué hacer.</span></h1>
-        <p>Cuéntenos qué le preocupa. Le orientamos en asuntos laborales, de familia, deudas, inmuebles y herencias, con una explicación clara de sus alternativas.</p>
-        <div class="welcome-actions">
-            <article class="welcome-card">
-                <h2>Quiero hablar con el estudio</h2>
-                <p>Puede llamarnos o escribirnos. No necesita completar un formulario.</p>
-                <a class="clear-action" href="tel:+56950129843">Llamar al +56 9 5012 9843</a>
-                <a class="clear-action clear-secondary" href="https://wa.me/56950129843?text=Hola%2C%20quiero%20consultar%20mi%20caso%20con%20AeroLex">Consultar mi caso por WhatsApp</a>
-            </article>
-            <article class="welcome-card">
-                <h2>Quiero usar una herramienta</h2>
-                <p>Estime su finiquito, revise una deuda o busque orientación sobre un plazo.</p>
-                <a class="clear-action clear-secondary" href="#herramientas">Elegir una herramienta</a>
-            </article>
-            <article class="welcome-card">
-                <h2>Quiero revisar mi causa</h2>
-                <p>Si ya es cliente, consulte el avance con el código y PIN que le entregó el estudio.</p>
-                <a class="clear-action clear-secondary" href="#mi-causa">Ver el avance de mi causa</a>
-            </article>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-black/5 shadow-sm text-[11px] font-bold text-mac-dark uppercase tracking-widest mb-6 fade-in">
+            Estudio Jurídico & LegalTech en Puerto Montt
         </div>
-        <p class="mt-6">Benavente 405, oficina 305, Puerto Montt.<br>Atención de lunes a viernes, 09:00 a 18:00.</p>
-        <nav aria-label="Áreas de atención jurídica" class="flex flex-wrap justify-center gap-x-5 gap-y-3 mt-5 text-base font-semibold">
-            <a class="underline underline-offset-4 py-2" href="/abogado-laboral-puerto-montt">Laboral</a>
-            <a class="underline underline-offset-4 py-2" href="/abogado-familia-puerto-montt">Familia</a>
-            <a class="underline underline-offset-4 py-2" href="/abogado-deudas-embargos-puerto-montt">Deudas y embargos</a>
-            <a class="underline underline-offset-4 py-2" href="/abogado-inmobiliario-puerto-montt">Inmuebles</a>
-            <a class="underline underline-offset-4 py-2" href="/posesion-efectiva-puerto-montt">Herencias</a>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-mac-dark tracking-tight mb-6">
+            Abogados en Puerto Montt<br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-mac-accent to-gray-500">Asesoría jurídica ágil y estratégica.</span>
+        </h1>
+        <p class="text-mac-dark/70 text-[15px] md:text-[17px] max-w-4xl font-medium leading-relaxed">
+            Representación y defensa en derecho laboral, despidos, juicios civiles, inmobiliario, familia, herencias y peritajes técnicos con drones. Cuéntenos su caso y reciba orientación directa con un abogado del estudio en la Región de Los Lagos.
+        </p>
+
+
+        <div class="hero-contact flex flex-wrap justify-center gap-3 mt-6">
+            <a href="https://wa.me/56950129843?text=Hola%2C%20quiero%20consultar%20mi%20caso%20con%20AeroLex" class="inline-flex items-center gap-2 bg-mac-dark text-white font-bold px-6 py-3 rounded-xl hover:bg-black transition"><i class="fab fa-whatsapp" aria-hidden="true"></i> Consultar mi caso por WhatsApp</a>
+            <a href="tel:+56950129843" class="inline-flex items-center gap-2 bg-white border border-gray-300 font-bold px-6 py-3 rounded-xl hover:bg-gray-50 transition">Llamar al +56 9 5012 9843</a>
+        </div>
+        <p class="mt-3 text-sm text-mac-dark/70">Benavente 405, oficina 305, Puerto Montt · Lunes a viernes, 09:00 a 18:00.</p>
+        <nav aria-label="Áreas de atención jurídica" class="flex flex-wrap justify-center gap-x-5 gap-y-3 mt-5 text-sm font-semibold">
+            <a class="underline underline-offset-4" href="/abogado-laboral-puerto-montt">Despidos y finiquitos</a>
+            <a class="underline underline-offset-4" href="/abogado-familia-puerto-montt">Alimentos y divorcio</a>
+            <a class="underline underline-offset-4" href="/abogado-deudas-embargos-puerto-montt">Deudas y embargos</a>
+            <a class="underline underline-offset-4" href="/abogado-inmobiliario-puerto-montt">Inmuebles y contratos</a>
+            <a class="underline underline-offset-4" href="/posesion-efectiva-puerto-montt">Herencias</a>
         </nav>
+
+        <!-- BOTONES DE ACCESO DIRECTO VISIBLES A SECCIONES CLAVE -->
+        <div class="hero-shortcuts flex flex-wrap items-center justify-center gap-2.5 mt-8 max-w-4xl mx-auto">
+            <a href="#cobertura-tribunales" class="px-4 py-2.5 rounded-full bg-white/90 hover:bg-white text-mac-dark border border-gray-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md hover:border-mac-dark/40 text-[13px] font-bold transition-all flex items-center gap-2 group">
+                <div class="w-6 h-6 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-xs group-hover:scale-110 transition-transform">
+                    <i class="fas fa-location-dot"></i>
+                </div>
+                Cobertura & Tribunales
+            </a>
+            <a href="#soy-cliente" onclick="openCalcTab('finiquito')" class="px-4 py-2.5 rounded-full bg-white/90 hover:bg-white text-mac-dark border border-gray-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md hover:border-mac-dark/40 text-[13px] font-bold transition-all flex items-center gap-2 group">
+                <div class="w-6 h-6 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-xs group-hover:scale-110 transition-transform">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                Calculadora & Plazos
+            </a>
+            <a href="#servicios" class="px-4 py-2.5 rounded-full bg-white/90 hover:bg-white text-mac-dark border border-gray-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md hover:border-mac-dark/40 text-[13px] font-bold transition-all flex items-center gap-2 group">
+                <div class="w-6 h-6 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center text-xs group-hover:scale-110 transition-transform">
+                    <i class="fas fa-scale-balanced"></i>
+                </div>
+                Servicios Jurídicos
+            </a>
+            <a href="#faq" class="px-4 py-2.5 rounded-full bg-white/90 hover:bg-white text-mac-dark border border-gray-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md hover:border-mac-dark/40 text-[13px] font-bold transition-all flex items-center gap-2 group">
+                <div class="w-6 h-6 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center text-xs group-hover:scale-110 transition-transform">
+                    <i class="fas fa-circle-question"></i>
+                </div>
+                Preguntas Frecuentes
+            </a>
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-4 pb-10 w-full relative z-10">
+        <div class="urgent-access p-5 md:p-7">
+            <div class="text-center mb-5">
+                <h2 class="text-lg md:text-xl font-extrabold">¿Necesita un abogado urgente ahora?</h2>
+                <p class="text-[12px] md:text-[13px] text-gray-300 mt-1">Elija una opción. Le llevaremos directamente al lugar correcto.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <button type="button" class="urgent-option" onclick="openAssistant(); setTimeout(startTracking, 250)"><i class="fas fa-file-circle-exclamation"></i><span><strong>Tengo una urgencia o notificación</strong><span>Quiero saber qué hacer y cuidar mi plazo.</span></span></button>
+                <button type="button" class="urgent-option" onclick="openAssistant(); setTimeout(startNewConsult, 250)"><i class="fas fa-comments"></i><span><strong>Quiero contar mi problema</strong><span>Le ayudaremos a encontrar la orientación adecuada.</span></span></button>
+                <button type="button" class="urgent-option" onclick="openAssistant(); setTimeout(contactDirect, 250)"><i class="fab fa-whatsapp"></i><span><strong>Hablar directamente con un abogado</strong><span>Contacto rápido con el estudio en Puerto Montt.</span></span></button>
+            </div>
+        </div>
     </section>
 
     <!-- HERRAMIENTAS LEGALES INTELIGENTES -->
     <section id="herramientas" class="max-w-7xl mx-auto px-4 pb-12 w-full relative z-10 mt-4">
         <div class="text-center mb-6 px-4">
             <span class="inline-flex items-center gap-2 text-[11px] font-bold text-mac-accent uppercase tracking-widest mb-3"><i class="fas fa-microchip"></i> AeroLex · Derecho + Tecnología</span>
-            <h2 class="text-2xl md:text-4xl font-extrabold text-mac-dark tracking-tight">¿Qué necesita hacer?</h2>
-            <p class="text-mac-dark/60 text-[14px] md:text-[15px] mt-3 max-w-2xl mx-auto leading-relaxed">Elija una herramienta. Le mostraremos solo lo que necesita para comenzar. No necesita ser cliente.</p>
+            <h2 class="text-2xl md:text-4xl font-extrabold text-mac-dark tracking-tight">Ayuda legal para tomar decisiones</h2>
+            <p class="text-mac-dark/60 text-[14px] md:text-[15px] mt-3 max-w-2xl mx-auto leading-relaxed">Herramientas simples para saber qué hacer, revisar un plazo y entender palabras jurídicas antes de conversar con un abogado.</p>
         </div>
 
-<div class="tool-choices"><a class="tool-choice" href="#calculator-details" data-friendly-tool="finiquito"><strong>Calcular mi finiquito</strong><span>Obtenga una estimación a partir de sus fechas y sueldo.</span><b>Abrir herramienta →</b></a>
-<a class="tool-choice" href="#calculator-details" data-friendly-tool="arriendo"><strong>Calcular una deuda de arriendo</strong><span>Revise el monto aproximado de los meses sin pagar.</span><b>Abrir herramienta →</b></a>
-<a class="tool-choice" href="#legal-tools-details" data-friendly-tool="plazos"><strong>Orientarme sobre un plazo</strong><span>Elija qué le ocurrió y revise qué antecedentes necesita.</span><b>Abrir herramienta →</b></a>
-<a class="tool-choice" href="#legal-tools-details" data-friendly-tool="glosario"><strong>Entender una palabra legal</strong><span>Busque palabras como finiquito, RIT o deslinde.</span><b>Abrir herramienta →</b></a>
-<a class="tool-choice" href="#legal-tools-details" data-friendly-tool="indicadores"><strong>Consultar UF y UTM</strong><span>Consulte los valores de referencia y convierta montos a pesos.</span><b>Abrir herramienta →</b></a></div><p class="tool-help">¿Prefiere que le ayudemos? <a href="tel:+56950129843">Llámenos al +56 9 5012 9843</a>.</p>
-        <details id="legal-tools-details" class="accessible-disclosure"><summary>Orientación sobre plazos, valores y palabras legales</summary>
         <div class="glass-effect rounded-[1.5rem] shadow-2xl shadow-black/5 overflow-hidden flex flex-col border border-white/60">
-            <div class="friendly-tool-tabs px-4 md:px-6 pt-4 pb-4 border-b border-black/5">
-                <button type="button" data-tool="plazos" aria-controls="tool-plazos" aria-pressed="true" onclick="switchTool('plazos', this)" class="tool-tab active">Revisar un plazo</button>
-                <button type="button" data-tool="indicadores" aria-controls="tool-indicadores" aria-pressed="false" onclick="switchTool('indicadores', this)" class="tool-tab">Valores UF y UTM</button>
-                <button type="button" data-tool="glosario" aria-controls="tool-glosario" aria-pressed="false" onclick="switchTool('glosario', this)" class="tool-tab">Palabras legales</button>
+            <div class="h-12 bg-white/40 border-b border-black/5 flex items-center px-4 shrink-0 backdrop-blur-md relative">
+                <div class="flex gap-2 absolute left-4">
+                    <div class="w-3 h-3 rounded-full bg-[#FF5F56] border border-black/10"></div>
+                    <div class="w-3 h-3 rounded-full bg-[#FFBD2E] border border-black/10"></div>
+                    <div class="w-3 h-3 rounded-full bg-[#27C93F] border border-black/10"></div>
+                </div>
+                <div class="w-full text-center text-[11px] font-bold text-mac-dark/40 tracking-widest uppercase">Asistente Legal Express</div>
+            </div>
+
+            <div class="tool-navigation px-4 md:px-6 pt-4 pb-4 bg-white/30 border-b border-black/5">
+                <button onclick="switchTool('plazos', this)" class="tool-tab active"><i class="fas fa-hourglass-half"></i> Revisar un plazo</button>
+                <button onclick="switchTool('indicadores', this)" class="tool-tab"><i class="fas fa-coins"></i> UF / UTM</button>
+                <button onclick="switchTool('glosario', this)" class="tool-tab"><i class="fas fa-book-open"></i> Palabras legales</button>
             </div>
 
             <div class="p-5 md:p-8 bg-white/40">
@@ -859,8 +917,8 @@
                         <input id="plazo-fecha" class="hidden" type="date">
                         <span id="plazo-desde-label" class="hidden"></span><span id="plazo-ley" class="hidden"></span><div id="plazo-resultado" class="hidden"></div>
                         <div class="deadline-steps">
-                            <span class="deadline-step active" data-step="1"><b>1</b> Qué ocurrió</span><i class="fas fa-chevron-right text-[9px]"></i>
-                            <span class="deadline-step" data-step="2"><b>2</b> Qué puede hacer</span><i class="fas fa-chevron-right text-[9px]"></i>
+                            <span class="deadline-step active" data-step="1"><b>1</b> Suceso</span><i class="fas fa-chevron-right text-[9px]"></i>
+                            <span class="deadline-step" data-step="2"><b>2</b> Acción</span><i class="fas fa-chevron-right text-[9px]"></i>
                             <span class="deadline-step" data-step="3"><b>3</b> Resultado</span>
                         </div>
                         <button id="deadline-back" type="button" class="hidden text-[12px] font-bold text-mac-accent mb-4 inline-flex items-center gap-2 hover:gap-3 transition-all" onclick="deadlineBack()"><i class="fas fa-arrow-left"></i> Volver</button>
@@ -918,20 +976,19 @@
                 </p>
             </div>
         </div>
-    </details>
     </section>
 
     <!-- CENTRO LEGAL DEL CLIENTE — calculadora viva, informe PDF y seguimiento -->
     <section id="soy-cliente" class="max-w-7xl mx-auto px-4 pb-12 w-full relative z-10 mt-6">
         <div class="text-center max-w-3xl mx-auto mb-8">
             <p class="text-[11px] font-black tracking-[0.22em] text-mac-accent uppercase mb-2">Centro legal del cliente</p>
-            <h2 class="text-[28px] md:text-[36px] font-black text-mac-dark leading-tight">Calculadoras y seguimiento de su causa</h2>
-            <p class="text-[14.5px] text-gray-600 mt-3 leading-relaxed">Abra la calculadora para obtener una estimación. Si ya tiene un expediente con AeroLex, puede consultar su avance en «Mi causa».</p>
+            <h2 class="text-[28px] md:text-[36px] font-black text-mac-dark leading-tight">Soy Cliente: calcule, entienda y siga su caso</h2>
+            <p class="text-[14.5px] text-gray-600 mt-3 leading-relaxed">Herramientas gratuitas con la legislación chilena vigente. Vea su estimación en menos de 2 minutos y descargue su informe en PDF. Después, si quiere, un abogado lo revisa con usted.</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
             <!-- Calculadora -->
-            <details id="calculator-details" class="lg:col-span-2 accessible-disclosure self-start"><summary>Calcular mi finiquito o una deuda de arriendo</summary><div class="p-5 md:p-7">
+            <div class="lg:col-span-2 alc-wrap p-5 md:p-7">
                 <div class="flex items-center justify-between gap-3 flex-wrap mb-4">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-mac-dark text-white flex items-center justify-center"><i class="fas fa-calculator"></i></div>
@@ -943,9 +1000,9 @@
                     <span class="alc-chip"><i class="fas fa-shield-halved"></i> Ley chilena vigente</span>
                 </div>
                 <div class="alc-tabs mb-5">
-                    <button type="button" id="alc-tab-finiquito" aria-pressed="true" class="alc-tab active" onclick="openCalcTab('finiquito')"><i class="fas fa-briefcase mr-1.5"></i>Finiquito y despido</button>
-                    <button type="button" id="alc-tab-arriendo" aria-pressed="false" class="alc-tab" onclick="openCalcTab('arriendo')"><i class="fas fa-house mr-1.5"></i>Deuda de arriendo</button>
-                    <button type="button" id="alc-tab-plazos" aria-pressed="false" class="alc-tab" onclick="openCalcTab('plazos')"><i class="fas fa-hourglass-half mr-1.5"></i>Plazos legales</button>
+                    <button type="button" id="alc-tab-finiquito" class="alc-tab active" onclick="openCalcTab('finiquito')"><i class="fas fa-briefcase mr-1.5"></i>Finiquito y despido</button>
+                    <button type="button" id="alc-tab-arriendo" class="alc-tab" onclick="openCalcTab('arriendo')"><i class="fas fa-house mr-1.5"></i>Deuda de arriendo</button>
+                    <button type="button" id="alc-tab-plazos" class="alc-tab" onclick="openCalcTab('plazos')"><i class="fas fa-hourglass-half mr-1.5"></i>Plazos legales</button>
                 </div>
                 <div class="alc-progress mb-5" aria-hidden="true"><span id="alc-progress"></span></div>
 
@@ -996,7 +1053,7 @@
                         <button type="button" class="alc-cta" onclick="irAAsistentePlazos()"><i class="fas fa-arrow-down"></i> Abrir el asistente de plazos</button>
                     </div>
                 </div>
-            </div></details>
+            </div>
 
             <!-- Mi Causa + confianza -->
             <div class="flex flex-col gap-5">
@@ -3003,7 +3060,8 @@
 
         function switchTool(tool, btn) {
             ['plazos','indicadores','glosario'].forEach(t => document.getElementById('tool-' + t).classList.toggle('hidden', t !== tool));
-            document.querySelectorAll('#legal-tools-details [data-tool]').forEach(b => { b.classList.toggle('active', b === btn); b.setAttribute('aria-pressed', String(b === btn)); });
+            document.querySelectorAll('.tool-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
             if (tool === 'indicadores') loadIndicadores();
         }
 
@@ -3300,7 +3358,7 @@
             if(backBtn) backBtn.classList.toggle('hidden',n===1);
             
             // Mantener la posición del lector en el asistente con offset para el header
-            const container = document.getElementById('legal-tools-details');
+            const container = document.getElementById('herramientas');
             if (container) {
                 const headerOffset = 90;
                 const elementPosition = container.getBoundingClientRect().top;
