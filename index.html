@@ -692,8 +692,8 @@
         <div class="max-w-7xl mx-auto px-4 md:px-6 flex justify-between items-center">
             
             <!-- Logo Customizado -->
-            <a href="#inicio" class="flex items-center group transition-transform duration-300 hover:scale-105">
-                <img src="/logo.png" alt="AeroLex - Abogados en Puerto Montt" width="1109" height="381" class="h-12 md:h-14 w-auto object-contain drop-shadow-sm">
+            <a href="#inicio" class="dock-brand" aria-label="AeroLex, inicio">
+                <img src="/logo.png" alt="AeroLex - Abogados en Puerto Montt" width="1109" height="381" decoding="async" class="dock-logo">
             </a>
             
             <!-- Nav de Escritorio (Oculto en móviles, visible en pantallas grandes) -->
@@ -718,9 +718,8 @@
                 </a>
             </nav>
 
-            <!-- Botones Derecho (Abogado de Turno + Hamburguesa Móvil) -->
-            <div class="flex items-center gap-3">
-                <a href="https://wa.me/56950129843" class="header-contact" title="Contactar al estudio por WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i><span>Consultar</span></a>
+            <!-- Menú para pantallas pequeñas -->
+            <div class="flex items-center gap-3 xl:hidden">
                 
                 <!-- Botón Hamburguesa Móvil -->
                 <button id="open-mobile-menu" type="button" onclick="toggleMobileMenu()" class="menu-toggle xl:hidden bg-white border border-gray-200" aria-controls="mobile-menu" aria-expanded="false">Menú</button>
