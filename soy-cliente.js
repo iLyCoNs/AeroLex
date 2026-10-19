@@ -79,11 +79,16 @@
 
   /* ── Pestañas ─────────────────────────────────────────────── */
   window.openCalcTab = function (tab) {
+    var disclosure = $("calculator-details");
+    if (disclosure) {
+      disclosure.open = true;
+      disclosure.querySelector('summary').textContent = tab === 'arriendo' ? 'Calcular una deuda de arriendo' : tab === 'plazos' ? 'Orientación sobre plazos' : 'Calcular mi finiquito';
+    }
     ["finiquito", "arriendo", "plazos"].forEach(function (name) {
       var panel = $("alc-panel-" + name);
       var link = $("alc-tab-" + name);
       if (panel) panel.classList.toggle("hidden", name !== tab);
-      if (link) link.classList.toggle("active", name === tab);
+      if (link) { link.classList.toggle("active", name === tab); link.setAttribute("aria-pressed", String(name === tab)); }
     });
     var active = $("alc-panel-" + tab);
     if (active) progress(active);
@@ -91,6 +96,7 @@
   };
 
   window.irAAsistentePlazos = function () {
+    if (typeof window.openFriendlyTool === "function") { window.openFriendlyTool("plazos"); return; }
     var target = document.getElementById("herramientas");
     if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
     track("calc_step", "Abrió asistente de plazos legales");
