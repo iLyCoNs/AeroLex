@@ -1,0 +1,9 @@
+{
+  "name": "aerolex-web",
+  "private": true,
+  "scripts": {
+    "build": "tailwindcss -c tailwind.config.cjs -i styles/public.css -o assets/public.css --minify",
+    "test:seo": "node scripts/test-seo.cjs"
+  },
+  "devDependencies": { "tailwindcss": "3.4.17" }
+}

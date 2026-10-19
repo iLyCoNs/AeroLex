@@ -31,16 +31,12 @@
     <meta name="twitter:title" content="Abogado de Familia en Puerto Montt | AeroLex">
     <meta name="twitter:description" content="Divorcios, alimentos, cuidado personal y compensación económica. Atención en Puerto Montt y Región de Los Lagos.">
     <meta name="twitter:image" content="https://aerolex.cl/logo.png">
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { theme: { extend: { colors: { 'mac-bg': '#F9FAFB', 'mac-dark': '#1D1D1F', 'mac-accent': '#788C9F' }, fontFamily: { sans: ['-apple-system', 'BlinkMacSystemFont', '"Inter"', 'sans-serif'] } } } }
-    </script>
+    <link rel="stylesheet" href="/assets/public.css">
     <style>
         body { background-color:#F9FAFB; color:#1D1D1F; -webkit-font-smoothing:antialiased; }
         .glass { background:rgba(255,255,255,.85); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,.95); }
@@ -93,8 +89,8 @@
           "mainEntity": [
             { "@type": "Question", "name": "¿Cuánto demora un divorcio en Puerto Montt?", "acceptedAnswer": { "@type": "Answer", "text": "Un divorcio de mutuo acuerdo con acuerdo completo y suficientemente específico suele resolverse en algunos meses, según la agenda del tribunal. El divorcio unilateral requiere acreditar al menos tres años de cese de convivencia (o un año con incumplimiento grave) y puede tardar más, especialmente si hay desacuerdo sobre alimentos, cuidado personal o compensación económica." } },
             { "@type": "Question", "name": "¿Cómo solicito la pensión de alimentos en Chile?", "acceptedAnswer": { "@type": "Answer", "text": "Se presenta una demanda ante el Juzgado de Familia, con título en el acuerdo o en la ley (Ley 14.908). El tribunal puede fijar alimentos provisorios desde el inicio del juicio y ordenar medidas como retención por el empleador. La mediación previa es obligatoria en la mayoría de los casos." } },
-            { "@type": "Question", "name": "¿Qué es el cuidado personal compartido?", "acceptedAnswer": { "@type": "Answer", "text": "Es el régimen en que ambos padres participan activamente en el cuidado del hijo o hija (Ley 20.680). El juez resuelve siempre en función del interés superior del niño, considerando la corresponsabilidad, la aptitud de los padres y la opinión del menor según su edad y madurez." } },
-            { "@type": "Question", "name": "¿Qué es la compensación económica y cuándo se solicita?", "acceptedAnswer": { "@type": "Answer", "text": "Es la suma que puede pedir el cónyuge que se dedicó al hogar o al cuidado de los hijos y que, por ello, sufrió un menoscabo económico (art. 61 de la Ley 19.947). Debe demandarse en el juicio de divorcio o dentro del año siguiente a la sentencia. No se presume: debe acreditarse la dedicación y el perjuicio." } },
+            { "@type": "Question", "name": "¿Qué es el cuidado personal compartido?", "acceptedAnswer": { "@type": "Answer", "text": "Si los padres viven separados, pueden acordar el cuidado personal compartido cumpliendo las formalidades del artículo 225 del Código Civil. No debe confundirse con la corresponsabilidad parental. Si existe desacuerdo, se debe revisar la situación y las alternativas judiciales conforme al interés superior del hijo." } },
+            { "@type": "Question", "name": "¿Qué es la compensación económica y cuándo se solicita?", "acceptedAnswer": { "@type": "Answer", "text": "Es la suma que puede pedir el cónyuge que se dedicó al hogar o al cuidado de los hijos y que, por ello, sufrió un menoscabo económico (art. 61 de la Ley 19.947). Debe solicitarse oportunamente dentro del proceso de divorcio o nulidad: en la demanda, en un escrito complementario o en la reconvención, conforme al artículo 64 de la Ley 19.947. No se presume: debe acreditarse la dedicación y el perjuicio." } },
             { "@type": "Question", "name": "¿Qué hacer en un caso de violencia intrafamiliar (VIF)?", "acceptedAnswer": { "@type": "Answer", "text": "Se puede denunciar en Carabineros, PDI, Fiscalía o directamente en el Juzgado de Familia. La Ley 20.066 permite medidas cautelares urgentes: prohibición de acercamiento, prohibición de porte de armas, entre otras. Es prioritario proteger a la víctima y reunir prueba de las agresiones y amenazas." } },
             { "@type": "Question", "name": "¿Cuánto cuesta un abogado de familia en Puerto Montt?", "acceptedAnswer": { "@type": "Answer", "text": "AeroLex entrega un presupuesto formal por escrito, con etapas y facilidades de pago, tras la primera reunión. El valor depende de si el caso es de mutuo acuerdo, contencioso, y de si requiere medidas cautelares o juicios asociados (alimentos, cuidado personal, compensación)." } }
           ]
@@ -257,11 +253,11 @@
         </details>
         <details class="glass rounded-2xl p-5 shadow-sm group">
             <summary class="flex items-center justify-between gap-4 font-bold text-[14.5px] text-mac-dark">¿Qué es el cuidado personal compartido?<i class="fas fa-chevron-down chev text-gray-400 text-xs transition-transform"></i></summary>
-            <p class="mt-3 pt-3 border-t border-gray-100 text-[13.5px] text-mac-dark/70 leading-relaxed">Es el régimen en que ambos padres participan activamente del cuidado del hijo o hija (Ley 20.680). El juez resuelve en función del interés superior del niño, considerando la corresponsabilidad, la aptitud de cada padre y la opinión del menor según su edad y madurez. También puede fijarse cuidado exclusivo a uno de los padres cuando corresponde.</p>
+            <p class="mt-3 pt-3 border-t border-gray-100 text-[13.5px] text-mac-dark/70 leading-relaxed">Si los padres viven separados, pueden acordar el cuidado personal compartido cumpliendo las formalidades del artículo 225 del Código Civil. No debe confundirse con la corresponsabilidad parental. Si existe desacuerdo, se debe revisar la situación y las alternativas judiciales conforme al interés superior del hijo.</p>
         </details>
         <details class="glass rounded-2xl p-5 shadow-sm group">
             <summary class="flex items-center justify-between gap-4 font-bold text-[14.5px] text-mac-dark">¿Qué es la compensación económica y cuándo se pide?<i class="fas fa-chevron-down chev text-gray-400 text-xs transition-transform"></i></summary>
-            <p class="mt-3 pt-3 border-t border-gray-100 text-[13.5px] text-mac-dark/70 leading-relaxed">Es la suma que puede solicitar el cónyuge que se dedicó al hogar o al cuidado de los hijos y que, por ello, sufrió un menoscabo económico (art. 61 de la Ley 19.947). Debe demandarse en el juicio de divorcio o dentro del año siguiente a la sentencia. No se presume: hay que acreditar la dedicación y el perjuicio con prueba.</p>
+            <p class="mt-3 pt-3 border-t border-gray-100 text-[13.5px] text-mac-dark/70 leading-relaxed">Es la suma que puede solicitar el cónyuge que se dedicó al hogar o al cuidado de los hijos y que, por ello, sufrió un menoscabo económico (art. 61 de la Ley 19.947). Debe solicitarse oportunamente dentro del proceso de divorcio o nulidad: en la demanda, en un escrito complementario o en la reconvención, conforme al artículo 64 de la Ley 19.947. No se presume: hay que acreditar la dedicación y el perjuicio con prueba.</p>
         </details>
         <details class="glass rounded-2xl p-5 shadow-sm group">
             <summary class="flex items-center justify-between gap-4 font-bold text-[14.5px] text-mac-dark">¿Qué hacer en un caso de violencia intrafamiliar?<i class="fas fa-chevron-down chev text-gray-400 text-xs transition-transform"></i></summary>
@@ -282,6 +278,19 @@
             <a href="https://wa.me/56950129843?text=Hola%2C%20quiero%20una%20consulta%20de%20familia%20en%20Puerto%20Montt" target="_blank" rel="noopener" class="bg-[#25D366] text-white font-bold px-6 py-3.5 rounded-xl hover:bg-[#1fa855] transition flex items-center gap-2 text-[14.5px]"><i class="fab fa-whatsapp text-lg"></i> Agendar consulta</a>
             <a href="/#contacto" class="bg-white/10 border border-white/20 text-white font-bold px-6 py-3.5 rounded-xl hover:bg-white/20 transition flex items-center gap-2 text-[14.5px]"><i class="fas fa-location-dot"></i> Ver oficina en Puerto Montt</a>
         </div>
+    </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 pb-8 text-sm text-mac-dark/70" aria-label="Fuentes legales"><p>Fuentes: <a class="underline" href="https://www.bcn.cl/leychile/navegar?idNorma=225128">Ley 19.947, artículos 61 a 66</a> y <a class="underline" href="https://www.bcn.cl/leychile/navegar?idNorma=1052090">Ley 20.680 sobre cuidado personal y corresponsabilidad</a>.</p></section>
+<section class="max-w-6xl mx-auto px-4 pb-12" aria-label="Preparar su consulta">
+    <div class="glass rounded-2xl p-6 md:p-8">
+        <h2 class="text-2xl font-extrabold mb-4">Qué preparar para su primera consulta</h2>
+        <ul class="list-disc pl-5 space-y-2 text-sm text-mac-dark/80"><li>Indique si necesita resolver alimentos, divorcio, cuidado personal o cumplimiento de una resolución.</li>
+<li>Tenga a mano los acuerdos o resoluciones existentes y el RIT de la causa, si lo conoce.</li>
+<li>Si realizó mediación, indique su resultado. En alimentos, reúna antecedentes de ingresos y gastos.</li></ul>
+        <p class="mt-4 text-sm text-mac-dark/70">Para el primer contacto, basta una descripción breve. Coordine con el estudio el envío de documentos personales y antecedentes de su caso.</p>
+        <p class="mt-4 text-sm"><a href="/#equipo" class="underline underline-offset-4 font-semibold">Conozca al equipo de AeroLex y sus funciones</a>. Atención en Benavente 405, oficina 305, Puerto Montt, de lunes a viernes de 09:00 a 18:00.</p>
+        <a href="tel:+56950129843" class="inline-flex mt-4 font-bold underline underline-offset-4">Llamar al +56 9 5012 9843</a>
     </div>
 </section>
 
