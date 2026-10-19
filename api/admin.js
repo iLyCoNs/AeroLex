@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const Procedures = require('../procedures');
 const SUPA_URL = process.env.SUPABASE_URL;
 const SUPA_KEY = process.env.SUPABASE_SERVICE_KEY;
 
@@ -225,6 +226,12 @@ async function checkPjudCase(rit, court) {
 function unpackCaseEstadoDiario(c) {
   if (!c) return c;
   if (Array.isArray(c.triage)) {
+    const procedureItem = c.triage.find(item => typeof item === 'string' && item.startsWith('__PROCEDIMIENTO__:'));
+    if (procedureItem) {
+      const id = procedureItem.slice('__PROCEDIMIENTO__:'.length);
+      if (Procedures.valid(id)) c.procedimiento = id;
+      c.triage = c.triage.filter(item => typeof item !== 'string' || !item.startsWith('__PROCEDIMIENTO__:'));
+    }
     const edItem = c.triage.find(item => typeof item === 'string' && item.startsWith('__ESTADO_DIARIO__:'));
     if (edItem) {
       try {
@@ -309,6 +316,12 @@ function buildPartialPatch(body, currentTriage = null) {
       clean.push('__ABOGADO__:' + String(body.abogado).trim().slice(0, 200));
     }
     patch.triage = clean;
+  }
+  if (body.procedimiento !== undefined) {
+    if (!Procedures.valid(body.procedimiento)) throw new Error('bad_procedimiento');
+    const base = Array.isArray(patch.triage) ? patch.triage : (Array.isArray(currentTriage) ? currentTriage : []);
+    patch.triage = base.filter(item => typeof item !== 'string' || !item.startsWith('__PROCEDIMIENTO__:'));
+    patch.triage.push('__PROCEDIMIENTO__:' + body.procedimiento);
   }
   // Vigilancia por causa: marca __VIGILANCIA__:off en el triage para que el
   // barrido comun y el parte diario omitan la causa (la app la enciende/apaga).
@@ -1083,6 +1096,10 @@ module.exports = async (req, res) => {
 
       const today = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Santiago' }).replace(/\./g, '');
       const triage = [];
+      if (body.procedimiento !== undefined) {
+        if (!Procedures.valid(body.procedimiento)) return fail(res, 400, 'bad_procedimiento');
+        triage.push('__PROCEDIMIENTO__:' + body.procedimiento);
+      }
       if (body.estado_diario) {
         triage.push('__ESTADO_DIARIO__:' + JSON.stringify(body.estado_diario));
       }
@@ -1099,10 +1116,7 @@ module.exports = async (req, res) => {
         detalle: String(body.detalle || '').slice(0, 2000),
         estado_actual: typeof body.estado_actual === 'number' ? body.estado_actual : 0,
         triage,
-        steps: Array.isArray(body.steps) && body.steps.length ? body.steps : [
-          { title: 'Expediente recibido por AeroLex', date: today, done: true },
-          { title: 'Revisión de antecedentes', date: 'En curso', done: false }
-        ]
+        steps: Array.isArray(body.steps) && body.steps.length ? body.steps : Procedures.initialSteps(today)
       };
 
       const resp = await fetch(`${SUPA_URL}/rest/v1/cases`, {
@@ -1162,10 +1176,7 @@ module.exports = async (req, res) => {
           detalle: patch.detalle || '',
           estado_actual: patch.estado_actual ?? 0,
           triage: patch.triage || [],
-          steps: patch.steps || [
-            { title: 'Expediente recibido por AeroLex', date: today, done: true },
-            { title: 'Revisión de antecedentes', date: 'En curso', done: false }
-          ],
+          steps: patch.steps || Procedures.initialSteps(today),
           status: patch.status || 'nuevo',
           created_at: patch.updated_at,
           updated_at: patch.updated_at

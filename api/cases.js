@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const Procedures = require('../procedures');
 const SUPA_URL = process.env.SUPABASE_URL;
 const SUPA_KEY = process.env.SUPABASE_SERVICE_KEY;
 
@@ -52,47 +53,9 @@ function fail(res, status, error) {
   return res.status(status).json({ ok: false, error });
 }
 
-function stepsTemplate(materia) {
-  const m = ' ' + (materia || '').toLowerCase() + ' ';
-  const has = (...words) => words.some(w => m.includes(w));
-  const today = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Santiago' }).replace(/\./g, '');
-  const mk = (title, date, done) => ({ title, date: date || 'Pendiente', done: !!done });
-
-  const extra = [];
-  if (has('inmobiliario', 'compraventa', 'título', 'títulos', 'escritura', 'loteo', 'subdivisión', 'prescripción', 'posesorio', 'posesoria')) {
-    extra.push(mk('Estudio y análisis de títulos', 'Pendiente'));
-    extra.push(mk('Firma de escritura / gestión notarial', 'Pendiente'));
-    extra.push(mk('Inscripción en Conservador (CBR)', 'Pendiente'));
-  } else if (has('laboral', 'despido', 'tutela', 'finiquito', 'trabajo')) {
-    extra.push(mk('Análisis de plazos legales', 'En curso'));
-    extra.push(mk('Presentación de demanda / descargos', 'Pendiente'));
-    extra.push(mk('Audiencia preparatoria', 'Pendiente'));
-  } else if (has('divorcio', 'alimento', 'familia', 'cuidado', 'visita', 'vif', 'compensación')) {
-    extra.push(mk('Reunión de estrategia con abogado', 'Pendiente'));
-    extra.push(mk('Redacción y presentación de demanda', 'Pendiente'));
-    extra.push(mk('Audiencia ante tribunal de familia', 'Pendiente'));
-  } else if (has('posesión efectiva', 'herencia', 'sucesor', 'testamento', 'partición')) {
-    extra.push(mk('Inventario de bienes y deudas', 'Pendiente'));
-    extra.push(mk('Tramitación de posesión efectiva', 'Pendiente'));
-    extra.push(mk('Inscripción y partición de bienes', 'Pendiente'));
-  } else if (has('dron', 'drone', 'aéreo', 'aerea', 'predio', 'deslinde', 'ortomosaico', 'ortofoto', 'fotogrametr', 'modelo 3d', 'inspección', 'inspeccion', 'vuelo')) {
-    extra.push(mk('Planificación de vuelo y logística', 'Pendiente'));
-    extra.push(mk('Levantamiento aéreo y procesamiento', 'Pendiente'));
-    extra.push(mk('Informe técnico-legal entregable', 'Pendiente'));
-  } else if (has('sociedad', 'comercial', 'compliance', 'empresa', 'societ', 'contrato')) {
-    extra.push(mk('Revisión documental y estructura', 'Pendiente'));
-    extra.push(mk('Elaboración de instrumentos', 'Pendiente'));
-    extra.push(mk('Firma e inscripción', 'Pendiente'));
-  } else {
-    extra.push(mk('Evaluación por el abogado asignado', 'Pendiente'));
-  }
-
-  return [
-    mk('Expediente recibido por AeroLex', today, true),
-    mk('Revisión de antecedentes', 'En curso'),
-    ...extra,
-    mk('Cierre y entrega de resultados', 'Pendiente')
-  ];
+function stepsTemplate() {
+  const today = new Date().toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Santiago' }).replace(/\./g, '');
+  return Procedures.initialSteps(today);
 }
 
 async function listYearCodes(year) {
@@ -105,7 +68,7 @@ async function listYearCodes(year) {
 }
 
 async function verifyCase(res, code, pin) {
-  const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(code)}&select=code,pin,materia,tribunal,rit,detalle,estado_actual,steps,status`, { headers: supaHeaders() });
+  const resp = await fetch(`${SUPA_URL}/rest/v1/cases?code=eq.${encodeURIComponent(code)}&select=code,pin,materia,tribunal,rit,detalle,estado_actual,steps,status,triage`, { headers: supaHeaders() });
   if (!resp.ok) return fail(res, 500, 'db_error');
   const rows = await resp.json();
   if (!Array.isArray(rows) || rows.length === 0) return fail(res, 404, 'not_found');
@@ -123,6 +86,7 @@ async function verifyCase(res, code, pin) {
       detalle: c.detalle,
       estado_actual: c.estado_actual,
       steps: c.steps || [],
+      procedimiento: Procedures.storedProcedure(c.triage),
       status: c.status
     }
   });

@@ -503,6 +503,8 @@
         .timeline-step::before { content: ''; position: absolute; left: -20px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: #E2E8F0; border: 2px solid #fff; box-shadow: 0 0 0 1px #E2E8F0; }
         .timeline-step.active::before { background: #25D366; box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.3); border: none;}
         .timeline-step.active .step-title { color: #1D1D1F; font-weight: 700; }
+        .timeline-step.current::before { background: #f97316; box-shadow: 0 0 0 2px #fed7aa; border: none; }
+        .timeline-step.current .step-title { color: #9a3412; font-weight: 700; }
 
         /* ====== ASISTENTE UNIFICADO AEROLEX ====== */
         @keyframes auraPing { 0% { transform: scale(1); opacity: 0.45; } 75%, 100% { transform: scale(1.75); opacity: 0; } }
@@ -699,6 +701,7 @@
         .alc-field { width:100%; border:1px solid #E2E8F0; border-radius:12px; padding:10px 12px; font-size:13.5px; background:#fff; }
         .alc-field:focus { outline:none; border-color:#1D1D1F; box-shadow:0 0 0 3px rgba(29,29,31,.08); }
     </style>
+    <script src="procedures.js"></script>
     <script src="soy-cliente.js" defer></script>
 </head>
 <body class="relative flex flex-col min-h-screen">
@@ -2826,18 +2829,21 @@
                 </div>`;
             }
 
-            const estadoActual = (typeof caseData.estado_actual === 'number') ? caseData.estado_actual : caseData.estadoActual;
             const steps = caseData.steps || [];
-            const nextStep = steps.find(s => !s.done);
+            const currentIndex = steps.findIndex(s => !s.done);
+            const currentStep = steps[currentIndex];
 
             html += `<div class="timeline-container mt-4">`;
             if (steps.length > 0) {
                 steps.forEach((step, index) => {
-                    const isActive = step.done || index <= estadoActual;
+                    const isActive = step.done;
+                    const isCurrent = index === currentIndex;
+                    const label = isActive ? 'Cumplido' : isCurrent ? 'Actual · En curso' : 'Pendiente';
+                    const date = /^(en curso|en trámite actual|pendiente)$/i.test((step.date || '').trim()) ? '' : step.date;
                     html += `
-                        <div class="timeline-step ${isActive ? 'active' : ''}">
+                        <div class="timeline-step ${isActive ? 'active' : isCurrent ? 'current' : ''}">
                             <div class="step-title text-[13px] ${isActive ? 'text-mac-dark' : 'text-mac-dark/40'}">${escapeHtml(step.title)}</div>
-                            <div class="text-[10px] ${isActive ? 'text-green-600 font-medium' : 'text-mac-dark/40'}">${escapeHtml(step.date)}</div>
+                            <div class="text-[10px] font-medium" style="color: ${isActive ? '#15803d' : isCurrent ? '#c2410c' : '#64748b'}">${label}${date ? ` · ${escapeHtml(date)}` : ''}</div>
                         </div>`;
                 });
             } else {
@@ -2845,9 +2851,17 @@
             }
             html += `</div>`;
 
-            if (nextStep) {
-                html += `<div class="mt-3 p-2.5 bg-green-50 border border-green-100 rounded-lg text-green-800 text-[12px] flex items-start gap-2">
-                    <i class="fas fa-arrow-circle-right mt-0.5"></i><span><strong>Próximo hito de su causa:</strong> ${escapeHtml(nextStep.title)}</span>
+            if (currentStep) {
+                html += `<div class="mt-3 p-2.5 rounded-lg text-[12px] flex items-start gap-2" style="background:#fff7ed;border:1px solid #fed7aa;color:#9a3412">
+                    <i class="fas fa-clock mt-0.5"></i><span><strong>Hito actual · En curso:</strong> ${escapeHtml(currentStep.title)}</span>
+                </div>`;
+            }
+            const registeredNext = AeroLexProcedures.nextRegistered(caseData);
+            const suggestedNext = registeredNext ? null : AeroLexProcedures.nextSuggestion(caseData);
+            const next = registeredNext || suggestedNext;
+            if (next) {
+                html += `<div class="mt-2 p-2.5 bg-blue-50 border border-blue-100 rounded-lg text-blue-800 text-[12px]">
+                    <strong>${registeredNext ? 'Próximo hito previsto:' : 'Próximo paso sugerido (por confirmar):'}</strong> ${escapeHtml(next.title)}${next.conditional ? ' (si corresponde)' : ''}
                 </div>`;
             }
             return html;

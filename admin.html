@@ -2,9 +2,9 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow, noarchive">
-    <title>Bóveda AeroLex · Gestión de Expedientes</title>
+    <title>AeroLex · Espacio de gestión jurídica</title>
     <script>
         (function() {
             try {
@@ -25,6 +25,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="procedures.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -352,7 +353,7 @@
             flex-shrink: 0;
             border: 1px solid rgba(255, 255, 255, 0.06);
         }
-        .milestone-switch.done {
+        .milestone-switch.done, [data-theme="light"] .milestone-switch.done {
             background: #10b981;
             border-color: #059669;
         }
@@ -371,6 +372,14 @@
         .milestone-switch.done::after {
             transform: translateX(18px);
         }
+        .milestone-switch.current, [data-theme="light"] .milestone-switch.current {
+            background: #f97316;
+            border-color: #ea580c;
+        }
+        .milestone-state { font-size: 10px; font-weight: 700; white-space: nowrap; }
+        .milestone-state.done { color: #059669; }
+        .milestone-state.current { color: #ea580c; }
+        .milestone-state.pending { color: #64748b; }
 
         /* Toasts */
         #toast-zone {
@@ -670,6 +679,7 @@
         [data-theme="light"] .chip-finalizado { color: #059669; border-color: rgba(5, 150, 105, 0.3); background: rgba(5, 150, 105, 0.08); }
         [data-theme="light"] .chip-suspendido { color: #475569; border-color: rgba(71, 85, 105, 0.3); background: rgba(71, 85, 105, 0.08); }
     </style>
+    <link rel="stylesheet" href="admin-design.css">
 </head>
 <body class="h-screen flex flex-col antialiased select-none md:select-auto">
 <div class="env-bg"></div>
@@ -681,11 +691,10 @@
     </button>
     <div class="w-full max-w-sm relative">
         <div class="text-center mb-7">
-            <div class="w-12 h-12 rounded-xl mx-auto flex items-center justify-center shadow-lg mb-3.5 bg-gradient-to-br from-blue-600 to-blue-800 border border-blue-400/20">
-                <i class="fas fa-scale-balanced text-lg text-white"></i>
-            </div>
-            <h1 class="text-xl font-bold text-white tracking-tight">Bóveda AeroLex</h1>
-            <p class="text-[10.5px] text-slate-400 mt-1 uppercase tracking-wider font-semibold">Portal Forense & Sincronización</p>
+            <div class="brand-plaque login-brand"><img src="/logo.png" width="1109" height="381" alt="AeroLex · Abogados y asesores"></div>
+            <p class="workspace-eyebrow login-eyebrow">ESPACIO PROFESIONAL</p>
+            <h1 class="login-title">Cada causa, en perspectiva.</h1>
+            <p class="login-description">Tu estudio. Tus expedientes. Un solo lugar.</p>
         </div>
 
         <div class="panel-card p-6 relative overflow-hidden">
@@ -696,7 +705,7 @@
                     <input type="password" id="admin-key" class="input-base" autocomplete="new-password" placeholder="••••••••••••" required>
                 </div>
                 <button type="submit" id="btn-connect" class="btn btn-primary w-full !py-2.5 mt-2">
-                    <i class="fas fa-lock-open mr-1"></i> Desbloquear Bóveda
+                    <i class="fas fa-lock-open mr-1"></i> Ingresar al estudio
                 </button>
             </form>
             <p id="error-msg" class="text-red-400 text-xs text-center mt-3 hidden font-medium"></p>
@@ -709,28 +718,24 @@
 <div id="app-container" class="flex-1 flex flex-col overflow-hidden relative w-full h-full hidden">
 
     <!-- BARRA SUPERIOR (ESTILO BOT JURÍDICO) -->
-    <header class="h-13 border-b border-[--border] flex items-center justify-between px-4 md:px-5 shrink-0 z-20" style="background: var(--header-bg); backdrop-filter: blur(12px);">
-        <div class="flex items-center gap-3">
-            <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-blue-600 shadow-sm">
-                <i class="fas fa-scale-balanced text-white text-xs"></i>
+    <header class="portal-header">
+        <div class="portal-identity">
+            <a class="brand-plaque" href="https://aerolex.cl" target="_blank" rel="noopener noreferrer" aria-label="AeroLex, sitio oficial">
+                <img src="/logo.png" width="1109" height="381" alt="AeroLex · Abogados y asesores">
+            </a>
+            <div class="workspace-identity">
+                <span class="workspace-eyebrow">ESPACIO PROFESIONAL</span>
+                <span id="header-study-name">Gestión jurídica</span>
+                <span class="workspace-description">Expedientes, estrategia y seguimiento</span>
             </div>
-            <div>
-                <div class="font-semibold text-white text-[13px] leading-tight flex items-center gap-2">
-                    <span id="header-study-name">Bóveda AeroLex</span>
-                    <span class="text-[9.5px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-300 font-mono font-semibold">PORTAL WEB</span>
-                </div>
-                <div class="text-[9.5px] text-slate-400 uppercase tracking-wider font-medium">Sincronización en Vivo con Bot Jurídico</div>
-            </div>
-            <!-- Selector de estudio: cada estudio sincroniza sus causas con sus propias siglas -->
-            <div class="flex items-center gap-1 ml-1" id="study-selector" role="tablist" aria-label="Estudio jurídico"></div>
         </div>
 
         <!-- Estadísticas en vivo -->
-        <div class="hidden lg:flex items-center gap-2" id="stats-bar">
+        <div id="stats-bar" aria-label="Resumen de expedientes">
             <!-- Renderizado dinámico -->
         </div>
 
-        <div class="flex items-center gap-1.5">
+        <div class="portal-actions">
             <!-- Botón Estilo Google Ads: Control de Vigilancia 24/7 (GitHub Actions) -->
             <button type="button" onclick="openVigilanciaModal()" class="gads-pill-btn flex items-center gap-2 px-2.5 py-1.5 rounded-full border transition-all duration-200 select-none cursor-pointer" id="btn-vigilancia-gads" title="Control de Vigilancia Judicial 24/7 (GitHub Actions · PC Apagado)">
                 <span class="flex items-center gap-1.5">
@@ -749,6 +754,10 @@
                 <i class="fas fa-caret-down text-[9.5px] text-slate-400 ml-0.5"></i>
             </button>
 
+            <details class="tools-menu" id="portal-tools">
+                <summary class="btn btn-secondary"><i class="fas fa-sliders" aria-hidden="true"></i> Herramientas <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+                <div class="tools-menu-panel" aria-label="Herramientas del estudio">
+                    <span class="tools-caption">ADMINISTRACIÓN DEL ESTUDIO</span>
             <!-- Botón Telemetría Google Ads & Tráfico -->
             <button onclick="openTelemetryModal()" class="btn btn-secondary !p-1.5 !px-2.5 relative flex items-center gap-1.5" title="Telemetría y Tráfico Google Ads / SEO" id="btn-telemetry">
                 <span class="relative flex w-2 h-2">
@@ -759,6 +768,7 @@
                 <span class="text-xs hidden sm:inline text-slate-300 font-medium">Google</span>
                 <span id="telemetry-gads-badge" class="px-1.5 py-0.2 rounded text-[9.5px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">0 Ads</span>
                 <span id="telemetry-wa-badge" class="hidden md:inline px-1.5 py-0.2 rounded text-[9.5px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">0 WA</span>
+            </button>
             <!-- Botón Directorio de Abogados Aliados -->
             <button onclick="openLawyersModal()" class="btn btn-secondary !p-1.5 !px-2.5 relative flex items-center gap-1.5" title="Directorio Oficial de Abogados Aliados Sincronizados" id="btn-lawyers-modal">
                 <i class="fas fa-user-tie text-purple-400 text-xs"></i>
@@ -772,7 +782,9 @@
                 <span id="wa-badge" class="hidden absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center leading-none">0</span>
             </button>
             <button onclick="openDesktopLicenses()" class="btn btn-secondary !p-2" title="Administrar licencias de escritorio">Licencias de escritorio</button>
-            <button onclick="openSettings()" class="btn btn-secondary !p-2" title="Configuración WhatsApp"><i class="fas fa-gear text-xs"></i></button>
+            <button onclick="openSettings()" class="btn btn-secondary !p-2" title="Configuración WhatsApp"><i class="fas fa-gear text-xs"></i> Configuración</button>
+                </div>
+            </details>
             <button id="btn-theme-toggle" onclick="toggleTheme()" class="btn btn-secondary !p-2 transition-transform duration-200 hover:scale-105 active:scale-95" title="Cambiar a modo claro (Día)" aria-label="Cambiar tema día/noche">
                 <i id="theme-toggle-icon" class="fas fa-sun text-amber-400 text-xs"></i>
             </button>
@@ -785,6 +797,7 @@
 
         <!-- PANEL LATERAL: LISTA DE EXPEDIENTES -->
         <aside id="sidebar" class="w-full md:w-[310px] lg:w-[330px] bg-[--panel] border-r border-[--border] flex flex-col shrink-0 absolute md:relative h-full z-10 transition-transform duration-300">
+            <div class="sidebar-heading"><span class="workspace-eyebrow">CARTERA DEL ESTUDIO</span><h2>Expedientes</h2><p>El detalle que importa, a la vista.</p></div>
             <div class="p-2.5 border-b border-[--border] shrink-0 space-y-2">
                 <div class="relative">
                     <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
@@ -812,7 +825,6 @@
                         <i class="fas fa-user-tie text-[9.5px] text-purple-400 shrink-0"></i>
                         <select id="sidebar-lawyer-filter" onchange="setLawyerFilter(this.value)" class="bg-[--panel-inset] border border-[--border] text-slate-300 rounded px-1.5 py-0.5 text-[10px] outline-none font-medium max-w-[170px] truncate" title="Filtrar causas por abogado asignado">
                             <option value="all">Todos los Abogados</option>
-                            <option value="Marta Elizabeth Sánchez Andrade">Marta Sánchez (Socia)</option>
                             <option value="Jaime Vidal Paredes">Jaime Vidal (Titular)</option>
                             <option value="Bot Jurídico AeroLex">Bot Jurídico (Internas)</option>
                         </select>
@@ -839,7 +851,7 @@
             <!-- ENCABEZADO DEL EXPEDIENTE -->
             <div class="h-14 border-b border-[--border] flex items-center justify-between px-4 md:px-6 shrink-0 gap-3" style="background: var(--panel);">
                 <div class="flex items-center gap-2.5 min-w-0">
-                    <button onclick="closeMobileEditor()" class="md:hidden btn btn-secondary !p-1.5 shrink-0"><i class="fas fa-chevron-left text-xs"></i></button>
+                    <button onclick="closeMobileEditor()" aria-label="Volver a expedientes" class="md:hidden btn btn-secondary !p-1.5 shrink-0"><i class="fas fa-chevron-left text-xs"></i></button>
                     <div class="min-w-0">
                         <div class="flex items-center gap-2">
                             <span id="editor-code" class="font-bold text-sm md:text-base text-white font-mono tracking-tight">Seleccione un expediente</span>
@@ -863,7 +875,7 @@
             <div id="editor-tabs-bar" class="border-b border-[--border] px-4 md:px-6 flex items-center gap-1 shrink-0 overflow-x-auto hide-scrollbar hidden" style="background: var(--tabs-bg);">
                 <button type="button" onclick="switchTab('resumen')" id="tab-resumen" class="tab-btn active">
                     <i class="fas fa-file-lines text-xs"></i>
-                    <span>Resumen & Ficha</span>
+                    <span>Resumen del expediente</span>
                 </button>
                 <button type="button" onclick="switchTab('estado-diario')" id="tab-estado-diario" class="tab-btn">
                     <i class="fas fa-gavel text-xs"></i>
@@ -871,11 +883,11 @@
                 </button>
                 <button type="button" onclick="switchTab('avance')" id="tab-avance" class="tab-btn">
                     <i class="fas fa-list-check text-xs"></i>
-                    <span>Avance & Hitos</span>
+                    <span>Avance e hitos</span>
                 </button>
                 <button type="button" onclick="switchTab('credenciales')" id="tab-credenciales" class="tab-btn">
                     <i class="fas fa-key text-xs"></i>
-                    <span>Credenciales & Cliente</span>
+                    <span>Acceso del cliente</span>
                 </button>
             </div>
 
@@ -971,7 +983,6 @@
                                     <label class="field-label">Abogado(a) Patrocinante / Asignado(a)</label>
                                     <div class="flex gap-2">
                                         <select id="case-lawyer" class="input-base font-medium flex-1" onchange="markUnsaved(); updateForensicBrief();">
-                                            <option value="Marta Elizabeth Sánchez Andrade">Marta Elizabeth Sánchez Andrade (Abogada Socia)</option>
                                             <option value="Jaime Vidal Paredes">Jaime Vidal Paredes (Abogado Titular)</option>
                                             <option value="Bot Jurídico AeroLex">Bot Jurídico AeroLex (Causa Interna / Sistema)</option>
                                             <option value="Cartera General / Por Asignar">Cartera General / Por Asignar</option>
@@ -1113,12 +1124,22 @@
                             </div>
                             <div class="p-4 space-y-3">
                                 <!-- Formulario de nuevo hito -->
+                                <div class="p-3 rounded-lg border border-[--border] space-y-2">
+                                    <label for="case-procedure" class="text-xs font-semibold">Procedimiento de la causa</label>
+                                    <select id="case-procedure" class="input-base !text-xs" onchange="setCaseProcedure(this.value)"></select>
+                                    <button type="button" class="btn !text-xs !py-1" onclick="setCaseProcedure(document.getElementById('case-procedure').value)">Confirmar procedimiento</button>
+                                    <p id="procedure-note" class="text-[11px] text-slate-400"></p>
+                                    <p id="procedure-source" class="text-[11px]"></p>
+                                    <label for="suggested-step" class="text-xs font-semibold block">Elegir un hito del procedimiento</label>
+                                    <select id="suggested-step" class="input-base !text-xs" onchange="chooseSuggestedMilestone(this.value)"></select>
+                                    <p id="procedure-next" class="text-[11px] text-slate-400"></p>
+                                </div>
                                 <div class="p-3 rounded-lg border border-[--border] bg-[--panel-inset] grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
                                     <div class="sm:col-span-6">
-                                        <input type="text" id="new-step-title" class="input-base !text-xs !py-1.5" placeholder="Título del nuevo hito (ej. Demanda notificada)...">
+                                        <input type="text" id="new-step-title" class="input-base !text-xs !py-1.5" aria-label="Título del nuevo hito" placeholder="Hito sugerido o personalizado..." oninput="this.dataset.suggested = ''">
                                     </div>
                                     <div class="sm:col-span-3">
-                                        <input type="text" id="new-step-date" class="input-base !text-xs !py-1.5 font-mono" placeholder="Fecha (ej. 09 sep 2026)">
+                                        <input type="text" id="new-step-date" class="input-base !text-xs !py-1.5 font-mono" aria-label="Fecha del hito, opcional" placeholder="Fecha, si está fijada">
                                     </div>
                                     <div class="sm:col-span-3 flex items-center gap-2">
                                         <label class="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer select-none">
@@ -1288,6 +1309,16 @@
     // Inicialización inmediata de botones de tema
     document.addEventListener('DOMContentLoaded', () => {
         updateThemeButtons(getStoredTheme());
+        const toolsMenu = document.getElementById('portal-tools');
+        document.addEventListener('click', event => {
+            if (toolsMenu && (!toolsMenu.contains(event.target) || event.target.closest('.tools-menu-panel button'))) toolsMenu.open = false;
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && toolsMenu?.open) {
+                toolsMenu.open = false;
+                toolsMenu.querySelector('summary').focus();
+            }
+        });
     });
 
     // =========================================================================
@@ -1322,30 +1353,10 @@
     // =========================================================================
     // 2. INFERENCIA PROCESAL FORENSE (ALGORITMO BOT JURÍDICO)
     // =========================================================================
-    function inferProceduralTrack(matter, title) {
-        const text = `${matter || ''} ${title || ''}`.toLowerCase();
-        if (text.includes('arriendo') || text.includes('arrendamiento') || text.includes('desalojo')) {
-            return "Procedimiento Especial de Arrendamiento (Ley 18.101 mod. Ley 21.461 'Devuélveme mi casa')";
-        }
-        if (text.includes('cobro') || text.includes('ejecutivo') || text.includes('pagare') || text.includes('factura')) {
-            return "Juicio Ejecutivo de Obligación de Dar (Art. 434 y ss. Código de Procedimiento Civil)";
-        }
-        if (text.includes('laboral') || text.includes('despido') || text.includes('tutela') || text.includes('autodespido')) {
-            return "Procedimiento Laboral de Aplicación General / Monitorio (Código del Trabajo)";
-        }
-        if (text.includes('familia') || text.includes('alimento') || text.includes('divorcio') || text.includes('cuidado personal')) {
-            return "Procedimiento Ordinario de Familia (Ley 19.968)";
-        }
-        if (text.includes('precario') || text.includes('comodato')) {
-            return "Juicio Sumario de Comodato Precario (Art. 680 N°6 Código de Procedimiento Civil)";
-        }
-        if (text.includes('particion') || text.includes('herencia')) {
-            return "Juicio Arbitral de Partición de Bienes (Art. 1325 Código Civil)";
-        }
-        if (text.includes('indemnizacion') || text.includes('perjuicio') || text.includes('responsabilidad')) {
-            return "Juicio Ordinario de Mayor Cuantía (Libro II Código de Procedimiento Civil)";
-        }
-        return "Procedimiento Declarativo Civil General (Código de Procedimiento Civil)";
+    function inferProceduralTrack(matter) {
+        const c = casesDB[currentEditingId] || { materia: matter };
+        const id = AeroLexProcedures.resolve({ ...c, materia: matter });
+        return AeroLexProcedures.catalog[id].label + (c.procedimiento ? '' : ' · por confirmar');
     }
 
     // =========================================================================
@@ -1359,10 +1370,9 @@
 
 // ── Estudios en la bóveda: cada uno con sus siglas de causa ──────────────
 const STUDIES = [
-    { prefix: 'ALX', name: 'AeroLex SaaS', label: 'AeroLex' },
-    { prefix: 'PS', name: 'Puentes & Sanchez', label: 'Puentes & Sanchez' },
+    { prefix: 'ALX', name: 'AeroLex', label: 'AeroLex' },
 ];
-let activeStudy = (localStorage.getItem('aerolex_study_prefix') || 'ALX').toUpperCase();
+let activeStudy = 'ALX'; // El portal opera exclusivamente con la cartera AeroLex.
 let lastVigilanciaCauses = [];
 function refreshWatchedCausesForStudy() {
     renderWatchedCausesTable(lastVigilanciaCauses);
@@ -1379,25 +1389,15 @@ function codeStudy(code) {
     return prefix;
 }
 function renderStudySelector() {
-    const host = document.getElementById('study-selector');
     const header = document.getElementById('header-study-name');
-    if (header) header.textContent = `Bóveda ${studyByPrefix(activeStudy).name}`;
-    if (!host) return;
-    const present = new Set(Object.keys(casesDB).map(codeStudy).filter(Boolean));
-    const studies = STUDIES;
-    host.innerHTML = studies.map(s => {
-        const active = s.prefix === activeStudy;
-        const count = Object.keys(casesDB).filter(id => codeStudy(id) === s.prefix).length;
-        return `<button type="button" role="tab" aria-selected="${active}" onclick="setActiveStudy('${s.prefix}')" title="${escapeHtml(s.name)}" class="px-2.5 py-1 rounded-full text-[10.5px] font-semibold border transition ${active ? 'bg-blue-600 text-white border-blue-500' : 'bg-[--panel-raised] text-slate-300 border-[--border] hover:border-blue-500/40'}">${escapeHtml(s.label)} <span class="font-mono opacity-80">${count}</span></button>`;
-    }).join('');
+    if (header) header.textContent = 'Gestión jurídica';
 }
-function setActiveStudy(prefix) {
-    activeStudy = String(prefix || 'ALX').toUpperCase();
-    localStorage.setItem('aerolex_study_prefix', activeStudy);
-    renderStudySelector();
+function setActiveStudy() {
+    activeStudy = 'ALX';
+    localStorage.setItem('aerolex_study_prefix', 'ALX');
     renderSidebar();
     renderStats();
-    if (typeof refreshWatchedCausesForStudy === 'function') refreshWatchedCausesForStudy();
+    refreshWatchedCausesForStudy();
 }
     let currentTab = 'resumen';
 
@@ -1488,7 +1488,7 @@ function setActiveStudy(prefix) {
         });
 
         const today = new Date().toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/\./g, '');
-        document.getElementById('new-step-date').value = today;
+        document.getElementById('new-step-date').value = '';
 
         renderSidebar();
         renderStats();
@@ -1532,6 +1532,7 @@ function setActiveStudy(prefix) {
                     abogado: c.abogado,
                     estado_actual: c.estado_actual,
                     steps: c.steps,
+                    procedimiento: c.procedimiento,
                     status: c.status
                 })
             });
@@ -1575,6 +1576,7 @@ function setActiveStudy(prefix) {
         saveCurrentFormToDB();
         updateLivePreview();
         updateForensicBrief();
+        renderProcedureOptions();
     }
 
     // =========================================================================
@@ -1664,7 +1666,10 @@ function setActiveStudy(prefix) {
         STAGES.forEach((st) => {
             const isActive = st.id === currentStage;
             const isCompleted = st.id < currentStage;
-            const card = document.createElement('div');
+            const card = document.createElement('button');
+            card.type = 'button';
+            card.setAttribute('aria-pressed', String(isActive));
+            card.setAttribute('aria-label', `${st.name}${isActive ? ', etapa actual' : ''}`);
             card.className = `step-pill ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`;
             card.onclick = () => setStage(st.id);
             card.innerHTML = `
@@ -1683,7 +1688,46 @@ function setActiveStudy(prefix) {
     // =========================================================================
     // 9. GESTIÓN DE HITOS (LÍNEA DE TIEMPO)
     // =========================================================================
+    function renderProcedureOptions(fillTitle = false) {
+        const c = casesDB[currentEditingId];
+        const select = document.getElementById('case-procedure');
+        if (!c || !select) return;
+        const id = AeroLexProcedures.resolve(c);
+        const route = AeroLexProcedures.catalog[id];
+        select.innerHTML = Object.entries(AeroLexProcedures.catalog).map(([key, p]) => `<option value="${key}">${escapeHtml(p.label)}</option>`).join('');
+        select.value = id;
+        document.getElementById('procedure-note').textContent = (c.procedimiento ? 'Procedimiento seleccionado. ' : 'Sugerencia por materia; confirmar la vía aplicable. ') + route.note;
+        const source = AeroLexProcedures.sources[route.source];
+        document.getElementById('procedure-source').innerHTML = source ? `<a href="${source[1]}" target="_blank" rel="noopener noreferrer" class="text-blue-400 underline">${escapeHtml(source[0])} · ${escapeHtml(route.articles)}</a> · Revisión: 18 oct 2026` : '';
+        const next = AeroLexProcedures.nextSuggestion(c);
+        const options = AeroLexProcedures.suggestions(c);
+        if (next && !options.some(s => s.id === next.id)) options.push(next);
+        document.getElementById('suggested-step').innerHTML = '<option value="">Hito personalizado...</option>' + options.map(s => `<option value="${escapeHtml(s.title)}">${s.id === next?.id ? 'Siguiente sugerido: ' : ''}${escapeHtml(s.title)}${s.conditional ? ' (si corresponde)' : ''}</option>`).join('');
+        document.getElementById('procedure-next').textContent = next ? `Siguiente sugerido: ${next.title}${next.conditional ? ' (solo si corresponde)' : ''}. Revisa su procedencia. El hito añadido se publica al guardar.` : 'No hay un siguiente hito automático seguro. Elige una actuación del procedimiento o escribe una personalizada.';
+        const input = document.getElementById('new-step-title');
+        if (fillTitle || input.dataset.suggested === 'true') {
+            input.value = next?.title || '';
+            input.dataset.suggested = 'true';
+            document.getElementById('suggested-step').value = input.value;
+        }
+    }
+
+    function setCaseProcedure(id) {
+        if (!currentEditingId || !AeroLexProcedures.valid(id)) return;
+        casesDB[currentEditingId].procedimiento = id;
+        markUnsaved();
+        renderProcedureOptions(true);
+    }
+
+    function chooseSuggestedMilestone(title) {
+        const input = document.getElementById('new-step-title');
+        input.value = title;
+        input.dataset.suggested = '';
+        input.focus();
+    }
+
     function renderMilestonesUI(steps) {
+        renderProcedureOptions();
         const list = document.getElementById('milestones-list');
         list.innerHTML = '';
         const arr = Array.isArray(steps) ? steps : [];
@@ -1694,7 +1738,10 @@ function setActiveStudy(prefix) {
             return;
         }
 
+        const currentIndex = arr.findIndex(st => !st.done);
         arr.forEach((st, idx) => {
+            const state = st.done ? 'done' : idx === currentIndex ? 'current' : 'pending';
+            const label = st.done ? 'Cumplido' : idx === currentIndex ? 'Actual · En curso' : 'Pendiente';
             const item = document.createElement('div');
             item.className = 'p-2.5 rounded-lg border border-[--border] bg-[--panel-inset] flex flex-col sm:flex-row sm:items-center gap-2.5 transition-colors';
             item.innerHTML = `
@@ -1703,12 +1750,14 @@ function setActiveStudy(prefix) {
                         <button type="button" onclick="moveMilestone(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="text-[9px] text-slate-500 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition" title="Subir"><i class="fas fa-chevron-up"></i></button>
                         <button type="button" onclick="moveMilestone(${idx}, 1)" ${idx === arr.length - 1 ? 'disabled' : ''} class="text-[9px] text-slate-500 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition" title="Bajar"><i class="fas fa-chevron-down"></i></button>
                     </div>
-                    <div class="milestone-switch ${st.done ? 'done' : ''}" onclick="toggleMilestone(${idx})" title="Cambiar estado"></div>
+                    <button type="button" role="switch" aria-checked="${!!st.done}" aria-label="${escapeHtml(st.title)}: ${label}. Cambiar cumplimiento" class="milestone-switch ${state}" onclick="toggleMilestone(${idx})" title="Cambiar cumplimiento"></button>
+                    <span class="milestone-state ${state}">${label}</span>
                 </div>
                 <div class="flex-1 flex flex-col sm:flex-row gap-2">
                     <input type="text" class="input-base !py-1 !text-xs flex-1 font-medium" value="${escapeHtml(st.title)}" oninput="updateMilestoneTitle(${idx}, this.value)" placeholder="Título del hito...">
                     <input type="text" class="input-base !py-1 !text-xs sm:w-32 font-mono text-slate-300" value="${escapeHtml(st.date)}" oninput="updateMilestoneDate(${idx}, this.value)" placeholder="Fecha">
                 </div>
+                ${idx !== currentIndex ? `<button type="button" onclick="setCurrentMilestone(${idx})" class="btn !px-2 !py-1 !text-[10px]" title="Marca los anteriores como cumplidos y este como en curso">Marcar actual</button>` : ''}
                 <button type="button" onclick="deleteMilestone(${idx})" class="btn btn-danger !p-1.5 !text-xs shrink-0 self-end sm:self-auto" title="Eliminar hito">
                     <i class="fas fa-trash-alt text-xs"></i>
                 </button>
@@ -1724,10 +1773,23 @@ function setActiveStudy(prefix) {
         markUnsaved();
     }
 
+    function setCurrentMilestone(idx) {
+        const steps = casesDB[currentEditingId]?.steps;
+        if (!steps?.[idx]) return;
+        steps.forEach((step, index) => {
+            step.done = index < idx;
+            // No conservar estados antiguos dentro del campo de fecha.
+            if (/^(en curso|en trámite actual|pendiente)$/i.test((step.date || '').trim())) step.date = '';
+        });
+        renderMilestonesUI(steps);
+        markUnsaved();
+    }
+
     function updateMilestoneTitle(idx, val) {
         if (!currentEditingId || !casesDB[currentEditingId]?.steps?.[idx]) return;
         casesDB[currentEditingId].steps[idx].title = val;
         markUnsaved();
+        renderProcedureOptions();
     }
 
     function updateMilestoneDate(idx, val) {
@@ -1771,16 +1833,18 @@ function setActiveStudy(prefix) {
             return;
         }
 
-        const date = dateInput.value.trim() || new Date().toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/\./g, '');
+        const date = dateInput.value.trim();
         const done = doneInput.checked;
 
         if (!casesDB[currentEditingId].steps) casesDB[currentEditingId].steps = [];
         casesDB[currentEditingId].steps.push({ title, date, done });
 
         titleInput.value = '';
+        dateInput.value = '';
         doneInput.checked = false;
 
         renderMilestonesUI(casesDB[currentEditingId].steps);
+        renderProcedureOptions(true);
         markUnsaved();
         toast('Hito añadido al avance.', 'ok');
     }
@@ -1818,16 +1882,28 @@ function setActiveStudy(prefix) {
         if (steps.length === 0) {
             stepsCont.innerHTML = `<div class="text-[11px] text-slate-500 italic col-span-2">Sin hitos registrados.</div>`;
         } else {
-            steps.forEach(st => {
+            const currentIndex = steps.findIndex(st => !st.done);
+            steps.forEach((st, index) => {
+                const state = st.done ? 'done' : index === currentIndex ? 'current' : 'pending';
+                const label = st.done ? 'Cumplido' : index === currentIndex ? 'Actual · En curso' : 'Pendiente';
                 const row = document.createElement('div');
                 row.className = 'flex items-center gap-2 text-xs';
                 row.innerHTML = `
-                    <i class="fas ${st.done ? 'fa-circle-check text-emerald-400' : 'fa-circle text-slate-600'} text-[10px] shrink-0"></i>
+                    <i class="fas ${st.done ? 'fa-circle-check' : index === currentIndex ? 'fa-clock' : 'fa-circle'} milestone-state ${state} shrink-0"></i>
+                    <span class="milestone-state ${state}">${label}</span>
                     <span class="${st.done ? 'text-white font-medium' : 'text-slate-400'} truncate">${escapeHtml(st.title)}</span>
                     ${st.date ? `<span class="text-[10px] text-slate-500 shrink-0">· ${escapeHtml(st.date)}</span>` : ''}
                 `;
                 stepsCont.appendChild(row);
             });
+        }
+        const registeredNext = AeroLexProcedures.nextRegistered(c);
+        const next = registeredNext || AeroLexProcedures.nextSuggestion(c);
+        if (next) {
+            const row = document.createElement('div');
+            row.className = 'text-xs col-span-2 text-blue-400';
+            row.textContent = `${registeredNext ? 'Próximo hito previsto' : 'Próximo paso sugerido (por confirmar)'}: ${next.title}${next.conditional ? ' (si corresponde)' : ''}`;
+            stepsCont.appendChild(row);
         }
     }
 
@@ -1869,16 +1945,6 @@ function setActiveStudy(prefix) {
             badgeCls: "bg-blue-500/15 text-blue-300 border border-blue-500/30",
             defaultCollapsed: false
         },
-        "Marta Elizabeth Sánchez Andrade": {
-            id: "marta-sanchez",
-            name: "Marta Elizabeth Sánchez Andrade",
-            shortName: "Marta Sánchez",
-            role: "Abogada Socia",
-            icon: "fa-user-tie",
-            iconColor: "text-purple-400",
-            badgeCls: "bg-purple-500/15 text-purple-300 border border-purple-500/30",
-            defaultCollapsed: false
-        },
         "Bot Jurídico AeroLex": {
             id: "bot-juridico",
             name: "Bot Jurídico AeroLex",
@@ -1896,6 +1962,7 @@ function setActiveStudy(prefix) {
 
     function syncLawyersCatalog(lawyersList) {
         if (!Array.isArray(lawyersList)) return;
+        lawyersList = lawyersList.filter(lawyer => !/puentes\s*(?:&|y)?\s*s[aá]nchez/i.test(String(lawyer?.studio || '')));
         syncedLawyersRaw = lawyersList;
         LAWYER_CATALOG = { ...DEFAULT_LAWYER_CATALOG };
 
@@ -1917,13 +1984,6 @@ function setActiveStudy(prefix) {
                 if (lawyer.phone) LAWYER_CATALOG["Jaime Vidal Paredes"].phone = lawyer.phone;
                 if (lawyer.rut) LAWYER_CATALOG["Jaime Vidal Paredes"].rut = lawyer.rut;
                 if (lawyer.studio) LAWYER_CATALOG["Jaime Vidal Paredes"].studio = lawyer.studio;
-                return;
-            }
-            if (/marta|s[aá]nchez|elizabeth/i.test(cleanName)) {
-                if (lawyer.email) LAWYER_CATALOG["Marta Elizabeth Sánchez Andrade"].email = lawyer.email;
-                if (lawyer.phone) LAWYER_CATALOG["Marta Elizabeth Sánchez Andrade"].phone = lawyer.phone;
-                if (lawyer.rut) LAWYER_CATALOG["Marta Elizabeth Sánchez Andrade"].rut = lawyer.rut;
-                if (lawyer.studio) LAWYER_CATALOG["Marta Elizabeth Sánchez Andrade"].studio = lawyer.studio;
                 return;
             }
 
@@ -2501,6 +2561,9 @@ function setActiveStudy(prefix) {
         const stage = typeof c.estado_actual === 'number' ? c.estado_actual : 0;
         renderStepperUI(stage);
         renderMilestonesUI(c.steps || []);
+        document.getElementById('new-step-date').value = '';
+        document.getElementById('new-step-done').checked = false;
+        renderProcedureOptions(true);
         renderEstadoDiarioUI(c.estado_diario, c);
         updateForensicBrief();
         renderSidebar();
