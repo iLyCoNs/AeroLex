@@ -63,6 +63,55 @@ const server = http.createServer((req, res) => {
       assert(await page.locator('#open-mobile-menu').evaluate(el => el === document.activeElement));
       results.push(`${width}px header and keyboard menu: OK`);
     }
+    // Real deployed chatbot engine, with network calls intercepted (no messages/logs leave this test).
+    const fixtureDir = require('node:os').tmpdir();
+    const engineFile = path.join(fixtureDir, 'aerolex-test-vibe-copilot.js');
+    if (fs.existsSync(engineFile)) {
+      const chatPage = await browser.newPage();
+      chatPage.on('pageerror', e => errors.push(e.message));
+      const requests = [];
+      await chatPage.route('**/*', route => {
+        const url = route.request().url();
+        if (url.startsWith(base)) return route.continue();
+        if (url.endsWith('/vibe-copilot.js')) return route.fulfill({contentType:'application/javascript',body:fs.readFileSync(engineFile,'utf8')});
+        if (url.endsWith('/vibe-copilot.css')) return route.fulfill({contentType:'text/css',body:fs.readFileSync(path.join(fixtureDir,'aerolex-test-vibe-copilot.css'),'utf8')});
+        if (url.includes('/api/config')) return route.fulfill({json:{config:{businessId:'aerolex',businessName:'AeroLex',enableVoice:false}}});
+        if (url.includes('/api/chat')) { requests.push(route.request().postDataJSON()); return route.fulfill({json:{text:'Orientación de prueba: ¿quién envió su documento?'}}); }
+        return route.abort();
+      });
+      await chatPage.goto(base);
+      await chatPage.locator('#vibe-drawer').waitFor({state:'attached'});
+      await chatPage.locator('[data-assistant-topic="urgencia"]').click();
+      await chatPage.waitForFunction(() => document.querySelector('#vibe-drawer').classList.contains('vibe-open'));
+      await chatPage.waitForFunction(() => document.querySelector('#vibe-drawer').textContent.includes('Orientación de prueba'));
+      assert.equal(requests.length,1);
+      assert(JSON.stringify(requests[0].messages).includes('quién envió'));
+      assert.equal(await chatPage.locator('#ai-modal').evaluate(el=>el.open), false);
+      await chatPage.evaluate(() => VibeCopilot.close());
+      await chatPage.locator('#alc-tab-arriendo').click();
+      await chatPage.locator('#arr-renta').fill('450000');
+      await chatPage.locator('#arr-meses').fill('2');
+      await chatPage.getByRole('button',{name:'Calcular deuda estimada',exact:true}).click();
+      await chatPage.locator('#alc-lead-nombre').fill('PRIVATE_TEST_NAME');
+      await chatPage.locator('#alc-case-pin').fill('9876');
+      await chatPage.getByRole('button',{name:'Explícame este resultado',exact:true}).click();
+      await chatPage.waitForFunction(() => document.querySelector('#vibe-drawer').textContent.includes('900.000'));
+      assert.equal(requests.length,2);
+      assert(!JSON.stringify(requests).includes('PRIVATE_TEST_NAME'));
+      assert(!JSON.stringify(requests).includes('9876'));
+      await chatPage.evaluate(() => VibeCopilot.close());
+      await chatPage.evaluate(() => openPortalTracking());
+      assert(await chatPage.locator('#ai-modal').evaluate(el=>el.open), 'Tracking remains in authenticated portal');
+      await chatPage.close();
+      results.push('Published chatbot: urgency + result context + private-field exclusion + portal isolation: OK');
+    }
+    await page.goto(base);
+    await page.locator('[data-assistant-topic="urgencia"]').click();
+    await page.getByRole('button',{name:'Volver a conectar',exact:true}).waitFor({state:'visible',timeout:8000});
+    assert((await page.locator('#assistant-connection').innerText()).includes('No necesita un código'));
+    await page.getByRole('button',{name:'Cerrar ayuda',exact:true}).click();
+    assert.equal(await page.locator('#assistant-connection').evaluate(el=>el.open),false);
+    results.push('Unavailable chatbot: useful fallback and close: OK');
     assert.deepEqual(errors, [], 'No uncaught client JS errors');
     console.log(results.join('\n'));
   } finally {

@@ -249,6 +249,8 @@
         '</div>' +
       '</div>';
     track("calc_result", data.tipo + ": " + rango);
+    if (window.AeroLexHelp) window.AeroLexHelp.result(box, 'resultado-' + kind, data.tipo,
+      'Estimación: ' + rango + '. Desglose: ' + data.casos.map(function (row) { return row.join(': '); }).join('; '));
   }
 
   function leadPayload(kind) {

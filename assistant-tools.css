@@ -1,0 +1,262 @@
+.urgent-access {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #102338 0%, #17324d 50%, #0d1a29 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  box-shadow: 0 15px 35px -5px rgba(10, 25, 45, 0.25);
+}
+.urgent-access::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, #38bdf8, #34d399, #818cf8);
+}
+.urgent-access .urgent-option {
+  text-align: left;
+  position: relative;
+  padding: 16px 36px 16px 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+}
+.urgent-access .urgent-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+.urgent-access .urgent-option::after {
+  content: '→';
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #94a3b8;
+  transition: transform 0.2s, color 0.2s;
+}
+.urgent-access .urgent-option:hover::after {
+  transform: translateY(-50%) translateX(3px);
+  color: #38bdf8;
+}
+.urgent-access .urgent-option strong {
+  color: white;
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.urgent-access .urgent-option .urgent-desc {
+  display: block;
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+.urgent-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  border-radius: 6px;
+  line-height: 1.2;
+}
+.urgent-badge-red {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+.urgent-badge-cyan {
+  background: rgba(6, 182, 212, 0.2);
+  color: #67e8f9;
+  border: 1px solid rgba(6, 182, 212, 0.35);
+}
+.urgent-badge-green {
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+.urgent-access .urgent-option > i {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  shrink-0: 0;
+  background: rgba(255, 255, 255, 0.08);
+}
+.assistant-expectation {
+  color: #94a3b8;
+  font-size: 12.5px;
+  line-height: 1.6;
+  text-align: center;
+  margin: 16px 0 0;
+}
+
+/* Ayuda contextual integrada dentro de cada herramienta */
+.assistant-tool-help {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  margin: 0 0 18px;
+  background: linear-gradient(110deg, #f0f7ff, #f0fdf4);
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+.assistant-tool-help p {
+  font-size: 13.5px;
+  color: #1e293b;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+}
+.assistant-tool-help button {
+  background: #0f172a;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.assistant-tool-help button:hover {
+  background: #1e293b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+/* Botón explicativo de resultados de cálculos */
+.assistant-result-help {
+  margin-top: 16px;
+  padding: 14px 18px;
+  border: 1px solid #bbf7d0;
+  background: #f0fdf4;
+  border-radius: 14px;
+}
+.assistant-result-help button {
+  background: #047857;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+}
+.assistant-result-help button:hover {
+  background: #065f46;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(4, 120, 87, 0.2);
+}
+.assistant-result-help p {
+  margin-top: 8px;
+  margin-bottom: 0;
+  font-size: 12px;
+  color: #166534;
+  line-height: 1.4;
+}
+
+/* Modal de contingencia cuando el copilot tarda o está bloqueado */
+#assistant-connection {
+  width: min(92vw, 460px);
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 24px;
+  color: #0f172a;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25);
+  background: #ffffff;
+}
+#assistant-connection::backdrop {
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+}
+.assistant-connection-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.assistant-connection-head strong {
+  font-size: 14px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.assistant-connection-head button {
+  padding: 6px 12px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #334155;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+#assistant-connection h2 {
+  font-size: 20px;
+  line-height: 1.3;
+  margin: 16px 0 10px;
+  font-weight: 800;
+  color: #0f172a;
+}
+#assistant-connection p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin-bottom: 14px;
+  color: #475569;
+}
+.assistant-connection-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+.assistant-connection-actions button,
+.assistant-connection-actions a {
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: #0f172a;
+  color: white;
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.assistant-connection-actions a {
+  background: #25d366;
+  color: white;
+}
+.assistant-connection-actions [hidden] {
+  display: none !important;
+}

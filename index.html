@@ -681,6 +681,8 @@
     <script src="soy-cliente.js" defer></script>
 <link rel="stylesheet" href="/home-refinement.css">
 <script src="/home-refinement.js" defer></script>
+<link rel="stylesheet" href="/assistant-tools.css">
+<script src="/assistant-tools.js" defer></script>
 </head>
 <body class="relative flex flex-col min-h-screen">
 <a href="#inicio" class="skip-content">Ir al contenido principal</a>
@@ -752,7 +754,7 @@
             <a href="#soy-cliente" onclick="toggleMobileMenu()" class="text-2xl font-bold text-blue-700 border-b border-gray-100 pb-4 flex items-center gap-3 hover:text-blue-900 transition">
                 <i class="fas fa-satellite-dish"></i> Soy Cliente
             </a>
-            <button onclick="toggleMobileMenu(); openAssistant(); setTimeout(contactDirect, 200)" class="text-left text-2xl font-bold text-[#25D366] border-b border-gray-100 pb-4 flex items-center gap-3 hover:text-[#1fa855] transition">
+            <button onclick="toggleMobileMenu(); window.location.href='https://wa.me/56950129843'" class="text-left text-2xl font-bold text-[#25D366] border-b border-gray-100 pb-4 flex items-center gap-3 hover:text-[#1fa855] transition">
                 <i class="fab fa-whatsapp"></i> Contactar Abogado de Turno
             </button>
             
@@ -863,16 +865,38 @@
     </section>
 
     <section class="max-w-7xl mx-auto px-4 pb-10 w-full relative z-10">
-        <div class="urgent-access p-5 md:p-7">
-            <div class="text-center mb-5">
-                <h2 class="text-lg md:text-xl font-extrabold">¿Necesita un abogado urgente ahora?</h2>
-                <p class="text-[12px] md:text-[13px] text-gray-300 mt-1">Elija una opción. Le llevaremos directamente al lugar correcto.</p>
+        <div class="urgent-access p-5 md:p-8">
+            <div class="flex flex-col items-center text-center mb-6">
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-400/30 text-blue-300 text-[11px] font-bold uppercase tracking-wider mb-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Asistente Legal Inteligente 24/7
+                </span>
+                <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight">¿Tiene un problema legal o una notificación urgente?</h2>
+                <p class="text-[13px] md:text-[14px] text-slate-300 mt-1.5 max-w-2xl leading-relaxed">Obtenga orientación inicial clara en segundos. Preguntas sencillas para saber cómo actuar antes de que venza su plazo.</p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <button type="button" class="urgent-option" onclick="openAssistant(); setTimeout(startTracking, 250)"><i class="fas fa-file-circle-exclamation"></i><span><strong>Tengo una urgencia o notificación</strong><span>Quiero saber qué hacer y cuidar mi plazo.</span></span></button>
-                <button type="button" class="urgent-option" onclick="openAssistant(); setTimeout(startNewConsult, 250)"><i class="fas fa-comments"></i><span><strong>Quiero contar mi problema</strong><span>Le ayudaremos a encontrar la orientación adecuada.</span></span></button>
-                <button type="button" class="urgent-option" onclick="openAssistant(); setTimeout(contactDirect, 250)"><i class="fab fa-whatsapp"></i><span><strong>Hablar directamente con un abogado</strong><span>Contacto rápido con el estudio en Puerto Montt.</span></span></button>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                <button type="button" class="urgent-option" data-assistant-topic="urgencia">
+                    <i class="fas fa-file-circle-exclamation text-amber-300" aria-hidden="true"></i>
+                    <span>
+                        <strong>Recibí una notificación judicial <span class="urgent-badge urgent-badge-red">Urgente</span></strong>
+                        <span class="urgent-desc">El asistente le orienta qué revisar y cómo cuidar su plazo.</span>
+                    </span>
+                </button>
+                <button type="button" class="urgent-option" data-assistant-topic="consulta">
+                    <i class="fas fa-comments text-cyan-300" aria-hidden="true"></i>
+                    <span>
+                        <strong>Quiero orientación sobre mi caso <span class="urgent-badge urgent-badge-cyan">Online</span></strong>
+                        <span class="urgent-desc">Cuéntenos qué ocurrió en palabras simples, sin trámites previos.</span>
+                    </span>
+                </button>
+                <a class="urgent-option" href="https://wa.me/56950129843?text=Hola%2C%20necesito%20consultar%20mi%20situaci%C3%B3n%20con%20AeroLex">
+                    <i class="fab fa-whatsapp text-emerald-300" aria-hidden="true"></i>
+                    <span>
+                        <strong>Hablar con un abogado por WhatsApp <span class="urgent-badge urgent-badge-green">Directo</span></strong>
+                        <span class="urgent-desc">Contacto rápido con nuestro estudio jurídico en Puerto Montt.</span>
+                    </span>
+                </a>
             </div>
+            <p class="assistant-expectation">⚡ Orientación inmediata con asistente virtual · Sin necesidad de registro previo · Revisión y patrocinio formal a cargo de abogados titulados.</p>
         </div>
     </section>
 
@@ -904,6 +928,7 @@
 
                 <!-- PANEL PLAZOS -->
                 <div id="tool-plazos">
+<div class="assistant-tool-help"><p>¿No sabe qué plazo elegir?</p><button type="button" data-assistant-topic="plazos">Que el asistente me guíe →</button></div>
                     <div class="flex items-center justify-between gap-3 flex-wrap mb-5">
                         <div class="deadline-mode">
                             <button id="deadline-client" class="active" onclick="setDeadlineMode('client')"><i class="fas fa-user mr-1"></i> Soy cliente</button>
@@ -933,6 +958,7 @@
 
                 <!-- PANEL INDICADORES -->
                 <div id="tool-indicadores" class="hidden">
+<div class="assistant-tool-help"><p>¿Qué valor necesita para su documento?</p><button type="button" data-assistant-topic="indicadores">Que el asistente me guíe →</button></div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="ind-card">
                             <div class="tool-label"><i class="fas fa-house-chimney mr-1.5 text-mac-accent"></i> Unidad de Fomento (UF)</div>
@@ -963,6 +989,7 @@
 
                 <!-- PANEL GLOSARIO -->
                 <div id="tool-glosario" class="hidden">
+<div class="assistant-tool-help"><p>Entienda una palabra con un ejemplo.</p><button type="button" data-assistant-topic="glosario">Que el asistente me guíe →</button></div>
                     <div class="relative max-w-md">
                         <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
                         <input type="text" id="glos-search" aria-label="Buscar una palabra legal" class="tool-input !pl-10" placeholder="Buscar término: finiquito, RIT, deslinde, CBR..." oninput="renderGlosario()" autocomplete="off">
@@ -1007,6 +1034,7 @@
 
                 <!-- FINIQUITO -->
                 <div id="alc-panel-finiquito">
+<div class="assistant-tool-help"><p>¿Necesita ayuda para completar su finiquito?</p><button type="button" data-assistant-topic="finiquito">Que el asistente me guíe →</button></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                         <label class="block"><span class="text-[12px] font-bold text-gray-600">¿Cuándo empezó a trabajar?</span><input id="fin-inicio" type="date" class="alc-field mt-1.5"></label>
                         <label class="block"><span class="text-[12px] font-bold text-gray-600">¿Cuándo terminó (o le avisaron)?</span><input id="fin-termino" type="date" class="alc-field mt-1.5"></label>
@@ -1033,6 +1061,7 @@
 
                 <!-- ARRIENDO -->
                 <div id="alc-panel-arriendo" class="hidden">
+<div class="assistant-tool-help"><p>¿Tiene dudas sobre la deuda o la garantía?</p><button type="button" data-assistant-topic="arriendo">Que el asistente me guíe →</button></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                         <label class="block"><span class="text-[12px] font-bold text-gray-600">Renta mensual pactada (CLP)</span><input id="arr-renta" type="number" min="0" step="10000" placeholder="Ej: 450000" class="alc-field mt-1.5"></label>
                         <label class="block"><span class="text-[12px] font-bold text-gray-600">Meses impagos</span><input id="arr-meses" type="number" min="1" max="60" value="1" class="alc-field mt-1.5"></label>
@@ -1270,7 +1299,7 @@
                             </div>
                         </article>
 
-                        <article class="service-widget p-5 flex flex-col justify-between border border-emerald-300/80 hover:border-emerald-500 transition shadow-sm rounded-2xl bg-emerald-50/50 backdrop-blur-sm cursor-pointer group" onclick="openAssistant(); setTimeout(contactDirect, 200)">
+                        <article class="service-widget p-5 flex flex-col justify-between border border-emerald-300/80 hover:border-emerald-500 transition shadow-sm rounded-2xl bg-emerald-50/50 backdrop-blur-sm cursor-pointer group" onclick="window.location.href='https://wa.me/56950129843'">
                             <div>
                                 <div class="flex items-center justify-between gap-2 mb-3">
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#25D366] text-white font-bold text-[11px] shadow-sm">
@@ -1400,7 +1429,7 @@
                         </div>
                     </div>
                     <div class="mt-5 pt-4 border-t border-gray-100">
-                        <button type="button" onclick="openAssistant(); setTimeout(contactDirect, 200)" class="text-[11.5px] font-bold text-mac-dark hover:text-mac-accent flex items-center gap-1.5 transition">
+                        <button type="button" onclick="window.location.href='https://wa.me/56950129843'" class="text-[11.5px] font-bold text-mac-dark hover:text-mac-accent flex items-center gap-1.5 transition">
                             <i class="fab fa-whatsapp text-green-500 text-sm"></i> Coordinar consulta local en Puerto Montt &rarr;
                         </button>
                     </div>
@@ -1810,7 +1839,7 @@
             <!-- Derecha: Redes y Firma -->
             <div class="flex flex-col items-center lg:items-end gap-5 w-full lg:w-auto">
                 <!-- Botón WhatsApp Rápido -->
-                <button type="button" onclick="openAssistant(); setTimeout(contactDirect, 200)" class="inline-flex items-center gap-2 bg-[#25D366] text-white text-[13px] font-bold px-5 py-2.5 rounded-xl shadow-md hover:bg-[#1fa855] transition transform hover:-translate-y-0.5">
+                <button type="button" onclick="window.location.href='https://wa.me/56950129843'" class="inline-flex items-center gap-2 bg-[#25D366] text-white text-[13px] font-bold px-5 py-2.5 rounded-xl shadow-md hover:bg-[#1fa855] transition transform hover:-translate-y-0.5">
                     <i class="fab fa-whatsapp text-base"></i> Contactar Abogado de Turno
                 </button>
 
@@ -2411,6 +2440,7 @@
 
         // ====== ENTRADA PRINCIPAL DEL ASISTENTE UNIFICADO ======
         function openAssistant() {
+            if (window.AeroLexHelp) { window.AeroLexHelp.open('consulta'); return; }
             aiModal.showModal();
             aiChatLog.innerHTML = '';
             verifiedClient = null;
@@ -2422,6 +2452,7 @@
 
         // ====== ENTRADA DIRECTA PORTAL CLIENTES (RASTREO DE CAUSA) ======
         window.openPortalTracking = function(code, pin) {
+            if (window.VibeCopilot) window.VibeCopilot.close();
             aiModal.showModal();
             aiChatLog.innerHTML = '';
             pendingCaseCode = null;
@@ -2636,6 +2667,7 @@
 
         // ====== ENTRADA DESDE TARJETAS DE SERVICIOS (TRIAJE DIRECTO) ======
         function openAIChat(serviceId, serviceTitle) {
+            if (window.AeroLexHelp) { window.AeroLexHelp.service(serviceTitle); return; }
             aiModal.showModal();
             aiChatLog.innerHTML = '';
             pendingCaseCode = null;
@@ -3541,6 +3573,7 @@
                         <a class="res-btn res-btn-wa flex-1 text-[13px] py-2.5" target="_blank" href="https://wa.me/${WHATSAPP_NUMBER}?text=${wa}"><i class="fab fa-whatsapp text-base"></i> Hablar con abogado</a>
                     </div>
                 </div>`;
+            if (window.AeroLexHelp) window.AeroLexHelp.result($(target), 'plazo-' + p.id, p.name, 'Fecha inicial introducida: ' + start + '. Fecha estimada por la herramienta: ' + text(v) + '. Fundamento mostrado: ' + (p.law || 'Sin especificar') + '. El cálculo requiere revisión del cómputo legal.');
         }
         function copyDeadline(){if(!state.last)return;const x=state.last,n=`AEROLEX - CÁLCULO REFERENCIAL\nAcción: ${x.p.name}\nFundamento: ${x.p.law}\nInicio: ${text(new Date(x.start))}\nVencimiento: ${text(x.v)}\nEstado: ${x.remaining?'Vigente':'Vencido'}\nNo sustituye asesoría jurídica formal.`;navigator.clipboard.writeText(n);}
         function renderExpert(){const q=($('expert-search')?.value||'').toLowerCase(),items=D.filter(x=>(state.area==='Todas'||x.area===state.area)&&(`${x.name} ${x.law} ${x.area}`).toLowerCase().includes(q));$('expert-areas').innerHTML=['Todas',...new Set(D.map(x=>x.area))].map(a=>`<button class="tool-tab ${state.area===a?'active':''}" onclick="setExpertArea('${a}')">${a}</button>`).join('');$('expert-list').innerHTML=items.map(p=>`<div class="expert-row" onclick="expertOpen('${p.id}')"><div class="flex justify-between gap-3"><div><b class="text-[13px] text-mac-dark">${p.name}</b><div class="text-[11px] text-gray-500 mt-1">${p.law} · ${p.area}</div></div><span class="text-[10px] font-bold text-mac-accent">${p.days?p.days+' días':'Sin plazo fatal'}</span></div><div id="expert-${p.id}" class="hidden mt-3" onclick="event.stopPropagation()"></div></div>`).join('');}
