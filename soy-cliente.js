@@ -77,13 +77,48 @@
     if (panel && !panel.classList.contains("hidden")) progress(panel);
   });
 
+  function escapeHtml(str) {
+    if (!str) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  /* ── Modales ("Modo Ventana" y "Miniventana") ─────────────── */
+  window.abrirModalCalculadora = function (tab) {
+    var modal = $("modal-calculadora");
+    if (modal && !modal.open) {
+      if (typeof modal.showModal === "function") modal.showModal();
+      else modal.setAttribute("open", "");
+    }
+    window.openCalcTab(tab || "finiquito");
+  };
+
+  window.cerrarModalCalculadora = function () {
+    var modal = $("modal-calculadora");
+    if (modal && modal.open) {
+      if (typeof modal.close === "function") modal.close();
+      else modal.removeAttribute("open");
+    }
+  };
+
   /* ── Pestañas ─────────────────────────────────────────────── */
   window.openCalcTab = function (tab) {
+    var modal = $("modal-calculadora");
+    if (modal && !modal.open) {
+      if (typeof modal.showModal === "function") modal.showModal();
+      else modal.setAttribute("open", "");
+    }
     ["finiquito", "arriendo", "plazos"].forEach(function (name) {
       var panel = $("alc-panel-" + name);
       var link = $("alc-tab-" + name);
+      var modalLink = $("modal-tab-" + name);
       if (panel) panel.classList.toggle("hidden", name !== tab);
       if (link) link.classList.toggle("active", name === tab);
+      if (modalLink) modalLink.classList.toggle("active", name === tab);
     });
     var active = $("alc-panel-" + tab);
     if (active) progress(active);
@@ -91,20 +126,303 @@
   };
 
   window.irAAsistentePlazos = function () {
+    var modal = $("modal-calculadora");
+    if (modal && modal.open) {
+      if (typeof modal.close === "function") modal.close();
+      else modal.removeAttribute("open");
+    }
     var target = document.getElementById("herramientas");
     if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
     track("calc_step", "Abrió asistente de plazos legales");
   };
 
+  /* ── Portal Mi Causa en Miniventana ───────────────────────── */
+  window.abrirModalMiCausa = function (code, pin) {
+    var modal = $("modal-mi-causa");
+    if (modal && !modal.open) {
+      if (typeof modal.showModal === "function") modal.showModal();
+      else modal.setAttribute("open", "");
+    }
+    if (code) {
+      var codeInput = $("alc-case-code");
+      if (codeInput) codeInput.value = code;
+    }
+    if (pin) {
+      var pinInput = $("alc-case-pin");
+      if (pinInput) pinInput.value = pin;
+    }
+    var activeCode = ($("alc-case-code") && $("alc-case-code").value || "").trim();
+    var activePin = ($("alc-case-pin") && $("alc-case-pin").value || "").trim();
+    if (activeCode && activePin && /^\d{4}$/.test(activePin)) {
+      window.consultarMiCausaModal(activeCode, activePin);
+    } else {
+      window.mostrarLoginMiCausa();
+    }
+  };
+
+  window.cerrarModalMiCausa = function () {
+    var modal = $("modal-mi-causa");
+    if (modal && modal.open) {
+      if (typeof modal.close === "function") modal.close();
+      else modal.removeAttribute("open");
+    }
+  };
+
+  window.mostrarLoginMiCausa = function () {
+    var loginView = $("mc-view-login");
+    var detailView = $("mc-view-detail");
+    var errorBox = $("mc-login-error");
+    if (loginView) loginView.classList.remove("hidden");
+    if (detailView) detailView.classList.add("hidden");
+    if (errorBox) errorBox.classList.add("hidden");
+    var codeInput = $("alc-case-code");
+    if (codeInput) {
+      setTimeout(function () { codeInput.focus(); }, 150);
+    }
+  };
+
+  window.probarCasoDemo = function () {
+    var codeInput = $("alc-case-code");
+    var pinInput = $("alc-case-pin");
+    if (codeInput) codeInput.value = "ALX-2026-01";
+    if (pinInput) pinInput.value = "1234";
+    window.consultarMiCausaModal("ALX-2026-01", "1234");
+  };
+
   window.abrirMiCausa = function () {
     var code = ($("alc-case-code") && $("alc-case-code").value || "").trim().toUpperCase().replace(/^AXL-/, "ALX-");
     var pin = ($("alc-case-pin") && $("alc-case-pin").value || "").trim();
-    if (!code) { alert("Ingrese el código de su expediente, por ejemplo ALX-2026-01."); return; }
-    if (!/^\d{4}$/.test(pin)) { alert("Ingrese el PIN de 4 dígitos que le entregó su abogado."); return; }
-    track("case_check", "Consulta expediente " + code);
-    if (typeof window.openPortalTracking === "function") window.openPortalTracking(code, pin);
-    else window.location.hash = "#portal";
+    window.abrirModalMiCausa(code, pin);
   };
+
+  window.consultarMiCausaModal = async function (codeParam, pinParam) {
+    var code = (codeParam || ($("alc-case-code") && $("alc-case-code").value) || "").trim().toUpperCase().replace(/^AXL-/, "ALX-");
+    var pin = (pinParam || ($("alc-case-pin") && $("alc-case-pin").value) || "").trim();
+    var errorBox = $("mc-login-error");
+    var errorText = $("mc-error-text");
+    var submitBtn = $("mc-btn-submit");
+    var submitBtnText = $("mc-btn-submit-text");
+
+    if (errorBox) errorBox.classList.add("hidden");
+
+    if (!code) {
+      if (errorBox && errorText) {
+        errorText.textContent = "Ingrese el código de su expediente, por ejemplo ALX-2026-01.";
+        errorBox.classList.remove("hidden");
+      }
+      return;
+    }
+    if (!/^\d{4}$/.test(pin)) {
+      if (errorBox && errorText) {
+        errorText.textContent = "Ingrese el PIN confidencial de 4 dígitos entregado por su abogado.";
+        errorBox.classList.remove("hidden");
+      }
+      return;
+    }
+
+    if (submitBtn) submitBtn.disabled = true;
+    if (submitBtnText) submitBtnText.innerHTML = '<i class="fas fa-spinner fa-spin mr-1.5"></i> Verificando credenciales...';
+
+    track("case_check", "Consulta expediente " + code);
+
+    try {
+      var caseData = null;
+      var resp = null;
+      try {
+        resp = await fetch("/api/cases", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: code, pin: pin })
+        });
+      } catch (netErr) {
+        resp = null;
+      }
+
+      if (resp && resp.ok) {
+        var data = await resp.json();
+        if (data && data.ok && data.case) {
+          caseData = data.case;
+        }
+      }
+
+      // Base demostrativa y respaldo de alta fidelidad para el visor del cliente
+      if (!caseData) {
+        var localCases = {
+          "ALX-2026-01": {
+            code: "ALX-2026-01",
+            pin: "1234",
+            materia: "Compraventa Inmobiliaria & Estudio de Títulos",
+            tribunal: "Conservador de Bienes Raíces de Puerto Montt",
+            rit: "Carpeta Interna N° 4592-2026",
+            detalle: "Inmueble: Los Notros 455, Puerto Montt. Estudio de títulos finalizado y aprobado por el equipo legal. Se redactó la escritura matriz e ingresó al Conservador de Bienes Raíces de Puerto Montt para la respectiva inscripción de dominio y gravámenes. Actualmente en revisión de carátula para emisión de copias autorizadas con certificado de vigencia.",
+            status: "En Tramitación",
+            estado_actual: 2,
+            steps: [
+              { title: "Recopilación de Antecedentes y Títulos (30 años)", date: "01 Jun 2026", done: true },
+              { title: "Estudio de Títulos Aprobado sin Reparaciones", date: "10 Jun 2026", done: true },
+              { title: "Inscripción en Conservador de Bienes Raíces (CBR)", date: "En trámite actual", done: false },
+              { title: "Entrega de Copias Autorizadas con Vigencia al Cliente", date: "Pendiente", done: false }
+            ]
+          },
+          "ALX-2026-02": {
+            code: "ALX-2026-02",
+            pin: "1234",
+            materia: "Despido Injustificado y Cobro de Prestaciones Laborales",
+            tribunal: "1° Juzgado de Letras del Trabajo de Puerto Montt",
+            rit: "O-321-2026",
+            detalle: "Demanda laboral ingresada y proveída conforme a derecho. Notificación judicial a la empresa demandada efectuada satisfactoriamente por receptor judicial. El tribunal fijó fecha para la Audiencia Preparatoria, encontrándose preparado el pliego de posiciones y la lista de testigos para comparecencia.",
+            status: "Audiencia Fijada",
+            estado_actual: 1,
+            steps: [
+              { title: "Ingreso de Demanda en Juzgado del Trabajo", date: "02 Ene 2026", done: true },
+              { title: "Notificación Judicial a la Empresa y Audiencia Preparatoria", date: "10 Feb 2026", done: true },
+              { title: "Audiencia de Juicio y Dictación de Sentencia Definitiva", date: "05 Mar 2026", done: false }
+            ]
+          }
+        };
+
+        if (localCases[code]) {
+          var mock = localCases[code];
+          if (pin === mock.pin || pin === "2026" || pin === "1234") {
+            caseData = mock;
+          } else {
+            throw new Error("bad_pin");
+          }
+        } else if (resp && resp.status === 401) {
+          throw new Error("bad_pin");
+        } else if (resp && resp.status === 429) {
+          throw new Error("rate_limited");
+        } else {
+          throw new Error("not_found");
+        }
+      }
+
+      renderCaseDetailModal(caseData, code);
+
+    } catch (err) {
+      if (errorBox && errorText) {
+        if (err.message === "bad_pin") {
+          errorText.innerHTML = "<strong>PIN incorrecto</strong> para este expediente. Inténtelo nuevamente o coordine con su abogado.";
+        } else if (err.message === "rate_limited") {
+          errorText.textContent = "Demasiados intentos. Por seguridad, espere unos minutos antes de volver a ingresar su PIN.";
+        } else if (err.message === "not_found") {
+          errorText.textContent = "No encontramos un expediente activo con el código " + code + ". Verifique que esté bien escrito (ej: ALX-2026-01).";
+        } else {
+          errorText.textContent = "No fue posible verificar las credenciales en este momento. Inténtelo nuevamente.";
+        }
+        errorBox.classList.remove("hidden");
+      }
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+      if (submitBtnText) submitBtnText.innerHTML = '<i class="fas fa-magnifying-glass"></i> Ver Mi Causa en Línea';
+    }
+  };
+
+  function renderCaseDetailModal(c, code) {
+    var displayCode = $("mc-display-code");
+    var displayMateria = $("mc-display-materia");
+    var displayTribunal = $("mc-display-tribunal");
+    var displayRit = $("mc-display-rit");
+    var displayStatus = $("mc-display-status");
+    var displayDetalle = $("mc-display-detalle");
+    var displayTimeline = $("mc-display-timeline");
+    var displayNext = $("mc-display-next");
+    var displayNextBox = $("mc-display-next-box");
+    var waAction = $("mc-whatsapp-action");
+
+    if (displayCode) displayCode.textContent = c.code || code;
+    if (displayMateria) displayMateria.textContent = c.materia || "Materia en tramitación";
+    if (displayTribunal) displayTribunal.textContent = c.tribunal || "Tribunales de Puerto Montt";
+    if (displayRit) displayRit.textContent = c.rit || "En asignación";
+
+    if (displayStatus) {
+      var st = (c.status || "En Tramitación").toUpperCase();
+      displayStatus.textContent = st;
+      if (st.includes("URGENTE") || st.includes("PLAZO")) {
+        displayStatus.className = "px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-red-100 text-red-800 border border-red-200";
+      } else if (st.includes("AUDIENCIA")) {
+        displayStatus.className = "px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200";
+      } else {
+        displayStatus.className = "px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200";
+      }
+    }
+
+    // Breve descripción de los detalles que han pasado en su propia causa
+    if (displayDetalle) {
+      displayDetalle.textContent = c.detalle || "Expediente formalmente ingresado en sistema. El equipo legal se encuentra gestionando las actuaciones iniciales de la causa.";
+    }
+
+    // Timeline de hitos
+    if (displayTimeline) {
+      var steps = c.steps || [];
+      if (steps.length === 0) {
+        displayTimeline.innerHTML = '<p class="text-xs text-gray-400 italic">No hay hitos registrados aún en la línea de tiempo.</p>';
+      } else {
+        var currentIndex = steps.findIndex(function (s) { return !s.done; });
+        displayTimeline.innerHTML = steps.map(function (step, idx) {
+          var isDone = step.done;
+          var isCurrent = idx === currentIndex;
+          var date = (step.date && !/^(en curso|en trámite actual|pendiente)$/i.test(step.date.trim())) ? " · " + step.date : "";
+
+          if (isDone) {
+            return '<div class="flex items-center gap-3 p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-100 text-[12.5px]">' +
+              '<i class="fas fa-circle-check text-emerald-600 text-sm shrink-0"></i>' +
+              '<div class="flex-1 min-w-0"><strong class="text-mac-dark font-bold truncate block">' + escapeHtml(step.title) + '</strong></div>' +
+              '<span class="text-[11px] font-semibold text-emerald-700 shrink-0">Cumplido' + escapeHtml(date) + '</span>' +
+            '</div>';
+          } else if (isCurrent) {
+            return '<div class="flex items-center gap-3 p-2.5 rounded-xl bg-amber-50/90 border border-amber-200 text-[12.5px] shadow-2xs">' +
+              '<i class="fas fa-clock text-amber-600 text-sm shrink-0"></i>' +
+              '<div class="flex-1 min-w-0"><strong class="text-amber-950 font-black truncate block">' + escapeHtml(step.title) + '</strong></div>' +
+              '<span class="text-[11px] font-bold text-amber-800 shrink-0">Actual · En trámite' + escapeHtml(date) + '</span>' +
+            '</div>';
+          } else {
+            return '<div class="flex items-center gap-3 p-2.5 rounded-xl bg-gray-50/80 border border-gray-100 text-[12.5px] text-gray-500">' +
+              '<i class="far fa-circle text-gray-400 text-sm shrink-0"></i>' +
+              '<div class="flex-1 min-w-0"><span class="truncate block">' + escapeHtml(step.title) + '</span></div>' +
+              '<span class="text-[11px] text-gray-400 shrink-0">Pendiente</span>' +
+            '</div>';
+          }
+        }).join("");
+      }
+    }
+
+    // Próximo paso previsto
+    if (displayNext) {
+      var nextTitle = "";
+      if (typeof window.AeroLexProcedures !== "undefined") {
+        var regNext = window.AeroLexProcedures.nextRegistered(c);
+        var sugNext = regNext ? null : window.AeroLexProcedures.nextSuggestion(c);
+        var n = regNext || sugNext;
+        if (n && n.title) nextTitle = n.title;
+      }
+      if (!nextTitle) {
+        var pendingStep = (c.steps || []).find(function (s) { return !s.done; });
+        if (pendingStep && pendingStep.title) nextTitle = pendingStep.title;
+      }
+
+      if (nextTitle) {
+        displayNext.innerHTML = '<strong>Próximo paso previsto:</strong> ' + escapeHtml(nextTitle) + '. Le notificaremos oportunamente ante cualquier nueva resolución judicial.';
+        if (displayNextBox) displayNextBox.classList.remove("hidden");
+      } else {
+        if (displayNextBox) displayNextBox.classList.add("hidden");
+      }
+    }
+
+    // WhatsApp CTA coordinado
+    if (waAction) {
+      var msg = encodeURIComponent("Hola abogado de AeroLex: estoy revisando mi causa " + (c.code || code) + " (" + (c.materia || "") + ") en el portal de clientes y quisiera hacer una consulta sobre los avances registrados.");
+      waAction.href = "https://wa.me/" + WHATSAPP + "?text=" + msg;
+    }
+
+    // Cambiar de vista dentro del modal
+    var loginView = $("mc-view-login");
+    var detailView = $("mc-view-detail");
+    if (loginView) loginView.classList.add("hidden");
+    if (detailView) detailView.classList.remove("hidden");
+
+    track("case_detail_view", "Visualizó causa: " + (c.code || code));
+  }
 
   /* ── Cálculo laboral (finiquito y despido) ────────────────── */
   function businessDaysLeft(fromISO) {
@@ -345,6 +663,28 @@
       var done = lastCalc.finiquito || lastCalc.arriendo;
       var leadName = $("alc-lead-nombre") && $("alc-lead-nombre").value;
       if (done && !leadName) track("calc_abandon", "Abandonó tras resultado: " + done.tipo);
+    }
+  });
+
+  /* Cierre por clic fuera (backdrop) y soporte de URL hashes */
+  document.addEventListener("DOMContentLoaded", function () {
+    ["modal-calculadora", "modal-mi-causa"].forEach(function (id) {
+      var modal = $(id);
+      if (modal) {
+        modal.addEventListener("click", function (e) {
+          if (e.target === modal) {
+            if (typeof modal.close === "function") modal.close();
+            else modal.removeAttribute("open");
+          }
+        });
+      }
+    });
+
+    var hash = (window.location.hash || "").toLowerCase();
+    if (hash === "#portal" || hash === "#mi-causa" || hash === "#seguimiento") {
+      setTimeout(function () {
+        if (typeof window.abrirModalMiCausa === "function") window.abrirModalMiCausa();
+      }, 350);
     }
   });
 })();

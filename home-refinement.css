@@ -34,18 +34,18 @@ body > header .dock-logo { display:block; width:184px; height:auto; max-width:no
 .urgent-option strong { font-size:15px; line-height:1.45; }
 .urgent-option span span { font-size:13px; line-height:1.55; color:#d2deea; }
 #herramientas > .glass-effect { background:rgba(255,255,255,.88); border:1px solid #dbe3ec; box-shadow:0 14px 45px rgba(37,52,72,.08); }
-#herramientas .tool-tab, #soy-cliente .alc-tab { min-height:46px; font-size:14px; padding:11px 18px; border-radius:13px; white-space:normal; }
-#herramientas .tool-tab.active, #soy-cliente .alc-tab.active { background:linear-gradient(130deg,#30445a,#1d2a3a); border-color:#30445a; color:white; box-shadow:0 5px 12px rgba(26,43,64,.16); }
+#herramientas .tool-tab, :is(#soy-cliente, #modal-calculadora, #modal-mi-causa) .alc-tab { min-height:46px; font-size:14px; padding:11px 18px; border-radius:13px; white-space:normal; }
+#herramientas .tool-tab.active, :is(#soy-cliente, #modal-calculadora, #modal-mi-causa) .alc-tab.active { background:linear-gradient(130deg,#30445a,#1d2a3a); border-color:#30445a; color:white; box-shadow:0 5px 12px rgba(26,43,64,.16); }
 #herramientas .event-card { border:1px solid #d9e2ec; background:linear-gradient(135deg,#fff,#f6f8fb); padding:18px; border-radius:16px; box-shadow:0 3px 10px rgba(26,43,64,.025); }
 #herramientas .event-card:hover { border-color:#7892ab; background:#eef3f8; }
 #herramientas .event-card strong { font-size:15px; line-height:1.4; }
 #herramientas .event-card > span:last-child { font-size:14px; line-height:1.5; color:#586778; }
-#herramientas :is(.tool-input,.tool-label), #soy-cliente :is(.alc-field,label > span) { font-size:16px !important; }
-#herramientas .tool-input, #soy-cliente .alc-field { min-height:48px; border-color:#bccbda; background:#fff; }
+#herramientas :is(.tool-input,.tool-label), :is(#soy-cliente, #modal-calculadora, #modal-mi-causa) :is(.alc-field,label > span) { font-size:16px !important; }
+#herramientas .tool-input, :is(#soy-cliente, #modal-calculadora, #modal-mi-causa) .alc-field { min-height:48px; border-color:#bccbda; background:#fff; }
 #soy-cliente .alc-wrap { border:1px solid #dbe3ec; box-shadow:0 12px 36px rgba(37,52,72,.07); }
-#soy-cliente .alc-cta { min-height:50px; font-size:15px; background:linear-gradient(130deg,#30445a,#1d2a3a); box-shadow:0 6px 14px rgba(26,43,64,.13); }
-#soy-cliente label > span { color:#46586a; }
-#herramientas .tool-tab:focus-visible, #soy-cliente .alc-tab:focus-visible { outline-offset:2px; }
+:is(#soy-cliente, #modal-calculadora, #modal-mi-causa) .alc-cta { min-height:50px; font-size:15px; background:linear-gradient(130deg,#30445a,#1d2a3a); box-shadow:0 6px 14px rgba(26,43,64,.13); }
+:is(#soy-cliente, #modal-calculadora, #modal-mi-causa) label > span { color:#46586a; }
+#herramientas .tool-tab:focus-visible, :is(#soy-cliente, #modal-calculadora, #modal-mi-causa) .alc-tab:focus-visible { outline-offset:2px; }
 .tool-navigation { display:flex; flex-wrap:wrap; gap:10px; overflow:visible !important; }
 .tool-navigation button { flex:1 1 180px; justify-content:center; }
 #mi-causa { scroll-margin-top:120px; }
