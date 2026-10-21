@@ -80,6 +80,10 @@ const server = http.createServer((req, res) => {
 
     await page.getByRole('button', { name: 'Consultar Mi Causa (Miniventana)' }).click();
     assert.equal(await page.locator('#modal-mi-causa').evaluate(el => el.open), true, 'Modal mi-causa is open');
+    await page.waitForTimeout(400);
+
+    await page.screenshot({ path: path.resolve(root, 'modal-mi-causa-login-fixed.png') });
+    console.log('Screenshot of Modal Mi Causa Login saved: modal-mi-causa-login-fixed.png');
 
     // Probar carga con botón demo o credenciales
     console.log('Testing case ALX-2026-01 login...');
