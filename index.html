@@ -919,7 +919,7 @@
             </div>
 
             <div class="tool-navigation px-4 md:px-6 pt-4 pb-4 bg-white/30 border-b border-black/5">
-                <button onclick="switchTool('plazos', this)" class="tool-tab active"><i class="fas fa-hourglass-half"></i> Revisar un plazo</button>
+                <button onclick="switchTool('plazos', this)" class="tool-tab active"><i class="fas fa-hourglass-half"></i> Situaciones & Plazos Fatales</button>
                 <button onclick="switchTool('indicadores', this)" class="tool-tab"><i class="fas fa-coins"></i> UF / UTM</button>
                 <button onclick="switchTool('glosario', this)" class="tool-tab"><i class="fas fa-book-open"></i> Palabras legales</button>
             </div>
@@ -928,27 +928,88 @@
 
                 <!-- PANEL PLAZOS -->
                 <div id="tool-plazos">
-<div class="assistant-tool-help"><p>¿No sabe qué plazo elegir?</p><button type="button" data-assistant-topic="plazos">Que el asistente me guíe →</button></div>
+                    <div class="assistant-tool-help"><p>¿No sabe qué plazo legal aplica a su caso?</p><button type="button" data-assistant-topic="plazos">Que el asistente me guíe →</button></div>
                     <div class="flex items-center justify-between gap-3 flex-wrap mb-5">
-                        <div class="deadline-mode">
-                            <button id="deadline-client" class="active" onclick="setDeadlineMode('client')"><i class="fas fa-user mr-1"></i> Soy cliente</button>
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-100/90 text-slate-700 text-[12px] font-bold border border-slate-200/80">
+                            <i class="fas fa-scale-balanced text-mac-accent"></i>
+                            <span>Catálogo Legal de Plazos Fatales en Chile</span>
                         </div>
-                        <span class="text-[10.5px] text-gray-400"><i class="fas fa-circle-check text-green-500 mr-1"></i> Feriados chilenos incluidos</span>
+                        <span class="text-[11px] text-slate-500 font-medium inline-flex items-center gap-1.5"><i class="fas fa-circle-check text-emerald-500"></i> Días hábiles y feriados chilenos actualizados</span>
                     </div>
 
                     <div id="deadline-client-panel">
                         <select id="plazo-select" class="hidden"></select>
                         <input id="plazo-fecha" class="hidden" type="date">
                         <span id="plazo-desde-label" class="hidden"></span><span id="plazo-ley" class="hidden"></span><div id="plazo-resultado" class="hidden"></div>
-                        <div class="deadline-steps">
-                            <span class="deadline-step active" data-step="1"><b>1</b> Suceso</span><i class="fas fa-chevron-right text-[9px]"></i>
-                            <span class="deadline-step" data-step="2"><b>2</b> Acción</span><i class="fas fa-chevron-right text-[9px]"></i>
-                            <span class="deadline-step" data-step="3"><b>3</b> Resultado</span>
+
+                        <!-- Stepper Interactivo y Controles de Navegación Dinámicos -->
+                        <div class="deadline-stepper-wrap flex flex-wrap items-center justify-between gap-3 mb-6">
+                            <div class="flex items-center gap-1 sm:gap-2 flex-wrap" role="navigation" aria-label="Pasos para calcular plazo legal">
+                                <button type="button" id="step-btn-1" class="deadline-step-btn active" onclick="step(1)">
+                                    <span class="step-num">1</span>
+                                    <span>Situación & Plazo</span>
+                                </button>
+                                <i class="fas fa-chevron-right text-[10px] text-slate-400"></i>
+                                <button type="button" id="step-btn-2" class="deadline-step-btn" onclick="if(state.event) step(2)" title="Elegir acción legal">
+                                    <span class="step-num">2</span>
+                                    <span>Acción Legal</span>
+                                </button>
+                                <i class="fas fa-chevron-right text-[10px] text-slate-400"></i>
+                                <button type="button" id="step-btn-3" class="deadline-step-btn" onclick="if(state.action) step(3)" title="Cálculo de fecha fatal">
+                                    <span class="step-num">3</span>
+                                    <span>Cálculo de Fecha</span>
+                                </button>
+                            </div>
+                            <div id="deadline-nav-controls" class="hidden flex items-center gap-2">
+                                <button type="button" id="deadline-back-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-[12px] font-bold border border-slate-300 transition" onclick="deadlineBack()">
+                                    <i class="fas fa-arrow-left text-[11px]"></i> Volver
+                                </button>
+                                <button type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-600 text-[12px] font-semibold border border-slate-200 transition" onclick="resetDeadlineWizard()" title="Reiniciar búsqueda">
+                                    <i class="fas fa-rotate-left text-[11px]"></i> Reiniciar
+                                </button>
+                            </div>
                         </div>
+
                         <button id="deadline-back" type="button" class="hidden text-[12px] font-bold text-mac-accent mb-4 inline-flex items-center gap-2 hover:gap-3 transition-all" onclick="deadlineBack()"><i class="fas fa-arrow-left"></i> Volver</button>
+
                         <div id="deadline-events">
-                            <p class="text-[13.5px] text-mac-dark/70 font-semibold mb-2"><i class="fas fa-circle-question text-mac-accent mr-1"></i>¿Qué le ocurrió? Elija la opción que más se parece a su situación.</p>
-                            <p class="text-[12px] text-gray-500 mb-5"><i class="fas fa-hand-point-right text-mac-accent mr-1"></i>No necesita conocer leyes: le explicaremos qué puede hacer y qué plazo debe cuidar.</p>
+                            <div class="bg-gradient-to-r from-sky-50/70 via-white to-indigo-50/50 p-4 md:p-5 rounded-2xl border border-sky-100 mb-5 shadow-xs">
+                                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                                    <div>
+                                        <h3 class="text-[15.5px] md:text-[16.5px] font-extrabold text-mac-dark flex items-center gap-2">
+                                            <span class="w-7 h-7 rounded-lg bg-mac-dark text-white inline-flex items-center justify-center text-xs"><i class="fas fa-hourglass-half"></i></span>
+                                            Consulte el plazo legal según su situación
+                                        </h3>
+                                        <p class="text-[12.5px] text-slate-600 mt-1 leading-relaxed">
+                                            Cada tarjeta muestra directamente su <strong>plazo fatal o vigencia legal en Chile</strong> para que conozca su ventana de acción antes de que prescriba.
+                                        </p>
+                                    </div>
+                                    <div class="shrink-0 flex items-center gap-2">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11.5px] font-bold border border-emerald-200">
+                                            <i class="fas fa-shield-halved text-emerald-600"></i> Plazos Ley chilena
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Barra de búsqueda rápida -->
+                                <div class="mt-4 pt-3 border-t border-sky-100/80 flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
+                                    <div class="relative flex-1">
+                                        <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                        <input type="text" id="event-search" class="w-full pl-9 pr-3 py-2 text-[12.5px] rounded-xl border border-slate-200 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500" placeholder="Buscar por palabra o plazo (ej: despido, 60 días, arriendo, pensión, pagaré)..." oninput="filterEventsList(this.value)">
+                                    </div>
+                                </div>
+
+                                <!-- Filtros de Materia Jurídica -->
+                                <div class="flex items-center gap-1.5 flex-wrap mt-3" id="event-cat-filters">
+                                    <button type="button" class="event-filter-pill active" onclick="filterEventsCat('todas', this)">Todas las materias (16)</button>
+                                    <button type="button" class="event-filter-pill" onclick="filterEventsCat('laboral', this)">💼 Laboral</button>
+                                    <button type="button" class="event-filter-pill" onclick="filterEventsCat('familia', this)">👨‍👩‍👧 Familia</button>
+                                    <button type="button" class="event-filter-pill" onclick="filterEventsCat('arriendo', this)">🏠 Arriendos & Inmuebles</button>
+                                    <button type="button" class="event-filter-pill" onclick="filterEventsCat('deudas', this)">⚖️ Demandas & Cobros</button>
+                                    <button type="button" class="event-filter-pill" onclick="filterEventsCat('consumidor', this)">🛡️ Daños & Consumidor</button>
+                                </div>
+                            </div>
+
                             <div id="event-grid" class="event-grid"></div>
                         </div>
                         <div id="deadline-actions" class="hidden"></div>
@@ -3586,26 +3647,204 @@
             {id:'dano-indemnizacion',area:'Civil',name:'Demanda de indemnización de perjuicios (Daño material y daño moral)',law:'Art. 2314 y 2332 Código Civil',years:4,kind:'years',from:'Fecha en que ocurrió el hecho o daño',events:['dano'],plain:'Demanda civil para obligar al culpable de un accidente, negligencia, caída en local o daño a su propiedad a pagar todos los gastos materiales y una indemnización por el sufrimiento moral causado.',do:['Fotografíe y documente detalladamente los daños materiales sufridos','Guarde boletas de atención médica, medicamentos o presupuestos de arreglo','Identifique testigos presenciales del hecho'],docs:['Fotografías y videos fechados del hecho','Boletas y facturas de gastos incurridos','Informes médicos o peritajes de daños'],benefit:'Obtener una compensación económica justa que repare todo el daño patrimonial y moral sufrido.'}
         ];
 
-        const E = [
-            ['vif','fa-hand-holding-heart','Estoy viviendo violencia o amenazas','Le orientaremos sobre protección urgente y medidas legales de resguardo para su familia.'],
-            ['familia','fa-children','Necesito ayuda con mis hijos o nietos','Orientación sobre pensión de alimentos, cuidado personal de los niños y visitas familiares.'],
-            ['despido','fa-briefcase','Perdí mi trabajo o me despidieron','Revisaremos si su despido fue injustificado, si le deben años de servicio o finiquito.'],
-            ['nopago','fa-money-bill-wave','No me han pagado mi sueldo o dinero','Le ayudaremos a cobrar sueldos impagos, cotizaciones atrasadas (Ley Bustos) o finiquitos.'],
-            ['arriendo','fa-house-user','Problema con mi arriendo o mi casa','Le ayudaremos si no le pagan el arriendo (Ley Devuélveme mi casa) o quieren desalojarle.'],
-            ['demandado','fa-envelope-open-text','Recibí una carta o cobro del tribunal','Le explicaremos qué significa la notificación judicial y cómo defendernos antes de que venza el plazo.'],
-            ['deuda','fa-file-invoice-dollar','Alguien me debe dinero o me cobran deuda','Analizaremos cómo cobrar un pagaré o cómo defendernos de deudas bancarias prescritas.'],
-            ['divorcio','fa-heart-crack','Quiero separarme o divorciarme','Orientación sobre divorcio de común acuerdo o unilateral y compensación económica.'],
-            ['vecino','fa-house-chimney','Tengo un problema con un vecino','Le ayudaremos con deslindes de terreno, cercos corridos, obras ilegales, servidumbres o ruidos.'],
-            ['delito','fa-user-shield','Fui víctima de una estafa o delito','Le indicaremos cómo presentar querella criminal, perseguir a los estafadores y recuperar su dinero.'],
-            ['herencia','fa-scroll','Falleció un familiar y hay bienes','Le ayudaremos con la posesión efectiva en el Registro Civil y la repartición ordenada de la herencia.'],
-            ['transito','fa-car-burst','Tuve un choque o accidente de tránsito','Revisaremos la demanda en Policía Local, cobro de seguros SOAP y reparación de daños.'],
-            ['producto','fa-cart-shopping','Compré algo malo o me cobraron de más','Le explicaremos su garantía legal de 6 meses (cambio o devolución) y reclamos SERNAC.'],
-            ['autoridad','fa-shield-halved','Un organismo público me perjudicó','Revisaremos Recursos de Protección ante la Corte, licencias médicas rechazadas o multas injustas.'],
-            ['empresa','fa-store','Tengo un negocio o emprendimiento','Le orientaremos sobre cobro de facturas impagas, contratos comerciales y sociedades.'],
-            ['dano','fa-triangle-exclamation','Sufrí un daño a mi propiedad o persona','Le orientaremos sobre cómo demandar civilmente para que le reparen todos los perjuicios causados.']
+        const E_LIST = [
+            {
+                id: 'despido',
+                icon: 'fa-briefcase',
+                title: 'Perdí mi trabajo o me despidieron',
+                desc: 'Revisaremos si su despido fue injustificado, si le deben años de servicio, finiquito o tutela de derechos.',
+                cat: 'laboral',
+                catName: 'Laboral',
+                deadline: 'Plazo fatal: 60 días hábiles',
+                tagClass: 'urgent',
+                tagIcon: 'fa-clock',
+                keywords: 'despido despido injustificado trabajo finiquito carta despido 60 dias laborales inspectoria direccion del trabajo sueldos'
+            },
+            {
+                id: 'nopago',
+                icon: 'fa-money-bill-wave',
+                title: 'No me han pagado mi sueldo o finiquito',
+                desc: 'Le ayudaremos a cobrar sueldos impagos, cotizaciones atrasadas (Ley Bustos) o a tramitar autodespido.',
+                cat: 'laboral',
+                catName: 'Laboral',
+                deadline: 'Plazo fatal: 60 días / 2 años',
+                tagClass: 'urgent',
+                tagIcon: 'fa-clock',
+                keywords: 'sueldo no pago finiquito cotizaciones afp fonasa ley bustos autodespido 60 dias'
+            },
+            {
+                id: 'demandado',
+                icon: 'fa-envelope-open-text',
+                title: 'Recibí una carta o cobro del tribunal',
+                desc: 'Le explicaremos qué significa la notificación judicial y cómo defendernos antes de que venza el plazo fatal.',
+                cat: 'deudas',
+                catName: 'Defensa Judicial',
+                deadline: 'Plazo fatal: 4 a 18 días hábiles',
+                tagClass: 'urgent',
+                tagIcon: 'fa-triangle-exclamation',
+                keywords: 'demanda receptor judicial notificacion tribunal embargo 4 dias 8 dias 18 dias excepciones'
+            },
+            {
+                id: 'arriendo',
+                icon: 'fa-house-user',
+                title: 'Problema con mi arriendo o mi casa',
+                desc: 'Le ayudaremos si no le pagan el arriendo (Ley Devuélveme mi casa) o si quieren desalojarle ilegalmente.',
+                cat: 'arriendo',
+                catName: 'Arriendos',
+                deadline: 'Ley 21.461: 10 días desalojo',
+                tagClass: 'urgent',
+                tagIcon: 'fa-house-lock',
+                keywords: 'arriendo inquilino no paga no desaloja ley devuélveme mi casa 10 dias contrato arriendo garantía'
+            },
+            {
+                id: 'vif',
+                icon: 'fa-hand-holding-heart',
+                title: 'Estoy viviendo violencia o amenazas',
+                desc: 'Le orientaremos sobre medidas de protección urgente, alejamiento del agresor y resguardo para su familia.',
+                cat: 'familia',
+                catName: 'Familia',
+                deadline: 'Protección urgente (24-48 hrs)',
+                tagClass: 'urgent',
+                tagIcon: 'fa-shield-heart',
+                keywords: 'violencia intrafamiliar vif amenazas medidas cautelares proteccion tribunal de familia carabinero urgente 24 horas'
+            },
+            {
+                id: 'autoridad',
+                icon: 'fa-shield-halved',
+                title: 'Un organismo público me perjudicó',
+                desc: 'Revisaremos Recursos de Protección ante la Corte, licencias médicas rechazadas o resoluciones injustas.',
+                cat: 'consumidor',
+                catName: 'Constitucional',
+                deadline: 'Plazo fatal: 30 días corridos',
+                tagClass: 'urgent',
+                tagIcon: 'fa-scale-balanced',
+                keywords: 'recurso de proteccion corte de apelaciones compin licencias medicas suseso municipalidad 30 dias'
+            },
+            {
+                id: 'transito',
+                icon: 'fa-car-burst',
+                title: 'Tuve un choque o accidente de tránsito',
+                desc: 'Revisaremos la demanda en Policía Local, cobro de seguros SOAP y reparación de daños de su vehículo.',
+                cat: 'consumidor',
+                catName: 'Policía Local',
+                deadline: 'Plazo fatal: 6 meses (JPL)',
+                tagClass: 'warn',
+                tagIcon: 'fa-car-burst',
+                keywords: 'choque accidente transito juzgado de policia local jpl soap seguro obligatorio 6 meses'
+            },
+            {
+                id: 'deuda',
+                icon: 'fa-file-invoice-dollar',
+                title: 'Alguien me debe dinero o me cobran deuda',
+                desc: 'Analizaremos cómo cobrar un pagaré o cómo defendernos de deudas bancarias prescritas y limpiar DICOM.',
+                cat: 'deudas',
+                catName: 'Cobranza',
+                deadline: 'Prescripción: 1 a 5 años',
+                tagClass: 'warn',
+                tagIcon: 'fa-hourglass-half',
+                keywords: 'deuda pagaré cheque mutuo cobranza banco dicom prescripcion 1 año 5 años'
+            },
+            {
+                id: 'vecino',
+                icon: 'fa-house-chimney',
+                title: 'Tengo un problema con un vecino',
+                desc: 'Le ayudaremos con deslindes de terreno, cercos corridos, construcciones ilegales, servidumbres o ruidos.',
+                cat: 'arriendo',
+                catName: 'Propiedad',
+                deadline: 'Acciones posesorias: 1 año',
+                tagClass: 'warn',
+                tagIcon: 'fa-tree',
+                keywords: 'vecino deslinde cerco terreno camino servidumbre de paso obra nueva ruidos 1 año'
+            },
+            {
+                id: 'empresa',
+                icon: 'fa-store',
+                title: 'Tengo un negocio o emprendimiento',
+                desc: 'Le orientaremos sobre cobro de facturas impagas (Ley 30 días), contratos comerciales y socios.',
+                cat: 'deudas',
+                catName: 'Comercial',
+                deadline: 'Cobro facturas: 1 año ejecutivo',
+                tagClass: 'warn',
+                tagIcon: 'fa-file-invoice',
+                keywords: 'facturas cobro judicial empresas pymes ley pago a 30 dias contratos socios 1 año'
+            },
+            {
+                id: 'delito',
+                icon: 'fa-user-shield',
+                title: 'Fui víctima de una estafa o delito',
+                desc: 'Le indicaremos cómo presentar querella criminal, perseguir penalmente a los autores y recuperar dinero.',
+                cat: 'consumidor',
+                catName: 'Penal',
+                deadline: 'Prescripción: 1 a 5 años',
+                tagClass: 'warn',
+                tagIcon: 'fa-handcuffs',
+                keywords: 'estafa fraude robo delito querella fiscalia policia pdi indemnizacion'
+            },
+            {
+                id: 'familia',
+                icon: 'fa-children',
+                title: 'Necesito ayuda con mis hijos o nietos',
+                desc: 'Orientación sobre demanda o aumento de pensión de alimentos, cuidado personal (tuición) y visitas familiares.',
+                cat: 'familia',
+                catName: 'Familia',
+                deadline: 'Pensión & Cuidado: Vigente',
+                tagClass: 'ok',
+                tagIcon: 'fa-heart',
+                keywords: 'pension de alimentos alimentos menores hijos nietos tuicion cuidado personal visitas regimen comunicacional'
+            },
+            {
+                id: 'divorcio',
+                icon: 'fa-heart-crack',
+                title: 'Quiero separarme o divorciarme',
+                desc: 'Orientación sobre divorcio de común acuerdo o unilateral y reclamo de compensación económica familiar.',
+                cat: 'familia',
+                catName: 'Familia',
+                deadline: 'Cese convivencia: 1 a 3 años',
+                tagClass: 'ok',
+                tagIcon: 'fa-calendar-days',
+                keywords: 'divorcio separacion cese de convivencia compensacion economica mutuo acuerdo 1 año 3 años'
+            },
+            {
+                id: 'producto',
+                icon: 'fa-cart-shopping',
+                title: 'Compré algo malo o me cobraron de más',
+                desc: 'Le explicaremos su garantía legal de 6 meses (cambio o devolución) y cómo reclamar formalmente ante SERNAC.',
+                cat: 'consumidor',
+                catName: 'Consumidor',
+                deadline: 'Garantía legal: 6 meses',
+                tagClass: 'ok',
+                tagIcon: 'fa-shield-halved',
+                keywords: 'garantia legal sernac producto falla devolucion dinero 6 meses reclamo cobros indebidos'
+            },
+            {
+                id: 'dano',
+                icon: 'fa-triangle-exclamation',
+                title: 'Sufrí un daño a mi propiedad o persona',
+                desc: 'Le orientaremos sobre cómo demandar civilmente para que le paguen indemnización de perjuicios (daño moral y material).',
+                cat: 'consumidor',
+                catName: 'Civil',
+                deadline: 'Prescripción civil: 4 años',
+                tagClass: 'ok',
+                tagIcon: 'fa-scale-balanced',
+                keywords: 'indemnizacion perjuicios daño moral daño material lucro cesante demanda civil 4 años'
+            },
+            {
+                id: 'herencia',
+                icon: 'fa-scroll',
+                title: 'Falleció un familiar y hay bienes',
+                desc: 'Le ayudaremos con la posesión efectiva en el Registro Civil y la repartición ordenada de la herencia.',
+                cat: 'arriendo',
+                catName: 'Herencias',
+                deadline: 'Sin plazo fatal (2 años exención)',
+                tagClass: 'ok',
+                tagIcon: 'fa-file-signature',
+                keywords: 'herencia posesion efectiva fallecimiento intestada testamento particion bienes registro civil'
+            }
         ];
 
-        const state = {event:null, action:null, last:null, area:'Todas'};
+        const E = E_LIST.map(e => [e.id, e.icon, e.title, e.desc]);
+
+        const state = {event:null, action:null, last:null, area:'Todas', activeCat:'todas', searchQuery:''};
 
         function friendlyAction(p){
             const names = {
@@ -3661,6 +3900,29 @@
         function setMode(mode){ const cp=$('deadline-client-panel'), lp=$('deadline-lawyer-panel'), cb=$('deadline-client'), lb=$('deadline-lawyer'); if(cp) cp.classList.toggle('hidden',mode!=='client'); if(lp) lp.classList.toggle('hidden',mode!=='lawyer'); if(cb) cb.classList.toggle('active',mode==='client'); if(lb) lb.classList.toggle('active',mode==='lawyer'); if(mode==='client'||!lp) renderEvents(); else renderExpert(); }
         function step(n){
             ['deadline-events','deadline-actions','deadline-result'].forEach((id,i)=>{ const el = $(id); if(el) el.classList.toggle('hidden',i!==n-1); });
+            
+            // Stepper interactivo superior
+            const s1 = $('step-btn-1'), s2 = $('step-btn-2'), s3 = $('step-btn-3');
+            if (s1 && s2 && s3) {
+                if (n === 1) {
+                    s1.className = 'deadline-step-btn active';
+                    s2.className = 'deadline-step-btn';
+                    s3.className = 'deadline-step-btn';
+                } else if (n === 2) {
+                    s1.className = 'deadline-step-btn completed';
+                    s2.className = 'deadline-step-btn active';
+                    s3.className = 'deadline-step-btn';
+                } else if (n === 3) {
+                    s1.className = 'deadline-step-btn completed';
+                    s2.className = 'deadline-step-btn completed';
+                    s3.className = 'deadline-step-btn active';
+                }
+            }
+
+            // Controles de navegación en el stepper
+            const navControls = $('deadline-nav-controls');
+            if (navControls) navControls.classList.toggle('hidden', n === 1);
+
             document.querySelectorAll('.deadline-step').forEach(x=>x.classList.toggle('active',Number(x.dataset.step)===n));
             const backBtn = $('deadline-back');
             if(backBtn) backBtn.classList.toggle('hidden',n===1);
@@ -3676,26 +3938,133 @@
                 }
             }
         }
-        function deadlineBack(){ if(state.event&&state.action&&document.getElementById('deadline-result').classList.contains('hidden')===false){ state.action=null; step(2); } else { state.event=null; state.action=null; step(1); } }
-        function renderEvents(){ const priority=['vif','familia','despido','nopago','arriendo','demandado','deuda','divorcio','vecino','producto','transito','herencia','autoridad','delito','empresa','dano']; const events=[...E].sort((a,b)=>priority.indexOf(a[0])-priority.indexOf(b[0])); $('event-grid').innerHTML=events.map(e=>`<button type="button" class="event-card text-left" onclick="chooseEvent('${e[0]}')"><span class="event-icon"><i class="fas ${e[1]}"></i></span><strong class="text-[13.5px] text-mac-dark">${e[2]}</strong><span class="text-[11.5px] text-gray-500 leading-relaxed">${e[3]}</span></button>`).join(''); }
+
+        function deadlineBack(){
+            if(state.event && state.action && document.getElementById('deadline-result').classList.contains('hidden') === false){
+                state.action = null;
+                step(2);
+            } else {
+                state.event = null;
+                state.action = null;
+                step(1);
+            }
+        }
+
+        function resetDeadlineWizard(){
+            state.event = null;
+            state.action = null;
+            resetEventFilters();
+            step(1);
+        }
+
+        function filterEventsCat(cat, btn){
+            state.activeCat = cat;
+            document.querySelectorAll('#event-cat-filters .event-filter-pill').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            renderEvents();
+        }
+
+        function filterEventsList(query){
+            state.searchQuery = (query || '').trim().toLowerCase();
+            renderEvents();
+        }
+
+        function resetEventFilters(){
+            state.activeCat = 'todas';
+            state.searchQuery = '';
+            const searchInput = $('event-search');
+            if(searchInput) searchInput.value = '';
+            const firstPill = document.querySelector('#event-cat-filters .event-filter-pill');
+            if(firstPill){
+                document.querySelectorAll('#event-cat-filters .event-filter-pill').forEach(b => b.classList.remove('active'));
+                firstPill.classList.add('active');
+            }
+            renderEvents();
+        }
+
+        function renderEvents(){
+            const grid = $('event-grid');
+            if(!grid) return;
+            const q = state.searchQuery || '';
+            const cat = state.activeCat || 'todas';
+
+            let items = E_LIST;
+            if(cat !== 'todas'){
+                items = items.filter(x => x.cat === cat);
+            }
+            if(q){
+                items = items.filter(x => (x.title + ' ' + x.desc + ' ' + x.deadline + ' ' + x.catName + ' ' + (x.keywords || '')).toLowerCase().includes(q));
+            }
+
+            if(items.length === 0){
+                grid.innerHTML = `
+                    <div class="col-span-full py-8 text-center bg-slate-50 border border-dashed border-slate-300 rounded-2xl p-6">
+                        <i class="fas fa-search text-2xl text-slate-400 mb-2"></i>
+                        <p class="text-[14px] font-bold text-slate-700">No encontramos situaciones para "${q}"</p>
+                        <p class="text-[12px] text-slate-500 mt-1">Pruebe con otra palabra o seleccione "Todas las materias".</p>
+                        <button type="button" class="mt-3 px-4 py-1.5 rounded-xl bg-mac-dark text-white text-[12px] font-bold hover:bg-mac-accent transition" onclick="resetEventFilters()">
+                            Restablecer filtros
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = items.map(e => `
+                <button type="button" class="event-card text-left flex flex-col justify-between group transition-all" onclick="chooseEvent('${e.id}')">
+                    <div>
+                        <div class="flex items-start justify-between gap-2 mb-3">
+                            <span class="event-icon shrink-0">
+                                <i class="fas ${e.icon}"></i>
+                            </span>
+                            <div class="flex flex-col items-end gap-1">
+                                <span class="deadline-tag ${e.tagClass}">
+                                    <i class="fas ${e.tagIcon}"></i> ${e.deadline}
+                                </span>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${e.catName}</span>
+                            </div>
+                        </div>
+                        <strong class="text-[14.5px] md:text-[15px] font-black text-mac-dark group-hover:text-mac-accent transition block mb-1.5 leading-snug">${e.title}</strong>
+                        <span class="text-[12px] text-gray-500 leading-relaxed block">${e.desc}</span>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11.5px] font-bold text-mac-accent group-hover:text-mac-dark transition">
+                        <span>Revisar cálculo y acciones</span>
+                        <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </button>
+            `).join('');
+        }
+
         function chooseEvent(id){
             state.event = id;
-            const ev = E.find(x => x[0] === id);
+            const ev = E_LIST.find(x => x.id === id) || { title: 'Situación seleccionada', icon: 'fa-scale-balanced', deadline: '', tagClass: 'urgent', tagIcon: 'fa-clock' };
             const actions = D.filter(x => (x.events || []).includes(id));
             $('deadline-actions').innerHTML = `
-                <button type="button" class="text-[12.5px] font-bold text-mac-accent mb-4 inline-flex items-center gap-2 hover:text-mac-dark transition" onclick="step(1)">
-                    <i class="fas fa-arrow-left"></i> Cambiar situación
-                </button>
-                <div class="flex items-center gap-3 mb-2">
-                    <span class="w-10 h-10 rounded-2xl bg-mac-dark text-white flex items-center justify-center text-base shrink-0 shadow-sm">
-                        <i class="fas ${ev ? ev[1] : 'fa-scale-balanced'}"></i>
-                    </span>
-                    <div>
-                        <p class="font-black text-[17px] md:text-[18px] text-mac-dark leading-tight">${ev ? ev[2] : 'Situación seleccionada'}</p>
-                        <p class="text-[12px] text-gray-500 mt-0.5">Estas son las formas en que la ley le protege y en las que podemos orientar su caso:</p>
+                <!-- Barra de Contexto y Navegación Paso 2 -->
+                <div class="bg-gradient-to-r from-slate-50 via-white to-slate-50 border border-slate-200/90 rounded-2xl p-4 md:p-5 mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                    <div class="flex items-center gap-3">
+                        <span class="w-11 h-11 rounded-2xl bg-mac-dark text-white flex items-center justify-center text-lg shrink-0 shadow-sm">
+                            <i class="fas ${ev.icon}"></i>
+                        </span>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10.5px] font-black uppercase tracking-wider text-slate-400">Paso 2 · Acciones Legales</span>
+                                <span class="deadline-tag ${ev.tagClass} text-[10.5px] py-0.5 px-2.5">
+                                    <i class="fas ${ev.tagIcon}"></i> ${ev.deadline}
+                                </span>
+                            </div>
+                            <h3 class="font-black text-[16.5px] md:text-[18px] text-mac-dark leading-tight mt-0.5">${ev.title}</h3>
+                            <p class="text-[12px] text-gray-500 mt-0.5">Elija la acción legal que necesita para ver plazos fatales, requisitos y cómputo de fechas:</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button type="button" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 text-[12.5px] font-bold border border-slate-300 shadow-xs transition" onclick="step(1)">
+                            <i class="fas fa-arrow-left"></i> Cambiar situación
+                        </button>
                     </div>
                 </div>
-                <div class="space-y-4 mt-5">
+
+                <div class="space-y-4 mt-2">
                     ${actions.map(a => {
                         let badge = a.days && a.days <= 10 ? 'urgent' : a.days == null ? 'advisory' : '';
                         let p = a.days ? (a.days <= 10 ? 'Atención urgente' : `${a.days} días de plazo legal`) : 'Orientación sin plazo fatal';
@@ -3707,8 +4076,8 @@
                                     <span class="action-badge ${badge}">${p}</span>
                                     ${a.law ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-semibold text-[11.5px] border border-slate-200/80"><i class="fas fa-scale-balanced text-mac-accent text-xs"></i> ${a.law}</span>` : ''}
                                 </div>
-                                <span class="inline-flex items-center gap-1 text-[12px] font-bold text-mac-dark group-hover:text-mac-accent transition sm:ml-auto">
-                                    Ver explicación y calcular <i class="fas fa-chevron-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
+                                <span class="inline-flex items-center gap-1.5 text-[12px] font-bold text-mac-accent group-hover:text-mac-dark transition sm:ml-auto bg-sky-50 px-3 py-1 rounded-lg border border-sky-100">
+                                    Ver explicación y calcular fecha <i class="fas fa-chevron-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
                                 </span>
                             </div>
 
@@ -3738,17 +4107,40 @@
                         </button>`;
                     }).join('')}
                 </div>
-                <p class="text-[11px] text-gray-400 mt-5"><i class="fas fa-circle-info mr-1"></i>La estrategia legal exacta se confirma con un abogado de nuestro estudio según sus documentos.</p>
+                <div class="flex items-center justify-between gap-3 mt-6 pt-4 border-t border-slate-200/70">
+                    <button type="button" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-[12.5px] font-bold border border-slate-300 transition" onclick="step(1)">
+                        <i class="fas fa-arrow-left"></i> Volver al listado de situaciones
+                    </button>
+                    <p class="text-[11px] text-gray-400 text-right"><i class="fas fa-circle-info mr-1"></i>La estrategia legal exacta se confirma con un abogado de nuestro estudio.</p>
+                </div>
             `;
             step(2);
         }
+
         function chooseAction(id){
             state.action = id;
             const p = D.find(x => x.id === id);
+            const ev = E_LIST.find(x => x.id === state.event);
             $('deadline-result').innerHTML = `
-                <button type="button" class="text-[12.5px] font-bold text-mac-accent mb-4 inline-flex items-center gap-2 hover:text-mac-dark transition" onclick="step(2)">
-                    <i class="fas fa-arrow-left"></i> Volver a opciones
-                </button>
+                <!-- Barra de Contexto y Navegación Paso 3 -->
+                <div class="bg-gradient-to-r from-slate-50 via-white to-slate-50 border border-slate-200/90 rounded-2xl p-4 md:p-5 mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-[10.5px] font-black uppercase tracking-wider text-slate-400">Paso 3 · Cómputo de Plazo</span>
+                            ${ev ? `<span class="inline-flex items-center gap-1 text-[11px] font-bold text-mac-accent"><i class="fas fa-check-circle text-emerald-600"></i> ${ev.title}</span>` : ''}
+                        </div>
+                        <h3 class="font-black text-[16.5px] md:text-[18px] text-mac-dark leading-tight">${friendlyAction(p)}</h3>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button type="button" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 text-[12.5px] font-bold border border-slate-300 shadow-xs transition" onclick="step(2)">
+                            <i class="fas fa-arrow-left"></i> Volver a acciones
+                        </button>
+                        <button type="button" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-[12px] font-semibold border border-slate-300 transition" onclick="resetDeadlineWizard()" title="Elegir otra situación">
+                            <i class="fas fa-rotate-left"></i> Inicio
+                        </button>
+                    </div>
+                </div>
+
                 ${p.days ? `
                     <div class="max-w-md bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm mb-5">
                         <label class="tool-label text-mac-dark font-bold mb-2">${p.from || 'Fecha de inicio del hecho o notificación'}</label>
@@ -3855,7 +4247,7 @@
         function copyDeadline(){if(!state.last)return;const x=state.last,n=`AEROLEX - CÁLCULO REFERENCIAL\nAcción: ${x.p.name}\nFundamento: ${x.p.law}\nInicio: ${text(new Date(x.start))}\nVencimiento: ${text(x.v)}\nEstado: ${x.remaining?'Vigente':'Vencido'}\nNo sustituye asesoría jurídica formal.`;navigator.clipboard.writeText(n);}
         function renderExpert(){const q=($('expert-search')?.value||'').toLowerCase(),items=D.filter(x=>(state.area==='Todas'||x.area===state.area)&&(`${x.name} ${x.law} ${x.area}`).toLowerCase().includes(q));$('expert-areas').innerHTML=['Todas',...new Set(D.map(x=>x.area))].map(a=>`<button class="tool-tab ${state.area===a?'active':''}" onclick="setExpertArea('${a}')">${a}</button>`).join('');$('expert-list').innerHTML=items.map(p=>`<div class="expert-row" onclick="expertOpen('${p.id}')"><div class="flex justify-between gap-3"><div><b class="text-[13px] text-mac-dark">${p.name}</b><div class="text-[11px] text-gray-500 mt-1">${p.law} · ${p.area}</div></div><span class="text-[10px] font-bold text-mac-accent">${p.days?p.days+' días':'Sin plazo fatal'}</span></div><div id="expert-${p.id}" class="hidden mt-3" onclick="event.stopPropagation()"></div></div>`).join('');}
         function expertOpen(id){const p=D.find(x=>x.id===id),box=$('expert-'+id);box.classList.toggle('hidden');if(!box.classList.contains('hidden'))box.innerHTML=p.days?`<input type="date" class="tool-input" value="${dateInput()}" onchange="renderResult(D.find(x=>x.id==='${id}'),this.value,'expert-output-${id}')"><div id="expert-output-${id}" class="mt-3"></div>`:resultAdvice(p);}
-        window.setDeadlineMode=setMode;window.chooseEvent=chooseEvent;window.chooseAction=chooseAction;window.step=step;window.deadlineBack=deadlineBack;window.calculateWizard=calculateWizard;window.copyDeadline=copyDeadline;window.renderExpert=renderExpert;window.renderExpertDeadlines=renderExpert;window.setExpertArea=a=>{state.area=a;renderExpert();};window.expertOpen=expertOpen;renderEvents();setMode('client');
+        window.setDeadlineMode=setMode;window.chooseEvent=chooseEvent;window.chooseAction=chooseAction;window.step=step;window.deadlineBack=deadlineBack;window.resetDeadlineWizard=resetDeadlineWizard;window.filterEventsCat=filterEventsCat;window.filterEventsList=filterEventsList;window.resetEventFilters=resetEventFilters;window.calculateWizard=calculateWizard;window.copyDeadline=copyDeadline;window.renderExpert=renderExpert;window.renderExpertDeadlines=renderExpert;window.setExpertArea=a=>{state.area=a;renderExpert();};window.expertOpen=expertOpen;renderEvents();setMode('client');
     })();
     </script>
 

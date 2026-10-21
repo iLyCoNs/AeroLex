@@ -40,6 +40,23 @@ body > header .dock-logo { display:block; width:184px; height:auto; max-width:no
 #herramientas .event-card:hover { border-color:#7892ab; background:#eef3f8; }
 #herramientas .event-card strong { font-size:15px; line-height:1.4; }
 #herramientas .event-card > span:last-child { font-size:14px; line-height:1.5; color:#586778; }
+
+/* Plazos & Situaciones Stepper y Botones Dinámicos */
+.deadline-stepper-wrap { background:rgba(255,255,255,.8); border:1px solid #d9e2ec; border-radius:18px; padding:8px 12px; }
+.deadline-step-btn { display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border-radius:12px; font-size:12.5px; font-weight:800; color:#586778; background:transparent; border:1px solid transparent; cursor:pointer; transition:all .2s; }
+.deadline-step-btn:hover { background:#f1f5f9; color:#1d2a3a; }
+.deadline-step-btn .step-num { width:22px; height:22px; border-radius:50%; background:#e2e8f0; color:#475569; display:inline-flex; align-items:center; justify-content:center; font-size:11px; font-weight:900; }
+.deadline-step-btn.active { background:linear-gradient(130deg,#30445a,#1d2a3a); color:#fff; box-shadow:0 4px 12px rgba(26,43,64,.15); }
+.deadline-step-btn.active .step-num { background:#38bdf8; color:#0f172a; }
+.deadline-step-btn.completed { color:#047857; }
+.deadline-step-btn.completed .step-num { background:#d1fae5; color:#047857; }
+.event-filter-pill { border:1px solid #d9e2ec; background:#fff; color:#586778; border-radius:999px; padding:6px 14px; font-size:12px; font-weight:700; cursor:pointer; transition:all .18s; }
+.event-filter-pill:hover { border-color:#94a3b8; color:#1d2a3a; background:#f8fafc; }
+.event-filter-pill.active { background:linear-gradient(130deg,#30445a,#1d2a3a); color:#fff; border-color:#30445a; box-shadow:0 3px 8px rgba(26,43,64,.14); }
+.deadline-tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:800; background:#eff6ff; color:#1e40af; border:1px solid #bfdbfe; }
+.deadline-tag.urgent { background:#fef2f2; color:#991b1b; border-color:#fecaca; }
+.deadline-tag.warn { background:#fffbeb; color:#92400e; border-color:#fde68a; }
+.deadline-tag.ok { background:#f0fdf4; color:#166534; border-color:#bbf7d0; }
 #herramientas :is(.tool-input,.tool-label), :is(#soy-cliente, #modal-calculadora, #modal-mi-causa) :is(.alc-field,label > span) { font-size:16px !important; }
 #herramientas .tool-input, :is(#soy-cliente, #modal-calculadora, #modal-mi-causa) .alc-field { min-height:48px; border-color:#bccbda; background:#fff; }
 #soy-cliente .alc-wrap { border:1px solid #dbe3ec; box-shadow:0 12px 36px rgba(37,52,72,.07); }
