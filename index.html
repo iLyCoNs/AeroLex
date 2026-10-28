@@ -687,6 +687,47 @@
         .alc-cta:hover { transform:translateY(-1px); box-shadow:0 10px 26px rgba(0,0,0,.18); }
         .alc-field { width:100%; border:1px solid #E2E8F0; border-radius:12px; padding:10px 12px; font-size:13.5px; background:#fff; }
         .alc-field:focus { outline:none; border-color:#1D1D1F; box-shadow:0 0 0 3px rgba(29,29,31,.08); }
+
+        /* ── Ventanas Minimizables / Maximizables (Windows + macOS Hybrid UX) ── */
+        .window-collapsible {
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .window-collapsible.is-minimized {
+            height: auto !important;
+            min-height: 0 !important;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.05) !important;
+        }
+        .window-collapsible.is-minimized .window-body {
+            max-height: 0 !important;
+            height: 0 !important;
+            opacity: 0 !important;
+            overflow: hidden !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+        }
+        .window-collapsible:not(.is-minimized) .window-minimized-hint {
+            display: none !important;
+        }
+        .window-collapsible.is-minimized .window-minimized-hint {
+            display: flex !important;
+        }
+        #servicios-window:not(.is-minimized) {
+            height: 85vh;
+            min-height: 650px;
+        }
+        @media (min-width: 768px) {
+            #servicios-window:not(.is-minimized) {
+                height: 750px;
+            }
+        }
+        #servicios > div.is-minimized,
+        #herramientas > div.is-minimized {
+            height: auto !important;
+            min-height: 0 !important;
+        }
     </style>
     <script src="procedures.js"></script>
     <script src="soy-cliente.js" defer></script>
@@ -919,17 +960,56 @@
             <p class="text-mac-dark/60 text-[14px] md:text-[15px] mt-3 max-w-2xl mx-auto leading-relaxed">Herramientas simples para saber qué hacer, revisar un plazo y entender palabras jurídicas antes de conversar con un abogado.</p>
         </div>
 
-        <div class="glass-effect rounded-[1.5rem] shadow-2xl shadow-black/5 overflow-hidden flex flex-col border border-white/60">
-            <div class="h-12 bg-white/40 border-b border-black/5 flex items-center px-4 shrink-0 backdrop-blur-md relative">
-                <div class="flex gap-2 absolute left-4">
-                    <div class="w-3 h-3 rounded-full bg-[#FF5F56] border border-black/10"></div>
-                    <div class="w-3 h-3 rounded-full bg-[#FFBD2E] border border-black/10"></div>
-                    <div class="w-3 h-3 rounded-full bg-[#27C93F] border border-black/10"></div>
+        <div id="herramientas-window" class="window-collapsible is-minimized glass-effect rounded-[1.5rem] shadow-xl shadow-black/5 overflow-hidden flex flex-col border border-white/60 transition-all duration-300">
+            <!-- Barra Superior Estilo Híbrido (macOS + Windows) con Controles Intuitivos -->
+            <div class="window-titlebar h-14 bg-gradient-to-r from-slate-100/90 via-white to-slate-100/90 border-b border-black/10 flex items-center justify-between px-3 sm:px-5 shrink-0 backdrop-blur-md cursor-pointer select-none transition hover:bg-slate-50/80" onclick="toggleWindowMinimize('herramientas')" title="Haga clic para maximizar o minimizar esta ventana">
+                <!-- Izquierda: Traffic lights Mac + Icono + Título -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <div class="flex gap-1.5 shrink-0" onclick="event.stopPropagation()">
+                        <button type="button" onclick="minimizeWindow('herramientas')" class="w-3 h-3 rounded-full bg-[#FF5F56] border border-black/10 hover:opacity-80 transition cursor-pointer" title="Minimizar"></button>
+                        <button type="button" onclick="minimizeWindow('herramientas')" class="w-3 h-3 rounded-full bg-[#FFBD2E] border border-black/10 hover:opacity-80 transition cursor-pointer" title="Minimizar"></button>
+                        <button type="button" onclick="maximizeWindow('herramientas')" class="w-3 h-3 rounded-full bg-[#27C93F] border border-black/10 hover:opacity-80 transition cursor-pointer" title="Maximizar"></button>
+                    </div>
+                    <div class="h-4 w-px bg-slate-300 hidden sm:block"></div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-xs shrink-0">
+                            <i class="fas fa-calculator"></i>
+                        </span>
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                            <span class="text-[13px] font-black text-mac-dark tracking-tight">Asistente Legal Express</span>
+                            <span class="text-[11px] text-gray-500 font-medium hidden lg:inline">· Plazos fatales, UF/UTM y palabras legales</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="w-full text-center text-[11px] font-bold text-mac-dark/40 tracking-widest uppercase">Asistente Legal Express</div>
+
+                <!-- Centro / Derecha: Badge de Estado + Botón Estilo Windows / Universal -->
+                <div class="flex items-center gap-2.5">
+                    <span id="badge-herramientas" class="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-200/80 text-slate-700 transition">
+                        <i class="fas fa-window-minimize text-[9px]"></i> <span id="badge-text-herramientas">Minimizada</span>
+                    </span>
+                    <button type="button" id="btn-toggle-herramientas" onclick="event.stopPropagation(); toggleWindowMinimize('herramientas');" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold shadow-xs transition cursor-pointer">
+                        <i id="icon-toggle-herramientas" class="fas fa-window-maximize text-[11px]"></i>
+                        <span id="text-toggle-herramientas">Maximizar</span>
+                    </button>
+                    <!-- Control clásico Windows 🗖 / 🗕 -->
+                    <button type="button" onclick="event.stopPropagation(); toggleWindowMinimize('herramientas');" class="w-8 h-8 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200/70 transition hidden sm:flex items-center justify-center text-xs cursor-pointer" title="Maximizar / Restaurar">
+                        <i id="win-btn-herramientas" class="fas fa-up-right-and-down-left-from-center"></i>
+                    </button>
+                </div>
             </div>
 
-            <div class="tool-navigation px-4 md:px-6 pt-4 pb-4 bg-white/30 border-b border-black/5">
+            <!-- Tira de Vista Previa / Hint cuando está minimizada -->
+            <div class="window-minimized-hint py-2 px-4 sm:px-5 bg-blue-50/70 border-b border-blue-100/70 flex items-center justify-between text-[12px] text-blue-900 cursor-pointer" onclick="maximizeWindow('herramientas')">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-circle-info text-blue-600 text-xs shrink-0"></i>
+                    <span>Ventana minimizada para una lectura más ágil. Contiene el asistente de plazos fatales, indicadores económicos y glosario legal.</span>
+                </div>
+                <span class="font-bold text-blue-700 hover:text-blue-900 shrink-0 ml-2">Desplegar asistente →</span>
+            </div>
+
+            <!-- Cuerpo de la Ventana (Preserva 100% del DOM para SEO y accesibilidad) -->
+            <div id="herramientas-body" class="window-body transition-all duration-300">
+                <div class="tool-navigation px-4 md:px-6 pt-4 pb-4 bg-white/30 border-b border-black/5">
                 <button onclick="switchTool('plazos', this)" class="tool-tab active"><i class="fas fa-hourglass-half"></i> Situaciones & Plazos Fatales</button>
                 <button onclick="switchTool('indicadores', this)" class="tool-tab"><i class="fas fa-coins"></i> UF / UTM</button>
                 <button onclick="switchTool('glosario', this)" class="tool-tab"><i class="fas fa-book-open"></i> Palabras legales</button>
@@ -1073,7 +1153,8 @@
                     <i class="fas fa-circle-info mr-1"></i> Herramientas de referencia orientativa. El cálculo de días hábiles no descuenta feriados legales y los plazos pueden variar según el procedimiento aplicable a su caso. No sustituyen la asesoría de un abogado. Valores UF/UTM según mindicador.cl.
                 </p>
             </div>
-        </div>
+            </div><!-- /herramientas-body -->
+        </div><!-- /herramientas-window -->
     </section>
 
     <!-- CENTRO LEGAL DEL CLIENTE — Modo Ventana (Calculadora y Seguimiento Mi Causa) -->
@@ -1430,22 +1511,63 @@
         </div>
     </dialog>
 
-    <!-- CORE SYSTEM UI (Ventana macOS) - Dinámica para Móvil -->
+    <!-- CORE SYSTEM UI (Ventana Híbrida macOS + Windows) - Minimizada por defecto -->
     <section id="servicios" class="max-w-7xl mx-auto px-4 pb-12 w-full relative z-10">
-        <!-- Altura responsive: 85vh en móvil, 750px en escritorio -->
-        <div class="glass-effect rounded-[1.5rem] shadow-2xl shadow-black/5 overflow-hidden flex flex-col h-[85vh] min-h-[650px] md:h-[750px] border border-white/60">
-            
-            <!-- Barra Superior Estilo macOS -->
-            <div class="h-12 bg-white/40 border-b border-black/5 flex items-center px-4 shrink-0 backdrop-blur-md relative">
-                <div class="flex gap-2 absolute left-4">
-                    <div class="w-3 h-3 rounded-full bg-[#FF5F56] border border-black/10"></div>
-                    <div class="w-3 h-3 rounded-full bg-[#FFBD2E] border border-black/10"></div>
-                    <div class="w-3 h-3 rounded-full bg-[#27C93F] border border-black/10"></div>
+        <div class="text-center mb-6 px-4">
+            <span class="inline-flex items-center gap-2 text-[11px] font-bold text-blue-700 uppercase tracking-widest mb-3"><i class="fas fa-gavel"></i> Áreas de Práctica · Puerto Montt</span>
+            <h2 class="text-2xl md:text-4xl font-extrabold text-mac-dark tracking-tight">Directorio de Servicios Jurídicos &amp; Peritajes</h2>
+            <p class="text-mac-dark/60 text-[14px] md:text-[15px] mt-3 max-w-2xl mx-auto leading-relaxed">Consulte nuestras materias legales, plazos procesales y asistencia jurídica en la Región de Los Lagos.</p>
+        </div>
+
+        <div id="servicios-window" class="window-collapsible is-minimized glass-effect rounded-[1.5rem] shadow-xl shadow-black/5 overflow-hidden flex flex-col border border-white/60 transition-all duration-300">
+            <!-- Barra Superior Estilo Híbrido (macOS + Windows) con Controles Intuitivos -->
+            <div class="window-titlebar h-14 bg-gradient-to-r from-slate-100/90 via-white to-slate-100/90 border-b border-black/10 flex items-center justify-between px-3 sm:px-5 shrink-0 backdrop-blur-md cursor-pointer select-none transition hover:bg-slate-50/80" onclick="toggleWindowMinimize('servicios')" title="Haga clic para maximizar o minimizar esta ventana">
+                <!-- Izquierda: Traffic lights Mac + Icono + Título -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <div class="flex gap-1.5 shrink-0" onclick="event.stopPropagation()">
+                        <button type="button" onclick="minimizeWindow('servicios')" class="w-3 h-3 rounded-full bg-[#FF5F56] border border-black/10 hover:opacity-80 transition cursor-pointer" title="Minimizar"></button>
+                        <button type="button" onclick="minimizeWindow('servicios')" class="w-3 h-3 rounded-full bg-[#FFBD2E] border border-black/10 hover:opacity-80 transition cursor-pointer" title="Minimizar"></button>
+                        <button type="button" onclick="maximizeWindow('servicios')" class="w-3 h-3 rounded-full bg-[#27C93F] border border-black/10 hover:opacity-80 transition cursor-pointer" title="Maximizar"></button>
+                    </div>
+                    <div class="h-4 w-px bg-slate-300 hidden sm:block"></div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs shrink-0">
+                            <i class="fas fa-briefcase"></i>
+                        </span>
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                            <span class="text-[13px] font-black text-mac-dark tracking-tight">AeroLex Servicios</span>
+                            <span class="text-[11px] text-gray-500 font-medium hidden lg:inline">· Directorio de especialidades jurídicas y peritajes</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="w-full text-center text-[11px] font-bold text-mac-dark/40 tracking-widest uppercase">AeroLex Servicios</div>
+
+                <!-- Centro / Derecha: Badge de Estado + Botón Estilo Windows / Universal -->
+                <div class="flex items-center gap-2.5">
+                    <span id="badge-servicios" class="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-200/80 text-slate-700 transition">
+                        <i class="fas fa-window-minimize text-[9px]"></i> <span id="badge-text-servicios">Minimizada</span>
+                    </span>
+                    <button type="button" id="btn-toggle-servicios" onclick="event.stopPropagation(); toggleWindowMinimize('servicios');" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold shadow-xs transition cursor-pointer">
+                        <i id="icon-toggle-servicios" class="fas fa-window-maximize text-[11px]"></i>
+                        <span id="text-toggle-servicios">Maximizar</span>
+                    </button>
+                    <!-- Control clásico Windows 🗖 / 🗕 -->
+                    <button type="button" onclick="event.stopPropagation(); toggleWindowMinimize('servicios');" class="w-8 h-8 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200/70 transition hidden sm:flex items-center justify-center text-xs cursor-pointer" title="Maximizar / Restaurar">
+                        <i id="win-btn-servicios" class="fas fa-up-right-and-down-left-from-center"></i>
+                    </button>
+                </div>
             </div>
 
-            <div class="flex flex-col md:flex-row flex-1 overflow-hidden h-full relative">
+            <!-- Tira de Vista Previa / Hint cuando está minimizada -->
+            <div class="window-minimized-hint py-2 px-4 sm:px-5 bg-emerald-50/70 border-b border-emerald-100/70 flex items-center justify-between text-[12px] text-emerald-950 cursor-pointer" onclick="maximizeWindow('servicios')">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-circle-info text-emerald-600 text-xs shrink-0"></i>
+                    <span>Ventana minimizada para una lectura más ágil. Contiene el catálogo completo de derecho laboral, inmobiliario, familia y drones.</span>
+                </div>
+                <span class="font-bold text-emerald-800 hover:text-emerald-950 shrink-0 ml-2">Explorar servicios →</span>
+            </div>
+
+            <!-- Cuerpo de la Ventana (Preserva 100% del DOM para SEO y accesibilidad) -->
+            <div id="servicios-body" class="window-body flex flex-col md:flex-row flex-1 overflow-hidden h-full relative transition-all duration-300">
                 
                 <!-- SIDEBAR MÓVIL/DESKTOP (Drill-Down Control) -->
                 <!-- En móvil (por defecto) se ve. Al hacer clic, se oculta y muestra el contenido -->
@@ -4257,6 +4379,97 @@
         const observer = new MutationObserver(() => enhanceDate(document.getElementById('wizard-date')));
         observer.observe(document.body, { childList:true, subtree:true });
         enhanceDate(document.getElementById('wizard-date'));
+    })();
+    </script>
+
+    <!-- Script de Control de Ventanas Minimizables / Maximizables (Windows + macOS Hybrid UX) -->
+    <script>
+    (() => {
+        window.toggleWindowMinimize = function(winId) {
+            const win = document.getElementById(winId + '-window');
+            if (!win) return;
+            if (win.classList.contains('is-minimized')) {
+                window.maximizeWindow(winId);
+            } else {
+                window.minimizeWindow(winId);
+            }
+        };
+
+        window.maximizeWindow = function(winId) {
+            const win = document.getElementById(winId + '-window');
+            if (!win) return;
+            win.classList.remove('is-minimized');
+
+            const badge = document.getElementById('badge-' + winId);
+            const badgeText = document.getElementById('badge-text-' + winId);
+            if (badge && badgeText) {
+                badge.className = 'inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 transition';
+                badgeText.textContent = 'Activa';
+                const icon = badge.querySelector('i');
+                if (icon) icon.className = 'fas fa-circle text-[8px] text-emerald-500';
+            }
+
+            const btn = document.getElementById('btn-toggle-' + winId);
+            const btnText = document.getElementById('text-toggle-' + winId);
+            const btnIcon = document.getElementById('icon-toggle-' + winId);
+            if (btn && btnText && btnIcon) {
+                btn.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-[12px] font-bold shadow-xs transition cursor-pointer';
+                btnText.textContent = 'Minimizar';
+                btnIcon.className = 'fas fa-window-minimize text-[11px]';
+            }
+
+            const winBtn = document.getElementById('win-btn-' + winId);
+            if (winBtn) winBtn.className = 'fas fa-compress';
+        };
+
+        window.minimizeWindow = function(winId) {
+            const win = document.getElementById(winId + '-window');
+            if (!win) return;
+            win.classList.add('is-minimized');
+
+            const badge = document.getElementById('badge-' + winId);
+            const badgeText = document.getElementById('badge-text-' + winId);
+            if (badge && badgeText) {
+                badge.className = 'inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-200/80 text-slate-700 transition';
+                badgeText.textContent = 'Minimizada';
+                const icon = badge.querySelector('i');
+                if (icon) icon.className = 'fas fa-window-minimize text-[9px]';
+            }
+
+            const btn = document.getElementById('btn-toggle-' + winId);
+            const btnText = document.getElementById('text-toggle-' + winId);
+            const btnIcon = document.getElementById('icon-toggle-' + winId);
+            if (btn && btnText && btnIcon) {
+                btn.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold shadow-xs transition cursor-pointer';
+                btnText.textContent = 'Maximizar';
+                btnIcon.className = 'fas fa-window-maximize text-[11px]';
+            }
+
+            const winBtn = document.getElementById('win-btn-' + winId);
+            if (winBtn) winBtn.className = 'fas fa-up-right-and-down-left-from-center';
+        };
+
+        function checkHashForWindow() {
+            const hash = window.location.hash || '';
+            if (hash === '#servicios' || hash.startsWith('#servicios')) {
+                window.maximizeWindow('servicios');
+            } else if (hash === '#herramientas' || hash.startsWith('#herramientas')) {
+                window.maximizeWindow('herramientas');
+            }
+        }
+        window.addEventListener('hashchange', checkHashForWindow);
+        window.addEventListener('DOMContentLoaded', checkHashForWindow);
+
+        document.addEventListener('click', function(e) {
+            const a = e.target.closest('a');
+            if (!a) return;
+            const href = a.getAttribute('href') || '';
+            if (href === '#servicios' || href.startsWith('#servicios')) {
+                window.maximizeWindow('servicios');
+            } else if (href === '#herramientas' || href.startsWith('#herramientas')) {
+                window.maximizeWindow('herramientas');
+            }
+        });
     })();
     </script>
 
