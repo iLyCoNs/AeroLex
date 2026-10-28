@@ -26,6 +26,5 @@ Allow: /
 User-agent: Applebot-Extended
 Allow: /
 
-# Sitemaps Oficiales y Geo-Localización Espacial
+# Sitemap Oficial
 Sitemap: https://aerolex.cl/sitemap.xml
-Sitemap: https://aerolex.cl/geositemap.xml
