@@ -26,5 +26,6 @@ Allow: /
 User-agent: Applebot-Extended
 Allow: /
 
-# Sitemap y Documento Semántico para Agentes LLM
+# Sitemaps Oficiales y Geo-Localización Espacial
 Sitemap: https://aerolex.cl/sitemap.xml
+Sitemap: https://aerolex.cl/geositemap.xml

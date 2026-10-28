@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+  <Document>
+    <name>AeroLex - Abogados y Servicios Jurídicos Puerto Montt</name>
+    <atom:author>
+      <atom:name>AeroLex LegalTech &amp; Abogados</atom:name>
+    </atom:author>
+    <atom:link href="https://aerolex.cl" />
+    <description>Estudio Jurídico y Plataforma LegalTech en Puerto Montt, Región de Los Lagos, Chile. Representación ante Juzgado de Letras del Trabajo, Juzgados Civiles, Juzgado de Familia y Corte de Apelaciones de Puerto Montt.</description>
+
+    <Style id="aeroLexOffice">
+      <IconStyle>
+        <scale>1.2</scale>
+        <Icon>
+          <href>https://aerolex.cl/favicon-48x48.png</href>
+        </Icon>
+      </IconStyle>
+      <BalloonStyle>
+        <text><![CDATA[
+          <h3>$[name]</h3>
+          <p><strong>Dirección:</strong> Benavente 405, Oficina 305, Puerto Montt, Región de Los Lagos, Chile</p>
+          <p><strong>Teléfono / WhatsApp:</strong> +56 9 5012 9843</p>
+          <p><strong>Sitio Web:</strong> <a href="https://aerolex.cl" target="_blank">https://aerolex.cl</a></p>
+          <p><strong>Especialidades:</strong> Derecho Laboral (Despidos), Civil, Deudas, Inmobiliario, Familia y Peritajes Aéreos con Drones.</p>
+        ]]></text>
+      </BalloonStyle>
+    </Style>
+
+    <!-- Oficina Central AeroLex -->
+    <Placemark>
+      <name>AeroLex - Estudio Jurídico Central</name>
+      <description>Oficina principal de atención presencial y coordinación judicial en el centro de Puerto Montt.</description>
+      <styleUrl>#aeroLexOffice</styleUrl>
+      <address>Benavente 405, Oficina 305, Puerto Montt, Los Lagos, Chile</address>
+      <phoneNumber>+56950129843</phoneNumber>
+      <Point>
+        <coordinates>-72.9369,-41.4717,0</coordinates>
+      </Point>
+    </Placemark>
+
+    <!-- Polígono de Cobertura Judicial Preferente Gran Puerto Montt -->
+    <Placemark>
+      <name>Zona de Cobertura Judicial Los Lagos - AeroLex</name>
+      <description>Jurisdicción preferente: Corte de Apelaciones de Puerto Montt, Tribunales Laborales, Civiles y de Familia de Puerto Montt, Puerto Varas, Llanquihue y Frutillar.</description>
+      <Polygon>
+        <extrude>1</extrude>
+        <altitudeMode>clampToGround</altitudeMode>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -72.9900,-41.4300,0
+              -72.9100,-41.4300,0
+              -72.8800,-41.5100,0
+              -72.9900,-41.5100,0
+              -72.9900,-41.4300,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Document>
+</kml>
