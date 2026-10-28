@@ -1089,12 +1089,12 @@
         <!-- Tarjetas Armónicas de Acceso Modo Ventana -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
             <!-- TARJETA 1: CALCULADORA LEGAL -->
-            <div class="alc-wrap p-6 md:p-8 flex flex-col justify-between hover:shadow-xl transition-all border border-gray-200/90 relative overflow-hidden group">
+            <div class="alc-wrap p-6 md:p-8 flex flex-col justify-between hover:shadow-xl transition-all border border-gray-200/90 bg-white relative overflow-hidden group">
                 <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-all pointer-events-none"></div>
-                <div>
-                    <div class="flex items-center justify-between gap-3 flex-wrap mb-5">
+                <div class="flex-1 flex flex-col">
+                    <div class="flex items-center justify-between gap-3 mb-5">
                         <div class="flex items-center gap-3.5">
-                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center shadow-md shrink-0" style="background: linear-gradient(135deg, #1d2a3a, #0f172a); color: #fff;">
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center shadow-md shrink-0" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: #fff;">
                                 <i class="fas fa-calculator text-xl text-blue-300"></i>
                             </div>
                             <div>
@@ -1102,50 +1102,58 @@
                                 <p class="text-[12px] text-gray-500 font-medium">Estimación referencial + informe PDF descargable</p>
                             </div>
                         </div>
-                        <span class="alc-chip"><i class="fas fa-shield-halved text-amber-600"></i> Ley chilena vigente</span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-800 text-[11.5px] font-bold border border-amber-200/80 shrink-0">
+                            <i class="fas fa-shield-halved text-amber-600"></i> Ley chilena vigente
+                        </span>
                     </div>
 
-                    <p class="text-[13.5px] text-gray-600 leading-relaxed mb-5">
+                    <p class="text-[13.5px] text-gray-600 leading-relaxed mb-5 md:min-h-[64px]">
                         Herramienta de cálculo confidencial ajustada al Código del Trabajo (arts. 162, 163, 168 y 172) y Ley de Arriendo 18.101/21.461. Obtenga su desglose financiero en segundos en una ventana interactiva sin exponer sus datos en la página.
                     </p>
 
                     <!-- Puntos clave -->
                     <div class="space-y-2.5 mb-6 text-[12.5px] text-gray-700">
                         <div class="flex items-center gap-2.5">
-                            <i class="fas fa-briefcase text-blue-600 w-4 text-center"></i>
+                            <i class="fas fa-briefcase text-blue-600 w-4 text-center shrink-0"></i>
                             <span><strong>Finiquito & Despido:</strong> Años de servicio (tope 90 UF) y recargo legal.</span>
                         </div>
                         <div class="flex items-center gap-2.5">
-                            <i class="fas fa-house text-emerald-600 w-4 text-center"></i>
+                            <i class="fas fa-house text-emerald-600 w-4 text-center shrink-0"></i>
                             <span><strong>Deudas de Arriendo:</strong> Rentas impagas, mes de garantía y desahucio.</span>
                         </div>
                         <div class="flex items-center gap-2.5">
-                            <i class="fas fa-hourglass-half text-amber-500 w-4 text-center"></i>
+                            <i class="fas fa-hourglass-half text-amber-500 w-4 text-center shrink-0"></i>
                             <span><strong>Plazos Legales:</strong> Días hábiles y fechas fatales ante tribunales.</span>
                         </div>
                     </div>
                 </div>
 
-                <div>
-                    <button type="button" class="alc-cta py-3.5" onclick="abrirModalCalculadora('finiquito')">
+                <div class="mt-auto pt-4 border-t border-gray-100 flex flex-col gap-3">
+                    <button type="button" class="alc-cta py-3.5 w-full flex items-center justify-center gap-2 text-white font-bold" onclick="abrirModalCalculadora('finiquito')">
                         <i class="fas fa-arrow-up-right-from-square"></i> Abrir Calculadora Legal (Modo Ventana)
                     </button>
                     <!-- Accesos rápidos a pestañas -->
-                    <div class="alc-tabs justify-center mt-3 pt-3 border-t border-gray-100/80">
-                        <button type="button" id="alc-tab-finiquito" class="alc-tab" onclick="abrirModalCalculadora('finiquito')"><i class="fas fa-briefcase mr-1.5"></i>Finiquito</button>
-                        <button type="button" id="alc-tab-arriendo" class="alc-tab" onclick="abrirModalCalculadora('arriendo')"><i class="fas fa-house mr-1.5"></i>Arriendo</button>
-                        <button type="button" id="alc-tab-plazos" class="alc-tab" onclick="abrirModalCalculadora('plazos')"><i class="fas fa-hourglass-half mr-1.5"></i>Plazos</button>
+                    <div class="min-h-[36px] md:h-[36px] flex items-center justify-center gap-1.5 flex-wrap md:flex-nowrap">
+                        <button type="button" id="alc-tab-finiquito" class="h-full px-3 py-1 rounded-xl bg-gray-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-gray-200/80 text-[11.5px] font-bold text-gray-600 transition flex items-center gap-1.5 cursor-pointer shadow-2xs" onclick="abrirModalCalculadora('finiquito')">
+                            <i class="fas fa-briefcase text-blue-600 text-xs"></i> Finiquito
+                        </button>
+                        <button type="button" id="alc-tab-arriendo" class="h-full px-3 py-1 rounded-xl bg-gray-50 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 border border-gray-200/80 text-[11.5px] font-bold text-gray-600 transition flex items-center gap-1.5 cursor-pointer shadow-2xs" onclick="abrirModalCalculadora('arriendo')">
+                            <i class="fas fa-house text-emerald-600 text-xs"></i> Arriendo
+                        </button>
+                        <button type="button" id="alc-tab-plazos" class="h-full px-3 py-1 rounded-xl bg-gray-50 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-200 border border-gray-200/80 text-[11.5px] font-bold text-gray-600 transition flex items-center gap-1.5 cursor-pointer shadow-2xs" onclick="abrirModalCalculadora('plazos')">
+                            <i class="fas fa-hourglass-half text-amber-600 text-xs"></i> Plazos
+                        </button>
                     </div>
                 </div>
             </div>
 
             <!-- TARJETA 2: PORTAL CLIENTES · MI CAUSA -->
-            <div id="mi-causa" class="alc-wrap p-6 md:p-8 flex flex-col justify-between hover:shadow-xl transition-all border border-blue-200/70 bg-gradient-to-b from-white to-blue-50/20 relative overflow-hidden group">
+            <div id="mi-causa" class="alc-wrap p-6 md:p-8 flex flex-col justify-between hover:shadow-xl transition-all border border-gray-200/90 bg-white relative overflow-hidden group">
                 <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-blue-600/5 rounded-full blur-2xl group-hover:bg-blue-600/10 transition-all pointer-events-none"></div>
-                <div>
-                    <div class="flex items-center justify-between gap-3 flex-wrap mb-5">
+                <div class="flex-1 flex flex-col">
+                    <div class="flex items-center justify-between gap-3 mb-5">
                         <div class="flex items-center gap-3.5">
-                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center shadow-md shrink-0" style="background: linear-gradient(135deg, #1d4ed8, #312e81); color: #fff;">
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center shadow-md shrink-0" style="background: linear-gradient(135deg, #1d4ed8, #1e1b4b); color: #fff;">
                                 <i class="fas fa-satellite-dish text-xl text-emerald-300"></i>
                             </div>
                             <div>
@@ -1153,75 +1161,44 @@
                                 <p class="text-[12px] text-gray-500 font-medium">Seguimiento de expediente en tiempo real</p>
                             </div>
                         </div>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11.5px] font-bold border border-emerald-200/80">
-                            <i class="fas fa-lock"></i> Acceso Seguro & Cifrado
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11.5px] font-bold border border-emerald-200/80 shrink-0">
+                            <i class="fas fa-lock text-emerald-600"></i> Acceso Seguro & Cifrado
                         </span>
                     </div>
 
-                    <p class="text-[13.5px] text-gray-600 leading-relaxed mb-5">
+                    <p class="text-[13.5px] text-gray-600 leading-relaxed mb-5 md:min-h-[64px]">
                         Consulte en una ventana privada el avance procesal de su caso, las resoluciones dictadas y una <strong>breve descripción de los detalles que han pasado en su causa</strong>, redactada directamente por su equipo legal.
                     </p>
 
                     <!-- Puntos clave -->
                     <div class="space-y-2.5 mb-6 text-[12.5px] text-gray-700">
                         <div class="flex items-center gap-2.5">
-                            <i class="fas fa-clipboard-check text-blue-600 w-4 text-center"></i>
+                            <i class="fas fa-clipboard-check text-blue-600 w-4 text-center shrink-0"></i>
                             <span><strong>Resumen de Actuaciones:</strong> Explicación clara de lo ocurrido en su causa.</span>
                         </div>
                         <div class="flex items-center gap-2.5">
-                            <i class="fas fa-timeline text-emerald-600 w-4 text-center"></i>
+                            <i class="fas fa-timeline text-emerald-600 w-4 text-center shrink-0"></i>
                             <span><strong>Línea de Hitos:</strong> Etapas cumplidas, trámite actual y próximo paso.</span>
                         </div>
                         <div class="flex items-center gap-2.5">
-                            <i class="fas fa-user-shield text-indigo-600 w-4 text-center"></i>
+                            <i class="fas fa-user-shield text-indigo-600 w-4 text-center shrink-0"></i>
                             <span><strong>Confidencialidad:</strong> Validación mediante código único y PIN de 4 dígitos.</span>
                         </div>
                     </div>
                 </div>
 
-                <div>
-                    <button type="button" class="alc-cta bg-gradient-to-r from-blue-700 via-blue-800 to-indigo-900 hover:from-blue-800 hover:to-indigo-950 text-white shadow-md py-3.5" onclick="abrirModalMiCausa()">
-                        <i class="fas fa-magnifying-glass"></i> Consultar Mi Causa (Miniventana)
+                <div class="mt-auto pt-4 border-t border-gray-100 flex flex-col gap-3">
+                    <button type="button" class="alc-cta py-3.5 w-full flex items-center justify-center gap-2 text-white font-bold" onclick="abrirModalMiCausa()">
+                        <i class="fas fa-magnifying-glass"></i> Consultar Mi Causa (Modo Ventana)
                     </button>
-                    <div class="mt-3 pt-3 border-t border-gray-100/80 flex items-center justify-center gap-2 text-[12px] text-gray-500">
-                        <i class="fas fa-key text-blue-500"></i>
-                        <span>Requiere su código (ej. <strong>ALX-2026-01</strong>) y PIN provisto por su abogado</span>
+                    <div class="min-h-[36px] md:h-[36px] flex items-center justify-center">
+                        <div class="h-full px-3.5 py-1 rounded-xl bg-gray-50 border border-gray-200/80 text-[11.5px] text-gray-600 font-medium flex items-center gap-2 shadow-2xs">
+                            <i class="fas fa-key text-blue-600 text-xs"></i>
+                            <span>Requiere su código (ej. <strong class="text-gray-800">ALX-2026-01</strong>) y PIN provisto por su abogado</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Banner Inferior de Garantías y Contacto Directo -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div class="p-4 rounded-2xl bg-white border border-gray-200/80 shadow-sm flex items-center gap-3.5">
-                <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center text-lg shrink-0">
-                    <i class="fas fa-file-pdf"></i>
-                </div>
-                <div>
-                    <h4 class="text-[13px] font-black text-mac-dark">Informe PDF sin costo</h4>
-                    <p class="text-[11.5px] text-gray-500">Descargue su estimación con artículos de ley citados.</p>
-                </div>
-            </div>
-
-            <div class="p-4 rounded-2xl bg-white border border-gray-200/80 shadow-sm flex items-center gap-3.5">
-                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg shrink-0">
-                    <i class="fas fa-user-shield"></i>
-                </div>
-                <div>
-                    <h4 class="text-[13px] font-black text-mac-dark">Secreto Profesional</h4>
-                    <p class="text-[11.5px] text-gray-500">Toda información es tratada bajo reserva y confidencialidad.</p>
-                </div>
-            </div>
-
-            <a href="https://wa.me/56950129843?text=Hola%20AeroLex%2C%20quisiera%20consultar%20mi%20caso%20con%20un%20abogado." target="_blank" rel="noopener" class="p-4 rounded-2xl bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200/80 shadow-sm transition flex items-center gap-3.5 group">
-                <div class="w-10 h-10 rounded-xl bg-[#25D366] text-white flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
-                    <i class="fab fa-whatsapp"></i>
-                </div>
-                <div>
-                    <h4 class="text-[13px] font-black text-emerald-950 flex items-center gap-1">Hablar con un Abogado <i class="fas fa-arrow-right text-[10px] text-emerald-600 group-hover:translate-x-1 transition-transform"></i></h4>
-                    <p class="text-[11.5px] text-emerald-700">Coordinación directa para revisar antecedentes.</p>
-                </div>
-            </a>
         </div>
     </section>
 
