@@ -1165,34 +1165,74 @@
 
                         <!-- CREDENCIALES DE CONSULTA DEL CLIENTE -->
                         <div class="panel-card overflow-hidden">
-                            <div class="flex items-center justify-between px-4 py-3 border-b border-[--border] bg-[--panel-raised]">
+                            <div class="flex items-center justify-between px-4 py-3 border-b border-[--border] bg-[--panel-raised] flex-wrap gap-2">
                                 <div class="flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-wider text-slate-300">
                                     <i class="fas fa-key text-blue-400"></i> Credenciales de Rastreo del Cliente
                                 </div>
-                                <button onclick="sendCredentialsWA()" class="btn btn-secondary !text-xs !py-1 !px-2.5 hover:!text-emerald-400">
-                                    <i class="fab fa-whatsapp text-emerald-400"></i> Enviar por WhatsApp
-                                </button>
-                            </div>
-                            <div class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div class="p-3.5 rounded-lg border border-[--border] bg-[--panel-inset] flex items-center justify-between">
-                                    <div>
-                                        <span class="field-label">Código del Expediente</span>
-                                        <div id="cred-code" class="text-lg font-bold font-mono text-white tracking-wide">—</div>
-                                        <p class="text-[10px] text-slate-500 mt-0.5">Identificador en portal</p>
-                                    </div>
-                                    <button onclick="copyText(document.getElementById('cred-code').innerText, 'Código copiado')" class="btn btn-secondary !p-2" title="Copiar código">
-                                        <i class="fas fa-copy text-xs"></i>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="copyClientInviteMessage()" class="btn btn-primary !text-xs !py-1 !px-2.5 flex items-center gap-1.5 shadow-sm cursor-pointer">
+                                        <i class="fas fa-clipboard-check text-xs"></i> <span>Copiar Mensaje Completo</span>
+                                    </button>
+                                    <button onclick="sendCredentialsWA()" class="btn btn-secondary !text-xs !py-1 !px-2.5 hover:!text-emerald-400 flex items-center gap-1.5 cursor-pointer" title="Enviar directamente a WhatsApp">
+                                        <i class="fab fa-whatsapp text-emerald-400"></i> <span>WhatsApp</span>
                                     </button>
                                 </div>
-                                <div class="p-3.5 rounded-lg border border-[--border] bg-[--panel-inset] flex items-center justify-between">
-                                    <div>
-                                        <span class="field-label">PIN Privado de 4 Dígitos</span>
-                                        <div id="cred-pin" class="text-lg font-bold font-mono text-emerald-400 tracking-widest">—</div>
-                                        <p class="text-[10px] text-slate-500 mt-0.5">Clave de acceso seguro</p>
+                            </div>
+                            <div class="p-4 space-y-4">
+                                <!-- Tarjetas de Código y PIN -->
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div class="p-3.5 rounded-lg border border-[--border] bg-[--panel-inset] flex items-center justify-between">
+                                        <div>
+                                            <span class="field-label">Código del Expediente</span>
+                                            <div id="cred-code" class="text-lg font-bold font-mono text-white tracking-wide">—</div>
+                                            <p class="text-[10px] text-slate-500 mt-0.5">Identificador en portal</p>
+                                        </div>
+                                        <button onclick="copyText(document.getElementById('cred-code').innerText, 'Código copiado')" class="btn btn-secondary !p-2 cursor-pointer" title="Copiar código individual">
+                                            <i class="fas fa-copy text-xs"></i>
+                                        </button>
                                     </div>
-                                    <button onclick="copyText(document.getElementById('cred-pin').innerText, 'PIN copiado')" class="btn btn-secondary !p-2" title="Copiar PIN">
-                                        <i class="fas fa-copy text-xs"></i>
-                                    </button>
+                                    <div class="p-3.5 rounded-lg border border-[--border] bg-[--panel-inset] flex items-center justify-between">
+                                        <div>
+                                            <span class="field-label">PIN Privado de 4 Dígitos</span>
+                                            <div id="cred-pin" class="text-lg font-bold font-mono text-emerald-400 tracking-widest">—</div>
+                                            <p class="text-[10px] text-slate-500 mt-0.5">Clave de acceso seguro</p>
+                                        </div>
+                                        <button onclick="copyText(document.getElementById('cred-pin').innerText, 'PIN copiado')" class="btn btn-secondary !p-2 cursor-pointer" title="Copiar PIN individual">
+                                            <i class="fas fa-copy text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Clipboard: Mensaje Formateado con Instrucciones para el Cliente -->
+                                <div class="rounded-xl border border-[--border] bg-gradient-to-b from-[--panel-inset] to-[--panel-raised] p-3.5 sm:p-4">
+                                    <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-[--border] flex-wrap gap-2">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center text-xs shrink-0">
+                                                <i class="fas fa-clipboard-list"></i>
+                                            </div>
+                                            <div>
+                                                <div class="text-xs font-bold text-white flex items-center gap-2">
+                                                    <span>Mensaje de Notificación al Cliente</span>
+                                                    <span class="text-[9.5px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-300 font-semibold border border-blue-500/20">Listo para enviar</span>
+                                                </div>
+                                                <p class="text-[10.5px] text-slate-400">Texto profesional con credenciales e instrucciones precisas de acceso</p>
+                                            </div>
+                                        </div>
+                                        <button onclick="copyClientInviteMessage()" id="btn-copy-client-msg" class="btn btn-secondary !text-xs !py-1 !px-2.5 hover:!bg-blue-600 hover:!text-white transition flex items-center gap-1.5 cursor-pointer">
+                                            <i class="fas fa-copy text-xs"></i> <span id="lbl-copy-client-msg">Copiar al Portapapeles</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="relative">
+                                        <pre id="cred-client-message" class="font-sans text-[12px] text-slate-200 bg-[--panel-inset] p-3.5 rounded-lg border border-[--border] whitespace-pre-wrap leading-relaxed select-all">Seleccione o cree un expediente para generar el mensaje con credenciales e instrucciones.</pre>
+                                    </div>
+
+                                    <div class="mt-2.5 pt-2 border-t border-[--border]/60 flex items-center justify-between text-[11px] text-slate-400 flex-wrap gap-2">
+                                        <span class="flex items-center gap-1.5 text-emerald-400 text-[11px] font-medium">
+                                            <i class="fas fa-check-circle text-xs"></i> Indica claramente ingresar a <strong>aerolex.cl</strong> y presionar <strong>"Soy Cliente"</strong>
+                                        </span>
+                                        <span class="text-[10.5px] text-slate-500">Puede pegarlo directamente en WhatsApp, Email o SMS</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1425,6 +1465,12 @@ function setActiveStudy() {
         document.querySelectorAll('.tab-pane').forEach(pane => {
             pane.classList.toggle('hidden', pane.id !== `pane-${tabId}`);
         });
+        if (tabId === 'credenciales' && currentEditingId && casesDB[currentEditingId]) {
+            const c = casesDB[currentEditingId];
+            if (typeof updateCredentialsMessage === 'function') {
+                updateCredentialsMessage(currentEditingId, c.pin);
+            }
+        }
     }
 
     // =========================================================================
@@ -2526,6 +2572,9 @@ function setActiveStudy() {
 
         document.getElementById('cred-code').innerText = id;
         document.getElementById('cred-pin').innerText = c.pin || '—';
+        if (typeof updateCredentialsMessage === 'function') {
+            updateCredentialsMessage(id, c.pin);
+        }
 
         document.getElementById('case-status').value = c.status || 'activo';
         document.getElementById('case-rit').value = c.rit || '';
@@ -2870,11 +2919,67 @@ function setActiveStudy() {
         navigator.clipboard.writeText(text).then(() => toast(msg, 'ok')).catch(() => toast('No se pudo copiar.', 'err'));
     }
 
+    function generateClientInstructions(code, pin) {
+        return `Estimado/a cliente:
+
+Desde AeroLex Estudio Jurídico le compartimos sus credenciales privadas para el seguimiento en línea de su expediente:
+
+• Código de expediente: ${code}
+• Clave PIN confidencial: ${pin}
+
+Instrucciones de acceso:
+1. Ingrese a https://aerolex.cl
+2. En la barra superior (menú), presione el botón "Soy Cliente".
+3. Digite su Código y PIN en la ventana emergente para revisar en tiempo real las actuaciones, resoluciones y avances procesales de su causa.
+
+Atentamente,
+AeroLex Estudio Jurídico · Puerto Montt
+Benavente 405, Of. 305 | Tel: +56 9 5012 9843`;
+    }
+
+    function generateClientInstructionsWA(code, pin) {
+        return `*AeroLex Estudio Jurídico — Seguimiento de Causa*\n\nEstimado/a cliente, le compartimos sus credenciales privadas para consultar su expediente en línea:\n\n• *Expediente:* ${code}\n• *Clave PIN:* ${pin}\n\n*¿Cómo ingresar?*\n1. Ingrese a https://aerolex.cl\n2. En el menú superior presione el botón *\"Soy Cliente\"*.\n3. Digite su Código y PIN para revisar en tiempo real el avance y las actuaciones de su causa.\n\n_AeroLex — Benavente 405, Of. 305, Puerto Montt_`;
+    }
+
+    function copyClientInviteMessage() {
+        const c = casesDB[currentEditingId];
+        if (!c) {
+            toast('Seleccione un expediente primero.', 'err');
+            return;
+        }
+        const code = c.code || currentEditingId;
+        const pin = c.pin || '—';
+        const text = generateClientInstructions(code, pin);
+        navigator.clipboard.writeText(text).then(() => {
+            toast('Mensaje con credenciales copiado al portapapeles', 'ok');
+            const btnLbl = document.getElementById('lbl-copy-client-msg');
+            if (btnLbl) {
+                btnLbl.textContent = '¡Copiado al Portapapeles!';
+                setTimeout(() => { btnLbl.textContent = 'Copiar al Portapapeles'; }, 2200);
+            }
+        }).catch(() => {
+            toast('No se pudo copiar el mensaje.', 'err');
+        });
+    }
+
+    function updateCredentialsMessage(code, pin) {
+        const el = document.getElementById('cred-client-message');
+        if (!el) return;
+        if (!code || code === '—') {
+            el.textContent = 'Seleccione o cree un expediente para generar el mensaje con credenciales e instrucciones.';
+            return;
+        }
+        el.textContent = generateClientInstructions(code, pin || '—');
+    }
+
     function sendCredentialsWA() {
         const c = casesDB[currentEditingId];
-        if (!c) return;
-        const msg = `*AeroLex — Sus credenciales de seguimiento*\n\nExpediente: *${c.code}*\nPIN de consulta: *${c.pin}*\n\nPuede consultar el avance procesal de su caso en tiempo real en nuestro portal web https://aerolex.cl, o directamente con nuestro asistente virtual seleccionando "Rastrear mi caso".\n\n— Estudio Jurídico AeroLex, Puerto Montt`;
-        logAdminWaContact('envio_credenciales', msg, c.code);
+        if (!c) {
+            toast('Seleccione un expediente primero.', 'err');
+            return;
+        }
+        const msg = generateClientInstructionsWA(c.code || currentEditingId, c.pin || '—');
+        logAdminWaContact('envio_credenciales', msg, c.code || currentEditingId);
         window.open(`https://wa.me/${getWaNumber()}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
